@@ -1,4 +1,4 @@
-# Master-s_Thesis:
+# Master's_Thesis:
 A mechanized proof of curve length of a rectifiable curve in ACL2(r)
 
 Files description:
