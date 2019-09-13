@@ -5,7 +5,7 @@
  ()
  (defthmd i-small-plus-lemma
    (implies (i-close x y)
-	    (i-small (- x y))))
+ 	    (i-small (- x y))))
  
  (defthmd i-close-plus-lemma
    (implies (i-small (- x y))
@@ -68,23 +68,9 @@
 		 (equal x z))
 	    (i-close y z)
 	    )
-   
    )
-
- (defthmd realp-i-l
-   (realp (i-large-integer))
-   )
-
- (defthmd x+eps-real
-   (implies (and (realp x)
-		 (realp eps)
-		 (i-small eps))
-	    (realp (+ eps x))
-	    )
-   
-   )
-
  )
+ 
 
 (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta" :dir :system))
 (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/nsa" :dir :system))
@@ -118,7 +104,6 @@
 			    (x (* a (- x y)))
 			    (y (* y (- a b))))
 		 )
-					; :in-theory nil
 	   ))
   )
 
@@ -272,6 +257,9 @@
  )
 
 
+
+
+
 (local
  (defthm-std standard-f-prime
    (implies (standardp x)
@@ -281,7 +269,6 @@
  (defthm-std standard-fi-prime
    (implies (standardp x)
 	    (standardp (fi-prime x)))))
-
 
 
 (encapsulate
@@ -1217,54 +1204,59 @@
  )
 
 (local 
-(defthm real-derivative-cr-f-o-fi
-  (implies (inside-interval-p x (f-o-fi-domain))
-	   (realp (derivative-cr-f-o-fi x)))
-  :hints (("Goal"
-	   :use (:functional-instance real-derivative-cr-fn1-o-fn2
-				      (derivative-cr-fn1-o-fn2 derivative-cr-f-o-fi)
-				      (differential-cr-fn1-o-fn2 differential-cr-f-o-fi)
-				      (cr-fn1-o-fn2 f-o-fi)
-				      (cr-fn2-domain f-o-fi-domain)
-				      (cr-fn2-range fi-range)
-				      (cr-fn1 f)
-				      (cr-fn2 fi)
-				      (derivative-cr-fn2 fi-prime)
-				      (derivative-cr-fn1 F-prime)
-				      (differential-cr-fn1 differential-cr-f)
-				      (differential-cr-fn2 differential-cr-fi)))
-	  )
-  )
-)
+ (defthm real-derivative-cr-f-o-fi
+   (implies (inside-interval-p x (f-o-fi-domain))
+	    (realp (derivative-cr-f-o-fi x)))
+   :hints (("Goal"
+	    :use (:functional-instance real-derivative-cr-fn1-o-fn2
+				       (derivative-cr-fn1-o-fn2 derivative-cr-f-o-fi)
+				       (differential-cr-fn1-o-fn2 differential-cr-f-o-fi)
+				       (cr-fn1-o-fn2 f-o-fi)
+				       (cr-fn2-domain f-o-fi-domain)
+				       (cr-fn2-range fi-range)
+				       (cr-fn1 f)
+				       (cr-fn2 fi)
+				       (derivative-cr-fn2 fi-prime)
+				       (derivative-cr-fn1 F-prime)
+				       (differential-cr-fn1 differential-cr-f)
+				       (differential-cr-fn2 differential-cr-fi)))
+	   )
+   )
+ )
 
+(local
+ (defun F-o-fi-prime (x)
+   (if (inside-interval-p x (f-o-fi-domain))
+       (derivative-cr-f-o-fi x)
+     0)
+   )
+ )
 
-(defun F-o-fi-prime (x)
-  (if (inside-interval-p x (f-o-fi-domain))
-      (derivative-cr-f-o-fi x)
-    0)
-  )
+(local 
+ (defthm F-o-fi-prime-real
+   (realp (F-o-fi-prime x))
+   :hints (("Goal"
+	    :use (:instance real-derivative-cr-f-o-fi)
+	    ))
+   )
+ )
 
-(defthm F-o-fi-prime-real
-  (realp (F-o-fi-prime x))
-  :hints (("Goal"
-	   :use (:instance real-derivative-cr-f-o-fi)
-	   ))
-  )
-
-(defthm F-o-fi-prime-is-derivative
-  (implies (and (standardp x)
-		(inside-interval-p x (F-o-fi-domain))
-		(inside-interval-p x1 (F-o-fi-domain))
-		(i-close x x1) (not (= x x1)))
-	   (i-close (/ (- (F-o-fi x) (F-o-fi x1)) (- x x1))
-		    (F-o-fi-prime x)))
-  :hints (("Goal"
-	   :use (
-		 (:instance  derivative-cr-f-o-fi-is-derivative)
-		 )
-	   :in-theory '(F-o-fi-prime derivative-cr-f-o-fi-is-derivative)
-	   ))
-  )
+(local
+ (defthm F-o-fi-prime-is-derivative
+   (implies (and (standardp x)
+		 (inside-interval-p x (F-o-fi-domain))
+		 (inside-interval-p x1 (F-o-fi-domain))
+		 (i-close x x1) (not (= x x1)))
+	    (i-close (/ (- (F-o-fi x) (F-o-fi x1)) (- x x1))
+		     (F-o-fi-prime x)))
+   :hints (("Goal"
+	    :use (
+		  (:instance  derivative-cr-f-o-fi-is-derivative)
+		  )
+	    :in-theory '(F-o-fi-prime derivative-cr-f-o-fi-is-derivative)
+	    ))
+   )
+ )
 
 (encapsulate
  ()
@@ -1418,23 +1410,29 @@
 
 (in-theory (disable F-o-fi-prime))
 
-(defun map-F-o-fi-prime (p)
-  (if (consp p)
-      (cons (F-o-fi-prime (car p))
-	    (map-F-o-fi-prime (cdr p)))
-    nil))
+(local 
+ (defun map-F-o-fi-prime (p)
+   (if (consp p)
+       (cons (F-o-fi-prime (car p))
+	     (map-F-o-fi-prime (cdr p)))
+     nil))
+ )
 
-(defun riemann-F-o-fi-prime (p)
-  (dotprod (deltas p)
-	   (map-F-o-fi-prime (cdr p))))
+(local 
+ (defun riemann-F-o-fi-prime (p)
+   (dotprod (deltas p)
+	    (map-F-o-fi-prime (cdr p))))
+ )
 
-(defthm realp-riemann-F-o-fi-prime
-  (implies (partitionp p)
-	   (realp (riemann-F-o-fi-prime p)))
-  :hints (("Goal"
-	   :use (:instance  F-o-fi-prime-real)
-	   ))
-  )
+(local 
+ (defthm realp-riemann-F-o-fi-prime
+   (implies (partitionp p)
+	    (realp (riemann-F-o-fi-prime p)))
+   :hints (("Goal"
+	    :use (:instance  F-o-fi-prime-real)
+	    ))
+   )
+ )
 
 (encapsulate
  nil
@@ -1468,15 +1466,16 @@
      0))
  )
 
-(defun int-F-o-fi-prime (a b)
-  (if (<= a b)
-      (strict-int-F-o-fi-prime a b)
-    (- (strict-int-F-o-fi-prime b a))))
+(local 
+ (defun int-F-o-fi-prime (a b)
+   (if (<= a b)
+       (strict-int-F-o-fi-prime a b)
+     (- (strict-int-F-o-fi-prime b a))))
+ )
 
-(encapsulate
- nil
- (local  (in-theory (disable F-o-fi-equal)))
+(local  (in-theory (disable F-o-fi-equal)))
 
+(local
  (defthmd ftc-2-usub
    (implies (and (inside-interval-p a (f-o-fi-domain))
 		 (inside-interval-p b (f-o-fi-domain)))
@@ -1500,36 +1499,46 @@
 	   ("Subgoal 6"
 	    :use ((:instance  F-o-fi-domain-non-trivial)))
 	   )
-   ))
+   )
+ )
+					;)
 
-(defthmd ftc2-usub-equal
-  (implies (and (inside-interval-p a (f-o-fi-domain))
-		(inside-interval-p b (f-o-fi-domain)))
-	   (equal (int-f-o-fi-prime a b)
-		  (- (f (fi b))
-		     (f (fi a)))))
-  :hints (("Goal"
-	   :use ((:instance ftc-2-usub)
-		 (:instance F-o-fi-equal(x a))
-		 (:instance F-o-fi-equal(x b))
-		 )
-	   
-	   ))
-  )
+(local 
+ (defthmd ftc2-usub-equal
+   (implies (and (inside-interval-p a (f-o-fi-domain))
+		 (inside-interval-p b (f-o-fi-domain)))
+	    (equal (int-f-o-fi-prime a b)
+		   (- (f (fi b))
+		      (f (fi a)))))
+   :hints (("Goal"
+	    :use ((:instance ftc-2-usub)
+		  (:instance F-o-fi-equal(x a))
+		  (:instance F-o-fi-equal(x b))
+		  )
+	    
+	    ))
+   )
+ )
 
-(defun map-F-prime (p)
-  (if (consp p)
-      (cons (F-prime (car p))
-	    (map-F-prime (cdr p)))
-    nil))
+(local 
+ (defun map-F-prime (p)
+   (if (consp p)
+       (cons (F-prime (car p))
+	     (map-F-prime (cdr p)))
+     nil))
+ )
 
-(defun riemann-F-prime (p)
-  (dotprod (deltas p)
-	   (map-F-prime (cdr p))))
+(local
+ (defun riemann-F-prime (p)
+   (dotprod (deltas p)
+	    (map-F-prime (cdr p))))
+ )
 
-(defthm realp-riemann-F-prime
-  (implies (partitionp p)
-	   (realp (riemann-F-prime p))))
+(local
+ (defthm realp-riemann-F-prime
+   (implies (partitionp p)
+	    (realp (riemann-F-prime p))))
+ )
 
 (encapsulate
  nil
@@ -1566,56 +1575,60 @@
      0))
  )
 
-(defun int-F-prime (a b)
-  (if (<= a b)
-      (strict-int-F-prime a b)
-    (- (strict-int-F-prime b a))))
+(local 
+ (defun int-F-prime (a b)
+   (if (<= a b)
+       (strict-int-F-prime a b)
+     (- (strict-int-F-prime b a))))
+ )
 
-(defthmd ftc-2-usub-1
-  (implies (and (inside-interval-p a (fi-range))
-		(inside-interval-p b (fi-range)))
-	   (equal (int-f-prime a b)
-		  (- (f b)
-		     (f a))))
-  :hints (("Goal"
-	   :use (:functional-instance ftc-2
-				      (rcdfn-domain fi-range)
-				      (int-rcdfn-prime int-F-prime)
-				      (riemann-rcdfn-prime riemann-F-prime)
-				      (map-rcdfn-prime map-F-prime)
-				      (rcdfn F)
-				      (rcdfn-prime F-prime)
-				      (strict-int-rcdfn-prime strict-int-F-prime))
-	   
-	   :in-theory (disable F-prime-definition)
+(local 
+ (defthmd ftc-2-usub-1
+   (implies (and (inside-interval-p a (fi-range))
+		 (inside-interval-p b (fi-range)))
+	    (equal (int-f-prime a b)
+		   (- (f b)
+		      (f a))))
+   :hints (("Goal"
+	    :use (:functional-instance ftc-2
+				       (rcdfn-domain fi-range)
+				       (int-rcdfn-prime int-F-prime)
+				       (riemann-rcdfn-prime riemann-F-prime)
+				       (map-rcdfn-prime map-F-prime)
+				       (rcdfn F)
+				       (rcdfn-prime F-prime)
+				       (strict-int-rcdfn-prime strict-int-F-prime))
+	    
+	    :in-theory (disable F-prime-definition)
+	    )
+	   ("Subgoal 7"
+	    :use ((:instance F-prime-is-derivative)))
+	   ("Subgoal 8"
+	    :use ((:instance F-real)))
+	   ("Subgoal 6"
+	    :use ((:instance  fi-range-non-trivial)))
 	   )
-	  ("Subgoal 7"
-	   :use ((:instance F-prime-is-derivative)))
-	  ("Subgoal 8"
-	   :use ((:instance F-real)))
-	  ("Subgoal 6"
-	   :use ((:instance  fi-range-non-trivial)))
-	  )
-  )
+   )
+ )
 
-(defthmd ftc2-usub-1-equal
-  (implies (and (inside-interval-p a (f-o-fi-domain))
-		(inside-interval-p b (f-o-fi-domain)))
-	   (equal (int-f-prime (fi a) (fi b))
-		  (- (f (fi b))
-		     (f (fi a)))))
-  :hints (("Goal"
-	   :use (
-		 (:instance ftc-2-usub-1 (a (fi a))
-			    (b (fi b))
-			    )
-		 )
-	   )
-	  )
-					;:rule-classes (:rewrite)
-  )
+(local 
+ (defthmd ftc2-usub-1-equal
+   (implies (and (inside-interval-p a (f-o-fi-domain))
+		 (inside-interval-p b (f-o-fi-domain)))
+	    (equal (int-f-prime (fi a) (fi b))
+		   (- (f (fi b))
+		      (f (fi a)))))
+   :hints (("Goal"
+	    :use (
+		  (:instance ftc-2-usub-1 (a (fi a))
+			     (b (fi b))
+			     )
+		  )
+	    ))
+   )
+ )
 
-(defthm ftc2-usub-usub1-equal
+(defthm usubstitution-f-o-fi
   (implies (and (inside-interval-p a (f-o-fi-domain))
 		(inside-interval-p b (f-o-fi-domain)))
 	   (equal (int-f-prime (fi a) (fi b))
