@@ -1,138 +1,10 @@
-;;;;test
 
+(IN-PACKAGE "ACL2")
 
-(encapsulate
- ()
- (defthmd i-small-plus-lemma
-   (implies (i-close x y)
- 	    (i-small (- x y))))
- 
- (defthmd i-close-plus-lemma
-   (implies (i-small (- x y))
-	    (i-close (- x y) 0)))
- 
- (defthmd i-close-plus-lemma-1
-   (implies (and (acl2-numberp x)
-		 (acl2-numberp y)
-		 (i-close (- x y) 0))
-	    (i-close x y)
-	    ))
- 
- (defthmd i-close-plus-lemma-2
-   (implies (and (acl2-numberp x)
-		 (acl2-numberp y)
-		 (i-small (- x y))
-		 )
-	    (i-close x y))
-   
-   :hints (("Goal"
-	    :use (
-		  (:instance i-close-plus-lemma(x x) )
-		  (:instance i-close-plus-lemma-1(x x))
-		  )
-	    )))
-
- (defthmd i-small-limited-lemma
-   (implies (and (acl2-numberp x) (i-small x))
-	    (i-limited x))
-   )
-
- (defthmd close-stdpart-lemma1
-   (implies (and (i-close x y)
-		 (i-limited x))
-	    (equal (standard-part x) (standard-part y)))
-   )
-
- (defthmd close-stdpart-lemma2-1
-   (implies (and  (standardp x)
-		  (acl2-numberp x)
-		  )
-	    (equal (standard-part x) x)
-	    )
-   )
-
- (defthmd close-stdpart-lemma2
-   (implies (and (i-close x y)
-		 (standardp x)
-		 (acl2-numberp x)
-		 (acl2-numberp y))
-	    (equal (standard-part y) x))
-   :hints (("Goal"
-	    :use ((:instance close-stdpart-lemma1 (x x) (y y))
-		  (:instance close-stdpart-lemma2-1 (x x))
-		  )))
-   )
-
- (defthmd i-close-lemma1
-   (implies (and (i-close x y)
-		 (equal x z))
-	    (i-close y z)
-	    )
-   )
- )
- 
-
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta" :dir :system))
 (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/nsa" :dir :system))
-
-(defthmd i-close-lemma2
-  (implies (and (acl2-numberp a)
-		(acl2-numberp b)
-		(acl2-numberp x)
-		(acl2-numberp y)
-		(i-close a b)
-		(i-close x y)
-		(i-limited a)
-		(i-limited y)
-		)
-	   (i-small (+ (* a (- x y)) (* y (- a b))))
-	   )
-  :hints (("Goal"
-	   :use ((:instance i-small-plus-lemma
-			    (x x)
-			    (y y))
-		 (:instance i-small-plus-lemma
-			    (x a)
-			    (y b))
-		 (:instance small*limited->small
-			    (x (- x y))
-			    (y a))
-		 (:instance small*limited->small
-			    (x (- a b))
-			    (y y))
-		 (:instance i-small-plus
-			    (x (* a (- x y)))
-			    (y (* y (- a b))))
-		 )
-	   ))
-  )
-
-(defthmd i-close-lemma3
-  (implies (and (acl2-numberp a)
-		(acl2-numberp b)
-		(acl2-numberp x)
-		(acl2-numberp y)
-		(i-close a b)
-		(i-close x y)
-		(i-limited a)
-		(i-limited y)
-		)
-	   (i-close  (* a x) (* b y))
-	   )
-  :hints (("Goal" 
-	   :use ((:instance i-close-lemma2)
-		 (:instance i-close-plus-lemma-2
-			    (x (* a x))
-			    (y (* b y)))
-		 )
-	   ))
-  )
-
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2" :dir :system))
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/chain-rule" :dir :system))
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/continuous-function" :dir :system))
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-1" :dir :system))
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/continuity-product" :dir :system))
+(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2" :dir :system)
+(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/chain-rule" :dir :system)
+(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/continuity-product" :dir :system)
 
 (encapsulate
  (
@@ -258,6 +130,173 @@
 
 
 
+(local 
+ (defthmd i-large-lemma
+   (i-small (/(i-large-integer)))
+   :hints(("Goal"
+	   :use (:instance i-large-udivide
+			   (x (i-large-integer))
+			   )
+	   :in-theory (enable nsa-theory)
+	   ))
+   )
+ )
+
+(local 
+ (defthmd i-small-plus-lemma
+   (implies (i-close x y)
+	    (i-small (- x y)))
+   :hints(("Goal"
+	   :in-theory (enable nsa-theory)
+	   ))
+   )
+ )
+
+(local  
+ (defthmd i-close-plus-lemma
+   (implies (i-small (- x y))
+	    (i-close (- x y) 0))
+   :hints(("Goal"
+	   :in-theory (enable nsa-theory)
+	   ))
+   )
+ )
+
+(local 
+ (defthmd i-close-plus-lemma-1
+   (implies (and (acl2-numberp x)
+		 (acl2-numberp y)
+		 (i-close (- x y) 0))
+	    (i-close x y)
+	    )
+   :hints(("Goal"
+	   :in-theory (enable nsa-theory)
+	   ))
+   )
+ )
+
+(local 
+ (defthmd i-close-plus-lemma-2
+   (implies (and (acl2-numberp x)
+		 (acl2-numberp y)
+		 (i-small (- x y))
+		 )
+	    (i-close x y))
+   
+   :hints (("Goal"
+	    :use (
+		  (:instance i-close-plus-lemma(x x) )
+		  (:instance i-close-plus-lemma-1(x x))
+		  )
+	    )))
+ )
+
+(local 
+ (defthmd i-small-limited-lemma
+   (implies (and (acl2-numberp x) (i-small x))
+	    (i-limited x))
+   )
+ )
+
+(local 
+ (defthmd close-stdpart-lemma1
+   (implies (and (i-close x y)
+		 (i-limited x))
+	    (equal (standard-part x) (standard-part y)))
+   )
+ )
+
+(local
+ (defthmd close-stdpart-lemma2-1
+   (implies (and  (standardp x)
+		  (acl2-numberp x)
+		  )
+	    (equal (standard-part x) x)
+	    )
+   )
+ )
+
+(local
+ (defthmd close-stdpart-lemma2
+   (implies (and (i-close x y)
+		 (standardp x)
+		 (acl2-numberp x)
+		 (acl2-numberp y))
+	    (equal (standard-part y) x))
+   :hints (("Goal"
+	    :use ((:instance close-stdpart-lemma1 (x x) (y y))
+		  (:instance close-stdpart-lemma2-1 (x x))
+		  )))
+   )
+ )
+
+(local
+ (defthmd i-close-lemma1
+   (implies (and (i-close x y)
+		 (equal x z))
+	    (i-close y z)
+	    )
+   )
+ )
+
+(local
+ (defthmd i-close-lemma2
+   (implies (and (acl2-numberp a)
+		 (acl2-numberp b)
+		 (acl2-numberp x)
+		 (acl2-numberp y)
+		 (i-close a b)
+		 (i-close x y)
+		 (i-limited a)
+		 (i-limited y)
+		 )
+	    (i-small (+ (* a (- x y)) (* y (- a b))))
+	    )
+   :hints (("Goal"
+	    :use ((:instance i-small-plus-lemma
+			     (x x)
+			     (y y))
+		  (:instance i-small-plus-lemma
+			     (x a)
+			     (y b))
+		  (:instance small*limited->small
+			     (x (- x y))
+			     (y a))
+		  (:instance small*limited->small
+			     (x (- a b))
+			     (y y))
+		  (:instance i-small-plus
+			     (x (* a (- x y)))
+			     (y (* y (- a b))))
+		  )
+	    ))
+   )
+ )
+
+(local 
+ (defthmd i-close-lemma3
+   (implies (and (acl2-numberp a)
+		 (acl2-numberp b)
+		 (acl2-numberp x)
+		 (acl2-numberp y)
+		 (i-close a b)
+		 (i-close x y)
+		 (i-limited a)
+		 (i-limited y)
+		 )
+	    (i-close  (* a x) (* b y))
+	    )
+   :hints (("Goal" 
+	    :use ((:instance i-close-lemma2)
+		  (:instance i-close-plus-lemma-2
+			     (x (* a x))
+			     (y (* b y)))
+		  )
+	    ))
+   )
+ )
+
+
 
 
 (local
@@ -282,7 +321,7 @@
   ((strict-int-f-prime-1 * *) => *)
   ((int-f-prime-1 * *) => *)
   )
-
+ 
  (local
   (defun map-f-prime-1 (p)
     (if (consp p)
@@ -626,25 +665,23 @@
 		(inside-interval-p (- x eps) (fi-range))))
    :hints (("Goal"
 	    :use (
-		  (:instance fi-range-real)
-		  (:instance intervalp-fi-range)
 		  (:instance fi-range-non-trivial)
 		  (:instance x-in-interval-implies-x+-eps-in-interval-1
-			     (x x)
-			     (eps eps)
-			     (x1 (interval-left-endpoint (fi-range))))
+		  	     (x x)
+		  	     (eps eps)
+		  	     (x1 (interval-left-endpoint (fi-range))))
 		  (:instance x-in-interval-implies-x+-eps-in-interval-1
-			     (x x)
-			     (eps (- eps))
-			     (x1 (interval-left-endpoint (fi-range))))
+		  	     (x x)
+		  	     (eps (- eps))
+		  	     (x1 (interval-left-endpoint (fi-range))))
 		  (:instance x-in-interval-implies-x+-eps-in-interval-2
-			     (x x)
-			     (eps eps)
-			     (x2 (interval-right-endpoint (fi-range))))
+		  	     (x x)
+		  	     (eps eps)
+		  	     (x2 (interval-right-endpoint (fi-range))))
 		  (:instance x-in-interval-implies-x+-eps-in-interval-2
-			     (x x)
-			     (eps (- eps))
-			     (x2 (interval-right-endpoint (fi-range))))
+		  	     (x x)
+		  	     (eps (- eps))
+		  	     (x2 (interval-right-endpoint (fi-range))))
 		  )
 	    )
 	   ("Subgoal 9"
@@ -658,9 +695,13 @@
 	   ("Subgoal 1"
 	    :in-theory (enable interval-definition-theory))
 	   )
+   :rule-classes nil
    ))
 
-(local
+(encapsulate
+ ()
+ (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top" :dir :system))
+ 
  (defthm F-prime-definition
    (implies (and (inside-interval-p x (fi-range))
 		 (standardp x))
@@ -677,15 +718,9 @@
 		  (:instance x-in-interval-implies-x+-eps-in-interval
 			     (x x)
 			     (eps (/ (i-large-integer))))
+		  (:instance i-large-lemma)
 		  (:instance F-prime-is-derivative (x x)
 			     (x1 (+ x (/ (I-LARGE-INTEGER))))
-			     )
-		  (:instance F-prime-is-derivative (x x)
-			     (x1 (- x (/ (I-LARGE-INTEGER))))
-			     )
-		  (:instance i-close-plus-lemma-2
-			     (x x)
-			     (y (+ (- (/ (I-LARGE-INTEGER))) X))
 			     )
 		  (:instance i-close-plus-lemma-2
 			     (y x)
@@ -694,6 +729,13 @@
 		  (:instance close-stdpart-lemma2
 			     (x (f-prime x))
 			     (y (differential-cr-f x (/ (i-large-integer))))
+			     )
+		  (:instance F-prime-is-derivative (x x)
+			     (x1 (+ x (-(/ (I-LARGE-INTEGER)))))
+			     )
+		  (:instance i-close-plus-lemma-2
+			     (x x)
+			     (y (+ (- (/ (I-LARGE-INTEGER))) X))
 			     )
 		  (:instance close-stdpart-lemma2
 			     (x (f-prime x))
@@ -727,8 +769,6 @@
 		(inside-interval-p (- x eps) (f-o-fi-domain))))
    :hints (("Goal"
 	    :use (
-		  (:instance f-o-fi-domain-real)
-		  (:instance intervalp-f-o-fi-domain)
 		  (:instance f-o-fi-domain-non-trivial)
 		  (:instance x-in-interval-implies-x+-eps-in-interval-1
 			     (x x)
@@ -761,7 +801,9 @@
 	   )
    ))
 
-(local
+(encapsulate
+ ()
+ (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top" :dir :system))
  (defthm fi-prime-definition
    (implies (and (inside-interval-p x (f-o-fi-domain))
 		 (standardp x))
@@ -776,30 +818,30 @@
 	    :use (
 		  (:instance standard-fi-prime)
 		  (:instance x-in-interval-implies-x+-eps-in-interval-f-o-fi-domain
-			     (x x)
-			     (eps (/ (i-large-integer))))
+		  	     (x x)
+		  	     (eps (/ (i-large-integer))))
 		  (:instance fi-prime-is-derivative (x x)
-			     (x1 (+ x (/ (I-LARGE-INTEGER))))
-			     )
+		  	     (x1 (+ x (/ (I-LARGE-INTEGER))))
+		  	     )
 		  (:instance fi-prime-is-derivative (x x)
-			     (x1 (- x (/ (I-LARGE-INTEGER))))
-			     )
+		  	     (x1 (- x (/ (I-LARGE-INTEGER))))
+		  	     )
 		  (:instance i-close-plus-lemma-2
-			     (x x)
-			     (y (+ (- (/ (I-LARGE-INTEGER))) X))
-			     )
+		  	     (x x)
+		  	     (y (+ (- (/ (I-LARGE-INTEGER))) X))
+		  	     )
 		  (:instance i-close-plus-lemma-2
-			     (y x)
-			     (x  (+ (/ (I-LARGE-INTEGER)) x))
-			     )
+		  	     (y x)
+		  	     (x  (+ (/ (I-LARGE-INTEGER)) x))
+		  	     )
 		  (:instance close-stdpart-lemma2
-			     (x (fi-prime x))
-			     (y (differential-cr-fi x (/ (i-large-integer))))
-			     )
+		  	     (x (fi-prime x))
+		  	     (y (differential-cr-fi x (/ (i-large-integer))))
+		  	     )
 		  (:instance close-stdpart-lemma2
-			     (x (fi-prime x))
-			     (y (differential-cr-fi x (- (/ (i-large-integer)))))
-			     )
+		  	     (x (fi-prime x))
+		  	     (y (differential-cr-fi x (- (/ (i-large-integer)))))
+		  	     )
 		  )
 	    ))
    )
@@ -1224,13 +1266,11 @@
    )
  )
 
-(local
- (defun F-o-fi-prime (x)
-   (if (inside-interval-p x (f-o-fi-domain))
-       (derivative-cr-f-o-fi x)
-     0)
-   )
- )
+(defun F-o-fi-prime (x)
+  (if (inside-interval-p x (f-o-fi-domain))
+      (derivative-cr-f-o-fi x)
+    0)
+  )
 
 (local 
  (defthm F-o-fi-prime-real
@@ -1258,141 +1298,132 @@
    )
  )
 
-(encapsulate
- ()
+(local
+ (defthm-std fi-standard-1
+   (implies (standardp x)
+	    (standardp (fi x))
+	    )
+   )
+ )
 
- (local
-  (defthm-std fi-standard-1
-    (implies (standardp x)
-	     (standardp (fi x))
-	     )
-    )
-  )
+(local
+ (defthm fi-standard
+   (implies (standard-numberp x)
+	    (standard-numberp (fi x))
+	    )
+   :hints (("Goal"
+	    :use (:instance fi-standard-1)
+	    ))
+   )
+ )
 
- (local
-  (defthm fi-standard
-    (implies (standard-numberp x)
-	     (standard-numberp (fi x))
-	     )
-    :hints (("Goal"
-	     :use (:instance fi-standard-1)
-	     ))
-    )
-  )
+(local
+ (defthm-std fi-prime-standard-1
+   (implies (standardp x)
+	    (standardp (fi-prime x))
+	    )
+   )
+ )
 
- (local
-  (defthm-std fi-prime-standard-1
-    (implies (standardp x)
-	     (standardp (fi-prime x))
-	     )
-    )
-  )
+(local
+ (defthm fi-prime-standard
+   (implies (standard-numberp x)
+	    (standard-numberp (fi-prime x))
+	    )
+   :hints (("Goal"
+	    :use (:instance fi-prime-standard-1)
+	    ))
+   )
+ )
 
- (local
-  (defthm fi-prime-standard
-    (implies (standard-numberp x)
-	     (standard-numberp (fi-prime x))
-	     )
-    :hints (("Goal"
-	     :use (:instance fi-prime-standard-1)
-	     ))
-    )
-  )
+(local
+ (defthm-std f-prime-f-standard-1
+   (implies (standardp x)
+	    (standardp (f-prime (fi x)))
+	    )
+   )
+ )
 
- (local
-  (defthm-std f-prime-f-standard-1
-    (implies (standardp x)
-	     (standardp (f-prime (fi x)))
-	     )
-    )
-  )
+(local
+ (defthm f-prime-f-standard
+   (implies (standard-numberp x)
+	    (standard-numberp (f-prime (fi x)))
+	    )
+   :hints (("Goal"
+	    :use (:instance f-prime-f-standard-1)
+	    ))
+   )
+ )
 
- (local
-  (defthm f-prime-f-standard
-    (implies (standard-numberp x)
-	     (standard-numberp (f-prime (fi x)))
-	     )
-    :hints (("Goal"
-	     :use (:instance f-prime-f-standard-1)
-	     ))
-    )
-  )
-
- (local
-  (defthm f-continuous
-    (implies (and (standardp x)
-		  (inside-interval-p x (fi-range))
-		  (i-close x y)
-		  (inside-interval-p y (fi-range))
+(local
+ (defthm f-continuous
+   (implies (and (standardp x)
+		 (inside-interval-p x (fi-range))
+		 (i-close x y)
+		 (inside-interval-p y (fi-range))
+		 )
+	    (i-close (f x) (f y))
+	    )
+   :hints (("Goal"
+	    :use ((:functional-instance rdfn-continuous
+					(rdfn f)
+					(rdfn-domain fi-range))
 		  )
-	     (i-close (f x) (f y))
-	     )
-    :hints (("Goal"
-	     :use ((:functional-instance rdfn-continuous
-					 (rdfn f)
-					 (rdfn-domain fi-range))
-		   )
-	     ))
-    )
-  )
+	    ))
+   )
+ )
 
 
- (local
-  (defthm fi-prime-real-1
-    (implies (realp x)
-	     (realp (fi-prime x)))
-    )
-  )
+(local
+ (defthm fi-prime-real-1
+   (implies (realp x)
+	    (realp (fi-prime x)))
+   )
+ )
 
- (local
-  (defthm f-prime-fi-real-1
-    (implies (realp x)
-	     (realp (f-prime (fi x))))
-    )
-  )
+(local
+ (defthm f-prime-fi-real-1
+   (implies (realp x)
+	    (realp (f-prime (fi x))))
+   )
+ )
 
- (local
-  (defthm fi-continuous
-    (implies (and (standardp x)
-		  (inside-interval-p x (f-o-fi-domain))
-		  (i-close x y)
-		  (inside-interval-p y (f-o-fi-domain))
+(local
+ (defthm fi-continuous
+   (implies (and (standardp x)
+		 (inside-interval-p x (f-o-fi-domain))
+		 (i-close x y)
+		 (inside-interval-p y (f-o-fi-domain))
+		 )
+	    (i-close (fi x) (fi y))
+	    )
+   :hints (("Goal"
+	    :use ((:functional-instance rdfn-continuous
+					(rdfn fi)
+					(rdfn-domain f-o-fi-domain))
 		  )
-	     (i-close (fi x) (fi y))
-	     )
-    :hints (("Goal"
-	     :use ((:functional-instance rdfn-continuous
-					 (rdfn fi)
-					 (rdfn-domain f-o-fi-domain))
-		   )
-	     ))
-    )
-  )
+	    ))
+   )
+ )
 
- (local
-  (defthm f-prime-fi-continuous
-    (implies (and (standardp x)
-		  (inside-interval-p x (F-o-fi-domain))
-		  (i-close x x1)
-		  (inside-interval-p x1 (F-o-fi-domain))
-					;(not (= x x1))
+(local
+ (defthm f-prime-fi-continuous
+   (implies (and (standardp x)
+		 (inside-interval-p x (F-o-fi-domain))
+		 (i-close x x1)
+		 (inside-interval-p x1 (F-o-fi-domain))
+		 )
+	    (i-close (f-prime (fi x))
+		     (f-prime (fi x1))))
+   :hints (("Goal"
+	    :use ((:instance F-prime-continuous)
+		  (:instance fi-range-in-domain-of-f-o-fi (x x))
+		  (:instance fi-range-in-domain-of-f-o-fi (x x1))
 		  )
-	     (i-close (f-prime (fi x))
-		      (f-prime (fi x1))))
-    :hints (("Goal"
-	     :use ((:instance F-prime-continuous)
-		   (:instance fi-range-in-domain-of-f-o-fi (x x))
-		   (:instance fi-range-in-domain-of-f-o-fi (x x1))
-		   )
-	     ))
-    ))
+	    ))
+   ))
 
- (local
-  (defun f-prime-fi (x)
-    (f-prime (fi x))
-    )
-  )
-
+(local
  (defthm F-o-fi-prime-continuous
    (implies (and (standardp x)
 		 (inside-interval-p x (F-o-fi-domain))
@@ -1408,21 +1439,17 @@
    )
  )
 
-(in-theory (disable F-o-fi-prime))
+(local (in-theory (disable F-o-fi-prime)))
 
-(local 
- (defun map-F-o-fi-prime (p)
-   (if (consp p)
-       (cons (F-o-fi-prime (car p))
-	     (map-F-o-fi-prime (cdr p)))
-     nil))
- )
+(defun map-F-o-fi-prime (p)
+  (if (consp p)
+      (cons (F-o-fi-prime (car p))
+	    (map-F-o-fi-prime (cdr p)))
+    nil))
 
-(local 
- (defun riemann-F-o-fi-prime (p)
-   (dotprod (deltas p)
-	    (map-F-o-fi-prime (cdr p))))
- )
+(defun riemann-F-o-fi-prime (p)
+  (dotprod (deltas p)
+	   (map-F-o-fi-prime (cdr p))))
 
 (local 
  (defthm realp-riemann-F-o-fi-prime
@@ -1438,7 +1465,7 @@
  nil
 
  (local
-  (defthm limited-riemann-F-o-fi-prime-small-partition
+  (defthmd limited-riemann-F-o-fi-prime-small-partition-lemma
     (implies (and (realp a) (standardp a)
 		  (realp b) (standardp b)
 		  (inside-interval-p a (F-o-fi-domain))
@@ -1452,9 +1479,24 @@
 				       (map-rcfn map-F-o-fi-prime)
 				       (riemann-rcfn riemann-F-o-fi-prime)))
 	    ("Subgoal 2"
-	     :use ((:instance F-o-fi-domain-non-trivial))))))
+	     :use ((:instance F-o-fi-domain-non-trivial)))))
+  )
 
- (local (in-theory (disable riemann-F-o-fi-prime)))
+ (defthmd limited-riemann-F-o-fi-prime-small-partition
+   (implies (and (realp a) (standardp a)
+		 (realp b) (standardp b)
+		 (inside-interval-p a (F-o-fi-domain))
+		 (inside-interval-p b (F-o-fi-domain))
+		 (< a b))
+	    (standardp (standard-part(riemann-F-o-fi-prime (make-small-partition a b)))))
+   :hints (("Goal"
+	    :use ((:instance limited-riemann-F-o-fi-prime-small-partition-lemma)
+		  (:instance standardp-standard-part (x (riemann-F-o-fi-prime (make-small-partition a b)))))
+	    ))
+   )
+
+ (local (in-theory nil))
+ (local (in-theory (enable limited-riemann-F-o-fi-prime-small-partition)))
 
  (defun-std strict-int-F-o-fi-prime (a b)
    (if (and (realp a)
@@ -1466,12 +1508,10 @@
      0))
  )
 
-(local 
- (defun int-F-o-fi-prime (a b)
-   (if (<= a b)
-       (strict-int-F-o-fi-prime a b)
-     (- (strict-int-F-o-fi-prime b a))))
- )
+(defun int-F-o-fi-prime (a b)
+  (if (<= a b)
+      (strict-int-F-o-fi-prime a b)
+    (- (strict-int-F-o-fi-prime b a))))
 
 (local  (in-theory (disable F-o-fi-equal)))
 
@@ -1491,7 +1531,8 @@
 					(rcdfn F-o-fi)
 					(rcdfn-prime F-o-fi-prime)
 					(strict-int-rcdfn-prime strict-int-F-o-fi-prime))))
-
+	   
+	   
 	   ("Subgoal 7"
 	    :use ((:instance F-o-fi-prime-is-derivative)))
 	   ("Subgoal 8"
@@ -1501,7 +1542,6 @@
 	   )
    )
  )
-					;)
 
 (local 
  (defthmd ftc2-usub-equal
@@ -1520,19 +1560,15 @@
    )
  )
 
-(local 
- (defun map-F-prime (p)
-   (if (consp p)
-       (cons (F-prime (car p))
-	     (map-F-prime (cdr p)))
-     nil))
- )
+(defun map-F-prime (p)
+  (if (consp p)
+      (cons (F-prime (car p))
+	    (map-F-prime (cdr p)))
+    nil))
 
-(local
- (defun riemann-F-prime (p)
-   (dotprod (deltas p)
-	    (map-F-prime (cdr p))))
- )
+(defun riemann-F-prime (p)
+  (dotprod (deltas p)
+	   (map-F-prime (cdr p))))
 
 (local
  (defthm realp-riemann-F-prime
@@ -1544,7 +1580,7 @@
  nil
 
  (local
-  (defthm limited-riemann-F-prime-small-partition
+  (defthmd limited-riemann-F-prime-small-partition-lemma
     (implies (and (realp a) (standardp a)
 		  (realp b) (standardp b)
 		  (inside-interval-p a (fi-range))
@@ -1563,7 +1599,21 @@
 	     :use ((:instance fi-range-non-trivial)))
 	    )))
 
- (local (in-theory (disable riemann-F-prime)))
+ (defthmd limited-riemann-F-prime-small-partition
+   (implies (and (realp a) (standardp a)
+		 (realp b) (standardp b)
+		 (inside-interval-p a (fi-range))
+		 (inside-interval-p b (fi-range))
+		 (< a b))
+	    (standardp (standard-part(riemann-F-prime (make-small-partition a b)))))
+   :hints (("Goal"
+	    :use ((:instance limited-riemann-F-prime-small-partition-lemma)
+		  (:instance standardp-standard-part (x (riemann-F-prime (make-small-partition a b)))))
+	    ))
+   )
+
+ (local (in-theory nil))
+ (local (in-theory (enable limited-riemann-F-prime-small-partition)))
 
  (defun-std strict-int-F-prime (a b)
    (if (and (realp a)
@@ -1575,12 +1625,11 @@
      0))
  )
 
-(local 
- (defun int-F-prime (a b)
-   (if (<= a b)
-       (strict-int-F-prime a b)
-     (- (strict-int-F-prime b a))))
- )
+(defun int-F-prime (a b)
+  (if (<= a b)
+      (strict-int-F-prime a b)
+    (- (strict-int-F-prime b a))))
+
 
 (local 
  (defthmd ftc-2-usub-1
@@ -1628,6 +1677,7 @@
    )
  )
 
+
 (defthm usubstitution-f-o-fi
   (implies (and (inside-interval-p a (f-o-fi-domain))
 		(inside-interval-p b (f-o-fi-domain)))
@@ -1638,5 +1688,8 @@
 		 (:instance ftc2-usub-1-equal)
 		 (:instance ftc2-usub-equal)
 		 )
+	   :in-theory (disable int-f-o-fi-prime int-f-prime)
 	   ))
   )
+
+
