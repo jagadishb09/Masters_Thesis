@@ -1,12 +1,14 @@
 
+(in-package "ACL2")
+
 (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/realp" :dir :system))
 (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/inequalities" :dir :system))
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square"))
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-trig"))
-					;(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/intervals"))
-(local (include-book "/users/jagadishbapanapally/Documents/AreaofACircle/u-substitution"))
+(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square")
+(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-trig")
+(include-book "/users/jagadishbapanapally/Documents/AreaofACircle/u-substitution")
 (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/sin-cos-minimal"))
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/intervals" :dir :system))
+(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/intervals")
+;(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/intervals" :dir :system))
 
 (encapsulate 
  ((rad() t)
@@ -40,8 +42,6 @@
 	    ))
    )
  )
-
-					;(local (in-theory (disable consta1-def)))
 
 (defun circle-x-domain() (interval (- (rad)) (rad)))
 
@@ -306,7 +306,6 @@
 			    (x (* (rad) (/ (- (acl2-sine x) (acl2-sine x1)) (- x x1))))
 			    (y (* (rad) (acl2-cosine x))))
 		 )
-					;:in-theory (sub-func sub-func-prime)
 	   ))
   )
 
@@ -382,8 +381,6 @@
 (defthmd root-close-lemma-1
   (implies (and (realp y1)
 		(realp y2)
-		;; (>= y1 0)
-		;; (>= y2 0)
 		(not (i-close y1 y2))
 		)
 	   (not (= (standard-part y1) (standard-part y2)))
@@ -542,7 +539,6 @@
  (defthm sqrt>=0-lemma
    (implies (and (i-limited x)
 		 (realp x))
-					;(>= x 0))
 	    (>= (acl2-sqrt x) 0))
    ))
 
@@ -560,7 +556,6 @@
     )
    :hints (("Goal"
 	    :use (
-					; (:EXECUTABLE-COUNTERPART NOT)
 		  (:definition square)
 		  (:instance STANDARDS-ARE-LIMITED-FORWARD (x x1))
 		  (:instance i-close-limited-2 (y x1) (x x2))
@@ -572,7 +567,6 @@
 		  (:instance sqrt>=0-lemma (x x2))
 		  (:instance root-close-lemma-6 (y1 (acl2-sqrt x1) ) (y2 (acl2-sqrt x2)))
 		  )
-					;:in-theory nil
 	    ))
    
    
@@ -615,7 +609,6 @@
    (IMPLIES (AND (realp x1)
 		 (realp x2)
 		 (> 0 x1)
-					;(> 0 x2)
 		 (> x1 x2))
 	    (> (* X2 X2) (* X1 X1)))
    :hints (("Goal"
@@ -659,15 +652,6 @@
    )
  )
 
-;; (local
-;;  (defthm square-lemma-5
-;;    (< (- (rad)) (rad))
-;;  :hints (("Goal"
-;; 	  :use (:instance rad-def)
-;; 	  ))
-;;  )
-;;  )
-
 (local
  (defthm square-lemma-6
    (implies (and (realp x)
@@ -682,7 +666,6 @@
 			 (<= x (rad)))))
    :hints (("Goal"
 	    :use ((:instance rad-def)
-					;(:instance square-lemma-5)
 		  )))
    )
  )
@@ -713,16 +696,6 @@
 	    ))
    )
  )
-
-
-;; (local
-;;  (defthm rad-def-lemma
-;;    (realp (- (rad)))
-;;    :hints (("Goal"
-;; 	    :use (:instance rad-def)
-;; 	    ))
-;;    )
-;;  )
 
 (local
  (defthm c-domain-lemma
@@ -817,10 +790,7 @@
 	    :use (
 		  (:instance lemma-6 (x x))
 		  (:instance lemma-6 (x y))
-					;(:instance lemma-6 (x z))
 		  (:instance FIx(x z))
-		  ;; (:definition FIX (- y))
-		  ;; (:definition FIX z)
 		  (:instance STANDARD-PART-OF-PLUS (x z) (y (- x)))
 		  (:instance STANDARD-PART-OF-STANDARDP (x z))
 		  (:instance STANDARD-PART-OF-UMINUS(x x))
@@ -892,38 +862,6 @@
 	    ))
    )
  )
-
-;; (local
-;;  (defthm lemma-9
-;;    (implies (and (realp x)
-;; 		 (standardp x))
-;; 	    (standardp (* x x))
-;; 	    )
-;;    )
-;;  )
-
-;; (local 
-;;  (defthm i-close-plus-lemma
-;;    (implies (i-small (- x y))
-;; 	    (i-close (- x y) 0))
-;;     :hints(("Goal"
-;;     	   :in-theory (enable i-small i-close)
-;;     	   ))
-;;    )
-;;  )
-
-;; (local 
-;;  (defthm i-close-plus-lemma-1
-;;    (implies (and (acl2-numberp x)
-;; 		 (acl2-numberp y)
-;; 		 (i-close (- x y) 0))
-;; 	    (i-close x y)
-;; 	    )
-;;    :hints(("Goal"
-;; 	   :in-theory (enable nsa-theory)
-;; 	   ))
-;;    )
-;;  )
 
 (local
  (defthm i-close-plus-lemma-2
@@ -1422,24 +1360,23 @@
 	  )
   )
 
-(defthm quarter-circle-area
-    (implies (and (inside-interval-p 0 (fi-domain))
-		(inside-interval-p (/ (acl2-pi) 2) (fi-domain)))
-	   (equal (int-circle (sub-func 0) (sub-func (/ (acl2-pi) 2)))
-		  (int-circle-sub-prime 0 (/ (acl2-pi) 2))))
-    :hints (("Goal"
-	     :use(:instance usubstitution-circle
-			    (a 0)
-			    (b (/ (acl2-pi) 2))
-			    )
-	     ))
-    )
+;; (defthm quarter-circle-area
+;;     (implies (and (inside-interval-p 0 (fi-domain))
+;; 		(inside-interval-p (/ (acl2-pi) 2) (fi-domain)))
+;; 	   (equal (int-circle (sub-func 0) (sub-func (/ (acl2-pi) 2)))
+;; 		  (int-circle-sub-prime 0 (/ (acl2-pi) 2))))
+;;     :hints (("Goal"
+;; 	     :use(:instance usubstitution-circle
+;; 			    (a 0)
+;; 			    (b (/ (acl2-pi) 2))
+;; 			    )
+;; 	     ))
+;;     )
 
 
 (encapsulate
  nil
  (local (in-theory nil))
-					;(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/realp" :dir :system))
  (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top" :dir :system))
  (local
   (defthm lemma-12
@@ -1457,10 +1394,23 @@
 	     )
     ))
 
+ (local
+  (defthm lemma-14
+    (implies (and (realp x)
+		  (>= x 0))
+	     (= (abs x) x))
+    :hints (("Goal"
+	     :use (:instance abs (x x))
+	     :in-theory nil
+	     ))
+    
+    ))
+
 
  (defthm circle-sub-prime-equals
-   (implies (inside-interval-p x (fi-domain))
-	    (equal (circle-sub-prime x) (*  (abs (* (rad) (acl2-cosine x))) (* (rad) (acl2-cosine x)))))
+   (implies (and (inside-interval-p x (fi-domain))
+		 (>= (acl2-cosine x) 0))
+	    (equal (circle-sub-prime x) (*  (* (rad) (acl2-cosine x)) (* (rad) (acl2-cosine x)))))
    :hints (("Goal"
 	    :use ((:instance circle-sub-prime)
 		  (:instance derivative-circle-sub-definition)
@@ -1480,6 +1430,9 @@
 			     (x (rad))
 			     (y (acl2-cosine x))
 			     )
+		  (:instance lemma-14
+			     (x (* (rad) (acl2-cosine x)))
+			     )
 		  )
 	    :in-theory nil
 	    
@@ -1487,19 +1440,53 @@
    )
  )
 
-
-
-
+;; (local
+;;  (defthm lemma-15
+;;    (and (>= 0 (- (fi-dom-variable)))
+;; 	(inside-interval-p (* 1/2 (acl2-pi)) (fi-domain))
+;; 	)
+;;    ;; :hints (("Goal"
+;;    ;; 	    :cases (= (fi-dom-variable) 20)
+;;    ;; 	    :use (:instance fi-dom-var-def)
+;;    ;; 	    ))
+;;  ))
 
 ;; (local
-
 ;;  (defthm lemma-15
 ;;    (implies (and (realp x)
-;; 		 (< x 0))
-;; 	    (= (abs x) x))
+;; 		 (<= 0 x)
+;; 		 (<= x 10))
+;; 	    (inside-interval-p x (fi-domain)))
 ;;    :hints (("Goal"
-;; 	    :use (:instance abs (x x))
-;; 	    :in-theory nil
+;; 	    :in-theory (enable interval-definition-theory)
 ;; 	    ))
-   
-;;    ))
+;;    )
+;;  )
+
+;(in-theory (disable consta1-def))
+
+;; (defun circle-sub-func (x)
+;;   (if (inside-interval-p x (fi-domain))
+;;       (*  (* (rad) (acl2-cosine x)) (* (rad) (acl2-cosine x)))
+;;     0
+;;     ))
+
+;; (defthm-std circle-sub-func-std
+;;   (implies (standardp x)
+;; 	   (standardp (circle-sub-func x))
+;; 	   )
+;;   )
+
+;; (defthm circle-sub-func-continuous
+;;   (implies (and (standardp x)
+;; 		(inside-interval-p x (rcfn-domain))
+;; 		(i-close x y)
+;; 		(inside-interval-p y (rcfn-domain)))
+;; 	   (i-close (circle-sub-func x) (circle-sub-func y)))
+;;   :hints (("Goal"
+;; 	   :use ((:instance rad-def)
+;; 		 (:instance cosine-continuous)
+;; 		 )
+;; 	   ))
+  
+;;   )
