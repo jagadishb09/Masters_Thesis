@@ -16,7 +16,7 @@
   (consta1 () t)
   )
  (local (defun rad() 1))
- (local (defun fi-dom-variable() 1))
+ (local (defun fi-dom-variable() 5))
  (local (defun consta1() 1))
  
  (defthm rad-def
@@ -30,6 +30,7 @@
    (and (realp (fi-dom-variable))
 	(> (fi-dom-variable) 0)
 	(standardp (fi-dom-variable))
+	(= (fi-dom-variable) 5)
 	)
    )
  
@@ -1101,7 +1102,7 @@
 				       (consta consta1)
 				       )
 	    )
-	   ("Subgoal 14"
+	   ("Subgoal 13"
 	    :use (:instance circle-domain-in-domain-of-fi)
 	    )
 	   ("Subgoal 11"
@@ -1175,22 +1176,40 @@
 					(fi sub-func)
 					(fi-prime sub-func-prime)
 					))
- 	    ("Subgoal 17"
+	    ("Goal"
+	     :use (
+		   (:instance riemann-circle-sub-prime)
+		   (:instance map-circle-sub-prime)
+		   (:instance circle-sub-prime)
+		   (:instance derivative-circle-sub-definition)
+		   (:instance fi-domain)
+		   (:instance circle-domain-in-domain-of-fi)
+		   (:instance intervalp-fi-domain)
+		   (:instance sub-func-differentiable)
+		   (:instance intervalp-c-domain)
+		   (:instance sub-func-prime-continuous)
+		   (:instance sub-func-prime-is-derivative)
+		   (:instance circle-continuous)
+		   (:instance consta1-def)
+		   )
+	     )
+	    
+ 	    ("Subgoal 16"
  	     :use (:instance riemann-circle-sub-prime)
  	     :in-theory (enable dotprod)
  	     )
- 	    ("Subgoal 16"
+ 	    ("Subgoal 15"
  	     :use (:instance map-circle-sub-prime)
  	     )
- 	    ("Subgoal 15"
+ 	    ("Subgoal 14"
  	     :use (:instance circle-sub-prime)
  	     )
- 	    ("Subgoal 14"
- 	     :use ((:instance derivative-circle-sub-definition)
- 		   (:instance fi-domain)
- 		   )
- 	     )
  	    ("Subgoal 13"
+ 	     :use ((:instance derivative-circle-sub-definition)
+ 	    	   (:instance fi-domain)
+ 	    	   )
+ 	     )
+ 	    ("Subgoal 12"
  	     :use (:instance circle-domain-in-domain-of-fi)
  	     )
  	    ("Subgoal 10"
