@@ -600,7 +600,140 @@
 	    :in-theory (enable interval-definition-theory)))
    ))
 
+
 (local
+ (defthm lemma-101
+   (implies (and (realp eps)
+		 (i-small eps))
+	    (< eps 1))
+   :hints (("Goal"
+	    :use ((:instance i-small (x eps))
+		  (:instance standard-part-<-2
+			     (x eps)
+			     (y 1)))
+	    ))
+   )
+ )
+
+(local
+ (defthm lemma-102
+   (implies (and (realp x)
+		 (realp eps)
+		 (< x eps)
+		 (< 0 eps)
+		 (<= 0 x))
+	    (< (abs x) (abs eps)))
+   )
+ )
+
+(local
+ (defthm lemma-103
+   (implies (and (realp x)
+		 (realp eps)
+		 (< (- x eps) 0))
+	    (< x eps))		 
+   )
+ )
+
+(local
+ (defthm lemma-104
+   (implies (and (standardp x)
+		 (realp x)
+		 (realp eps)
+		 (i-small eps)
+		 (< 0 eps)
+		 (<= 0 x)
+		 (< (- x eps) 0))
+	    (i-small (+ eps x)))
+   :hints (("Goal"
+	    :use ((:instance lemma-103)
+		  (:instance lemma-102)
+		  (:instance small-if-<-small
+			     (x eps)
+			     (y x))
+		  (:instance i-small-plus
+			     (x eps)
+			     (y x))
+		  ;; (:instance lemma-1 (eps (+ eps x)))
+		  ;; (:instance pi-between-2-4)
+		  )))
+   )
+ )
+
+(local
+ (defthm lemma-105
+   (implies (and (standardp x)
+		 (realp x)
+		 (realp eps)
+		 (i-small eps)
+		 (< 0 eps)
+		 (<= 0 x)
+		 (< (- x eps) 0))
+	    (< (+ eps x) 1))
+   :hints (("Goal"
+	    :use ((:instance lemma-104)
+		  (:instance lemma-101 (eps (+ eps x)))
+		  (:instance pi-between-2-4)
+		  (:instance acl2-pi-type-prescription)
+		  )))
+   )
+ )
+
+(local
+ (defthm lemma-106
+   (implies (and (<= x y)
+		 (< z x)
+		 (< p z))
+	    (< p y))
+   )
+ )
+
+
+(local
+ (defthm lemma-107
+   (implies (and (standardp x)
+		 (realp x)
+		 (realp eps)
+		 (i-small eps)
+		 (< 0 eps)
+		 (<= 0 x)
+		 (< (- x eps) 0))
+	    (< (+ eps x) (acl2-pi)))
+   :hints (("Goal"
+	    :use ((:instance lemma-105)
+		  (:instance pi-between-2-4)
+		  (:instance lemma-106
+			     (x 2)
+			     (y (acl2-pi))
+			     (z 1)
+			     (p (+ eps x)))
+		  (:instance acl2-pi-type-prescription)
+		  )))
+   )
+ )
+
+(local
+ (defthm lemma-108
+   (equal (car (f2-range)) 0)
+   :hints (("Goal"
+	    :in-theory (enable interval-definition-theory)
+	    ))
+   )
+ )
+
+(local
+ (defthm lemma-109
+   (equal (cdr (f2-range)) (acl2-pi))
+   :hints (("Goal"
+	    :in-theory (enable interval-definition-theory)
+	    ))
+   )
+ )
+
+(encapsulate
+ nil
+ (local (in-theory nil))
+ (local (include-book "/users/jagadishbapanapally/Documents/AreaofACircle/areaofacircle-0"))
  (defthm x-in-interval-implies-x+-eps-in-interval-f2-range
    (implies (and (inside-interval-p x (f2-range))
 		 (standardp x)
@@ -610,48 +743,16 @@
 	    (or (inside-interval-p (+ x eps) (f2-range))
 		(inside-interval-p (- x eps) (f2-range))))
    :hints (("Goal"
-	    :use (
-		  (:instance f2-range-non-trivial)
-		  (:instance x-in-interval-implies-x+-eps-in-interval-1
-			     (x x)
-			     (eps eps)
-			     (x1 (interval-left-endpoint (f2-range))))
-		  (:instance x-in-interval-implies-x+-eps-in-interval-1
-			     (x x)
-			     (eps (- eps))
-			     (x1 (interval-left-endpoint (f2-range))))
-		  (:instance x-in-interval-implies-x+-eps-in-interval-2
-			     (x x)
-			     (eps eps)
-			     (x2 (interval-right-endpoint (f2-range))))
-		  (:instance x-in-interval-implies-x+-eps-in-interval-2
-			     (x x)
-			     (eps (- eps))
-			     (x2 (interval-right-endpoint (f2-range))))
-		  (:instance intervalp-f2-range)
-		  (:instance f2-range-real)
-		  (:instance standard-f2-range)
-		  (:instance standard-f2-range-left-endpoint)
-		  (:instance standard-f2-range-right-endpoint)
-		  (:instance i-small (x (- eps)))
+	    :use ((:instance lemma-101)
+		  (:instance pi-between-2-4)
+		  (:instance lemma-107)
+		  (:instance f2-range)
+		  (:instance lemma-108)
+		  (:instance lemma-109)
 		  )
-	    )
-	   ("Subgoal 9"
-	    :in-theory (enable interval-definition-theory))
-	   ("Subgoal 7"
-	    :in-theory (enable interval-definition-theory))
-	   ("Subgoal 6"
-	    :in-theory (enable interval-definition-theory))
-	   ("Subgoal 5"
-	    :in-theory (enable interval-definition-theory))
-	   ("Subgoal 4"
-	    :in-theory (enable interval-definition-theory))
-	   ("Subgoal 3"
-	    :in-theory (enable interval-definition-theory))
-	   ("Subgoal 1"
-	    :in-theory (enable interval-definition-theory))
-	   )
-   ))
+	    :in-theory (enable interval-definition-theory)
+	    )))
+ )
 
 (defthm derivative-f-sine-equals
   (implies (and (inside-interval-p x (f2-range))
@@ -673,28 +774,70 @@
 			    (eps (- (/ (i-large-integer)))))
 		 )
 	   ))
-)
+  )
 
 (local
- (defthm x-in-interval-implies-x+-eps-in-interval-fi-dom
-   (implies (and (inside-interval-p x (fi-domain))
-		 (standardp x)
+ (defthm lemma-110
+   (implies (<= x y)
+	    (<= (* 1/2 x) (* 1/2 y))) 
+	    )
+ )
+
+(local
+ (defthm lemma-111
+   (implies (and (<= x y)
+		 (< z x))
+	    (< z y))
+   )
+ )
+
+(local
+ (defthm lemma-112
+   (implies (and (standardp x)
+		 (realp x)
 		 (realp eps)
 		 (i-small eps)
-		 (< 0 eps))
-	    (or (inside-interval-p (+ x eps) (fi-domain))
-		(inside-interval-p (- x eps) (fi-domain))))
-  :hints (("Goal"
-	   :use (:functional-instance x-in-interval-implies-x+-eps-in-interval-f2-range
-				      (f2-range fi-domain))
-	   :in-theory (disable f2-range fi-domain)
-	   )
-	  )))
-				      
+		 (< 0 eps)
+		 (<= 0 x)
+		 (< (- x eps) 0))
+	    (< (+ eps x) (* 1/2 (ACL2-PI))))
+   :hints (("Goal"
+	    :use ((:instance lemma-105)
+		  (:instance pi-between-2-4)
+		  (:instance lemma-110
+			     (x 2)
+			     (y (acl2-pi)))
+		  (:instance lemma-111
+			     (x 1)
+			     (y (* 1/2 (ACL2-PI)))
+			     (z (+ eps x)))
+		  (:instance acl2-pi-type-prescription)
+		  )))
+   )
+ )
 
-
-(skip-proofs
 (local
+ (defthm lemma-113
+   (equal (car (fi-domain)) 0)
+   :hints (("Goal"
+	    :in-theory (enable interval-definition-theory)
+	    ))
+   )
+ )
+
+(local
+ (defthm lemma-114
+   (equal (cdr (fi-domain)) (* 1/2 (acl2-pi)))
+   :hints (("Goal"
+	    :in-theory (enable interval-definition-theory)
+	    ))
+   )
+ )
+
+(encapsulate
+ nil
+ (local (in-theory nil))
+ (local (include-book "/users/jagadishbapanapally/Documents/AreaofACircle/areaofacircle-0"))
  (defthm x-in-interval-implies-x+-eps-in-interval-fi-dom
    (implies (and (inside-interval-p x (fi-domain))
 		 (standardp x)
@@ -704,49 +847,86 @@
 	    (or (inside-interval-p (+ x eps) (fi-domain))
 		(inside-interval-p (- x eps) (fi-domain))))
    :hints (("Goal"
-	    :use (
-		  (:instance fi-domain-non-trivial)
-		  (:instance x-in-interval-implies-x+-eps-in-interval-1
-			     (x x)
-			     (eps eps)
-			     (x1 (interval-left-endpoint (fi-domain))))
-		  (:instance x-in-interval-implies-x+-eps-in-interval-1
-			     (x x)
-			     (eps (- eps))
-			     (x1 (interval-left-endpoint (fi-domain))))
-		  (:instance x-in-interval-implies-x+-eps-in-interval-2
-			     (x x)
-			     (eps eps)
-			     (x2 (interval-right-endpoint (fi-domain))))
-		  (:instance x-in-interval-implies-x+-eps-in-interval-2
-			     (x x)
-			     (eps (- eps))
-			     (x2 (interval-right-endpoint (fi-domain))))
-					; (:instance lemma-17)
-					;(:instance lemma-18)
-		  (:instance intervalp-fi-domain)
-		  (:instance fi-domain-real)
-		  (:instance pi-between-2-4)
-					; (:instance fi-dom-var-def)
-		  )
-	    )
-	   ("Subgoal 11"
-	    :in-theory (enable interval-definition-theory))
-	   ;; ("Subgoal 7"
-	   ;;  :in-theory (enable interval-definition-theory))
-	   ;; ("Subgoal 6"
-	   ;;  :in-theory (enable interval-definition-theory))
-	   ;; ("Subgoal 5"
-	   ;;  :in-theory (enable interval-definition-theory))
-	   ;; ("Subgoal 4"
-	   ;;  :in-theory (enable interval-definition-theory))
-	   ;; ("Subgoal 3"
-	   ;;  :in-theory (enable interval-definition-theory))
-	   ;; ("Subgoal 1"
-	   ;;  :in-theory (enable interval-definition-theory))
-	   ;; )
-	   ))
- ))
+	    :use ((:instance lemma-112)
+		  (:instance lemma-113)
+		  (:instance lemma-114))
+	    :in-theory (enable interval-definition-theory)
+	    ))
+   )
+ )
+
+;; (local
+;;  (defthm x-in-interval-implies-x+-eps-in-interval-fi-dom
+;;    (implies (and (inside-interval-p x (fi-domain))
+;; 		 (standardp x)
+;; 		 (realp eps)
+;; 		 (i-small eps)
+;; 		 (< 0 eps))
+;; 	    (or (inside-interval-p (+ x eps) (fi-domain))
+;; 		(inside-interval-p (- x eps) (fi-domain))))
+;;   :hints (("Goal"
+;; 	   :use (:functional-instance x-in-interval-implies-x+-eps-in-interval-f2-range
+;; 				      (f2-range fi-domain))
+;; 	   :in-theory (disable f2-range fi-domain)
+;; 	   )
+;; 	  )))
+				      
+
+
+;; (skip-proofs
+;; (local
+;;  (defthm x-in-interval-implies-x+-eps-in-interval-fi-dom
+;;    (implies (and (inside-interval-p x (fi-domain))
+;; 		 (standardp x)
+;; 		 (realp eps)
+;; 		 (i-small eps)
+;; 		 (< 0 eps))
+;; 	    (or (inside-interval-p (+ x eps) (fi-domain))
+;; 		(inside-interval-p (- x eps) (fi-domain))))
+;;    :hints (("Goal"
+;; 	    :use (
+;; 		  (:instance fi-domain-non-trivial)
+;; 		  (:instance x-in-interval-implies-x+-eps-in-interval-1
+;; 			     (x x)
+;; 			     (eps eps)
+;; 			     (x1 (interval-left-endpoint (fi-domain))))
+;; 		  (:instance x-in-interval-implies-x+-eps-in-interval-1
+;; 			     (x x)
+;; 			     (eps (- eps))
+;; 			     (x1 (interval-left-endpoint (fi-domain))))
+;; 		  (:instance x-in-interval-implies-x+-eps-in-interval-2
+;; 			     (x x)
+;; 			     (eps eps)
+;; 			     (x2 (interval-right-endpoint (fi-domain))))
+;; 		  (:instance x-in-interval-implies-x+-eps-in-interval-2
+;; 			     (x x)
+;; 			     (eps (- eps))
+;; 			     (x2 (interval-right-endpoint (fi-domain))))
+;; 					; (:instance lemma-17)
+;; 					;(:instance lemma-18)
+;; 		  (:instance intervalp-fi-domain)
+;; 		  (:instance fi-domain-real)
+;; 		  (:instance pi-between-2-4)
+;; 					; (:instance fi-dom-var-def)
+;; 		  )
+;; 	    )
+;; 	   ("Subgoal 11"
+;; 	    :in-theory (enable interval-definition-theory))
+;; 	   ;; ("Subgoal 7"
+;; 	   ;;  :in-theory (enable interval-definition-theory))
+;; 	   ;; ("Subgoal 6"
+;; 	   ;;  :in-theory (enable interval-definition-theory))
+;; 	   ;; ("Subgoal 5"
+;; 	   ;;  :in-theory (enable interval-definition-theory))
+;; 	   ;; ("Subgoal 4"
+;; 	   ;;  :in-theory (enable interval-definition-theory))
+;; 	   ;; ("Subgoal 3"
+;; 	   ;;  :in-theory (enable interval-definition-theory))
+;; 	   ;; ("Subgoal 1"
+;; 	   ;;  :in-theory (enable interval-definition-theory))
+;; 	   ;; )
+;; 	   ))
+;;  ))
 
 (defthm derivative-cr-f2-equals
   (implies (and (inside-interval-p x (fi-domain))
@@ -962,30 +1142,30 @@
 	   ))
   )
 
-(local
- (defthm lemma-1
-   (and (>= 0 (- (fi-dom-variable)))
-	(inside-interval-p (* 1/2 (acl2-pi)) (fi-domain))
-	)
-   :hints (("Goal"
-	    :use ((:instance pi-between-2-4)
-		  (:instance fi-dom-var-def))
-	    :in-theory (enable interval-definition-theory)
-    	    ))
-   ))
+;; (local
+;;  (defthm lemma-1
+;;    (and (>= 0 (- (fi-dom-variable)))
+;; 	(inside-interval-p (* 1/2 (acl2-pi)) (fi-domain))
+;; 	)
+;;    :hints (("Goal"
+;; 	    :use ((:instance pi-between-2-4)
+;; 		  (:instance fi-dom-var-def))
+;; 	    :in-theory (enable interval-definition-theory)
+;;     	    ))
+;;    ))
 
-(local
- (defthm lemma-2
-   (implies (and (realp x)
-		 (<= 0 x)
-		 (<= x (* 1/2 (acl2-pi))))
-	    (inside-interval-p x (fi-domain)))
-   :hints (("Goal"
-	    :use ((:instance pi-between-2-4))
-	    :in-theory (enable interval-definition-theory)
-	    ))
-   )
- )
+;; (local
+;;  (defthm lemma-2
+;;    (implies (and (realp x)
+;; 		 (<= 0 x)
+;; 		 (<= x (* 1/2 (acl2-pi))))
+;; 	    (inside-interval-p x (fi-domain)))
+;;    :hints (("Goal"
+;; 	    :use ((:instance pi-between-2-4))
+;; 	    :in-theory (enable interval-definition-theory)
+;; 	    ))
+;;    )
+;;  )
 
 (local
  (defthm lemma-5
