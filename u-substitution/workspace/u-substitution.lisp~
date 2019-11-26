@@ -9,8 +9,8 @@
 (encapsulate
  (
   ((fi *) => *)
-  ((f-o-fi-domain) => *)
-  ((f-prime *) => *)
+  ((F-o-fi-domain) => *)
+  ((F-prime *) => *)
   ((fi-prime *) => *)
   (fi-range () t)
   (consta () t)
