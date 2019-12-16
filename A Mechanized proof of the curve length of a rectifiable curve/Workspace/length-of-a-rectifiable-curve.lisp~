@@ -1,5 +1,3 @@
-(in-package "ACL2")
-
 (encapsulate ()
   
    (defthmd i-small-plus-lemma
@@ -56,7 +54,7 @@
              (not (= (standard-part y1) (standard-part y2)))
              )
     )
-  (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/nsa"))
+  (local (include-book "/home/jagadish/Downloads/acl2r/books/nonstd/nsa/nsa"))
   
   (defthmd close-sum-lemma
     (implies (and (i-close x1 x2)
@@ -79,7 +77,7 @@
 (encapsulate
   ((c (x) t)
    (c-derivative (x) t))
-  (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta" :dir :system))
+  (local (include-book "/home/jagadish/Downloads/acl2r/books/arithmetic/top-with-meta" :dir :system))
   
   ; Our witness continuous function is the identity function.
   
@@ -136,7 +134,7 @@
 ;//////////////////////////////////////////////////////////////////////
 
 (encapsulate ()
-  (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta" :dir :system))
+  (local (include-book "/home/jagadish/Downloads/acl2r/books/arithmetic/top-with-meta" :dir :system))
   (local 
    (defthm re-close
      (implies (and
@@ -184,7 +182,7 @@
     )
   )
 
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square")
+(include-book "/home/jagadish/Downloads/acl2r/books/nonstd/nsa/inverse-square")
 
 (defun rc-der-sqr(x)
   (square (rc-derivative x))
@@ -286,6 +284,7 @@
   
   :hints (("Goal"
            :use (
+;(:instance rc-der-equal)
                  (:instance ic-der-sqr-cont (x x) (y y))
                  (:instance rc-der-sqr-cont (x x) (y y))
                  (:instance close-sum-lemma (x1 (rc-der-sqr x)) (x2 (rc-der-sqr y))
@@ -301,7 +300,7 @@
   )
 
 
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/intervals")
+(include-book "/home/jagadish/Downloads/acl2r/books/nonstd/nsa/intervals")
 (defun der-sum-sqrt-domain () (interval nil nil))
 
 
@@ -310,7 +309,7 @@
 
 (encapsulate ()
   
-  (local (include-book  "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/inequalities"))
+  (local (include-book  "/home/jagadish/Downloads/acl2r/books/arithmetic/inequalities"))
   
   (local
    (defthm ineq-lemma1
@@ -586,7 +585,7 @@
           (map-der-sum-sqrt (cdr p)))
     nil))
 
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/continuous-function")
+(include-book "/home/jagadish/Downloads/acl2r/books/nonstd/integrals/continuous-function")
 
 
 (defun riemann-der-sum-sqrt (p)
@@ -665,6 +664,7 @@
                     (strict-int-der-sum-sqrt a b)))
   
   :hints (("Goal"
+           ;:do-not-induct t
            :use (
                  (:functional-instance strict-int-rcfn-is-integral-of-rcfn
                   (rcfn-domain der-sum-sqrt-domain)
