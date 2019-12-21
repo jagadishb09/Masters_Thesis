@@ -1,4 +1,3 @@
-
 (in-package "ACL2")
 
 (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/realp" :dir :system))

@@ -10,7 +10,7 @@
  (
   ((fi *) => *)
   ((f-o-fi-domain) => *)
-  ((f-prime *) => *)
+  ((F-prime *) => *)
   ((fi-prime *) => *)
   (fi-range () t)
   (consta () t)

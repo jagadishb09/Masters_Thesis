@@ -1,4 +1,6 @@
-(local (include-book "/users/jagadishbapanapally/Documents/AreaofACircle/areaofacircle-0"))
+(in-package "ACL2")
+
+(include-book "/users/jagadishbapanapally/Documents/AreaofACircle/areaofacircle-0")
 (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/sin-cos-minimal"))
 
 (defun f-sine (x)
@@ -27,27 +29,27 @@
  (defthm-std standard-f2-range-right-endpoint
    (standardp (interval-right-endpoint (f2-range)))))
 
-(defthm intervalp-f2-range
-   (interval-p (f2-range))
+(defthmd intervalp-f2-range
+  (interval-p (f2-range))
   )
 
-(defthm f2-range-real
+(defthmd f2-range-real
   (implies (inside-interval-p x (f2-range))
 	   (realp x)))
 
-(defthm f2-range-non-trivial
+(defthmd f2-range-non-trivial
   (or (null (interval-left-endpoint (f2-range)))
       (null (interval-right-endpoint (f2-range)))
       (< (interval-left-endpoint (f2-range))
 	 (interval-right-endpoint (f2-range)))))
 
-(defthm f-sine-real
+(defthmd f-sine-real
   (realp (f-sine x)))
 
-(defthm f2-x--real
+(defthmd f2-x--real
   (realp (f2-x x)))
 
-(defthm f2-range-in-domain-of-f-sine
+(defthmd f2-range-in-domain-of-f-sine
   (implies (inside-interval-p x (fi-domain))
 	   (inside-interval-p (f2-x x) (f2-range)))
   :hints (("Goal"
@@ -68,7 +70,7 @@
 (encapsulate
  ()
  (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/sin-cos-minimal"))
- (defthm f-sine-differentiable
+ (defthmd f-sine-differentiable
    (implies (and (standardp x)
 		 (inside-interval-p x (f2-range))
 		 (inside-interval-p y1 (f2-range))
@@ -176,29 +178,29 @@
   )
 
  (local 
- (defthm f2-x-differentiable-lemma
-   (implies (and (standardp x)
-		 (inside-interval-p x (fi-domain))
-		 (inside-interval-p y1 (fi-domain))
-		 (i-close x y1) (not (= x y1))
-		 (not (= (- x y1) 0))
-		 )
-	    (equal (/ (- (f2-x x) (f2-x y1)) (- x y1)) 2)
-	    )
-   :hints (("Goal"
-	    :use (
-		  (:instance f2-x-diff-lemma)
-		  (:instance fi-domain-real (x y1))
-		  (:instance fi-domain-real (x x))
-		  (:instance lemma-22 (x (- x y1)))
+  (defthm f2-x-differentiable-lemma
+    (implies (and (standardp x)
+		  (inside-interval-p x (fi-domain))
+		  (inside-interval-p y1 (fi-domain))
+		  (i-close x y1) (not (= x y1))
+		  (not (= (- x y1) 0))
 		  )
-	    :in-theory nil
+	     (equal (/ (- (f2-x x) (f2-x y1)) (- x y1)) 2)
+	     )
+    :hints (("Goal"
+	     :use (
+		   (:instance f2-x-diff-lemma)
+		   (:instance fi-domain-real (x y1))
+		   (:instance fi-domain-real (x x))
+		   (:instance lemma-22 (x (- x y1)))
+		   )
+	     :in-theory nil
+	     )
 	    )
-	   )
-   )
- )
+    )
+  )
 
- (defthm f2-x-differentiable
+ (defthmd f2-x-differentiable
    (implies (and (standardp x)
 		 (inside-interval-p x (fi-domain))
 		 (inside-interval-p y1 (fi-domain))
@@ -208,32 +210,32 @@
 	    (and  (i-limited (/ (- (f2-x x) (f2-x y1)) (- x y1)))
 		  (i-close (/ (- (f2-x x) (f2-x y1)) (- x y1))
 			   (/ (- (f2-x x) (f2-x y2)) (- x y2)))))
- :hints (("Goal"
-	  :use (
-		(:instance f2-x-differentiable-lemma
-			   (x x)
-			   (y1 y1))
-		(:instance f2-x-differentiable-lemma
-			   (x x)
-			   (y1 y2))
-		(:instance lemma-23
-			   (x x)
-			   (y y1))
-		(:instance lemma-23
-			   (x x)
-			   (y y2))
-		(:instance fi-domain-real (x y1))
-		(:instance fi-domain-real (x x))
-		(:instance fi-domain-real (x y2))
-		(:instance standard-numberp-integers-to-100000000
-			   (x 2))
-		(:instance standards-are-limited-forward (x 2))
-		(:instance i-close-reflexive (x 2))
-		)
-	  ))
- )
+   :hints (("Goal"
+	    :use (
+		  (:instance f2-x-differentiable-lemma
+			     (x x)
+			     (y1 y1))
+		  (:instance f2-x-differentiable-lemma
+			     (x x)
+			     (y1 y2))
+		  (:instance lemma-23
+			     (x x)
+			     (y y1))
+		  (:instance lemma-23
+			     (x x)
+			     (y y2))
+		  (:instance fi-domain-real (x y1))
+		  (:instance fi-domain-real (x x))
+		  (:instance fi-domain-real (x y2))
+		  (:instance standard-numberp-integers-to-100000000
+			     (x 2))
+		  (:instance standards-are-limited-forward (x 2))
+		  (:instance i-close-reflexive (x 2))
+		  )
+	    ))
+   )
 
-)
+ )
 
 (encapsulate
 
@@ -252,7 +254,7 @@
  
  )
 
-(defthm realp-differential-f-sine
+(defthmd realp-differential-f-sine
   (implies (and (inside-interval-p x (f2-range))
 		(inside-interval-p (+ x eps) (f2-range))
 		(realp eps))
@@ -345,7 +347,7 @@
                    (/ (- (f2-x (+ x eps)) (f2-x x)) eps)))))
 
 
-(defthm realp-differential-cr-f2
+(defthmd realp-differential-cr-f2
   (implies (and (inside-interval-p x (fi-domain))
 		(inside-interval-p (+ x eps) (fi-domain))
 		(realp eps))
@@ -455,33 +457,33 @@
  )
 
 
-(defthm differential-f-sine-o-f2-close
-   (implies (and (inside-interval-p x (fi-domain))
-		 (standardp x)
-		 (realp eps) (i-small eps) (not (= eps 0))
-		 (inside-interval-p (+ x eps) (fi-domain))
-		 (syntaxp (not (equal eps (/ (i-large-integer))))))
-	    (equal (standard-part (differential-f-sine-o-f2 x eps))
-		   (derivative-f-sine-o-f2 x)))
-   :hints (("Goal"
-	    :use (:functional-instance differential-cr-fn1-o-fn2-close
-				       (derivative-cr-fn1-o-fn2 derivative-f-sine-o-f2)
-				       (differential-cr-fn1-o-fn2 differential-f-sine-o-f2)
-				       (cr-fn1-o-fn2 f-sine-o-f2)
-				       (cr-fn2-domain fi-domain)
-				       (derivative-cr-fn2 derivative-cr-f2)
-				       (differential-cr-fn2 differential-cr-f2)
-				       (derivative-cr-fn1 derivative-f-sine)
-				       (differential-cr-fn1 differential-f-sine)
-				       (cr-fn1 f-sine)
-				       (cr-fn2 f2-x)
-				       (cr-fn2-range f2-range)
-				       )
+(defthmd differential-f-sine-o-f2-close
+  (implies (and (inside-interval-p x (fi-domain))
+		(standardp x)
+		(realp eps) (i-small eps) (not (= eps 0))
+		(inside-interval-p (+ x eps) (fi-domain))
+		(syntaxp (not (equal eps (/ (i-large-integer))))))
+	   (equal (standard-part (differential-f-sine-o-f2 x eps))
+		  (derivative-f-sine-o-f2 x)))
+  :hints (("Goal"
+	   :use (:functional-instance differential-cr-fn1-o-fn2-close
+				      (derivative-cr-fn1-o-fn2 derivative-f-sine-o-f2)
+				      (differential-cr-fn1-o-fn2 differential-f-sine-o-f2)
+				      (cr-fn1-o-fn2 f-sine-o-f2)
+				      (cr-fn2-domain fi-domain)
+				      (derivative-cr-fn2 derivative-cr-f2)
+				      (differential-cr-fn2 differential-cr-f2)
+				      (derivative-cr-fn1 derivative-f-sine)
+				      (differential-cr-fn1 differential-f-sine)
+				      (cr-fn1 f-sine)
+				      (cr-fn2 f2-x)
+				      (cr-fn2-range f2-range)
+				      )
 
 
-	    )))
+	   )))
 
-(defthm differential-f-sine-std-equals
+(defthmd differential-f-sine-std-equals
   (implies (and
 	    (standardp x)
 	    (inside-interval-p x (f2-range))
@@ -506,7 +508,7 @@
 	  ))
   )
 
-(defthm differential-cr-f2-equals
+(defthmd differential-cr-f2-equals
   (implies (and (standardp x)
 		(i-small eps)
 		(not (= eps 0))
@@ -518,88 +520,6 @@
 	   :use (:instance differential-cr-f2-definition)
 	   ))
   )
-
-(local
- (defthmd x-in-interval-implies-x+-eps-in-interval-1
-   (implies (and (realp x)
-		 (standardp x)
-		 (realp x1)
-		 (standardp x1)
-		 (< x1 x)
-		 (realp eps)
-		 (i-small eps))
-	    (< x1
-	       (+ x eps)))
-   :hints (("Goal"
-	    :use ((:instance standard-part-<-2
-			     (x x1)
-			     (y (+ x eps))))
-	    :in-theory (enable nsa-theory)
-
-	    ))))
-
-(local
- (defthmd x-in-interval-implies-x+-eps-in-interval-2
-   (implies (and (realp x)
-		 (standardp x)
-		 (realp x2)
-		 (standardp x2)
-		 (< x x2)
-		 (realp eps)
-		 (i-small eps))
-	    (< (+ x eps)
-	       x2))
-   :hints (("Goal"
-	    :use ((:instance standard-part-<-2
-			     (x (+ x eps))
-			     (y x2)))
-	    :in-theory (enable nsa-theory)
-	    ))))
-
-(local
- (defthm x-in-trivial-interval
-   (implies (and (realp x)
-		 (interval-p interval)
-		 (not (realp (interval-left-endpoint interval)))
-		 (not (realp (interval-right-endpoint interval))))
-	    (inside-interval-p x interval))
-   :hints (("Goal"
-	    :in-theory (enable interval-definition-theory)))
-   ))
-
-(local
- (defthm x-in-left-trivial-interval
-   (implies (and (realp x)
-		 (interval-p interval)
-		 (not (realp (interval-left-endpoint interval)))
-		 (inside-interval-p y interval)
-		 (< x y))
-	    (inside-interval-p x interval))
-   :hints (("Goal"
-	    :in-theory (enable interval-definition-theory)))
-   ))
-
-(local
- (defthm x-in-right-trivial-interval
-   (implies (and (realp x)
-		 (interval-p interval)
-		 (not (realp (interval-right-endpoint interval)))
-		 (inside-interval-p y interval)
-		 (> x y))
-	    (inside-interval-p x interval))
-   :hints (("Goal"
-	    :in-theory (enable interval-definition-theory)))
-   ))
-
-(local
- (defthm nil-not-in-interval
-   (implies (and (not x)
-		 (interval-p interval))
-	    (not (inside-interval-p x interval)))
-   :hints (("Goal"
-	    :in-theory (enable interval-definition-theory)))
-   ))
-
 
 (local
  (defthm lemma-101
@@ -654,8 +574,6 @@
 		  (:instance i-small-plus
 			     (x eps)
 			     (y x))
-		  ;; (:instance lemma-1 (eps (+ eps x)))
-		  ;; (:instance pi-between-2-4)
 		  )))
    )
  )
@@ -734,7 +652,7 @@
  nil
  (local (in-theory nil))
  (local (include-book "/users/jagadishbapanapally/Documents/AreaofACircle/areaofacircle-0"))
- (defthm x-in-interval-implies-x+-eps-in-interval-f2-range
+ (defthmd x-in-interval-implies-x+-eps-in-interval-f2-range
    (implies (and (inside-interval-p x (f2-range))
 		 (standardp x)
 		 (realp eps)
@@ -754,7 +672,7 @@
 	    )))
  )
 
-(defthm derivative-f-sine-equals
+(defthmd derivative-f-sine-equals
   (implies (and (inside-interval-p x (f2-range))
 		(standardp x)
 		)
@@ -780,7 +698,7 @@
  (defthm lemma-110
    (implies (<= x y)
 	    (<= (* 1/2 x) (* 1/2 y))) 
-	    )
+   )
  )
 
 (local
@@ -838,7 +756,7 @@
  nil
  (local (in-theory nil))
  (local (include-book "/users/jagadishbapanapally/Documents/AreaofACircle/areaofacircle-0"))
- (defthm x-in-interval-implies-x+-eps-in-interval-fi-dom
+ (defthmd x-in-interval-implies-x+-eps-in-interval-fi-dom
    (implies (and (inside-interval-p x (fi-domain))
 		 (standardp x)
 		 (realp eps)
@@ -855,80 +773,7 @@
    )
  )
 
-;; (local
-;;  (defthm x-in-interval-implies-x+-eps-in-interval-fi-dom
-;;    (implies (and (inside-interval-p x (fi-domain))
-;; 		 (standardp x)
-;; 		 (realp eps)
-;; 		 (i-small eps)
-;; 		 (< 0 eps))
-;; 	    (or (inside-interval-p (+ x eps) (fi-domain))
-;; 		(inside-interval-p (- x eps) (fi-domain))))
-;;   :hints (("Goal"
-;; 	   :use (:functional-instance x-in-interval-implies-x+-eps-in-interval-f2-range
-;; 				      (f2-range fi-domain))
-;; 	   :in-theory (disable f2-range fi-domain)
-;; 	   )
-;; 	  )))
-				      
-
-
-;; (skip-proofs
-;; (local
-;;  (defthm x-in-interval-implies-x+-eps-in-interval-fi-dom
-;;    (implies (and (inside-interval-p x (fi-domain))
-;; 		 (standardp x)
-;; 		 (realp eps)
-;; 		 (i-small eps)
-;; 		 (< 0 eps))
-;; 	    (or (inside-interval-p (+ x eps) (fi-domain))
-;; 		(inside-interval-p (- x eps) (fi-domain))))
-;;    :hints (("Goal"
-;; 	    :use (
-;; 		  (:instance fi-domain-non-trivial)
-;; 		  (:instance x-in-interval-implies-x+-eps-in-interval-1
-;; 			     (x x)
-;; 			     (eps eps)
-;; 			     (x1 (interval-left-endpoint (fi-domain))))
-;; 		  (:instance x-in-interval-implies-x+-eps-in-interval-1
-;; 			     (x x)
-;; 			     (eps (- eps))
-;; 			     (x1 (interval-left-endpoint (fi-domain))))
-;; 		  (:instance x-in-interval-implies-x+-eps-in-interval-2
-;; 			     (x x)
-;; 			     (eps eps)
-;; 			     (x2 (interval-right-endpoint (fi-domain))))
-;; 		  (:instance x-in-interval-implies-x+-eps-in-interval-2
-;; 			     (x x)
-;; 			     (eps (- eps))
-;; 			     (x2 (interval-right-endpoint (fi-domain))))
-;; 					; (:instance lemma-17)
-;; 					;(:instance lemma-18)
-;; 		  (:instance intervalp-fi-domain)
-;; 		  (:instance fi-domain-real)
-;; 		  (:instance pi-between-2-4)
-;; 					; (:instance fi-dom-var-def)
-;; 		  )
-;; 	    )
-;; 	   ("Subgoal 11"
-;; 	    :in-theory (enable interval-definition-theory))
-;; 	   ;; ("Subgoal 7"
-;; 	   ;;  :in-theory (enable interval-definition-theory))
-;; 	   ;; ("Subgoal 6"
-;; 	   ;;  :in-theory (enable interval-definition-theory))
-;; 	   ;; ("Subgoal 5"
-;; 	   ;;  :in-theory (enable interval-definition-theory))
-;; 	   ;; ("Subgoal 4"
-;; 	   ;;  :in-theory (enable interval-definition-theory))
-;; 	   ;; ("Subgoal 3"
-;; 	   ;;  :in-theory (enable interval-definition-theory))
-;; 	   ;; ("Subgoal 1"
-;; 	   ;;  :in-theory (enable interval-definition-theory))
-;; 	   ;; )
-;; 	   ))
-;;  ))
-
-(defthm derivative-cr-f2-equals
+(defthmd derivative-cr-f2-equals
   (implies (and (inside-interval-p x (fi-domain))
 		(standardp x)
 		)
@@ -948,26 +793,26 @@
 			    (eps (- (/ (i-large-integer)))))
 		 )
 	   ))
-)
+  )
 
 
-(defthm differential-f-sine-o-f2-close-1
-   (implies (and (inside-interval-p x (fi-domain))
-		 (standardp x)
-		 (realp eps) (i-small eps) (not (= eps 0))
-		 (inside-interval-p (+ x eps) (fi-domain)))
-	    (equal (standard-part (differential-f-sine-o-f2 x eps))
-		   (* 2 (acl2-cosine (* 2 x)))))
-   :hints (("Goal"
-	    :use (
-		  (:instance differential-f-sine-o-f2-close)
-		  (:instance derivative-cr-f2-equals)
-		  (:instance derivative-f-sine-equals(x (f2-x x)))
-		  (:instance derivative-f-sine-o-f2-definition)
-		  (:instance f2-range-in-domain-of-f-sine)
-		  )
-	    ))
-   )
+(defthmd differential-f-sine-o-f2-close-1
+  (implies (and (inside-interval-p x (fi-domain))
+		(standardp x)
+		(realp eps) (i-small eps) (not (= eps 0))
+		(inside-interval-p (+ x eps) (fi-domain)))
+	   (equal (standard-part (differential-f-sine-o-f2 x eps))
+		  (* 2 (acl2-cosine (* 2 x)))))
+  :hints (("Goal"
+	   :use (
+		 (:instance differential-f-sine-o-f2-close)
+		 (:instance derivative-cr-f2-equals)
+		 (:instance derivative-f-sine-equals(x (f2-x x)))
+		 (:instance derivative-f-sine-o-f2-definition)
+		 (:instance f2-range-in-domain-of-f-sine)
+		 )
+	   ))
+  )
 
 (local
  (defthm lemma-24
@@ -982,7 +827,7 @@
    )
  )
 
-(defthm differential-f-sine-o-f2-derivative
+(defthmd differential-f-sine-o-f2-derivative
   (implies (and (inside-interval-p x (fi-domain))
 		(standardp x)
 		(realp eps) (i-small eps) (not (= eps 0))
@@ -1066,7 +911,7 @@
   )
 
 
-(defthm differential-f-sine-o-f2-derivative-1
+(defthmd differential-f-sine-o-f2-derivative-1
   (implies (and (inside-interval-p x (fi-domain))
 		(standardp x)
 		(i-close x x1)
@@ -1114,10 +959,7 @@
    )
  )
 
-
-
-
-(defthm differential-f2-x
+(defthmd differential-f2-x
   (implies (and (inside-interval-p x (fi-domain))
 		(standardp x)
 		(i-close x x1)
@@ -1142,31 +984,6 @@
 	   ))
   )
 
-;; (local
-;;  (defthm lemma-1
-;;    (and (>= 0 (- (fi-dom-variable)))
-;; 	(inside-interval-p (* 1/2 (acl2-pi)) (fi-domain))
-;; 	)
-;;    :hints (("Goal"
-;; 	    :use ((:instance pi-between-2-4)
-;; 		  (:instance fi-dom-var-def))
-;; 	    :in-theory (enable interval-definition-theory)
-;;     	    ))
-;;    ))
-
-;; (local
-;;  (defthm lemma-2
-;;    (implies (and (realp x)
-;; 		 (<= 0 x)
-;; 		 (<= x (* 1/2 (acl2-pi))))
-;; 	    (inside-interval-p x (fi-domain)))
-;;    :hints (("Goal"
-;; 	    :use ((:instance pi-between-2-4))
-;; 	    :in-theory (enable interval-definition-theory)
-;; 	    ))
-;;    )
-;;  )
-
 (local
  (defthm lemma-5
    (implies (inside-interval-p x (fi-domain))
@@ -1178,7 +995,7 @@
 		  (:instance acl2-cos-0-=-1))
 	    :in-theory (enable interval-definition-theory)
 	    ))))
-	    
+
 
 (local
  (defthm lemma-6
@@ -1194,12 +1011,12 @@
 	    ))))
 
 (defun rcdfn-f (x)
-    (if (realp x)
-	(* (rad) (rad) (/ 4) (* (+ (acl2-sine (* 2 x)) (* 2 x))))
-      0)
+  (if (realp x)
+      (* (rad) (rad) (/ 4) (* (+ (acl2-sine (* 2 x)) (* 2 x))))
+    0)
   )
 
-(defthm rcdfn-f-real
+(defthmd rcdfn-f-real
   (realp (rcdfn-f x))
   )
 
@@ -1246,7 +1063,7 @@
 		 (acl2-numberp d))
 	    (equal (+ (- a b) (- c d))
 		   (- (+ a c) (+ b d)))
-	     )
+	    )
    )
  )
 
@@ -1261,7 +1078,7 @@
    )
  )
 
-(defthm circle-sub-prime-is-derivative
+(defthmd circle-sub-prime-is-derivative
   (implies (and (standardp x)
 		(inside-interval-p x (fi-domain))
 		(inside-interval-p x1 (fi-domain))
@@ -1316,7 +1133,7 @@
 	   ))
   )
 
-(defthm circle-sub-prime-continuous
+(defthmd circle-sub-prime-continuous
   (implies (and (standardp x)
 		(inside-interval-p x (fi-domain))
 		(i-close x x1)
@@ -1341,7 +1158,7 @@
 	   ))
   )
 
-(defthm circle-area-ftc-2
+(defthmd circle-area-ftc-2
   (implies (and (inside-interval-p a (fi-domain))
 		(inside-interval-p b (fi-domain)))
 	   (equal (int-circle-sub-prime a b)
@@ -1373,19 +1190,19 @@
 	   )
 	  ("Subgoal 8"
 	   :use (:instance circle-sub-prime-is-derivative)
-	  )
+	   )
 	  )
   )
 
-(defthm lemma-0-inside
+(defthmd lemma-0-inside
   (inside-interval-p 0 (fi-domain))
   :hints (("Goal"
 	   :use ((:instance fi-domain))
 	   :in-theory (enable interval-definition-theory)
-	     ))
+	   ))
   )
 
-(defthm lemma-1/2-pi-inside
+(defthmd lemma-1/2-pi-inside
   (inside-interval-p (* 1/2 (acl2-pi)) (fi-domain))
   :hints (("Goal"
 	   :use ((:instance fi-domain)
@@ -1393,7 +1210,7 @@
 		 (:instance acl2-pi-type-prescription)
 		 )
 	   :in-theory (enable interval-definition-theory)
-	     ))
+	   ))
   )
 
 (defthm circle-area
@@ -1403,6 +1220,9 @@
 			    (b (* 1/2 (acl2-pi))))
 		 (:instance lemma-0-inside)
 		 (:instance lemma-1/2-pi-inside)
+		 (:instance acl2-pi-type-prescription)
+		 (:instance rcdfn-f (x 0))
+		 (:instance rcdfn-f (x (* 1/2 (acl2-pi))))
 		 )
 	   ))
   )
