@@ -1,10 +1,32 @@
-(in-package "ACL2")
+; ****************** BEGIN INITIALIZATION FOR ACL2s MODE ****************** ;
+; (Nothing to see here!  Your actual file is after this initialization code);
 
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/exp")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/trig")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/nsa")
-(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/A Mechanized proof of the curve length of a rectifiable curve/Workspace/length-of-a-rectifiable-curve")
+#+acl2s-startup (er-progn (assign fmt-error-msg "Problem loading the CCG book.~%Please choose \"Recertify ACL2s system books\" under the ACL2s menu and retry after successful recertification.") (value :invisible))
+(include-book "ccg/ccg" :uncertified-okp nil :dir :acl2s-modes :ttags ((:ccg)) :load-compiled-file nil);v4.0 change
+
+;Common base theory for all modes.
+#+acl2s-startup (er-progn (assign fmt-error-msg "Problem loading ACL2s base theory book.~%Please choose \"Recertify ACL2s system books\" under the ACL2s menu and retry after successful recertification.") (value :invisible))
+(include-book "base-theory" :dir :acl2s-modes)
+
+
+#+acl2s-startup (er-progn (assign fmt-error-msg "Problem loading ACL2s customizations book.~%Please choose \"Recertify ACL2s system books\" under the ACL2s menu and retry after successful recertification.") (value :invisible))
+(include-book "custom" :dir :acl2s-modes :uncertified-okp nil :ttags :all)
+
+#+acl2s-startup (er-progn (assign fmt-error-msg "Problem setting up ACL2s mode.") (value :invisible))
+
+;Settings common to all ACL2s modes
+(acl2s-common-settings)
+;(acl2::xdoc acl2s::defunc) ;; 3 seconds is too much time to spare -- commenting out [2015-02-01 Sun]
+
+(acl2::xdoc acl2s::defunc) ; almost 3 seconds
+
+; Non-events:
+;(set-guard-checking :none)
+
+(acl2::in-package "ACL2S")
+
+; ******************* END INITIALIZATION FOR ACL2s MODE ******************* ;
+;$ACL2s-SMode$;ACL2s
 
 (encapsulate 
   ((rad() t))
@@ -19,9 +41,16 @@
   )
 
 
+(include-book "/home/jagadish/Downloads/acl2r/books/nonstd/nsa/exp")
+
 (defun f(x)
   (* (rad) (acl2-exp (* #c(0 1) x)))
   )
+
+
+(include-book "/home/jagadish/Downloads/acl2r/books/nonstd/nsa/trig")
+
+(include-book "/home/jagadish/Downloads/acl2r/books/arithmetic/top-with-meta" :dir :system)
 
 (defthm circle-equal
   (equal (f x)
@@ -114,7 +143,7 @@
   
   
   
-  (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/sin-cos-minimal"))
+  (local (include-book "/home/jagadish/Downloads/acl2r/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/sin-cos-minimal"))
   
   (defthm circle-der-lemma
     (implies (and (standardp x)
@@ -251,7 +280,7 @@
 
 
 
-(defun imf(x) 
+(defun if(x) 
   (imagpart (f x))
   )
 
@@ -341,6 +370,17 @@
           )
   )
 
+
+
+
+
+
+
+
+
+
+
+
 (encapsulate ()
   
   (local 
@@ -402,9 +442,13 @@
     (strict-int-circle-der-sum-sqrt a b)
     (- (strict-int-circle-der-sum-sqrt b a))))
 
+
+
+
+
 (encapsulate()
   
-  (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/ln"))
+  (local (include-book "/home/jagadish/Downloads/acl2r/books/nonstd/nsa/ln"))
   
   (local
    (defthm dis*-1
@@ -435,89 +479,8 @@
                    )
               ))
      ))
-
-  (local
-   (encapsulate
-    ()
-    (local
-     (defthm *-complex-lemma-1
-       (implies (and (realp a) (realp b) (realp r) (realp s))
-		(equal (* (complex a b) (complex r s))
-		       (* (+ a (* #C(0 1) b)) (+ R (* #C(0 1) S)))))
-       :hints (("Goal"
-		:use ((:instance complex-definition (x a) (y b))
-		      (:instance complex-definition (x r) (y s)))))))
-
-    ;; ...the next step is to factor everything out, remembering that
-    ;; i^2=-1....
-
-    (local
-     (defthm *-complex-lemma-2
-       (implies (and (realp a) (realp b) (realp r) (realp s))
-		(equal (complex (- (* a r) (* b s))
-				(+ (* a s) (* b r)))
-		       (+ (+ (* a R) (- (* b S)))
-			  (* #C(0 1) (+ (* a S) (* b R))))))
-       :hints (("Goal"
-		:use ((:instance complex-definition
-				 (x (- (* a r) (* b s)))
-				 (y (+ (* a s) (* b r)))))))))
-
-    ;; And so now we can get a formula for the product of two complex
-    ;; numbers.
-
-    (defthm *-complex
-      (implies (and (realp i) (realp j) (realp r) (realp s))
-	       (equal (* (complex i j) (complex r s))
-		      (complex (- (* i r) (* j s))
-			       (+ (* i s) (* j r)))))))
-   )
   
-  (local
-   (defthm realpart-*-real
-     (implies (realp x)
-	      (equal (realpart (* x y))
-		     (* x (realpart y))))
-     :hints (("Goal"
-	      :use ((:instance *-complex
-			       (i x)
-			       (j 0)
-			       (r (realpart y))
-			       (s (imagpart y)))
-		    (:instance realpart-complex
-			       (x (* (realpart y) x))
-			       (y (* (imagpart y) x))))
-	      :in-theory (disable *-complex
-				  realpart-complex)))))
-
-  (local
-   (defthm *-real-complex
-     (implies (and (realp x)
-		   (realp r)
-		   (realp s))
-	      (equal (* x (complex r s))
-		     (complex (* r x) (* s x))))
-     :hints (("Goal"
-	      :use ((:instance *-complex
-			       (i x)
-			       (j 0)))))))
-
-  (local
-   (defthm imagpart-*-real
-     (implies (realp x)
-	      (equal (imagpart (* x y))
-		     (* x (imagpart y))))
-     :hints (("Goal"
-	      :use ((:instance *-complex
-			       (i x)
-			       (j 0)
-			       (r (realpart y))
-			       (s (imagpart y)))
-		    (:instance IMAGPART-COMPLEX
-			       (x (* (realpart y) x))
-			       (y (* (imagpart y) x))))
-	      :in-theory (disable *-complex
-				  imagpart-complex)))))
+  
 
    (defthm circle-der-sum-sqrt-eq
      (implies (realp x)
@@ -630,7 +593,7 @@
   )
 
 
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2")
+(local (include-book "/home/jagadish/Downloads/acl2r/books/nonstd/integrals/ftc-2"))
 
 (defthmd apply-ftc-2
   (implies (and (inside-interval-p a (circle-der-sum-sqrt-domain))
@@ -737,7 +700,10 @@
   
   (defthm circle-length
     (equal (int-circle-der-sum-sqrt 0 (* 2 (acl2-pi)))
-           (* 2 (rad) (acl2-pi)))   
+           (* 2 (rad) (acl2-pi)))
+    
+    
+    
     :hints (("Goal" 
              :use(
                   (:instance pi-between-2-4)

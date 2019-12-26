@@ -1,8 +1,9 @@
 (in-package "ACL2")
 
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square")
-;(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/intervals")
+(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/intervals")
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/continuous-function")
+(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/equalities")
 
 (encapsulate
  ((c (x) t)
@@ -32,10 +33,10 @@
     (i-close (c-derivative x) (c-derivative y)))
    )
  
- (defthm c-acl2num
-   (implies (acl2-numberp x)
-	    (acl2-numberp (c x)))
-   )
+ ;; (defthm c-acl2num
+ ;;   (implies (acl2-numberp x)
+ ;; 	    (acl2-numberp (c x)))
+ ;;   )
  )
 
 
@@ -54,142 +55,134 @@
   (imagpart (c-derivative x))
   )
 
-(encapsulate
- ()
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta" :dir :system))
- (local 
-  (defthm re-close
-    (implies (and
-	      (acl2-numberp x)
-	      (acl2-numberp y)
-	      (i-close x y))
-	     (i-close (realpart x) (realpart y)))
-    ))
- 
- (local 
-  (defthm im-close
-    (implies (and
-	      (acl2-numberp x)
-	      (acl2-numberp y)
-	      (i-close x y))
-	     (i-close (imagpart x) (imagpart y)))
-    ))
- 
- (defthm rc-der-cont
-   (implies (and (standardp x)
-		 (realp x)
-		 (realp y)
-		 (i-close x y))
-	    (i-close (rc-derivative x) (rc-derivative y)))
-   :hints (("Goal"
-	    :use (
-		  (:instance c-der-continuous (x x) (y y) )
-		  (:instance re-close (x (c-derivative x)) (y (c-derivative y)))
-		  )))
-   )
- 
- (defthm ic-der-cont
-   (implies (and (standardp x)
-		 (realp x)
-		 (realp y)
-		 (i-close x y))
-	    (i-close (ic-derivative x) (ic-derivative y)))
-   :hints (("Goal"
-	    :use (
-		  (:instance c-der-continuous (x x) (y y) )
-		  (:instance im-close (x (c-derivative x)) (y (c-derivative y)))
-		  
-		  )
-	    ))
-   )
- )
+
+
+(defthmd re-im-close
+  (implies (and
+	    (acl2-numberp x)
+	    (acl2-numberp y)
+	    (i-close x y))
+	   (and (i-close (realpart x) (realpart y))
+		(i-close (imagpart x) (imagpart y))))
+  :hints (("Goal"
+	   :use ((:instance i-small (x (- x y)))
+		 (:instance standard-part-of-plus (x x) (y (- y)))
+		 (:instance fix (x x))
+		 (:instance fix (x (- y)))
+		 (:instance standard-part-of-uminus (x y))
+		 (:instance inverse-of-+-as=0 (a (standard-part x)) (b (standard-part y)))
+		 
+		 (:instance realpart-imagpart-elim (x x))
+		 (:instance realpart-imagpart-elim (x y))
+		 (:instance standard-part-of-complex (x (realpart x)) (y (imagpart x)))
+		 (:instance standard-part-of-complex (x (realpart y)) (y (imagpart y)))
+		 (:instance complex-equal
+			    (x1 (standard-part (realpart x)))
+			    (y1 (standard-part (imagpart x)))
+			    (x2 (standard-part (realpart y)))
+			    (y2 (standard-part (imagpart y))))
+					; (:instance fix (x (standard-part (realpart x))))
+					;(:instance fix (x (standard-part (realpart y))))
+		 ;; (:instance unicity-of-0 (x (standard-part (realpart x))))
+		 ;; (:instance unicity-of-0 (x (standard-part (realpart y))))
+		 ;; (:instance inverse-of-+-as=0 (a (fix (standard-part (realpart x)))) (b (fix (standard-part (realpart y)))))
+		 
+		 ;; (:instance fix (x (realpart y)))
+		 ;; (:instance standard-part-of-uminus (x (realpart y)))
+		 ;; (:instance standard-part-of-plus (x (realpart x)) (y (- (realpart y))))
+		 ;; (:instance i-small (x (- (realpart x) (realpart y))))
+		 )
+	   :in-theory (enable nsa-theory)
+	   ))	  
+  )
+
+(defthmd rc-ic-der-cont
+  (implies (and (standardp x)
+		(realp x)
+		(realp y)
+		(i-close x y))
+	   (and (i-close (rc-derivative x) (rc-derivative y))
+		(i-close (ic-derivative x) (ic-derivative y))))
+  :hints (("Goal"
+	   :use (
+		 (:instance c-der-continuous (x x) (y y) )
+		 (:instance re-im-close (x (c-derivative x)) (y (c-derivative y)))
+		 )
+	   :in-theory (enable nsa-theory)))
+  )
 
 (defun rc-der-sqr(x)
   (square (rc-derivative x))
   )
 
-(encapsulate
- ()
- 
- (local 
-  (defthm real-std
-    (implies (standardp x)
-	     (standardp (realpart x)))
-    ))
- 
+(defthmd real-std
+  (implies (standardp x)
+	   (standardp (realpart x))))
 
- (defthm rc-der-std
-   (implies (standardp x)
-	    (standardp (rc-derivative x)))
-   
-   :hints (("Goal"
-	    :use (
-		  (:instance c-der-std (x x))
-		  (:instance real-std (x (c-derivative x)))
-		  )
-	    ))
-   )
- 
- 
- (defthm rc-der-sqr-cont
-   (implies (and (standardp x)
-		 (realp x)
-		 (realp y)
-		 (i-close x y))
-	    (i-close (rc-der-sqr x) (rc-der-sqr y)))
-   :hints (("Goal"
-	    :use (
-		  (:instance rc-der-std(x x))
-		  (:instance rc-der-cont(x x) (y y))
-		  (:instance square-is-continuous (x1 (rc-derivative x)) (x2 (rc-derivative y)))
-		  )
-	    ))
-   )
- )
+(defthmd rc-der-std
+  (implies (standardp x)
+	   (standardp (rc-derivative x)))
+  
+  :hints (("Goal"
+	   :use (
+		 (:instance c-der-std (x x))
+		 (:instance real-std (x (c-derivative x)))
+		 )
+	   ))
+  )
+
+(defthmd rc-der-sqr-cont
+  (implies (and (standardp x)
+		(realp x)
+		(realp y)
+		(i-close x y))
+	   (i-close (rc-der-sqr x) (rc-der-sqr y)))
+  :hints (("Goal"
+	   :use (
+		 (:instance rc-der-std(x x))
+		 (:instance rc-ic-der-cont(x x) (y y))
+		 (:instance square-is-continuous (x1 (rc-derivative x)) (x2 (rc-derivative y)))
+		 )
+	   ))
+  )
 
 
 (defun ic-der-sqr(x)
   (square (ic-derivative x) )
   )
 
+(defthmd im-std
+  (implies (standardp x)
+	   (standardp (imagpart x)))
+  )
 
-(encapsulate
- ()
- 
- (local 
-  (defthm im-std
-    (implies (standardp x)
-	     (standardp (imagpart x)))
-    ))
- 
- (defthm ic-der-std
-   (implies (standardp x)
-	    (standardp (ic-derivative x)))
-   
-   :hints (("Goal"
-	    :use (
-		  (:instance c-der-std (x x))
-		  (:instance im-std (x (c-derivative x)))
-		  )
-	    ))
-   )
- 
- (defthm ic-der-sqr-cont
-   (implies (and (standardp x)
-		 (realp x)
-		 (realp y)
-		 (i-close x y))
-	    (i-close (ic-der-sqr x) (ic-der-sqr y)))
-   
-   :hints (("Goal"
-	    :use (
-		  (:instance ic-der-std(x x))
-		  (:instance ic-der-cont(x x) (y y))
-		  (:instance square-is-continuous (x1 (ic-derivative x)) (x2 (ic-derivative y)))
-		  )
-	    ))
-   )
- )
+(defthmd ic-der-std
+  (implies (standardp x)
+	   (standardp (ic-derivative x)))
+  
+  :hints (("Goal"
+	   :use (
+		 (:instance c-der-std (x x))
+		 (:instance im-std (x (c-derivative x)))
+		 )
+	   ))
+  )
+
+(defthmd ic-der-sqr-cont
+  (implies (and (standardp x)
+		(realp x)
+		(realp y)
+		(i-close x y))
+	   (i-close (ic-der-sqr x) (ic-der-sqr y)))
+  
+  :hints (("Goal"
+	   :use (
+		 (:instance ic-der-std(x x))
+		 (:instance rc-ic-der-cont(x x) (y y))
+		 (:instance square-is-continuous (x1 (ic-derivative x)) (x2 (ic-derivative y)))
+		 )
+	   ))
+  )
 
 (defun der-sqr-sum(x)
   (+ (rc-der-sqr x) (ic-der-sqr x))
@@ -611,36 +604,37 @@
            ))
   )
 
-(encapsulate ()
-	     
-	     (local (in-theory (disable riemann-der-sum-sqrt)))
-	     
-	     (local 
-	      (defthm limited-riemann-der-sum-sqrt-small-partition-1
-		(implies (and (realp a) (standardp a)
-			      (realp b) (standardp b)
-			      (inside-interval-p a (der-sum-sqrt-domain))
-			      (inside-interval-p b (der-sum-sqrt-domain))
-			      (< a b))
-			 (standardp( standard-part(riemann-der-sum-sqrt (make-small-partition a b)))))
-		
-		:hints (("Goal"
-			 :use (
-			       (:instance limited-riemann-der-sum-sqrt-small-partition(a a) (b b) )
-			       )
-			 :in-theory (disable riemann-der-sum-sqrt)
-			 ))
-		))
-	     
-	     (defun-std strict-int-der-sum-sqrt (a b)
-	       (if (and (realp a)
-			(realp b)
-			(inside-interval-p a (der-sum-sqrt-domain))
-			(inside-interval-p b (der-sum-sqrt-domain))
-			(< a b))
-		   (standard-part (riemann-der-sum-sqrt (make-small-partition a b)))
-		 0))
-	     )
+(encapsulate
+ ()
+ 
+ (local (in-theory (disable riemann-der-sum-sqrt)))
+ 
+ (local 
+  (defthm limited-riemann-der-sum-sqrt-small-partition-1
+    (implies (and (realp a) (standardp a)
+		  (realp b) (standardp b)
+		  (inside-interval-p a (der-sum-sqrt-domain))
+		  (inside-interval-p b (der-sum-sqrt-domain))
+		  (< a b))
+	     (standardp( standard-part(riemann-der-sum-sqrt (make-small-partition a b)))))
+    
+    :hints (("Goal"
+	     :use (
+		   (:instance limited-riemann-der-sum-sqrt-small-partition(a a) (b b) )
+		   )
+	     :in-theory (disable riemann-der-sum-sqrt)
+	     ))
+    ))
+ 
+ (defun-std strict-int-der-sum-sqrt (a b)
+   (if (and (realp a)
+	    (realp b)
+	    (inside-interval-p a (der-sum-sqrt-domain))
+	    (inside-interval-p b (der-sum-sqrt-domain))
+	    (< a b))
+       (standard-part (riemann-der-sum-sqrt (make-small-partition a b)))
+     0))
+ )
 
 
 
