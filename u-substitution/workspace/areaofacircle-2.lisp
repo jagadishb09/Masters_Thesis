@@ -1,6 +1,6 @@
 (in-package "ACL2")
 
-(include-book "/users/jagadishbapanapally/Documents/AreaofACircle/areaofacircle-0")
+(include-book "/users/jagadishbapanapally/Documents/Github/Research/u-substitution/workspace/areaofacircle-0")
 (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/sin-cos-minimal"))
 
 (defun f-sine (x)
@@ -995,7 +995,6 @@
 		  (:instance acl2-cos-0-=-1))
 	    :in-theory (enable interval-definition-theory)
 	    ))))
-
 
 (local
  (defthm lemma-6

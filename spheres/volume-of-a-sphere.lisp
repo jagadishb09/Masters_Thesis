@@ -7,7 +7,7 @@
 (encapsulate 
  ((rad() t))
  (local (defun rad() 1))
- (defthm rad-det
+ (defthm rad-def
    (and (realp (rad))
 	(standardp (rad))
 	(>= (rad) 0)))
@@ -46,31 +46,159 @@
 (defthm f1-prime-real
   (realp (f1-prime x)))
 
-;(encapsulate
- ;()
- ;(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"))
- 
- ;(defthm lemma-1
- ;  (implies (and (realp x)
-;		 (realp y)
-;		 (i-close x y))
-;	    (i-close (square x) (* x (- (* 2 x) y))))
- ;  :hints (("Goal"
-;	    :use ((:instance i-close-symmetric)
-;		  (:instance )
-;	    ;:in-theory (enable nsa-theory)
-;	    ))
-  ; )
- 
- (skip-proofs
-  (defthm f1-prime-is-derivative
+(encapsulate
+ ()
+ (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"))
+
+ (local
+  (defthm lemma-1
     (implies (and (standardp x)
 		  (inside-interval-p x (f1-domain))
-		  (inside-interval-p x1 (f1-domain))
-		  (i-close x x1) (not (= x x1)))
-	     (i-close (/ (- (f1 x) (f1 x1)) (- x x1))
-		      (f1-prime x))))
+		  (inside-interval-p y (f1-domain))
+		  (i-close x y) (not (= x y)))
+	     (= (/ (- (f1 x) (f1 y)) (- x y)) (/ (- (* (square (rad)) (- x y)) (* 1/3 (- x y) (+ (square x) (* x y) (square y)))) (- x y)))
+	     )
+    )
   )
+
+ (local
+  (defthm lemma-2
+    (implies (and (acl2-numberp x)
+		  (acl2-numberp y)
+		  (acl2-numberp z)
+		  (not (= z 0)))
+	     (= (/ (- (* x z) (* 1/3 z y)) z) (- x (* 1/3 y))))		  
+    )
+  )
+
+ (local
+  (defthm lemma-3
+    (implies (realp x)
+	     (realp (* x x)))
+    )
+  )
+
+ (local
+  (defthm lemma-4
+    (implies (and (realp x)
+		  (realp y)
+		  (not (= x y)))
+	     (not (= (- x y) 0)))
+    )
+  )
+
+ (local
+  (defthm lemma-5
+    (implies (and (standardp x)
+		  (inside-interval-p x (f1-domain))
+		  (inside-interval-p y (f1-domain))
+		  (i-close x y) (not (= x y)))
+	     (= (/ (- (f1 x) (f1 y)) (- x y)) (- (square (rad)) (* 1/3 (+ (square x) (* x y) (square y)))))
+	     )
+    :hints (("Goal"
+	     :use ((:instance lemma-1)
+		   (:instance lemma-2
+			      (x (square (rad)))
+			      (z (- x y))
+			      (y (+ (square x) (* x y) (square y)))
+			      )
+		   (:instance f1-domain-real (x x))
+		   (:instance f1-domain-real (x y))
+		   (:instance rad-def)
+		   (:instance square (x (rad)))
+		   (:instance lemma-3 (x (rad)))
+		   (:instance lemma-4 (x x) (y y))
+		   (:instance realfix (x (* (rad) (rad))))
+		   )
+	     :in-theory nil
+	     ))
+    )
+  )
+
+ (local
+  (defthm lemma-6
+    (implies (and (standardp x)
+		  (inside-interval-p x (f1-domain))
+		  (inside-interval-p y (f1-domain))
+		  (i-close x y) (not (= x y)))
+	     (i-small (* 1/3 x (- x y)))
+	     )
+    :hints (("Goal"
+	     :use ((:instance i-close)
+		   (:instance standards-are-limited-forward (x x))
+		   (:instance f1-domain-real (x x))
+		   (:instance f1-domain-real (x y))
+		   (:instance limited*small->small (x x) (y (- x y)))
+		   (:instance limited*small->small (x 1/3) (y (* x (- x y))))
+		   )
+	     ;:in-theory (enable nsa-theory)
+	     ))
+    )
+  )
+
+ (local
+  (defthm lemma-7
+    (implies (and (standardp x)
+		  (inside-interval-p x (f1-domain))
+		  (inside-interval-p y (f1-domain))
+		  (i-close x y) (not (= x y)))
+	     (i-small (* 1/3 (+ x y) (- x y)))
+	     )
+    :hints (("Goal"
+	     :use ((:instance i-close)
+		   (:instance standards-are-limited-forward (x x))
+		   (:instance f1-domain-real (x x))
+		   (:instance f1-domain-real (x y))
+		   (:instance i-limited-plus)
+		   (:instance i-close-limited)
+		   (:instance limited*small->small (x x) (y (- x y)))
+		   (:instance limited*small->small (x (+ x y)) (y (- x y)))
+		   (:instance limited*small->small (x 1/3) (y (* (+ x y) (- x y))))
+		   )
+					;:in-theory (enable nsa-theory)
+	     ))
+    )
+  )
+ 
+ 
+					;(defthm lemma-1
+					;  (implies (and (realp x)
+					;		 (realp y)
+					;		 (i-close x y))
+					;	    (i-close (square x) (* x (- (* 2 x) y))))
+					;  :hints (("Goal"
+					;	    :use ((:instance i-close-symmetric)
+					;		  (:instance )
+					;	    ;:in-theory (enable nsa-theory)
+					;	    ))
+					; )
+ 
+ (defthm f1-prime-is-derivative
+   (implies (and (standardp x)
+		 (inside-interval-p x (f1-domain))
+		 (inside-interval-p y (f1-domain))
+		 (i-close x y) (not (= x y)))
+	    (i-close (/ (- (f1 x) (f1 y)) (- x y))
+		     (f1-prime x)))
+   :hints (("Goal"
+	    :use ((:instance lemma-5)
+		  (:instance lemma-6)
+		  (:instance lemma-7)
+		  (:instance i-small-plus (x (* 1/3 x (- x y))) (y (* 1/3 (+ x y) (- x y))))
+		  (:instance i-small (x (- (+ (* (RAD) (RAD))
+					      (- (* 1/3 X X))
+					      (- (* 1/3 X Y))
+					      (- (* 1/3 Y Y)))
+					   (+ (* (RAD) (RAD)) (- (* X X))))))
+		  (:instance f1-domain-real)
+		  (:instance f1-domain-real (x y))
+		  (:instance rad-def)
+		  )
+	    :in-theory (enable nsa-theory)
+	    
+	    ))
+   )
+ )
 
 (defthm f1-prime-continuous
   (implies (and (standardp x)
@@ -83,10 +211,6 @@
 	   :in-theory (enable nsa-theory)
 	   ))
   )
-
-
-
-
 
 (defun map-f1-prime (p)
   (if (consp p)
@@ -123,7 +247,7 @@
 	     )
 	    ("Subgoal 2"
 	     :use ((:instance f1-prime-continuous)
-		   (:instance rad-det)
+		   (:instance rad-def)
 		   )
 	     )
 	    )
@@ -169,7 +293,7 @@
 	   :use (:instance f1-prime-continuous (x x) (y x1))
 	   )
 	  ("Subgoal 6"
-	   :use (:instance f1-prime-is-derivative)
+	   :use (:instance f1-prime-is-derivative (x x) (y x1))
 	   )
 	  ))
 
@@ -184,7 +308,7 @@
    (= (volume-of-a-sphere) (* 4 (acl2-pi) (rad) (rad) (rad) 1/3))
    :hints (("Goal"
 	    :use ((:instance apply-ftc-2-vol (a 0) (b (rad)))
-		  (:instance rad-det)
+		  (:instance rad-def)
 		  )
 	    :in-theory (enable nsa-theory interval-definition-theory)
 	    ))

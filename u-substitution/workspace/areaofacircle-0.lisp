@@ -4,14 +4,11 @@
 (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/inequalities" :dir :system))
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square")
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-trig")
-(include-book "/users/jagadishbapanapally/Documents/AreaofACircle/u-substitution")
+(include-book "/users/jagadishbapanapally/Documents/Github/Research/u-substitution/workspace/u-substitution")
 (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/sin-cos-minimal"))
-;(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/intervals")
-;(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/intervals" :dir :system))
 
 (encapsulate 
  ((rad() t)
-  ;(fi-dom-variable() t)
   (consta1 () t)
   )
  (local (defun rad() 1))
@@ -25,14 +22,6 @@
 	)
    )
 
- ;(defthm fi-dom-var-def
-  ; (and (realp (fi-dom-variable))
-;	(> (fi-dom-variable) 0)
-;	(standardp (fi-dom-variable))
-;	(= (fi-dom-variable) 5)
-;	)
-					;  )
- 
  (defthmd consta1-def
    (and (inside-interval-p (consta1) (interval 0 (rad)))
 	(standardp (consta1))
@@ -991,8 +980,6 @@
    )
  )
 
-
-
 (defthm circle-continuous
   (implies (and (standardp x)
 		(inside-interval-p x (circle-x-domain))
@@ -1369,7 +1356,7 @@
 				      (F-o-fi-prime circle-sub-prime)
 				      (DERIVATIVE-CR-F-O-FI circle-sub-derivative)
 				      )
-	   ;:in-theory nil
+					;:in-theory nil
 	   )
 	  ("Subgoal 4"
 	   :use (:instance int-circle-sub-prime (a a) (b b))
@@ -1450,54 +1437,3 @@
 	    ))
    )
  )
-
-;; (local
-;;  (defthm lemma-15
-;;    (and (>= 0 (- (fi-dom-variable)))
-;; 	(inside-interval-p (* 1/2 (acl2-pi)) (fi-domain))
-;; 	)
-;;    ;; :hints (("Goal"
-;;    ;; 	    :cases (= (fi-dom-variable) 20)
-;;    ;; 	    :use (:instance fi-dom-var-def)
-;;    ;; 	    ))
-;;  ))
-
-;; (local
-;;  (defthm lemma-15
-;;    (implies (and (realp x)
-;; 		 (<= 0 x)
-;; 		 (<= x 10))
-;; 	    (inside-interval-p x (fi-domain)))
-;;    :hints (("Goal"
-;; 	    :in-theory (enable interval-definition-theory)
-;; 	    ))
-;;    )
-;;  )
-
-;(in-theory (disable consta1-def))
-
-;; (defun circle-sub-func (x)
-;;   (if (inside-interval-p x (fi-domain))
-;;       (*  (* (rad) (acl2-cosine x)) (* (rad) (acl2-cosine x)))
-;;     0
-;;     ))
-
-;; (defthm-std circle-sub-func-std
-;;   (implies (standardp x)
-;; 	   (standardp (circle-sub-func x))
-;; 	   )
-;;   )
-
-;; (defthm circle-sub-func-continuous
-;;   (implies (and (standardp x)
-;; 		(inside-interval-p x (rcfn-domain))
-;; 		(i-close x y)
-;; 		(inside-interval-p y (rcfn-domain)))
-;; 	   (i-close (circle-sub-func x) (circle-sub-func y)))
-;;   :hints (("Goal"
-;; 	   :use ((:instance rad-def)
-;; 		 (:instance cosine-continuous)
-;; 		 )
-;; 	   ))
-  
-;;   )

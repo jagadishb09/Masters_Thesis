@@ -32,11 +32,6 @@
 	 )
     (i-close (c-derivative x) (c-derivative y)))
    )
- 
- ;; (defthm c-acl2num
- ;;   (implies (acl2-numberp x)
- ;; 	    (acl2-numberp (c x)))
- ;;   )
  )
 
 
@@ -50,12 +45,9 @@
   (realpart (c-derivative x))
   )
 
-
 (defun ic-derivative (x)
   (imagpart (c-derivative x))
   )
-
-
 
 (defthmd re-im-close
   (implies (and
@@ -81,16 +73,6 @@
 			    (y1 (standard-part (imagpart x)))
 			    (x2 (standard-part (realpart y)))
 			    (y2 (standard-part (imagpart y))))
-					; (:instance fix (x (standard-part (realpart x))))
-					;(:instance fix (x (standard-part (realpart y))))
-		 ;; (:instance unicity-of-0 (x (standard-part (realpart x))))
-		 ;; (:instance unicity-of-0 (x (standard-part (realpart y))))
-		 ;; (:instance inverse-of-+-as=0 (a (fix (standard-part (realpart x)))) (b (fix (standard-part (realpart y)))))
-		 
-		 ;; (:instance fix (x (realpart y)))
-		 ;; (:instance standard-part-of-uminus (x (realpart y)))
-		 ;; (:instance standard-part-of-plus (x (realpart x)) (y (- (realpart y))))
-		 ;; (:instance i-small (x (- (realpart x) (realpart y))))
 		 )
 	   :in-theory (enable nsa-theory)
 	   ))	  
@@ -145,7 +127,6 @@
 		 )
 	   ))
   )
-
 
 (defun ic-der-sqr(x)
   (square (ic-derivative x) )
@@ -327,7 +308,6 @@
 		   (:instance ineq-lemma3 (a (* x1 x1)) (b (* x1 x2)) (c (* x2 x2)))
 		   )
 	     ))
-    
     ))
 
  (local 
@@ -635,8 +615,6 @@
        (standard-part (riemann-der-sum-sqrt (make-small-partition a b)))
      0))
  )
-
-
 
 (defthm strict-int-der-sum-sqrt-is-integral-of-der-sum-sqrt
   (implies (and (standardp a)

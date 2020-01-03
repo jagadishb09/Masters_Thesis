@@ -128,8 +128,6 @@
  
  )
 
-
-
 (local 
  (defthmd i-large-lemma
    (i-small (/(i-large-integer)))
@@ -296,9 +294,6 @@
    )
  )
 
-
-
-
 (local
  (defthm-std standard-f-prime
    (implies (standardp x)
@@ -378,7 +373,6 @@
 	(strict-int-f-prime-1 a b)
       (- (strict-int-f-prime-1 b a))))
   )
-
 
  (local
   (defthm ftc-1-fprime
@@ -1676,7 +1670,6 @@
 	    ))
    )
  )
-
 
 (defthm usubstitution-f-o-fi
   (implies (and (inside-interval-p a (f-o-fi-domain))
