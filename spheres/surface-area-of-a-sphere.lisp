@@ -92,31 +92,40 @@
 		  (:instance acl2-sine-derivative (x x) (y y)))
 	    )))
 
- (skip-proofs
-  (local
-   (defthm rad*norm
-     (implies (realp x)
-	      (= (+ (* (rad) (rad) (square (acl2-sine x))) (* (rad) (rad) (square (acl2-cosine x)))) (* (rad) (rad))))
-     :hints (("Goal"
-	      :use ((:instance sin**2+cos**2)
-		    (:instance rad-def)
-		    )
-	      ))
-     )
-   )
+ (local
+  (defthm lemma-1
+    (implies (and (realp x)
+		  (realp y)
+		  (realp z))
+	     (= (+ (* x y) (* x z)) (* x (+ y z)))
+	     )
+    )
   )
-
- (skip-proofs
-  (defthm norm-of-der
+ 
+ (local
+  (defthm rad*norm
     (implies (realp x)
-	     (= (acl2-sqrt (+ (square (sx-derivative x)) (square (sy-derivative x)))) (rad)))
+	     (= (+ (* (rad) (rad) (square (acl2-sine x))) (* (rad) (rad) (square (acl2-cosine x)))) (* (rad) (rad))))
     :hints (("Goal"
 	     :use ((:instance sin**2+cos**2)
 		   (:instance rad-def)
+		   (:instance lemma-1 (x (* (rad) (rad))) (y (square (acl2-sine x))) (z (square (acl2-cosine x))))
 		   )
 	     ))
-    ))
+    )
+  )
 
+ (defthm norm-of-der
+   (implies (realp x)
+	    (= (acl2-sqrt (+ (square (sx-derivative x)) (square (sy-derivative x)))) (rad)))
+   :hints (("Goal"
+	    :use ((:instance sin**2+cos**2)
+		  (:instance rad-def)
+		  (:instance rad*norm)
+		  (:instance y*y=x->y=sqrt-x (x (* rad rad)) (y (rad)))
+		  )
+	    ))
+   )
  )
 
 
@@ -158,36 +167,62 @@
  ()
  (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta" :dir :system))
 
- 
- (skip-proofs
-  (defthm f1-prime-is-derivative
-    (implies (and (standardp x)
-		  (realp x)
-		  (realp y)
-		  (i-close x y)
-		  (not (= x y))
+ (defthm f1-prime-is-derivative
+   (implies (and (standardp x)
+		 (inside-interval-p x (s-domain))
+		 (inside-interval-p y (s-domain))
+		 (i-close x y)
+		 (not (= x y))
+		 )
+	    (i-close (/ (- (f1 x) (f1 y)) (- x y)) (f1-prime x))
+	    )
+   :hints (("Goal"
+	    :use (
+					;(:instance acl2-cosine-derivative (x x) (y y))
+		  (:instance norm-of-der)
+		  (:instance sx-der-lemma)
+		  (:instance rad-def)
+		  (:instance standards-are-limited-forward (x (- (rad))))
+					;(:instance sy-der-lemma)
+		  (:instance limited*small->small (x (- (rad))) (y (- (/ (- (sphere-x x) (sphere-x y)) (- x y)) (sx-derivative x))))
+		  (:instance i-close (x (/ (- (f1 x) (f1 y)) (- x y))) (y (f1-prime x)))
+		  (:instance i-small-uminus (x (+ (* (RAD) (RAD) (ACL2-SINE X))
+						  (* (RAD)
+						     (RAD)
+						     (ACL2-COSINE X)
+						     (/ (+ X (- Y))))
+						  (- (* (RAD)
+							(RAD)
+							(ACL2-COSINE Y)
+							(/ (+ X (- Y))))))))
+		  (:instance s-domain-real)
+		  (:instance s-domain-real (x y))
 		  )
-	     (i-close (/ (- (f1 x) (f1 y)) (- x y)) (f1-prime x))
-	     )
-    :hints (("Goal"
-	     :use ((:instance acl2-cosine-derivative (x x) (y y))
-		   (:instance norm-of-der)
-		   (:instance sx-der-lemma)
-		   )
-	     :in-theory (enable nsa-theory)
-	     ))
-    )
-  )
-
- (skip-proofs
-    (defthm f1-prime-continuous
-     (implies (and (standardp x)
-		   (inside-interval-p x (s-domain))
-		   (i-close x y)
-		   (inside-interval-p y (s-domain)))
-	      (i-close (f1-prime x)
-		       (f1-prime y))))
-    )
+	    :in-theory (enable i-close)
+	    ))
+   )
+ 
+ (defthm f1-prime-continuous
+   (implies (and (standardp x)
+		 (inside-interval-p x (s-domain))
+		 (i-close x y)
+		 (inside-interval-p y (s-domain)))
+	    (i-close (f1-prime x)
+		     (f1-prime y)))
+   :hints (("Goal"
+	    :use ((:instance sine-continuous (x x) (y y))
+		  (:instance standards-are-limited-forward (x (rad)))
+		  (:instance norm-of-der)
+		  (:instance norm-of-der (x y))
+		  (:instance s-domain-real)
+		  (:instance s-domain-real (x y))
+		  (:instance i-limited-times (x (rad)) (y (rad)))
+		  (:instance i-close (x (acl2-sine x)) (y (acl2-sine y)))
+		  (:instance limited*small->small (x (* (rad) (rad))) (y (- (acl2-sine x) (acl2-sine y))))
+		  )
+	    :in-theory (enable i-close)
+	    ))
+   )
  )
 
 (defun map-f1-prime (p)
@@ -216,10 +251,10 @@
 	     (i-limited (riemann-f1-prime (make-small-partition a b))))
     :hints (("Goal"
 	     :use (:functional-instance limited-riemann-rcfn-small-partition
-				       (rcfn-domain s-domain)
-				       (rcfn f1-prime)
-				       (map-rcfn map-f1-prime)
-				       (riemann-rcfn riemann-f1-prime)))
+					(rcfn-domain s-domain)
+					(rcfn f1-prime)
+					(map-rcfn map-f1-prime)
+					(riemann-rcfn riemann-f1-prime)))
 	    ("Subgoal 2"
 	     :use ((:instance s-domain-non-trivial)))
 	    
@@ -273,9 +308,9 @@
 				       (strict-int-rcdfn-prime strict-int-f1-prime)
 				       ))
 	   )
-	  ;("Subgoal 7"
-	   ;:use (:instance f1-prime-continuous (x x) (y x1))
-	   ;)
+					;("Subgoal 7"
+					;:use (:instance f1-prime-continuous (x x) (y x1))
+					;)
 	  ("Subgoal 7"
 	   :use ((:instance norm-of-der)
 		 (:instance f1-prime-is-derivative (x x) (y x1)))
@@ -303,45 +338,3 @@
 	    ))
    )
  )
-
-
-					;(encapsulate 
-					; ((u-const() t))
-					;(local (defun u-const() 1))
-					;(defthm u-def
-					; (and (realp (u-const))
-					;     (standardp (u-const))
-					;    (inside-interval-p (u-const) (u-domain)))
-					;:hints (("Goal"
-					;	     :use ((:instance pi-between-2-4)
-					;		   (:instance u-domain)
-					;		   )
-					;	     :in-theory (enable interval-definition-theory)
-					;	     )
-					;	    ("Subgoal 4"
-					;	     :in-theory (enable interval-definition-theory)
-					;	     )
-					;	    )
-					;   )
-					; )
-
-					;(encapsulate 
-					; ((v-const() t))
-					;(local (defun v-const() 1))
-					;(defthm v-def
-					; (and (realp (v-const))
-					;     (standardp (v-const))
-					;    (inside-interval-p (v-const) (v-domain)))
-					;:hints (("Goal"
-					;	     :use ((:instance pi-between-2-4)
-					;		   (:instance v-domain)
-					;		   )
-					;	     :in-theory (enable interval-definition-theory)
-					;	     )
-					;	    ("Subgoal 4"
-					;	     :in-theory (enable interval-definition-theory)
-					;	     )
-					;	    )
-					;   )
-					; )
-
