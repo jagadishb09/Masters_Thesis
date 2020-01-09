@@ -1,11 +1,10 @@
 (in-package "ACL2")
 
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/realp" :dir :system))
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/inequalities" :dir :system))
+(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/realp"))
+(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/inequalities"))
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square")
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-trig")
 (include-book "/users/jagadishbapanapally/Documents/Github/Research/u-substitution/workspace/u-substitution")
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/sin-cos-minimal"))
 
 (encapsulate 
  ((rad() t)
@@ -477,16 +476,6 @@
 	   ))
   )
 
-(local 
- (defthm cosine-standard
-   (implies (and
-	     (realp x)
-	     (standard-numberp x)
-	     )
-	    (standardp (acl2-cosine x)))
-   )
- )
-
 (local
  (defthm lemma-4
    (implies (i-close x y)
@@ -510,6 +499,61 @@
 	    :in-theory (enable i-small i-close)
 	    ))
    )
+ )
+
+(encapsulate
+ ()
+ (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/exp-minimal"))
+
+ (local
+  (defthm-std acl2-exp-standard
+    (implies (standardp x)
+	     (standardp (acl2-exp x))))
+  )
+
+ (defthmd cosine-standard
+   (implies (standardp x)
+	    (standardp (acl2-cosine x)))
+   :hints (("Goal"
+	    :use (:instance acl2-exp-standard)
+	    :in-theory (enable acl2-cosine))))
+
+ (local
+  (defderivative sin-eqn-deriv 
+    (/ (- (acl2-exp (* #c(0 1) x))
+	  (acl2-exp (* #c(0 -1) x)))
+       #c(0 2))))
+
+
+ (defthm acl2-sine-derivative
+   (implies (and (acl2-numberp x)
+		 (acl2-numberp y)
+		 (standardp x)
+		 (i-close x y)
+		 (not (equal x y)))
+	    (i-close (/ (- (acl2-sine x) (acl2-sine y))
+			(- x y))
+		     (acl2-cosine x)))
+   :hints (("Goal" :use (:instance sin-eqn-deriv)
+	    :in-theory (enable acl2-sine acl2-cosine))))
+ 
+ (local
+  (defderivative cos-eqn-deriv 
+    (/ (+ (ACL2-EXP (* #C(0 1) X))
+	  (ACL2-EXP (* #C(0 -1) X)))
+       2)))
+
+ (defthm acl2-cosine-derivative
+   (implies (and (acl2-numberp x)
+		 (acl2-numberp y)
+		 (standardp x)
+		 (i-close x y)
+		 (not (equal x y)))
+	    (i-close (/ (- (acl2-cosine x) (acl2-cosine y))
+			(- x y))
+		     (- (acl2-sine x))))
+   :hints (("Goal" :use (:instance cos-eqn-deriv)
+	    :in-theory (enable acl2-sine acl2-cosine))))
  )
 
 (defthm sub-func-prime-is-derivative
@@ -1376,7 +1420,7 @@
 (encapsulate
  nil
  (local (in-theory nil))
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top" :dir :system))
+ (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top"))
  (local
   (defthm lemma-12
     (implies (acl2-numberp x)

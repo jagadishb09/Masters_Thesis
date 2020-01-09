@@ -108,8 +108,45 @@
 		  )
 	    ))
    )
+
+ (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/exp-minimal"))
+
+ (local
+  (defderivative sin-eqn-deriv 
+    (/ (- (acl2-exp (* #c(0 1) x))
+	  (acl2-exp (* #c(0 -1) x)))
+       #c(0 2))))
+
+
+ (defthm acl2-sine-derivative
+   (implies (and (acl2-numberp x)
+		 (acl2-numberp y)
+		 (standardp x)
+		 (i-close x y)
+		 (not (equal x y)))
+	    (i-close (/ (- (acl2-sine x) (acl2-sine y))
+			(- x y))
+		     (acl2-cosine x)))
+   :hints (("Goal" :use (:instance sin-eqn-deriv)
+	    :in-theory (enable acl2-sine acl2-cosine))))
  
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/sin-cos-minimal"))
+ (local
+  (defderivative cos-eqn-deriv 
+    (/ (+ (ACL2-EXP (* #C(0 1) X))
+	  (ACL2-EXP (* #C(0 -1) X)))
+       2)))
+
+ (defthm acl2-cosine-derivative
+   (implies (and (acl2-numberp x)
+		 (acl2-numberp y)
+		 (standardp x)
+		 (i-close x y)
+		 (not (equal x y)))
+	    (i-close (/ (- (acl2-cosine x) (acl2-cosine y))
+			(- x y))
+		     (- (acl2-sine x))))
+   :hints (("Goal" :use (:instance cos-eqn-deriv)
+	    :in-theory (enable acl2-sine acl2-cosine))))
  
  (defthm circle-der-lemma
    (implies (and (standardp x)
@@ -184,7 +221,6 @@
  (defthm circle-der-continuous
    (implies 
     (and 
-					;realp x realp y
      (standardp x)
      (realp x)
      (realp y)
@@ -228,7 +264,6 @@
 	   )
    
    )
- 
  
  (defthm f-acl2num
    (implies (acl2-numberp x)
@@ -385,135 +420,136 @@
       (strict-int-circle-der-sum-sqrt a b)
     (- (strict-int-circle-der-sum-sqrt b a))))
 
-(encapsulate()
-	    
-	    (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/ln"))
-	    
-	    (local
-	     (defthm dis*-1
-	       (equal (+ (* a b c c) (* a b d d)) (* a b (+ (* c c) (* d d))))
-	       ))
-	    
-	    (local
-	     (defthm dis+-1
-	       (equal (+ (* a a) (* b b)) (+ (* b b) (* a a)))
-	       ))
-	    
-	    (local
-	     (defthm sin-cos-eq
-	       (EQUAL (* (RAD) (RAD))
-		      (+ (* (RAD)
-			    (RAD)
-			    (ACL2-COSINE X)
-			    (ACL2-COSINE X))
-			 (* (RAD)
-			    (RAD)
-			    (ACL2-SINE X)
-			    (ACL2-SINE X))))
-	       :hints (("Goal" 
-			:use(           
-			     (:instance dis*-1 (a (rad)) (b (rad)) (c (acl2-cosine x)) (d (acl2-sine x)))
-			     (:instance dis+-1 (a (ACL2-COSINE X)) (b (ACL2-SINE X)))
-			     (:instance sin**2+cos**2(x x))
-			     )
-			))
-	       ))
+(encapsulate
+ ()
+ 
+ (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/ln"))
+ 
+ (local
+  (defthm dis*-1
+    (equal (+ (* a b c c) (* a b d d)) (* a b (+ (* c c) (* d d))))
+    ))
+ 
+ (local
+  (defthm dis+-1
+    (equal (+ (* a a) (* b b)) (+ (* b b) (* a a)))
+    ))
+ 
+ (local
+  (defthm sin-cos-eq
+    (EQUAL (* (RAD) (RAD))
+	   (+ (* (RAD)
+		 (RAD)
+		 (ACL2-COSINE X)
+		 (ACL2-COSINE X))
+	      (* (RAD)
+		 (RAD)
+		 (ACL2-SINE X)
+		 (ACL2-SINE X))))
+    :hints (("Goal" 
+	     :use(           
+		  (:instance dis*-1 (a (rad)) (b (rad)) (c (acl2-cosine x)) (d (acl2-sine x)))
+		  (:instance dis+-1 (a (ACL2-COSINE X)) (b (ACL2-SINE X)))
+		  (:instance sin**2+cos**2(x x))
+		  )
+	     ))
+    ))
 
-	    (local
-	     (encapsulate
-	      ()
-	      (local
-	       (defthm *-complex-lemma-1
-		 (implies (and (realp a) (realp b) (realp r) (realp s))
-			  (equal (* (complex a b) (complex r s))
-				 (* (+ a (* #C(0 1) b)) (+ R (* #C(0 1) S)))))
-		 :hints (("Goal"
-			  :use ((:instance complex-definition (x a) (y b))
-				(:instance complex-definition (x r) (y s)))))))
+ (local
+  (encapsulate
+   ()
+   (local
+    (defthm *-complex-lemma-1
+      (implies (and (realp a) (realp b) (realp r) (realp s))
+	       (equal (* (complex a b) (complex r s))
+		      (* (+ a (* #C(0 1) b)) (+ R (* #C(0 1) S)))))
+      :hints (("Goal"
+	       :use ((:instance complex-definition (x a) (y b))
+		     (:instance complex-definition (x r) (y s)))))))
 
-	      (local
-	       (defthm *-complex-lemma-2
-		 (implies (and (realp a) (realp b) (realp r) (realp s))
-			  (equal (complex (- (* a r) (* b s))
-					  (+ (* a s) (* b r)))
-				 (+ (+ (* a R) (- (* b S)))
-				    (* #C(0 1) (+ (* a S) (* b R))))))
-		 :hints (("Goal"
-			  :use ((:instance complex-definition
-					   (x (- (* a r) (* b s)))
-					   (y (+ (* a s) (* b r)))))))))
+   (local
+    (defthm *-complex-lemma-2
+      (implies (and (realp a) (realp b) (realp r) (realp s))
+	       (equal (complex (- (* a r) (* b s))
+			       (+ (* a s) (* b r)))
+		      (+ (+ (* a R) (- (* b S)))
+			 (* #C(0 1) (+ (* a S) (* b R))))))
+      :hints (("Goal"
+	       :use ((:instance complex-definition
+				(x (- (* a r) (* b s)))
+				(y (+ (* a s) (* b r)))))))))
 
-	      (defthm *-complex
-		(implies (and (realp i) (realp j) (realp r) (realp s))
-			 (equal (* (complex i j) (complex r s))
-				(complex (- (* i r) (* j s))
-					 (+ (* i s) (* j r)))))))
-	     )
-	    
-	    (local
-	     (defthm realpart-*-real
-	       (implies (realp x)
-			(equal (realpart (* x y))
-			       (* x (realpart y))))
-	       :hints (("Goal"
-			:use ((:instance *-complex
-					 (i x)
-					 (j 0)
-					 (r (realpart y))
-					 (s (imagpart y)))
-			      (:instance realpart-complex
-					 (x (* (realpart y) x))
-					 (y (* (imagpart y) x))))
-			:in-theory (disable *-complex
-					    realpart-complex)))))
+   (defthm *-complex
+     (implies (and (realp i) (realp j) (realp r) (realp s))
+	      (equal (* (complex i j) (complex r s))
+		     (complex (- (* i r) (* j s))
+			      (+ (* i s) (* j r)))))))
+  )
+ 
+ (local
+  (defthm realpart-*-real
+    (implies (realp x)
+	     (equal (realpart (* x y))
+		    (* x (realpart y))))
+    :hints (("Goal"
+	     :use ((:instance *-complex
+			      (i x)
+			      (j 0)
+			      (r (realpart y))
+			      (s (imagpart y)))
+		   (:instance realpart-complex
+			      (x (* (realpart y) x))
+			      (y (* (imagpart y) x))))
+	     :in-theory (disable *-complex
+				 realpart-complex)))))
 
-	    (local
-	     (defthm *-real-complex
-	       (implies (and (realp x)
-			     (realp r)
-			     (realp s))
-			(equal (* x (complex r s))
-			       (complex (* r x) (* s x))))
-	       :hints (("Goal"
-			:use ((:instance *-complex
-					 (i x)
-					 (j 0)))))))
+ (local
+  (defthm *-real-complex
+    (implies (and (realp x)
+		  (realp r)
+		  (realp s))
+	     (equal (* x (complex r s))
+		    (complex (* r x) (* s x))))
+    :hints (("Goal"
+	     :use ((:instance *-complex
+			      (i x)
+			      (j 0)))))))
 
-	    (local
-	     (defthm imagpart-*-real
-	       (implies (realp x)
-			(equal (imagpart (* x y))
-			       (* x (imagpart y))))
-	       :hints (("Goal"
-			:use ((:instance *-complex
-					 (i x)
-					 (j 0)
-					 (r (realpart y))
-					 (s (imagpart y)))
-			      (:instance IMAGPART-COMPLEX
-					 (x (* (realpart y) x))
-					 (y (* (imagpart y) x))))
-			:in-theory (disable *-complex
-					    imagpart-complex)))))
+ (local
+  (defthm imagpart-*-real
+    (implies (realp x)
+	     (equal (imagpart (* x y))
+		    (* x (imagpart y))))
+    :hints (("Goal"
+	     :use ((:instance *-complex
+			      (i x)
+			      (j 0)
+			      (r (realpart y))
+			      (s (imagpart y)))
+		   (:instance IMAGPART-COMPLEX
+			      (x (* (realpart y) x))
+			      (y (* (imagpart y) x))))
+	     :in-theory (disable *-complex
+				 imagpart-complex)))))
 
-	    (defthm circle-der-sum-sqrt-eq
-	      (implies (realp x)
-		       (equal (circle-der-sum-sqrt x) (rad)))
-	      :hints (("Goal" 
-		       :use(
-			    (:instance rad-det)
-			    (:instance sin-cos-eq (x x))
-			    (:instance dis*-1 (a (rad)) (b (rad)) (c (acl2-cosine x)) (d (acl2-sine x)))
-			    (:instance realpart-*-real (x (rad)) 
-				       (y  (COMPLEX (- (ACL2-SINE X)) (ACL2-COSINE X))))
-			    (:instance imagpart-*-real (x (rad)) 
-				       (y  (COMPLEX (- (ACL2-SINE X)) (ACL2-COSINE X))))
-			    (:instance sin**2+cos**2(x x))
-			    )
-		       :in-theory (disable acl2-sine acl2-cosine rad-det sin-cos-eq dis*-1 dis+-1)
-		       ))
-	      )
-	    )
+ (defthm circle-der-sum-sqrt-eq
+   (implies (realp x)
+	    (equal (circle-der-sum-sqrt x) (rad)))
+   :hints (("Goal" 
+	    :use(
+		 (:instance rad-det)
+		 (:instance sin-cos-eq (x x))
+		 (:instance dis*-1 (a (rad)) (b (rad)) (c (acl2-cosine x)) (d (acl2-sine x)))
+		 (:instance realpart-*-real (x (rad)) 
+			    (y  (COMPLEX (- (ACL2-SINE X)) (ACL2-COSINE X))))
+		 (:instance imagpart-*-real (x (rad)) 
+			    (y  (COMPLEX (- (ACL2-SINE X)) (ACL2-COSINE X))))
+		 (:instance sin**2+cos**2(x x))
+		 )
+	    :in-theory (disable acl2-sine acl2-cosine rad-det sin-cos-eq dis*-1 dis+-1)
+	    ))
+   )
+ )
 
 (encapsulate
  ()

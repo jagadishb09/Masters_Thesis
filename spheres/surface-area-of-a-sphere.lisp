@@ -3,7 +3,7 @@
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/trig")
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2")
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/sin-cos-minimal")
+(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/exp-minimal"))
 
 (encapsulate 
  ((rad() t))
@@ -15,8 +15,6 @@
  )
 
 (defun s-domain () (interval 0 (acl2-pi)))
-
-					;(defun v-domain () (interval 0 (* 2 (acl2-pi))))
 
 (defun sphere-x (x)
   (* (rad) (acl2-cosine x))
@@ -33,6 +31,43 @@
 (defun sy-derivative (x)
   (* (rad) (acl2-cosine x)) 
   )
+
+(local
+ (defderivative sin-eqn-deriv 
+   (/ (- (acl2-exp (* #c(0 1) x))
+	 (acl2-exp (* #c(0 -1) x)))
+      #c(0 2))))
+
+
+(defthm acl2-sine-derivative
+  (implies (and (acl2-numberp x)
+		(acl2-numberp y)
+		(standardp x)
+		(i-close x y)
+		(not (equal x y)))
+	   (i-close (/ (- (acl2-sine x) (acl2-sine y))
+		       (- x y))
+		    (acl2-cosine x)))
+  :hints (("Goal" :use (:instance sin-eqn-deriv)
+	   :in-theory (enable acl2-sine acl2-cosine))))
+
+(local
+ (defderivative cos-eqn-deriv 
+   (/ (+ (ACL2-EXP (* #C(0 1) X))
+	 (ACL2-EXP (* #C(0 -1) X)))
+      2)))
+
+(defthm acl2-cosine-derivative
+  (implies (and (acl2-numberp x)
+		(acl2-numberp y)
+		(standardp x)
+		(i-close x y)
+		(not (equal x y)))
+	   (i-close (/ (- (acl2-cosine x) (acl2-cosine y))
+		       (- x y))
+		    (- (acl2-sine x))))
+  :hints (("Goal" :use (:instance cos-eqn-deriv)
+	   :in-theory (enable acl2-sine acl2-cosine))))
 
 (encapsulate
  ()
@@ -165,7 +200,7 @@
 
 (encapsulate
  ()
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta" :dir :system))
+ (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"))
 
  (defthm f1-prime-is-derivative
    (implies (and (standardp x)
@@ -178,12 +213,10 @@
 	    )
    :hints (("Goal"
 	    :use (
-					;(:instance acl2-cosine-derivative (x x) (y y))
 		  (:instance norm-of-der)
 		  (:instance sx-der-lemma)
 		  (:instance rad-def)
 		  (:instance standards-are-limited-forward (x (- (rad))))
-					;(:instance sy-der-lemma)
 		  (:instance limited*small->small (x (- (rad))) (y (- (/ (- (sphere-x x) (sphere-x y)) (- x y)) (sx-derivative x))))
 		  (:instance i-close (x (/ (- (f1 x) (f1 y)) (- x y))) (y (f1-prime x)))
 		  (:instance i-small-uminus (x (+ (* (RAD) (RAD) (ACL2-SINE X))
@@ -239,7 +272,7 @@
 (encapsulate
  nil
 
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta" :dir :system))
+ (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"))
 
  (local
   (defthm limited-riemann-f1-prime-small-partition
@@ -268,12 +301,9 @@
 		   (:instance norm-of-der (x y))
 		   (:instance rad-def)
 		   (:instance f1-prime-continuous)))
-					;(:instance f1-prime-continuous)
 	    )))
 
  (local (in-theory (disable riemann-f1-prime)))
-
-
 
  (defun-std strict-int-f1-prime (a b)
    (if (and (realp a)
@@ -308,9 +338,6 @@
 				       (strict-int-rcdfn-prime strict-int-f1-prime)
 				       ))
 	   )
-					;("Subgoal 7"
-					;:use (:instance f1-prime-continuous (x x) (y x1))
-					;)
 	  ("Subgoal 7"
 	   :use ((:instance norm-of-der)
 		 (:instance f1-prime-is-derivative (x x) (y x1)))

@@ -131,7 +131,6 @@
 		   (:instance limited*small->small (x x) (y (- x y)))
 		   (:instance limited*small->small (x 1/3) (y (* x (- x y))))
 		   )
-	     ;:in-theory (enable nsa-theory)
 	     ))
     )
   )
@@ -155,23 +154,9 @@
 		   (:instance limited*small->small (x (+ x y)) (y (- x y)))
 		   (:instance limited*small->small (x 1/3) (y (* (+ x y) (- x y))))
 		   )
-					;:in-theory (enable nsa-theory)
 	     ))
     )
   )
- 
- 
-					;(defthm lemma-1
-					;  (implies (and (realp x)
-					;		 (realp y)
-					;		 (i-close x y))
-					;	    (i-close (square x) (* x (- (* 2 x) y))))
-					;  :hints (("Goal"
-					;	    :use ((:instance i-close-symmetric)
-					;		  (:instance )
-					;	    ;:in-theory (enable nsa-theory)
-					;	    ))
-					; )
  
  (defthm f1-prime-is-derivative
    (implies (and (standardp x)

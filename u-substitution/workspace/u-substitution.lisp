@@ -1,10 +1,10 @@
 
 (IN-PACKAGE "ACL2")
 
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/nsa" :dir :system))
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2" :dir :system)
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/chain-rule" :dir :system)
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/continuity-product" :dir :system)
+(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/nsa"))
+(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2")
+(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/chain-rule")
+(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/continuity-product")
 
 (encapsulate
  (
@@ -694,7 +694,7 @@
 
 (encapsulate
  ()
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top" :dir :system))
+ (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top"))
  
  (defthm f-prime-definition
    (implies (and (inside-interval-p x (fi-range))
@@ -797,7 +797,7 @@
 
 (encapsulate
  ()
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top" :dir :system))
+ (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top"))
  (defthm fi-prime-definition
    (implies (and (inside-interval-p x (f-o-fi-domain))
 		 (standardp x))

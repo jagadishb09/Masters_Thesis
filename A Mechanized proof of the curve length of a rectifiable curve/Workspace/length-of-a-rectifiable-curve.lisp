@@ -8,7 +8,7 @@
 (encapsulate
  ((c (x) t)
   (c-derivative (x) t))
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta" :dir :system))
+ (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"))
 
  (local (defun c(x) x))
  (local (defun c-derivative (x) (declare (ignore x)) 1))

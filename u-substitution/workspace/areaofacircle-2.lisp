@@ -1,7 +1,7 @@
 (in-package "ACL2")
 
 (include-book "/users/jagadishbapanapally/Documents/Github/Research/u-substitution/workspace/areaofacircle-0")
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/sin-cos-minimal"))
+(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"))
 
 (defun f-sine (x)
   (if (realp x)
@@ -67,56 +67,51 @@
 		  (standardp (acl2-cosine x)))	 
 	 ))
 
-(encapsulate
- ()
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/sin-cos-minimal"))
- (defthmd f-sine-differentiable
-   (implies (and (standardp x)
-		 (inside-interval-p x (f2-range))
-		 (inside-interval-p y1 (f2-range))
-		 (inside-interval-p y2 (f2-range))
-		 (i-close x y1) (not (= x y1))
-		 (i-close x y2) (not (= x y2))
+(defthmd f-sine-differentiable
+  (implies (and (standardp x)
+		(inside-interval-p x (f2-range))
+		(inside-interval-p y1 (f2-range))
+		(inside-interval-p y2 (f2-range))
+		(i-close x y1) (not (= x y1))
+		(i-close x y2) (not (= x y2))
+		)
+	   (and (i-limited (/ (- (f-sine x) (f-sine y1)) (- x y1)))
+		(i-close (/ (- (f-sine x) (f-sine y1)) (- x y1))
+			 (/ (- (f-sine x) (f-sine y2)) (- x y2)))
+		))
+  :hints (("Goal"
+	   :use ((:instance f2-range-real)
+		 (:instance f2-range-real(x y1))
+		 (:instance f2-range-real(x y2))
+		 (:instance acl2-sine-derivative(x x)
+			    (y y1))
+		 (:instance standards-are-limited-forward (x (acl2-cosine x)))
+		 (:instance i-close-limited-2
+			    (y (acl2-cosine x))
+			    (x (/ (- (f-sine x) (f-sine y1)) (- x y1))))
+		 (:instance acl2-sine)
+		 (:instance acl2-cosine)
+		 (:instance f-sine-std)
+		 (:instance f-sine)
+		 (:instance f-sine (x y1))
+		 (:instance f-sine (x y2))
+		 (:instance acl2-cosine-std)
+		 (:instance acl2-sine-derivative(x x)
+			    (y y2))
+		 (:instance i-close-transitive
+			    (x (/ (- (f-sine x) (f-sine y1)) (- x y1)))
+			    (y (acl2-cosine x))
+			    (z (/ (- (f-sine x) (f-sine y2)) (- x y2)))
+			    )
+		 (:instance i-close-symmetric
+			    (x (/ (- (f-sine x) (f-sine y2)) (- x y2)))
+			    (y (acl2-cosine x))
+			    )
 		 )
-	    (and (i-limited (/ (- (f-sine x) (f-sine y1)) (- x y1)))
-		 (i-close (/ (- (f-sine x) (f-sine y1)) (- x y1))
-			  (/ (- (f-sine x) (f-sine y2)) (- x y2)))
-		 ))
-   :hints (("Goal"
-	    :use ((:instance f2-range-real)
-		  (:instance f2-range-real(x y1))
-		  (:instance f2-range-real(x y2))
-		  (:instance acl2-sine-derivative(x x)
-			     (y y1))
-		  (:instance standards-are-limited-forward (x (acl2-cosine x)))
-					; (:instance i-large-uminus (x (acl2-cosine x)))
-		  (:instance i-close-limited-2
-			     (y (acl2-cosine x))
-			     (x (/ (- (f-sine x) (f-sine y1)) (- x y1))))
-		  (:instance acl2-sine)
-		  (:instance acl2-cosine)
-		  (:instance f-sine-std)
-		  (:instance f-sine)
-		  (:instance f-sine (x y1))
-		  (:instance f-sine (x y2))
-		  (:instance acl2-cosine-std)
-		  (:instance acl2-sine-derivative(x x)
-			     (y y2))
-		  (:instance i-close-transitive
-			     (x (/ (- (f-sine x) (f-sine y1)) (- x y1)))
-			     (y (acl2-cosine x))
-			     (z (/ (- (f-sine x) (f-sine y2)) (- x y2)))
-			     )
-		  (:instance i-close-symmetric
-			     (x (/ (- (f-sine x) (f-sine y2)) (- x y2)))
-			     (y (acl2-cosine x))
-			     )
-		  )
-	    :in-theory nil
-	    ))
-   
-   )
- )
+	   :in-theory nil
+	   ))
+  
+  )
 
 (local
  (defthm lemma-23
@@ -132,7 +127,7 @@
  nil
 
  (local (in-theory nil))
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top" :dir :system))
+ (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top"))
  (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/nsa"))
 
  (local (defthm f2-x-def
@@ -1225,4 +1220,3 @@
 		 )
 	   ))
   )
-
