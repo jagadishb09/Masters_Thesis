@@ -7,16 +7,50 @@
 
 (encapsulate
  ((c (x) t)
-  (c-derivative (x) t))
+  (c-derivative (x) t)
+  (der-sum-sqrt-domain() t))
  (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"))
 
  (local (defun c(x) x))
  (local (defun c-derivative (x) (declare (ignore x)) 1))
+ (local (defun der-sum-sqrt-domain () (interval 0 1)))
+
+ (defthm c-acl2numberp
+   (implies (acl2-numberp x)
+	    (acl2-numberp (c x)))
+   )
+
+ (defthm der-sum-sqrt-domain-real
+   (implies (inside-interval-p x (der-sum-sqrt-domain))
+	    (realp x))
+   )
+
+ (defthm der-sum-sqrt-domain-non-trivial
+   (or (null (interval-left-endpoint (der-sum-sqrt-domain)))
+       (null (interval-right-endpoint (der-sum-sqrt-domain)))
+       (< (interval-left-endpoint (der-sum-sqrt-domain))
+	  (interval-right-endpoint (der-sum-sqrt-domain))))
+   :rule-classes nil)
+
+ (defthm intervalp-der-sqrt-domain
+   (interval-p (der-sum-sqrt-domain))
+   )
+
+ (defthm c-differentiable
+   (implies (and (standardp x)
+		 (inside-interval-p x (der-sum-sqrt-domain))
+		 (inside-interval-p y1 (der-sum-sqrt-domain))
+		 (inside-interval-p y2 (der-sum-sqrt-domain))
+		 (i-close x y1) (not (= x y1))
+		 (i-close x y2) (not (= x y2)))
+	    (and (i-limited (/ (- (c x) (c y1)) (- x y1)))
+		 (i-close (/ (- (c x) (c y1)) (- x y1))
+			  (/ (- (c x) (c y2)) (- x y2))))))
  
  (defthm c-der-lemma
    (implies (and (standardp x)
-		 (realp x)
-		 (realp y)
+		 (inside-interval-p x (der-sum-sqrt-domain))
+		 (inside-interval-p y (der-sum-sqrt-domain))
 		 (i-close x y) 
 		 (not (= x y))
 		 )
@@ -26,8 +60,8 @@
  (defthm c-der-continuous
    (implies 
     (and (standardp x)
-	 (realp x)
-	 (realp y)
+	 (inside-interval-p x (der-sum-sqrt-domain))
+	 (inside-interval-p y (der-sum-sqrt-domain))
 	 (i-close x y)
 	 )
     (i-close (c-derivative x) (c-derivative y)))
@@ -80,8 +114,8 @@
 
 (defthmd rc-ic-der-cont
   (implies (and (standardp x)
-		(realp x)
-		(realp y)
+		(inside-interval-p x (der-sum-sqrt-domain))
+		(inside-interval-p y (der-sum-sqrt-domain))
 		(i-close x y))
 	   (and (i-close (rc-derivative x) (rc-derivative y))
 		(i-close (ic-derivative x) (ic-derivative y))))
@@ -115,8 +149,8 @@
 
 (defthmd rc-der-sqr-cont
   (implies (and (standardp x)
-		(realp x)
-		(realp y)
+		(inside-interval-p x (der-sum-sqrt-domain))
+		(inside-interval-p y (der-sum-sqrt-domain))
 		(i-close x y))
 	   (i-close (rc-der-sqr x) (rc-der-sqr y)))
   :hints (("Goal"
@@ -151,8 +185,8 @@
 
 (defthmd ic-der-sqr-cont
   (implies (and (standardp x)
-		(realp x)
-		(realp y)
+		(inside-interval-p x (der-sum-sqrt-domain))
+		(inside-interval-p y (der-sum-sqrt-domain))
 		(i-close x y))
 	   (i-close (ic-der-sqr x) (ic-der-sqr y)))
   
@@ -229,8 +263,8 @@
 
 (defthm der-sqr-sum-cont
   (implies (and (standardp x)
-                (realp x)
-                (realp y)
+		(inside-interval-p x (der-sum-sqrt-domain))
+		(inside-interval-p y (der-sum-sqrt-domain))
                 (i-close x y))
            (i-close (der-sqr-sum x) (der-sqr-sum y)))
   
@@ -248,8 +282,6 @@
 (defun der-sum-sqrt(x)
   (acl2-sqrt (der-sqr-sum x))
   )
-
-(defun der-sum-sqrt-domain () (interval nil nil))
 
 
 (encapsulate
@@ -579,7 +611,13 @@
 				       )
                  )
            )
-          ("Subgoal 2"
+	  ("Subgoal 1"
+	   :use (:instance intervalp-der-sqrt-domain)
+	   )
+	  ("Subgoal 2"
+           :use ((:instance der-sum-sqrt-domain-non-trivial))
+           )
+          ("Subgoal 3"
            :use ((:instance der-sum-sqrt-cont(x x) (y y)))
            ))
   )

@@ -1,5 +1,43 @@
 (in-package "ACL2")
 
+(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/A Mechanized proof of the curve length of a rectifiable curve/Workspace/length-of-a-rectifiable-curve")
+
+(defthm der-sum-sqrt-cont
+  (implies (and (standardp x)
+		(inside-interval-p x (der-sum-sqrt-domain))
+		(inside-interval-p y (der-sum-sqrt-domain))
+		(i-close x y)
+		)
+	   (i-close (der-sum-sqrt x) 
+		    (der-sum-sqrt y)
+		    )))
+
+(deftun imag-c (x)
+  (imagpart (c x))
+  )
+
+(defthm imag-c-cont
+  (implies (and (standardp x)
+		(inside-interval-p x (der-sum-sqrt-domain))
+		(inside-interval-p y (der-sum-sqrt-domain))
+		(i-close x y)
+		)
+	   (i-close (imag-c x) 
+		    (imag-c y)
+		    )))
+
+(defthm ic-der*der-sum-sqrt-cont
+  (implies (and (standardp x)
+		(inside-interval-p x (der-sum-sqrt-domain))
+		(inside-interval-p y (der-sum-sqrt-domain))
+		(i-close x y)
+		)
+	   (i-close (* ic-derivative (der-sum-sqrt x) 
+		    (der-sum-sqrt y)
+		    ))
+  )
+
+
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/trig")
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2")
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square")
