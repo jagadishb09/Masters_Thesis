@@ -1,0 +1,831 @@
+"-*- Mode: auto-revert -*-"
+/Users/jagadishbapanapally/Documents/GitHub/Research/spheres
+HOST: jagadishs-mbp.uwyo.edu
+
+Environment variables:
+ACL2_CUSTOMIZATION=NONE
+ACL2_SYSTEM_BOOKS=/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books
+ACL2=/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/saved_acl2r
+
+Temp lisp file:
+(acl2::value :q)
+(acl2::in-package "ACL2")
+; see github issue #638 (waterfall-parallelism and profiling): 
+#+(and hons (not acl2-par)) (profile-fn 'prove)
+#+(and hons (not acl2-par)) (profile-fn 'certify-book-fn)
+(acl2::lp)
+(set-debugger-enable :bt)
+(acl2::in-package "ACL2")
+
+(set-ld-error-action (quote (:exit 1)) state)
+(set-inhibit-output-lst (list (quote prove) (quote proof-tree) (quote warning) (quote observation) (quote event) (quote history)))
+
+(acl2::assign acl2::get-internal-time-as-realtime acl2::t)
+#-cmucl (acl2::gc-verbose t)
+; instructions from .acl2 file :
+
+
+; Prevent reset-prehistory while loading .port files
+(acl2::assign acl2::skip-reset-prehistory acl2::t)
+; portculli for included books:
+(acl2::ld "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square.port" :ld-missing-input-ok t)
+(acl2::ld "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/trig.port" :ld-missing-input-ok t)
+(acl2::ld "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2.port" :ld-missing-input-ok t)
+(acl2::ld "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta.port" :ld-missing-input-ok t)
+(acl2::ld "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta.port" :ld-missing-input-ok t)
+#!ACL2 (set-ld-error-action (quote :continue) state)
+
+; certify-book command flags: ? t
+#!ACL2 (er-progn (time$ (certify-book "volume-of-a-sphere" ? t  ))
+                                 (value (prog2$ #+hons (memsum)
+                                                 #-hons nil
+                                                 (exit 43))))
+--- End temp lisp file ---
+
+TARGET: volume-of-a-sphere
+STEP: certify
+Start of output:
+
+This is SBCL 1.5.3, an implementation of ANSI Common Lisp.
+More information about SBCL is available at <http://www.sbcl.org/>.
+
+SBCL is free software, provided as is, with absolutely no warranty.
+It is mostly in the public domain; some portions are provided under
+BSD-style licenses.  See the CREDITS and COPYING files in the
+distribution for more information.
+
+ ACL2 Version 8.2(r) built June 6, 2019  15:20:54.
+ Copyright (C) 2019, Regents of the University of Texas
+ ACL2 comes with ABSOLUTELY NO WARRANTY.  This is free software and you
+ are welcome to redistribute it under certain conditions.  For details,
+ see the LICENSE file distributed with ACL2.
+
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + WARNING: This is NOT an ACL2 release; it is a development snapshot  +
+ + (git commit hash: bcabaa3b4cb03ddaae2a82a26dcbd66e5232ed61).        +
+ + On rare occasions development snapshots may be incomplete, fragile, +
+ + or unable to pass the usual regression tests.                       +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ Initialized with (INITIALIZE-ACL2 'INCLUDE-BOOK *ACL2-PASS-2-FILES*).
+ See the documentation topic note-8-2 for recent changes.
+ Note: We have modified the prompt in some underlying Lisps to further
+ distinguish it from the ACL2 prompt.
+
+ACL2 Version 8.2(r).  Level 1.  Cbd 
+"/Users/jagadishbapanapally/Documents/GitHub/Research/spheres/".
+System books directory 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/".
+Type :help for help.
+Type (good-bye) to quit completely out of ACL2.
+
+ACL2(r) !>
+Exiting the ACL2 read-eval-print loop.  To re-enter, execute (LP).
+* #<PACKAGE "ACL2">
+* PROVE
+* CERTIFY-BOOK-FN
+* 
+ACL2 Version 8.2(r).  Level 1.  Cbd 
+"/Users/jagadishbapanapally/Documents/GitHub/Research/spheres/".
+System books directory 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/".
+Type :help for help.
+Type (good-bye) to quit completely out of ACL2.
+
+ACL2(r) !><state>
+ACL2(r) !> "ACL2"
+ACL2(r) !> (:EXIT 1)
+ACL2(r) !> (PROVE PROOF-TREE
+        WARNING OBSERVATION EVENT HISTORY)
+ACL2(r) !> T
+ACL2(r) !>GC-VERBOSE is not supported in this Common Lisp.
+Contact the ACL2 developers if you would like to help add such support.NIL
+ACL2(r) !> T
+ACL2(r) !>
+ACL2 Version 8.2(r).  Level 2.  Cbd 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/".
+System books directory 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/".
+Type :help for help.
+Type (good-bye) to quit completely out of ACL2.
+
+ACL2(r) !>> "ACL2"
+ACL2(r) !>>
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.06 seconds (prove: 0.00, print: 0.00, other: 0.06)
+ "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/cowles/portcullis.lisp"
+ACL2(r) !>>
+Summary
+Form:  ( INCLUDE-BOOK "data-structures/portcullis" ...)
+Rules: NIL
+Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
+ "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/data-structures/portcullis.lisp"
+ACL2(r) !>>Bye.
+ :EOF
+ACL2(r) !>
+ACL2 Version 8.2(r).  Level 2.  Cbd 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/".
+System books directory 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/".
+Type :help for help.
+Type (good-bye) to quit completely out of ACL2.
+
+ACL2(r) !>> "ACL2"
+ACL2(r) !>>
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2(r) !>>Bye.
+ :EOF
+ACL2(r) !>
+ACL2 Version 8.2(r).  Level 2.  Cbd 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/".
+System books directory 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/".
+Type :help for help.
+Type (good-bye) to quit completely out of ACL2.
+
+ACL2(r) !>> "ACL2"
+ACL2(r) !>>
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2(r) !>>Bye.
+ :EOF
+ACL2(r) !>
+ACL2 Version 8.2(r).  Level 2.  Cbd 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/".
+System books directory 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/".
+Type :help for help.
+Type (good-bye) to quit completely out of ACL2.
+
+ACL2(r) !>> "ACL2"
+ACL2(r) !>>
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2(r) !>>Bye.
+ :EOF
+ACL2(r) !>
+ACL2 Version 8.2(r).  Level 2.  Cbd 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/".
+System books directory 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/".
+Type :help for help.
+Type (good-bye) to quit completely out of ACL2.
+
+ACL2(r) !>> "ACL2"
+ACL2(r) !>>
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2(r) !>>Bye.
+ :EOF
+ACL2(r) !> :CONTINUE
+ACL2(r) !>
+Summary
+Form:  ( INCLUDE-BOOK 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square"
+...)
+Rules: NIL
+Time:  0.07 seconds (prove: 0.00, print: 0.00, other: 0.07)
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square.lisp"
+
+Summary
+Form:  ( INCLUDE-BOOK 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/trig"
+...)
+Rules: NIL
+Time:  0.06 seconds (prove: 0.00, print: 0.00, other: 0.06)
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/trig.lisp"
+
+Summary
+Form:  ( INCLUDE-BOOK 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2"
+...)
+Rules: NIL
+Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2.lisp"
+
+Summary
+Form:  ( DEFUN RAD ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+RAD
+
+Summary
+Form:  ( DEFTHM RAD-DEF ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION RAD))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+RAD-DEF
+
+Summary
+Form:  ( ENCAPSULATE ((RAD NIL ...) ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+T
+
+Summary
+Form:  ( DEFUN F1 ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION SQUARE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+F1
+
+Summary
+Form:  ( DEFUN F ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION SQUARE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+F
+
+Summary
+Form:  ( DEFUN F1-PRIME ...)
+Rules: ((:TYPE-PRESCRIPTION F))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+F1-PRIME
+
+Summary
+Form:  ( DEFUN F1-DOMAIN ...)
+Rules: ((:TYPE-PRESCRIPTION INTERVAL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+F1-DOMAIN
+
+Summary
+Form:  ( DEFTHM INTERVALP-F1-DOMAIN ...)
+Rules: ((:EXECUTABLE-COUNTERPART F1-DOMAIN)
+        (:EXECUTABLE-COUNTERPART INTERVAL-P)
+        (:TYPE-PRESCRIPTION INTERVAL-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  2
+INTERVALP-F1-DOMAIN
+
+Summary
+Form:  ( DEFTHM F1-DOMAIN-REAL ...)
+Rules: ((:FORWARD-CHAINING INSIDE-INTERVAL-IS-REAL)
+        (:TYPE-PRESCRIPTION INSIDE-INTERVAL-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+F1-DOMAIN-REAL
+
+Summary
+Form:  ( DEFTHM F1-DOMAIN-NON-TRIVIAL ...)
+Rules: ((:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART F1-DOMAIN)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:EXECUTABLE-COUNTERPART INTERVAL-LEFT-ENDPOINT)
+        (:EXECUTABLE-COUNTERPART INTERVAL-RIGHT-ENDPOINT)
+        (:EXECUTABLE-COUNTERPART NULL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  19
+F1-DOMAIN-NON-TRIVIAL
+
+Summary
+Form:  ( DEFTHM F1-REAL ...)
+Rules: ((:TYPE-PRESCRIPTION F1))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+F1-REAL
+
+Summary
+Form:  ( DEFTHM F1-PRIME-REAL ...)
+Rules: ((:TYPE-PRESCRIPTION F1-PRIME))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+F1-PRIME-REAL
+
+Summary
+Form:  ( INCLUDE-BOOK 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"
+...)
+Rules: NIL
+Time:  0.07 seconds (prove: 0.00, print: 0.00, other: 0.07)
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta.lisp"
+Goal'
+
+Summary
+Form:  ( DEFTHM LEMMA-1 ...)
+Rules: ((:DEFINITION =)
+        (:DEFINITION F1)
+        (:DEFINITION FIX)
+        (:DEFINITION NOT)
+        (:DEFINITION REALFIX)
+        (:DEFINITION SQUARE)
+        (:EXECUTABLE-COUNTERPART F1-DOMAIN)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING INSIDE-INTERVAL-IS-REAL)
+        (:REWRITE ASSOCIATIVITY-OF-*)
+        (:REWRITE ASSOCIATIVITY-OF-+)
+        (:REWRITE COMMUTATIVITY-2-OF-*)
+        (:REWRITE COMMUTATIVITY-2-OF-+)
+        (:REWRITE COMMUTATIVITY-OF-*)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE DISTRIBUTIVITY)
+        (:REWRITE DISTRIBUTIVITY-OF-MINUS-OVER-+)
+        (:REWRITE FUNCTIONAL-COMMUTATIVITY-OF-MINUS-*-RIGHT)
+        (:REWRITE FUNCTIONAL-SELF-INVERSION-OF-MINUS)
+        (:REWRITE MINUS-CANCELLATION-ON-LEFT)
+        (:REWRITE RAD-DEF)
+        (:REWRITE REALP-*)
+        (:TYPE-PRESCRIPTION INSIDE-INTERVAL-P)
+        (:TYPE-PRESCRIPTION NONNEGATIVE-PRODUCT))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1583
+LEMMA-1
+Goal'
+
+Summary
+Form:  ( DEFTHM LEMMA-2 ...)
+Rules: ((:DEFINITION =)
+        (:DEFINITION FIX)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE COMMUTATIVITY-2-OF-*)
+        (:REWRITE COMMUTATIVITY-OF-*)
+        (:REWRITE DISTRIBUTIVITY)
+        (:REWRITE FUNCTIONAL-COMMUTATIVITY-OF-MINUS-*-RIGHT)
+        (:REWRITE INVERSE-OF-*)
+        (:REWRITE UNICITY-OF-1))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  695
+LEMMA-2
+
+Summary
+Form:  ( DEFTHM LEMMA-3 ...)
+Rules: ((:TYPE-PRESCRIPTION NONNEGATIVE-PRODUCT))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+LEMMA-3
+Goal'
+
+Summary
+Form:  ( DEFTHM LEMMA-4 ...)
+Rules: ((:DEFINITION =)
+        (:DEFINITION FIX)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE INVERSE-OF-+-AS=0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  126
+LEMMA-4
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM LEMMA-5 ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Hint-events: ((:USE F1-DOMAIN-REAL)
+              (:USE LEMMA-1)
+              (:USE LEMMA-2)
+              (:USE LEMMA-3)
+              (:USE LEMMA-4)
+              (:USE RAD-DEF)
+              (:USE REALFIX)
+              (:USE SQUARE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  756
+LEMMA-5
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM LEMMA-6 ...)
+Rules: ((:DEFINITION =)
+        (:DEFINITION ABS)
+        (:DEFINITION FIX)
+        (:DEFINITION NOT)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-*)
+        (:EXECUTABLE-COUNTERPART F1-DOMAIN)
+        (:EXECUTABLE-COUNTERPART I-LARGE)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART SUBINTERVAL-P)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING INSIDE-INTERVAL-IS-REAL)
+        (:FORWARD-CHAINING STANDARDS-ARE-LIMITED-FORWARD)
+        (:REWRITE <-*-/-LEFT-COMMUTED)
+        (:REWRITE <-*-LEFT-CANCEL)
+        (:REWRITE <-+-NEGATIVE-0-2)
+        (:REWRITE DISTRIBUTIVITY)
+        (:REWRITE DISTRIBUTIVITY-OF-MINUS-OVER-+)
+        (:REWRITE FOLD-CONSTS-IN-*)
+        (:REWRITE FUNCTIONAL-COMMUTATIVITY-OF-MINUS-*-RIGHT)
+        (:REWRITE FUNCTIONAL-SELF-INVERSION-OF-MINUS)
+        (:REWRITE I-CLOSE-REFLEXIVE)
+        (:REWRITE I-CLOSE-TRANSITIVE)
+        (:REWRITE INSIDE-SUBINTERVAL)
+        (:REWRITE SMALL-IF-<-SMALL)
+        (:REWRITE UNICITY-OF-1)
+        (:TYPE-PRESCRIPTION I-CLOSE)
+        (:TYPE-PRESCRIPTION I-SMALL)
+        (:TYPE-PRESCRIPTION INSIDE-INTERVAL-P)
+        (:TYPE-PRESCRIPTION NONNEGATIVE-PRODUCT))
+Hint-events: ((:USE F1-DOMAIN-REAL)
+              (:USE I-CLOSE)
+              (:USE LIMITED*SMALL->SMALL)
+              (:USE STANDARDS-ARE-LIMITED-FORWARD))
+Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Prover steps counted:  4074
+LEMMA-6
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM LEMMA-7 ...)
+Rules: ((:DEFINITION =)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART F1-DOMAIN)
+        (:EXECUTABLE-COUNTERPART I-LARGE)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART SUBINTERVAL-P)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING INSIDE-INTERVAL-IS-REAL)
+        (:FORWARD-CHAINING STANDARDS-ARE-LIMITED-FORWARD)
+        (:REWRITE I-CLOSE-REFLEXIVE)
+        (:REWRITE I-CLOSE-TRANSITIVE)
+        (:REWRITE INSIDE-SUBINTERVAL)
+        (:TYPE-PRESCRIPTION I-CLOSE)
+        (:TYPE-PRESCRIPTION I-LARGE)
+        (:TYPE-PRESCRIPTION I-SMALL)
+        (:TYPE-PRESCRIPTION INSIDE-INTERVAL-P))
+Hint-events: ((:USE F1-DOMAIN-REAL)
+              (:USE I-CLOSE)
+              (:USE I-CLOSE-LIMITED)
+              (:USE I-LIMITED-PLUS)
+              (:USE LIMITED*SMALL->SMALL)
+              (:USE STANDARDS-ARE-LIMITED-FORWARD))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  2362
+LEMMA-7
+Goal'
+Goal''
+Goal'''
+
+Summary
+Form:  ( DEFTHM F1-PRIME-IS-DERIVATIVE ...)
+Rules: ((:DEFINITION =)
+        (:DEFINITION ABS)
+        (:DEFINITION F)
+        (:DEFINITION F1)
+        (:DEFINITION F1-PRIME)
+        (:DEFINITION FIX)
+        (:DEFINITION I-CLOSE)
+        (:DEFINITION I-SMALL)
+        (:DEFINITION NOT)
+        (:DEFINITION REALFIX)
+        (:DEFINITION SQUARE)
+        (:EXECUTABLE-COUNTERPART F1-DOMAIN)
+        (:EXECUTABLE-COUNTERPART I-LARGE)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART SUBINTERVAL-P)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING INSIDE-INTERVAL-IS-REAL)
+        (:FORWARD-CHAINING STANDARDS-ARE-LIMITED-FORWARD)
+        (:REWRITE ASSOCIATIVITY-OF-*)
+        (:REWRITE ASSOCIATIVITY-OF-+)
+        (:REWRITE COMMUTATIVITY-2-OF-*)
+        (:REWRITE COMMUTATIVITY-2-OF-+)
+        (:REWRITE COMMUTATIVITY-OF-*)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE DIFFERENTIAL-RDFN2-LIMITED)
+        (:REWRITE DISTRIBUTIVITY)
+        (:REWRITE DISTRIBUTIVITY-OF-MINUS-OVER-+)
+        (:REWRITE EQUAL-*-/-1)
+        (:REWRITE FUNCTIONAL-COMMUTATIVITY-OF-MINUS-*-RIGHT)
+        (:REWRITE FUNCTIONAL-SELF-INVERSION-OF-MINUS)
+        (:REWRITE I-CLOSE-SMALL-2)
+        (:REWRITE I-LARGE-INTEGER-IS-LARGE)
+        (:REWRITE I-LARGE-UDIVIDE)
+        (:REWRITE I-LIMITED-TIMES)
+        (:REWRITE I-SMALL-PLUS)
+        (:REWRITE I-SMALL-UMINUS)
+        (:REWRITE INSIDE-INTERVAL-ROLLES-CRITICAL-POINT-+-/I-LARGE-INTEGER)
+        (:REWRITE INSIDE-INTERVAL-ROLLES-CRITICAL-POINT-2)
+        (:REWRITE INSIDE-SUBINTERVAL)
+        (:REWRITE INVERSE-OF-+-AS=0)
+        (:REWRITE LARGE-IF->-LARGE)
+        (:REWRITE LEMMA-3)
+        (:REWRITE LIMITED-SQUEEZE)
+        (:REWRITE MINUS-CANCELLATION-ON-LEFT)
+        (:REWRITE RAD-DEF)
+        (:REWRITE RDFN-SUBDOMAIN-IS-SUBDOMAIN)
+        (:REWRITE ROLLES-THEOREM-2-COROLLARY)
+        (:REWRITE STANDARD-PART-OF-PLUS)
+        (:REWRITE STANDARD-PART-OF-STANDARDP)
+        (:REWRITE STANDARD-PART-OF-TIMES)
+        (:REWRITE STANDARD-PART-OF-UMINUS)
+        (:REWRITE STANDARD-ROLLES-CRITICAL-POINT-2)
+        (:REWRITE STANDARDP-TIMES)
+        (:TYPE-PRESCRIPTION I-CLOSE)
+        (:TYPE-PRESCRIPTION INSIDE-INTERVAL-P)
+        (:TYPE-PRESCRIPTION NONNEGATIVE-PRODUCT))
+Hint-events: ((:USE F1-DOMAIN-REAL)
+              (:USE I-SMALL)
+              (:USE I-SMALL-PLUS)
+              (:USE LEMMA-5)
+              (:USE LEMMA-6)
+              (:USE LEMMA-7)
+              (:USE RAD-DEF))
+Time:  56.76 seconds (prove: 56.76, print: 0.00, other: 0.00)
+Prover steps counted:  11551375
+F1-PRIME-IS-DERIVATIVE
+
+Summary
+Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
+Rules: NIL
+Time:  56.89 seconds (prove: 56.82, print: 0.00, other: 0.07)
+Prover steps counted:  11560971
+T
+Goal'
+Goal''
+Goal'''
+
+Summary
+Form:  ( DEFTHM F1-PRIME-CONTINUOUS ...)
+Rules: ((:DEFINITION F)
+        (:DEFINITION F1-PRIME)
+        (:DEFINITION FIX)
+        (:DEFINITION I-CLOSE)
+        (:DEFINITION I-SMALL)
+        (:DEFINITION NOT)
+        (:DEFINITION REALFIX)
+        (:DEFINITION SQUARE)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING STANDARDS-ARE-LIMITED-FORWARD)
+        (:REWRITE COMMUTATIVITY-2-OF-+)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE DISTRIBUTIVITY-OF-MINUS-OVER-+)
+        (:REWRITE RAD-DEF)
+        (:REWRITE REALP-*)
+        (:REWRITE STANDARD-PART-OF-PLUS)
+        (:REWRITE STANDARD-PART-OF-STANDARDP)
+        (:REWRITE STANDARD-PART-OF-TIMES)
+        (:REWRITE STANDARD-PART-OF-UMINUS)
+        (:REWRITE STANDARDP-TIMES)
+        (:TYPE-PRESCRIPTION I-CLOSE)
+        (:TYPE-PRESCRIPTION NONNEGATIVE-PRODUCT))
+Hint-events: ((:USE SQUARE-IS-CONTINUOUS))
+Time:  0.08 seconds (prove: 0.08, print: 0.00, other: 0.00)
+Prover steps counted:  20521
+F1-PRIME-CONTINUOUS
+
+Summary
+Form:  ( DEFUN MAP-F1-PRIME ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MAP-F1-PRIME
+
+Summary
+Form:  ( DEFUN RIEMANN-F1-PRIME ...)
+Rules: ((:TYPE-PRESCRIPTION DOTPROD))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+RIEMANN-F1-PRIME
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 2'
+Subgoal 2''
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM LIMITED-RIEMANN-F1-SMALL-PARTITION ...)
+Rules: ((:DEFINITION DELTAS)
+        (:DEFINITION DOTPROD)
+        (:DEFINITION F)
+        (:DEFINITION F1-PRIME)
+        (:DEFINITION MAP-F1-PRIME)
+        (:DEFINITION NOT)
+        (:DEFINITION REALFIX)
+        (:DEFINITION RIEMANN-F1-PRIME)
+        (:DEFINITION SQUARE)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART F1-DOMAIN)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:EXECUTABLE-COUNTERPART INTERVAL-LEFT-ENDPOINT)
+        (:EXECUTABLE-COUNTERPART INTERVAL-P)
+        (:EXECUTABLE-COUNTERPART INTERVAL-RIGHT-ENDPOINT)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART NULL)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING INSIDE-INTERVAL-IS-REAL)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE RAD-DEF)
+        (:REWRITE REALP-*)
+        (:TYPE-PRESCRIPTION I-CLOSE)
+        (:TYPE-PRESCRIPTION INSIDE-INTERVAL-P)
+        (:TYPE-PRESCRIPTION RIEMANN-F1-PRIME))
+Hint-events: ((:USE F1-PRIME-CONTINUOUS)
+              (:USE LIMITED-RIEMANN-RCFN-SMALL-PARTITION)
+              (:USE RAD-DEF))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  3015
+LIMITED-RIEMANN-F1-SMALL-PARTITION
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 5639)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFUN-STD STRICT-INT-F1-PRIME ...)
+Rules: ((:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART F1-DOMAIN)
+        (:EXECUTABLE-COUNTERPART SUBINTERVAL-P)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING INSIDE-INTERVAL-IS-REAL)
+        (:REWRITE INSIDE-SUBINTERVAL)
+        (:REWRITE LIMITED-RIEMANN-F1-SMALL-PARTITION)
+        (:REWRITE STANDARDP-STANDARD-PART)
+        (:TYPE-PRESCRIPTION INSIDE-INTERVAL-P)
+        (:TYPE-PRESCRIPTION RIEMANN-F1-PRIME))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  361
+STRICT-INT-F1-PRIME
+
+Summary
+Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  3376
+T
+
+Summary
+Form:  ( DEFUN INT-F1-PRIME ...)
+Rules: ((:TYPE-PRESCRIPTION STRICT-INT-F1-PRIME))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+INT-F1-PRIME
+Subgoal 7
+Subgoal 7'
+Subgoal 7''
+Subgoal 6
+Subgoal 6'
+Subgoal 6''
+Subgoal 5
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM APPLY-FTC-2-VOL ...)
+Rules: ((:DEFINITION =)
+        (:DEFINITION DELTAS)
+        (:DEFINITION DOTPROD)
+        (:DEFINITION F)
+        (:DEFINITION F1-PRIME)
+        (:DEFINITION INT-F1-PRIME)
+        (:DEFINITION MAP-F1-PRIME)
+        (:DEFINITION NOT)
+        (:DEFINITION REALFIX)
+        (:DEFINITION RIEMANN-F1-PRIME)
+        (:DEFINITION SQUARE)
+        (:DEFINITION STRICT-INT-F1-PRIME)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART F1-DOMAIN)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:EXECUTABLE-COUNTERPART INTERVAL-LEFT-ENDPOINT)
+        (:EXECUTABLE-COUNTERPART INTERVAL-P)
+        (:EXECUTABLE-COUNTERPART INTERVAL-RIGHT-ENDPOINT)
+        (:EXECUTABLE-COUNTERPART NULL)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING INSIDE-INTERVAL-IS-REAL)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE F1-REAL)
+        (:REWRITE RAD-DEF)
+        (:REWRITE REALP-*)
+        (:TYPE-PRESCRIPTION I-CLOSE)
+        (:TYPE-PRESCRIPTION INSIDE-INTERVAL-P))
+Hint-events: ((:USE F1-PRIME-CONTINUOUS)
+              (:USE F1-PRIME-IS-DERIVATIVE)
+              (:USE FTC-2))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  5210
+APPLY-FTC-2-VOL
+
+Summary
+Form:  ( DEFUN VOLUME-OF-A-SPHERE ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+VOLUME-OF-A-SPHERE
+
+Summary
+Form:  ( INCLUDE-BOOK 
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"
+...)
+Rules: NIL
+Time:  0.05 seconds (prove: 0.00, print: 0.00, other: 0.05)
+"/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta.lisp"
+Goal'
+Goal''
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VOLUME-OF-A-SPHERE-EQUALS ...)
+Rules: ((:DEFINITION =)
+        (:DEFINITION AFTER-INTERVAL-P)
+        (:DEFINITION BEFORE-INTERVAL-P)
+        (:DEFINITION F1)
+        (:DEFINITION FIX)
+        (:DEFINITION HIDE)
+        (:DEFINITION INSIDE-INTERVAL-P)
+        (:DEFINITION NOT)
+        (:DEFINITION REALFIX)
+        (:DEFINITION SQUARE)
+        (:DEFINITION SYNP)
+        (:DEFINITION VOLUME-OF-A-SPHERE)
+        (:EXECUTABLE-COUNTERPART BINARY-*)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART F1-DOMAIN)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:EXECUTABLE-COUNTERPART INSIDE-INTERVAL-P)
+        (:EXECUTABLE-COUNTERPART INTERVAL-LEFT-ENDPOINT)
+        (:EXECUTABLE-COUNTERPART INTERVAL-RIGHT-ENDPOINT)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART REALP)
+        (:EXECUTABLE-COUNTERPART SQUARE)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:META CANCEL_PLUS-EQUAL-CORRECT)
+        (:REWRITE APPLY-FTC-2-VOL)
+        (:REWRITE COMMUTATIVITY-2-OF-*)
+        (:REWRITE COMMUTATIVITY-OF-*)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE DISTRIBUTIVITY)
+        (:REWRITE EQUAL-MINUS-0)
+        (:REWRITE F1-DOMAIN-REAL)
+        (:REWRITE FOLD-CONSTS-IN-*)
+        (:REWRITE FUNCTIONAL-COMMUTATIVITY-OF-MINUS-*-RIGHT)
+        (:REWRITE INVERSE-BEFORE-INSIDE-AFTER-TRICHOTOMY)
+        (:REWRITE RAD-DEF)
+        (:REWRITE REALP-*)
+        (:REWRITE TIMES-ZERO)
+        (:REWRITE UNICITY-OF-0))
+Hint-events: ((:USE APPLY-FTC-2-VOL) (:USE RAD-DEF))
+Time:  4.78 seconds (prove: 4.78, print: 0.00, other: 0.00)
+Prover steps counted:  1134795
+VOLUME-OF-A-SPHERE-EQUALS
+
+Summary
+Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
+Rules: NIL
+Time:  4.83 seconds (prove: 4.78, print: 0.00, other: 0.06)
+Prover steps counted:  1134795
+T
+
+Summary
+Form:  ( INCLUDE-BOOK "volume-of-a-sphere" ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+
+
+
+Summary
+Form:  (CERTIFY-BOOK "volume-of-a-sphere" ...)
+Rules: NIL
+Time:  62.04 seconds (prove: 61.71, print: 0.00, other: 0.33)
+Prover steps counted:  12724894
+; (EV-REC *RETURN-LAST-ARG3* ...) took 
+; 62.04 seconds realtime, 62.02 seconds runtime
+; (6,835,116,320 bytes allocated).
+
+Sorted by *memoize-summary-order-list* = (TOTAL-TIME NUMBER-OF-CALLS).
+(CERTIFY-BOOK-FN
+ Calls                                                                        1
+ Time of all outermost calls                                              62.04
+ Time per call                                                            62.04
+ Heap bytes allocated                                            6.84e+9; 50.3%
+ Heap bytes allocated per call                                          6.84e+9
+ To PROVE                                     1.21e+3 calls took 6.17e+1; 99.5%
+ To self/unprofiled functions                                    3.33e-1;  0.5%
+ From other functions                        1.00e+0 calls took 6.20e+1; 100.0%)
+(PROVE
+ Calls                                                                  1.21e+3
+ Time of all outermost calls                                              61.71
+ Time per call                                                             0.05
+ Heap bytes allocated                                            6.76e+9; 49.7%
+ Heap bytes allocated per call                                          5.60e+6
+ From CERTIFY-BOOK-FN                        1.21e+3 calls took 6.17e+1; 100.0%)
+Exit code from ACL2 is 43
+-rw-r--r--  1 jagadishbapanapally  staff  17678 Jan 26 18:43 volume-of-a-sphere.cert

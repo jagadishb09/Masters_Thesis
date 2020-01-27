@@ -19,8 +19,12 @@
     0)
   )
 
-(defun f1-prime (x)
+(defun f(x)
   (- (square (rad)) (square x))
+  )
+
+(defun f1-prime (x)
+  (f x)
   )
 
 (defun f1-domain () (interval nil nil))

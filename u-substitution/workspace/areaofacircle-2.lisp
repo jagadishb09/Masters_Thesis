@@ -1,6 +1,6 @@
 (in-package "ACL2")
 
-(include-book "/users/jagadishbapanapally/Documents/Github/Research/u-substitution/workspace/areaofacircle-0")
+(include-book "/Users/jagadishbapanapally/Documents/Github/Research/u-substitution/workspace/areaofacircle-0")
 (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"))
 
 (defun f-sine (x)
@@ -646,7 +646,7 @@
 (encapsulate
  nil
  (local (in-theory nil))
- (local (include-book "/users/jagadishbapanapally/Documents/AreaofACircle/areaofacircle-0"))
+ (local (include-book "/Users/jagadishbapanapally/Documents/Github/Research/u-substitution/workspace/areaofacircle-0"))
  (defthmd x-in-interval-implies-x+-eps-in-interval-f2-range
    (implies (and (inside-interval-p x (f2-range))
 		 (standardp x)
@@ -750,7 +750,7 @@
 (encapsulate
  nil
  (local (in-theory nil))
- (local (include-book "/users/jagadishbapanapally/Documents/AreaofACircle/areaofacircle-0"))
+ (local (include-book "/Users/jagadishbapanapally/Documents/Github/Research/u-substitution/workspace/areaofacircle-0"))
  (defthmd x-in-interval-implies-x+-eps-in-interval-fi-dom
    (implies (and (inside-interval-p x (fi-domain))
 		 (standardp x)

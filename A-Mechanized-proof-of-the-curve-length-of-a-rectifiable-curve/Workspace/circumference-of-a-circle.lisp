@@ -4,7 +4,7 @@
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/trig")
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta")
 (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/nsa")
-(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/A Mechanized proof of the curve length of a rectifiable curve/Workspace/length-of-a-rectifiable-curve")
+(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/A-Mechanized-proof-of-the-curve-length-of-a-rectifiable-curve/Workspace/length-of-a-rectifiable-curve")
 
 (encapsulate 
  ((rad() t))
@@ -320,7 +320,7 @@
   )
 
 (defthm circle-der-sum-sqrt-domain-real
-  (implies (inside-interval-p x (der-sum-sqrt-domain))
+  (implies (inside-interval-p x (circle-der-sum-sqrt-domain))
 	   (realp x))
   )
 

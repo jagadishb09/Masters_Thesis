@@ -1,6 +1,6 @@
 (in-package "ACL2")
 
-(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/A Mechanized proof of the curve length of a rectifiable curve/Workspace/length-of-a-rectifiable-curve")
+(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/A-Mechanized-proof-of-the-curve-length-of-a-rectifiable-curve/Workspace/length-of-a-rectifiable-curve")
 
 
 (encapsulate
@@ -114,10 +114,26 @@
 	   ))
   )
 
-(defun imc*der-sum-sqrt (x)
-  (* (imagpart (c x)) (der-sum-sqrt x))
+(defun imc (x)
+  (imagpart (c x))
   )
 
+(defun imc*der-sum-sqrt (x)
+  (* (imc x) (der-sum-sqrt x))
+  )
+
+(defthm imc*der-sum-sqrt-continuous
+  (implies (and (standardp x)
+		(inside-interval-p x (der-sum-sqrt-domain))
+		(i-close x y)
+		(inside-interval-p y (der-sum-sqrt-domain)))
+	   (i-close (imc*der-sum-sqrt x) (imc*der-sum-sqrt y))
+	   )
+      :hints (("Goal"
+	       :use (:instance surface-continuous)
+	       :in-theory (disable i-close)
+	       ))
+  )
 
 (defun map-imc*der-sum-sqrt (p)
   (if (consp p)
@@ -160,7 +176,7 @@
 	     :use ((:instance der-sum-sqrt-domain-non-trivial))
 	     )
 	    ("Subgoal 3"
-	     :use ((:instance surface-continuous (x x) (y y)))
+	     :use ((:instance imc*der-sum-sqrt-continuous (x x) (y y)))
 	     ))
     ))
 
