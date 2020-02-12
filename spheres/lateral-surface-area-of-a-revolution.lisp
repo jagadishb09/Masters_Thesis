@@ -1,7 +1,7 @@
 (in-package "ACL2")
 
 (include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/A-Mechanized-proof-of-the-curve-length-of-a-rectifiable-curve/Workspace/length-of-a-rectifiable-curve")
-
+(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/trig")
 
 (encapsulate
  ()
@@ -80,12 +80,32 @@
 	   (standardp (c x)))	   
   )
 
+(local
+ (defthm acl2-sqrt-lemma
+   (implies (and (standardp x)
+		 (acl2-numberp x))
+	    (standardp (acl2-sqrt x))
+	    )
+   :hints (("Goal"
+	    :use (
+		  (:DEFINITION FIX)
+		  (:FORWARD-CHAINING STANDARDS-ARE-LIMITED-FORWARD)
+		  (:REWRITE LIMITED-ITER-SQRT-STRONG)
+		  (:REWRITE STANDARDP-STANDARD-PART)
+		  (:TYPE-PRESCRIPTION ITER-SQRT-TYPE-PRESCRIPTION))
+	    :in-theory (enable acl2-sqrt)
+	    ))
+   )
+ )
+
 (defthm std-der-sum-sqrt
   (implies (and (standardp x)
 		(acl2-numberp x))
 	   (standardp (der-sum-sqrt x)))
   :hints (("Goal"
-	   :use (:instance der-sqr-sum-standard)
+	   :use ((:instance der-sqr-sum-standard)
+		 (:instance acl2-sqrt-lemma)
+		 )
 	   ))
   )
 
@@ -119,8 +139,21 @@
   )
 
 (defun imc*der-sum-sqrt (x)
-  (* (imc x) (der-sum-sqrt x))
+  (* 2 (acl2-pi) (imc x) (der-sum-sqrt x))
   )
+
+(local
+ (defthm acl2-pi-limited
+   (i-limited (acl2-pi))
+   :hints (("Goal"
+	    :use ((:instance pi-between-2-4)
+		  (:instance limited-squeeze (a 2) (b 4) (x (acl2-pi)))
+		  )
+	    :in-theory (enable nsa-theory interval-definition-theory standards-are-limited)
+	    ))
+   )
+ )
+ 
 
 (defthm imc*der-sum-sqrt-continuous
   (implies (and (standardp x)
@@ -130,8 +163,21 @@
 	   (i-close (imc*der-sum-sqrt x) (imc*der-sum-sqrt y))
 	   )
       :hints (("Goal"
-	       :use (:instance surface-continuous)
-	       :in-theory (disable i-close)
+	       :use ((:instance surface-continuous)
+		     (:instance i-small-plus-lemma
+				(x  (* (imagpart (c x)) (der-sum-sqrt x)))
+				(y (* (imagpart (c y)) (der-sum-sqrt y))))
+		     (:instance limited*small->small
+				(x (* 2 (acl2-pi)))
+				(y (- (* (imagpart (c x)) (der-sum-sqrt x)) (* (imagpart (c y)) (der-sum-sqrt y)))))
+		     (:instance pi-between-2-4)
+		     (:instance i-limited-times (x 2) (y (acl2-pi)))
+		     (:instance acl2-pi-limited)
+		     (:instance i-close-plus-lemma-2
+				(x (* 2 (acl2-pi) (imc x) (der-sum-sqrt x)))
+				(y (* 2 (acl2-pi) (imc y) (der-sum-sqrt y))))
+		     )
+	       :in-theory (enable nsa-theory)
 	       ))
   )
 

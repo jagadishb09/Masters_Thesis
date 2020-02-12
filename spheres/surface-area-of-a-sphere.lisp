@@ -4,7 +4,7 @@
 (include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/spheres/lateral-surface-area-of-a-revolution")
 
 (defun imcircle*norm-der (x)
-  (* (imf x)  (circle-der-sum-sqrt x))
+  (* 2 (acl2-pi) (imf x)  (circle-der-sum-sqrt x))
   )
 
 (defthm imcircle*norm-der-continuous
@@ -143,7 +143,7 @@
 
 (defthm f1-prime-=
   (implies (inside-interval-p x (circle-der-sum-sqrt-domain))
-	   (and (= (f1-prime x) (* (rad) (rad) (acl2-sine x)))
+	   (and (= (f1-prime x) (* 2 (acl2-pi) (rad) (rad) (acl2-sine x)))
 		(= (f1-prime x) (imcircle*norm-der x))))
   
   :hints (("Goal"
@@ -164,7 +164,7 @@
 
 (defun f1 (x)
   (if (inside-interval-p x (circle-der-sum-sqrt-domain))
-      (- (* (rad) (rad) (acl2-cosine x)))
+      (- (* 2 (acl2-pi) (rad) (rad) (acl2-cosine x)))
     0)
   )
 
@@ -297,14 +297,41 @@
    )
  )
 
-(defthm f1-prime-is-derivative
+(local
+ (defthm acl2-pi-limited
+   (i-limited (acl2-pi))
+   :hints (("Goal"
+	    :use ((:instance pi-between-2-4)
+		  (:instance limited-squeeze (a 2) (b 4) (x (acl2-pi)))
+		  )
+	    :in-theory (enable standards-are-limited)
+	    ))
+   )
+ )
+
+(local
+ (defthm f1-prime-deri-lemma
+   (implies (inside-interval-p x (circle-der-sum-sqrt-domain))
+	    (=  (* (imf x)  (circle-der-sum-sqrt x)) (* (rad) (rad) (acl2-sine x))))
+   :hints (("Goal"
+	    :use ((:instance f1-prime-=)
+		  (:instance acl2-pi-limited)
+		  (:instance i-limited-times (x 2) (y (acl2-pi)))
+		  )
+	    :in-theory (disable circle-der-sum-sqrt imf)
+	    ))
+   )
+ )
+
+(defthmd f1-prime-is-derivative-lemma
   (implies (and (standardp x)
 		(inside-interval-p x (circle-der-sum-sqrt-domain))
 		(inside-interval-p y (circle-der-sum-sqrt-domain))
 		(i-close x y)
 		(not (= x y))
 		)
-	   (i-close (/ (- (f1 x) (f1 y)) (- x y)) (f1-prime x))
+	   (i-close (- (/ (- (* (rad) (rad) (acl2-cosine x)) (* (rad) (rad) (acl2-cosine y))) (- x y)))
+		    (* (imf x) (circle-der-sum-sqrt x)))
 	   )
   :hints (("Goal"
 	   :use (
@@ -313,7 +340,6 @@
 		 (:instance rad-det)
 		 (:instance standards-are-limited-forward (x (- (rad))))
 		 (:instance limited*small->small (x (- (rad))) (y (- (/ (- (sphere-x x) (sphere-x y)) (- x y)) (sx-derivative x))))
-		 (:instance i-close (x (/ (- (f1 x) (f1 y)) (- x y))) (y (f1-prime x)))
 		 (:instance i-small-uminus (x (+ (* (RAD) (RAD) (ACL2-SINE X))
 						 (* (RAD)
 						    (RAD)
@@ -326,9 +352,36 @@
 		 (:instance circle-der-sum-sqrt-domain-real)
 		 (:instance circle-der-sum-sqrt-domain-real (x y))
 		 (:instance circle-der-sum-sqrt-eq)
-		 (:instance f1-prime-=)
+		 (:instance f1-prime-deri-lemma)
 		 )
 	   :in-theory (enable complex-definition nsa-theory)
+	   ))
+  )
+
+(defthmd f1-prime-is-derivative
+  (implies (and (standardp x)
+		(inside-interval-p x (circle-der-sum-sqrt-domain))
+		(inside-interval-p y (circle-der-sum-sqrt-domain))
+		(i-close x y)
+		(not (= x y))
+		)
+	   (i-close (/ (- (f1 x) (f1 y)) (- x y)) (f1-prime x)))
+  :hints (("Goal"
+	   :use ((:instance i-small-plus-lemma
+			    (x (- (/ (- (* (rad) (rad) (acl2-cosine x)) (* (rad) (rad) (acl2-cosine y))) (- x y))))
+			    (y (* (imf x) (circle-der-sum-sqrt x))))
+		 (:instance limited*small->small
+			    (x (* 2 (acl2-pi)))
+			    (y (- (- (/ (- (* (rad) (rad) (acl2-cosine x)) (* (rad) (rad) (acl2-cosine y))) (- x y)))
+				  (* (imf x) (circle-der-sum-sqrt x)))) 
+			     )
+		 (:instance acl2-pi-limited)
+		 (:instance i-limited-times (x 2) (y (acl2-pi)))
+		 (:instance i-close (x (/ (- (f1 x) (f1 y)) (- x y))) (y (f1-prime x)))
+		 (:instance f1-prime-is-derivative-lemma)
+		 (:instance f1-prime-=)
+		 )
+	   :in-theory (enable-disable (complex-definition nsa-theory) (imf circle-der-sum-sqrt))
 	   ))
   )
 
@@ -421,7 +474,7 @@
 	  ))
 
 (defun surface-area-of-a-sphere ()
-  (* 2 (acl2-pi) (int-f1-prime 0 (acl2-pi)))
+  (int-f1-prime 0 (acl2-pi))
   )
 
 (defthm surface-area-of-a-sphere-equals
