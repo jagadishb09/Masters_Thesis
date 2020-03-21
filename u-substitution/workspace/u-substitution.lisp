@@ -1,10 +1,10 @@
 
 (IN-PACKAGE "ACL2")
 
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/nsa"))
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/chain-rule")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/continuity-product")
+(local (include-book "nonstd/nsa/nsa" :dir :system))
+(include-book "nonstd/integrals/ftc-2" :dir :system)
+(include-book "nonstd/nsa/chain-rule" :dir :system)
+(include-book "nonstd/nsa/continuity-product" :dir :system)
 
 (encapsulate
  (
@@ -694,7 +694,7 @@
 
 (encapsulate
  ()
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top"))
+ (local (include-book "arithmetic-5/top" :dir :system))
  
  (defthm f-prime-definition
    (implies (and (inside-interval-p x (fi-range))
@@ -797,7 +797,7 @@
 
 (encapsulate
  ()
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top"))
+ (local (include-book "arithmetic-5/top" :dir :system))
  (defthm fi-prime-definition
    (implies (and (inside-interval-p x (f-o-fi-domain))
 		 (standardp x))
@@ -1080,18 +1080,64 @@
 
 (encapsulate
  nil
+ 
  (local
-  (defthm lemma-1
-    (implies (and 
-	      (acl2-numberp a)
-	      (acl2-numberp b)
-	      (acl2-numberp c)
-	      (acl2-numberp d))
-	     (equal (/ (- a b) (- c d))
-		    (/ (- b a) (- d c))
-		    )
-	     )
-    ))
+  (encapsulate
+   nil
+   (local (include-book "arithmetic/equalities" :dir :system))
+
+   (defthm lemma-1-1
+     (implies (and (acl2-numberp a)
+		   (acl2-numberp b))
+	      (equal (* -1 (- a b))
+		     (- b a)
+		     ))
+     
+     )
+
+   (defthm lemma-1-2
+     (implies (and (acl2-numberp a)
+		   (acl2-numberp b)
+		   (acl2-numberp c)
+		   (acl2-numberp d))
+	      (equal (/ (* -1 (- a b)) (* -1 (- c d)))
+		     (/ (- b a) (- d c)))
+	      )
+     :hints (("Goal"
+	      :use ((:instance lemma-1-1)
+		    (:instance lemma-1-1 (a c) (b d)))
+	      :in-theory nil
+	      ))
+     )
+
+   (defthm lemma-1-3
+     (implies (and (acl2-numberp a)
+		   (acl2-numberp b)
+		   (acl2-numberp c)
+		   (acl2-numberp d))
+	      (equal (* (/ a b) (/ c d))
+		     (/ (* a c) (* b d))))
+     )
+   
+   (defthm lemma-1
+     (implies (and 
+	       (acl2-numberp a)
+	       (acl2-numberp b)
+	       (acl2-numberp c)
+	       (acl2-numberp d))
+	      (equal (/ (- a b) (- c d))
+		     (/ (- b a) (- d c))
+		     )
+	      )
+     :hints (("Goal"
+	      :use ((:instance lemma-1-3
+			       (a -1) (b -1) (c (- a b)) (d (- c d)))
+		    (:instance lemma-1-2))
+	      
+	      ))
+     )
+   )
+  )
 
  (local
   (defthm lemma

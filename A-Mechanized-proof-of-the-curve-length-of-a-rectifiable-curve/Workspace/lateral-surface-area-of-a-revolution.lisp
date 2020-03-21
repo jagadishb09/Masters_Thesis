@@ -1,7 +1,7 @@
 (in-package "ACL2")
 
-(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/A-Mechanized-proof-of-the-curve-length-of-a-rectifiable-curve/Workspace/length-of-a-rectifiable-curve")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/trig")
+(include-book "length-of-a-rectifiable-curve")
+(include-book "nonstd/nsa/trig" :dir :system)
 
 (encapsulate
  ()

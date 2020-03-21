@@ -1,7 +1,7 @@
 (in-package "ACL2")
 
-(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/A-Mechanized-proof-of-the-curve-length-of-a-rectifiable-curve/Workspace/circumference-of-a-circle")
-(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/spheres/lateral-surface-area-of-a-revolution")
+(include-book "circumference-of-a-circle")
+(include-book "lateral-surface-area-of-a-revolution")
 
 (defun imcircle*norm-der (x)
   (* 2 (acl2-pi) (imf x)  (circle-der-sum-sqrt x))

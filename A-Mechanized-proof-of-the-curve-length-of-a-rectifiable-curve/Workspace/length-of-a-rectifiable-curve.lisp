@@ -1,15 +1,15 @@
 (in-package "ACL2")
 
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/intervals")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/continuous-function")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/equalities")
+(include-book "nonstd/nsa/inverse-square" :dir :system)
+(include-book "nonstd/nsa/intervals" :dir :system)
+(include-book "nonstd/integrals/continuous-function" :dir :system)
+(include-book "arithmetic/equalities" :dir :system)
 
 (encapsulate
  ((c (x) t)
   (c-derivative (x) t)
   (der-sum-sqrt-domain() t))
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"))
+ (local (include-book "arithmetic/top-with-meta" :dir :system))
 
  (local (defun c(x) x))
  (local (defun c-derivative (x) (declare (ignore x)) 1))
@@ -287,7 +287,7 @@
 (encapsulate
  ()
  
- (local (include-book  "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/inequalities"))
+ (local (include-book  "arithmetic/inequalities" :dir :system))
  
  (local
   (defthm ineq-lemma1

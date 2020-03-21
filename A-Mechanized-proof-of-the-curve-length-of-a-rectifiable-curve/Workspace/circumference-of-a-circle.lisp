@@ -1,10 +1,10 @@
 (in-package "ACL2")
 
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/exp")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/trig")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/nsa")
-(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/A-Mechanized-proof-of-the-curve-length-of-a-rectifiable-curve/Workspace/length-of-a-rectifiable-curve")
+(include-book "nonstd/nsa/exp" :dir :system)
+(include-book "nonstd/nsa/trig" :dir :system)
+(include-book "arithmetic/top-with-meta" :dir :system)
+(include-book "nonstd/nsa/nsa" :dir :system)
+(include-book "length-of-a-rectifiable-curve")
 
 (encapsulate 
  ((rad() t))
@@ -109,7 +109,7 @@
 	    ))
    )
 
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/exp-minimal"))
+ (local (include-book "nonstd/workshops/2011/reid-gamboa-differentiator/support/exp-minimal" :dir :system))
 
  (local
   (defderivative sin-eqn-deriv 
@@ -337,7 +337,7 @@
 
 (encapsulate
  ()
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-trig"))
+ (local (include-book "nonstd/nsa/inverse-trig" :dir :system))
  
  (local
   (defthm sine-bound
@@ -553,7 +553,7 @@
 (encapsulate
  ()
  
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/ln"))
+ (local (include-book "nonstd/nsa/ln" :dir :system))
  
  (local
   (defthm dis*-1
@@ -764,7 +764,7 @@
    )
  )
 
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2")
+(include-book "nonstd/integrals/ftc-2" :dir :system)
 
 (defthmd apply-ftc-2
   (implies (and (inside-interval-p a (circle-der-sum-sqrt-domain))

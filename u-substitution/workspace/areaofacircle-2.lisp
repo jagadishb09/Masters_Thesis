@@ -1,7 +1,7 @@
 (in-package "ACL2")
 
-(include-book "/Users/jagadishbapanapally/Documents/Github/Research/u-substitution/workspace/areaofacircle-0")
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"))
+(include-book "areaofacircle-0")
+(local (include-book "arithmetic/top-with-meta" :dir :system))
 
 (defun f-sine (x)
   (if (realp x)
@@ -127,8 +127,8 @@
  nil
 
  (local (in-theory nil))
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top"))
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/nsa"))
+ (local (include-book "arithmetic-5/top" :dir :system))
+ (local (include-book "nonstd/nsa/nsa" :dir :system))
 
  (local (defthm f2-x-def
 	  (implies (realp x)
@@ -646,7 +646,7 @@
 (encapsulate
  nil
  (local (in-theory nil))
- (local (include-book "/Users/jagadishbapanapally/Documents/Github/Research/u-substitution/workspace/areaofacircle-0"))
+ (local (include-book "areaofacircle-0"))
  (defthmd x-in-interval-implies-x+-eps-in-interval-f2-range
    (implies (and (inside-interval-p x (f2-range))
 		 (standardp x)
@@ -750,7 +750,7 @@
 (encapsulate
  nil
  (local (in-theory nil))
- (local (include-book "/Users/jagadishbapanapally/Documents/Github/Research/u-substitution/workspace/areaofacircle-0"))
+ (local (include-book "areaofacircle-0"))
  (defthmd x-in-interval-implies-x+-eps-in-interval-fi-dom
    (implies (and (inside-interval-p x (fi-domain))
 		 (standardp x)
@@ -905,22 +905,95 @@
 	  )
   )
 
+(encapsulate
+ nil
+ (local (include-book "arithmetic/equalities" :dir :system))
 
-(defthmd differential-f-sine-o-f2-derivative-1
-  (implies (and (inside-interval-p x (fi-domain))
-		(standardp x)
-		(i-close x x1)
-		(not (= x x1))
-		(inside-interval-p x1 (fi-domain)))
-	   (i-close  (/ (- (acl2-sine (* 2 x)) (acl2-sine (* 2 x1))) (- x x1)) (* 2 (acl2-cosine (* 2 x)))))
-  :hints (("Goal"
-	   :use (:instance differential-f-sine-o-f2-derivative
-			   (x x)
-			   (eps (- x1 x))
-			   )
-	   :in-theory (enable nsa-theory)
-	   ))
+ (local
+  (defthm lemma-1-1
+    (implies (and (acl2-numberp a)
+		  (acl2-numberp b))
+	     (equal (* -1 (- a b))
+		    (- b a)
+		    ))
+    
+    )
   )
+
+ (local
+  (defthm lemma-1-2
+    (implies (and (acl2-numberp a)
+		  (acl2-numberp b)
+		  (acl2-numberp c)
+		  (acl2-numberp d))
+	     (equal (/ (* -1 (- a b)) (* -1 (- c d)))
+		    (/ (- b a) (- d c)))
+	     )
+    :hints (("Goal"
+	     :use ((:instance lemma-1-1)
+		   (:instance lemma-1-1 (a c) (b d)))
+	     :in-theory nil
+	     ))
+    )
+  )
+
+ (local
+  (defthm lemma-1-3
+    (implies (and (acl2-numberp a)
+		  (acl2-numberp b)
+		  (acl2-numberp c)
+		  (acl2-numberp d))
+	     (equal (* (/ a b) (/ c d))
+		    (/ (* a c) (* b d))))
+    )
+  )
+
+ (local
+  (defthm lemma-1
+    (implies (and 
+	      (acl2-numberp a)
+	      (acl2-numberp b)
+	      (acl2-numberp c)
+	      (acl2-numberp d))
+	     (equal (/ (- a b) (- c d))
+		    (/ (- b a) (- d c))
+		    )
+	     )
+    :hints (("Goal"
+	     :use ((:instance lemma-1-3
+			      (a -1) (b -1) (c (- a b)) (d (- c d)))
+		   (:instance lemma-1-2))
+	     
+	     ))
+    )
+  )
+
+ (defthmd differential-f-sine-o-f2-derivative-1
+   (implies (and (inside-interval-p x (fi-domain))
+		 (standardp x)
+		 (i-close x x1)
+		 (not (= x x1))
+		 (inside-interval-p x1 (fi-domain)))
+	    (i-close  (/ (- (acl2-sine (* 2 x)) (acl2-sine (* 2 x1))) (- x x1)) (* 2 (acl2-cosine (* 2 x)))))
+   :hints (("Goal"
+	    :use (:instance differential-f-sine-o-f2-derivative
+			    (x x)
+			    (eps (- x1 x))
+			    )
+	    )
+	   ("Subgoal 2"
+	    :in-theory (enable nsa-theory)
+	    )
+	   ("Subgoal 1"
+	    :use (:instance lemma-1
+			    (a (acl2-sine (* 2 x1))) (b (acl2-sine (* 2 x)))
+			    (c x1) (d x))
+	    )
+	   )
+   )
+ )
+
+
 
 (local
  (defthm lemma-25

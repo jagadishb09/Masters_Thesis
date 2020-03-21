@@ -1,10 +1,10 @@
 (in-package "ACL2")
 
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/realp"))
-(local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/inequalities"))
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-trig")
-(include-book "/users/jagadishbapanapally/Documents/Github/Research/u-substitution/workspace/u-substitution")
+(local (include-book "arithmetic/realp" :dir :system))
+(local (include-book "arithmetic/inequalities" :dir :system))
+(include-book "nonstd/nsa/inverse-square" :dir :system)
+(include-book "nonstd/nsa/inverse-trig" :dir :system)
+(include-book "u-substitution")
 
 (encapsulate 
  ((rad() t)
@@ -503,7 +503,7 @@
 
 (encapsulate
  ()
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/exp-minimal"))
+ (local (include-book "nonstd/workshops/2011/reid-gamboa-differentiator/support/exp-minimal" :dir :system))
 
  (local
   (defthm-std acl2-exp-standard
@@ -1420,7 +1420,7 @@
 (encapsulate
  nil
  (local (in-theory nil))
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic-5/top"))
+ (local (include-book "arithmetic-5/top" :dir :system))
  (local
   (defthm lemma-12
     (implies (acl2-numberp x)
