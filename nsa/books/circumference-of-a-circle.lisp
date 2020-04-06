@@ -1,10 +1,9 @@
 (in-package "ACL2")
 
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/exp")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/trig")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/nsa")
-(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/A-Mechanized-proof-of-the-curve-length-of-a-rectifiable-curve/Workspace/length-of-a-rectifiable-curve")
+(include-book "nonstd/nsa/exp" :dir :system)
+(include-book "nonstd/nsa/trig" :dir :system)
+(include-book "arithmetic/top-with-meta" :dir :system)
+(include-book "length-of-a-rectifiable-curve")
 
 (encapsulate 
  ((rad() t))
@@ -109,7 +108,7 @@
 	    ))
    )
 
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/workshops/2011/reid-gamboa-differentiator/support/exp-minimal"))
+ (local (include-book "nonstd/workshops/2011/reid-gamboa-differentiator/support/exp-minimal" :dir :system))
 
  (local
   (defderivative sin-eqn-deriv 
@@ -306,7 +305,7 @@
   (acl2-sqrt (circle-der-sqr-sum x))
   )
 
-(defun circle-der-sum-sqrt-domain () (interval nil nil))
+(defun circle-domain () (interval nil nil))
 
 (defun map-circle-der-sum-sqrt (p)
   (if (consp p)
@@ -319,25 +318,25 @@
            (map-circle-der-sum-sqrt (cdr p)))
   )
 
-(defthm circle-der-sum-sqrt-domain-real
-  (implies (inside-interval-p x (circle-der-sum-sqrt-domain))
+(defthm circle-domain-real
+  (implies (inside-interval-p x (circle-domain))
 	   (realp x))
   )
 
-(defthm circle-der-sum-sqrt-domain-non-trivial
-  (or (null (interval-left-endpoint (circle-der-sum-sqrt-domain)))
-      (null (interval-right-endpoint (circle-der-sum-sqrt-domain)))
-      (< (interval-left-endpoint (circle-der-sum-sqrt-domain))
-	 (interval-right-endpoint (circle-der-sum-sqrt-domain))))
+(defthm circle-domain-non-trivial
+  (or (null (interval-left-endpoint (circle-domain)))
+      (null (interval-right-endpoint (circle-domain)))
+      (< (interval-left-endpoint (circle-domain))
+	 (interval-right-endpoint (circle-domain))))
   :rule-classes nil)
 
 (defthm intervalp-circle-der-sqrt-domain
-  (interval-p (circle-der-sum-sqrt-domain))
+  (interval-p (circle-domain))
   )
 
 (encapsulate
  ()
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-trig"))
+ (local (include-book "nonstd/nsa/inverse-trig" :dir :system))
  
  (local
   (defthm sine-bound
@@ -352,9 +351,9 @@
 
  (defthm circle-differentiable
    (implies (and (standardp x)
-		 (inside-interval-p x (circle-der-sum-sqrt-domain))
-		 (inside-interval-p y1 (circle-der-sum-sqrt-domain))
-		 (inside-interval-p y2 (circle-der-sum-sqrt-domain))
+		 (inside-interval-p x (circle-domain))
+		 (inside-interval-p y1 (circle-domain))
+		 (inside-interval-p y2 (circle-domain))
 		 (i-close x y1) (not (= x y1))
 		 (i-close x y2) (not (= x y2)))
 	    (and (i-limited (/ (- (circle x) (circle y1)) (- x y1)))
@@ -363,7 +362,7 @@
    :hints (("Goal"
 	    :use ((:instance circle-der-lemma (x x) (y y1))
 		  (:instance circle-der-lemma (x x) (y y2))
-		  (:instance circle-der-sum-sqrt-domain-real)
+		  (:instance circle-domain-real)
 		  (:instance cosine-bound)
 		  (:instance sine-bound)
 		  (:instance limited-squeeze (a -1) (x (acl2-cosine x)) (b 1))
@@ -397,9 +396,9 @@
 
  (defthm circle-continuous
    (implies (and (standardp x)
-		 (inside-interval-p x (circle-der-sum-sqrt-domain))
+		 (inside-interval-p x (circle-domain))
 		 (i-close x y)
-		 (inside-interval-p y (circle-der-sum-sqrt-domain)))
+		 (inside-interval-p y (circle-domain)))
 	    (i-close (circle x) (circle y)))
    :hints (("Goal"
 	    :use ((:instance circle-differentiable (y1 y) (y2 y))
@@ -408,16 +407,15 @@
 			     (y (+ x (- y)))))
 	    :in-theory (enable-disable (i-close)
 				       (circle-differentiable
-									lemma-1)))))
-	    ;:in-theory (enable-disable (i-close) (circle-differentiable lemma-1 circle-equal circle)))))
+					lemma-1)))))
  )
 
 
 (defthm circle-der-sum-sqrt-cont
   (implies 
    (and (standardp x)
-        (inside-interval-p x (circle-der-sum-sqrt-domain))
-        (inside-interval-p y (circle-der-sum-sqrt-domain))
+        (inside-interval-p x (circle-domain))
+        (inside-interval-p y (circle-domain))
         (i-close x y)
         )
    (i-close
@@ -428,7 +426,7 @@
   :hints (("Goal"
            :use (
                  (:functional-instance der-sum-sqrt-cont
-				       (der-sum-sqrt-domain circle-der-sum-sqrt-domain)
+				       (c-domain circle-domain)
 				       (der-sum-sqrt circle-der-sum-sqrt)
 				       (der-sqr-sum circle-der-sqr-sum)
 				       (ic-der-sqr icircle-der-sqr)
@@ -439,22 +437,16 @@
 				       (c circle)
 				       )
                  ))
-	  ("Subgoal 2"
-	   :use (:instance circle-differentiable (x x) (y1 y1))
-	   )
-          ("Subgoal 4" 
+          ("Subgoal 2" 
            :use (
                  (:instance circle-der-continuous (x x) (y y))
                  )
            )
           
-          ("Subgoal 3" 
+          ("Subgoal 1" 
            :use (
                  (:instance circle-der-lemma (x x) (y y))
                  )
-           )
-          ("Subgoal 1"
-           :in-theory (enable interval)
            )
           )
   )
@@ -466,8 +458,8 @@
   (defthm limited-riemann-circle-der-sum-sqrt-small-partition
     (implies (and (realp a) (standardp a)
 		  (realp b) (standardp b)
-		  (inside-interval-p a (circle-der-sum-sqrt-domain))
-		  (inside-interval-p b (circle-der-sum-sqrt-domain))
+		  (inside-interval-p a (circle-domain))
+		  (inside-interval-p b (circle-domain))
 		  (< a b))
 	     (i-limited (riemann-circle-der-sum-sqrt (make-small-partition a b))))
     
@@ -476,7 +468,7 @@
 		   (:functional-instance limited-riemann-der-sum-sqrt-small-partition
 					 (riemann-der-sum-sqrt riemann-circle-der-sum-sqrt)
 					 (map-der-sum-sqrt map-circle-der-sum-sqrt)
-					 (der-sum-sqrt-domain circle-der-sum-sqrt-domain)
+					 (c-domain circle-domain)
 					 (der-sum-sqrt circle-der-sum-sqrt)
 					 (der-sqr-sum circle-der-sqr-sum)
 					 (ic-der-sqr icircle-der-sqr)
@@ -495,8 +487,8 @@
  (defun-std strict-int-circle-der-sum-sqrt (a b)
    (if (and (realp a)
 	    (realp b)
-	    (inside-interval-p a (circle-der-sum-sqrt-domain))
-	    (inside-interval-p b (circle-der-sum-sqrt-domain))
+	    (inside-interval-p a (circle-domain))
+	    (inside-interval-p b (circle-domain))
 	    (< a b))
        (standard-part (riemann-circle-der-sum-sqrt (make-small-partition a b)))
      0))
@@ -506,8 +498,8 @@
   (implies (and (standardp a)
                 (standardp b)
                 (<= a b)
-                (inside-interval-p a (circle-der-sum-sqrt-domain))
-                (inside-interval-p b (circle-der-sum-sqrt-domain))
+                (inside-interval-p a (circle-domain))
+                (inside-interval-p b (circle-domain))
                 (partitionp p)
                 (equal (car p) a)
                 (equal (car (last p)) b)
@@ -520,7 +512,7 @@
                  (:functional-instance strict-int-der-sum-sqrt-is-integral-of-der-sum-sqrt
 					 (riemann-der-sum-sqrt riemann-circle-der-sum-sqrt)
 					 (map-der-sum-sqrt map-circle-der-sum-sqrt)
-					 (der-sum-sqrt-domain circle-der-sum-sqrt-domain)
+					 (c-domain circle-domain)
 					 (der-sum-sqrt circle-der-sum-sqrt)
 					 (der-sqr-sum circle-der-sqr-sum)
 					 (ic-der-sqr icircle-der-sqr)
@@ -553,7 +545,7 @@
 (encapsulate
  ()
  
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/ln"))
+ (local (include-book "nonstd/nsa/ln" :dir :system))
  
  (local
   (defthm dis*-1
@@ -719,8 +711,8 @@
  (local
   (defthm circle-der-sum-sqrt-is-derivative-2
     (implies (and (standardp x)
-		  (inside-interval-p x (circle-der-sum-sqrt-domain))
-		  (inside-interval-p y (circle-der-sum-sqrt-domain))
+		  (inside-interval-p x (circle-domain))
+		  (inside-interval-p y (circle-domain))
 		  (i-close x y) (not (= x y)))
 	     (equal (/ (- (f-len x) (f-len y)) (- x y))
 		    (rad)
@@ -734,7 +726,7 @@
 		  (:instance div-test-2(a (rad)) (b (- x y)))
 		  (:instance circle-der-sum-sqrt-eq(x x))
 		  )
-	     :in-theory (disable acl2-sine acl2-cosine ABS circle-der circle-der-SQR-SUM circle-der-SUM-SQRT circle-der-SUM-SQRT-DOMAIN FIX
+	     :in-theory (disable acl2-sine acl2-cosine ABS circle-der circle-der-SQR-SUM circle-der-SUM-SQRT circle-domain FIX
 				 Icircle-der-SQR Icircle-derIVATIVE NOT REALFIX Rcircle-der-SQR Rcircle-derIVATIVE SQUARE
 				 ASSOCIATIVITY-OF-* COMMUTATIVITY-2-OF-* DISTRIBUTIVITY FUNCTIONAL-COMMUTATIVITY-OF-MINUS-*-RIGHT
 				 INVERSE-OF-* INVERSE-OF-+-AS=0 UNICITY-OF-1)
@@ -743,8 +735,8 @@
  
  (defthm circle-der-sum-sqrt-is-derivative
    (implies (and (standardp x)
-		 (inside-interval-p x (circle-der-sum-sqrt-domain))
-		 (inside-interval-p y (circle-der-sum-sqrt-domain))
+		 (inside-interval-p x (circle-domain))
+		 (inside-interval-p y (circle-domain))
 		 (i-close x y) (not (= x y)))
 	    (i-close (/ (- (f-len x) (f-len y)) (- x y))
 		     (circle-der-sum-sqrt x)
@@ -756,7 +748,7 @@
 		 (:instance circle-der-sum-sqrt-eq(x x))
 		 (:instance test-close-1 (a (rad)))
 		 )
-	    :in-theory (disable acl2-sine acl2-cosine ABS circle-der circle-der-SQR-SUM circle-der-SUM-SQRT circle-der-SUM-SQRT-DOMAIN FIX
+	    :in-theory (disable acl2-sine acl2-cosine ABS circle-der circle-der-SQR-SUM circle-der-SUM-SQRT circle-domain FIX
 				Icircle-der-SQR Icircle-derIVATIVE NOT REALFIX Rcircle-der-SQR Rcircle-derIVATIVE SQUARE
 				ASSOCIATIVITY-OF-* COMMUTATIVITY-2-OF-* DISTRIBUTIVITY FUNCTIONAL-COMMUTATIVITY-OF-MINUS-*-RIGHT
 				INVERSE-OF-* INVERSE-OF-+-AS=0 UNICITY-OF-1)
@@ -764,11 +756,11 @@
    )
  )
 
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2")
+(include-book "nonstd/integrals/ftc-2" :dir :system)
 
 (defthmd apply-ftc-2
-  (implies (and (inside-interval-p a (circle-der-sum-sqrt-domain))
-                (inside-interval-p b (circle-der-sum-sqrt-domain)))
+  (implies (and (inside-interval-p a (circle-domain))
+                (inside-interval-p b (circle-domain)))
            (equal (int-circle-der-sum-sqrt a b)
                   (- (f-len b)
                      (f-len a))))
@@ -776,7 +768,7 @@
   :hints (("Goal"
            :use (
                  (:functional-instance ftc-2
-				       (rcdfn-domain circle-der-sum-sqrt-domain)
+				       (rcdfn-domain circle-domain)
 				       (int-rcdfn-prime int-circle-der-sum-sqrt)
 				       (riemann-rcdfn-prime riemann-circle-der-sum-sqrt)
 				       (map-rcdfn-prime map-circle-der-sum-sqrt)
@@ -851,16 +843,16 @@
  (local
   (defthm pi-test2
     (implies (and 
-	      (inside-interval-p 4 (circle-der-sum-sqrt-domain))
-	      (inside-interval-p 8 (circle-der-sum-sqrt-domain))
+	      (inside-interval-p 4 (circle-domain))
+	      (inside-interval-p 8 (circle-domain))
 	      (realp x)
 	      (<= 4 x)
 	      (< x 8))
-	     (inside-interval-p x (circle-der-sum-sqrt-domain))
+	     (inside-interval-p x (circle-domain))
 	     )
     :hints (("Goal" 
 	     :use(
-		  (:instance inside-interval-p-squeeze(a 4) (b 8) (c x) (interval (circle-der-sum-sqrt-domain)))
+		  (:instance inside-interval-p-squeeze(a 4) (b 8) (c x) (interval (circle-domain)))
 		  )
 	     :in-theory (enable interval)
 	     ))

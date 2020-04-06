@@ -1,8 +1,8 @@
 (in-package "ACL2")
 
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/trig")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/ftc-2")
+(include-book "nonstd/nsa/inverse-square" :dir :system)
+(include-book "nonstd/nsa/trig" :dir :system)
+(include-book "nonstd/integrals/ftc-2" :dir :system)
 
 (encapsulate 
  ((rad() t))
@@ -52,7 +52,7 @@
 
 (encapsulate
  ()
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"))
+ (local (include-book "arithmetic/top-with-meta" :dir :system))
 
  (local
   (defthm lemma-1
@@ -292,7 +292,7 @@
 
 (encapsulate
  ()
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"))
+ (local (include-book "arithmetic/top-with-meta" :dir :system))
  (defthm volume-of-a-sphere-equals
    (= (volume-of-a-sphere) (* 4 (acl2-pi) (rad) (rad) (rad) 1/3))
    :hints (("Goal"

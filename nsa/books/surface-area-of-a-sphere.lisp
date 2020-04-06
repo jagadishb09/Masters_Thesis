@@ -1,7 +1,7 @@
 (in-package "ACL2")
 
-(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/A-Mechanized-proof-of-the-curve-length-of-a-rectifiable-curve/Workspace/circumference-of-a-circle")
-(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/spheres/lateral-surface-area-of-a-revolution")
+(include-book "circumference-of-a-circle")
+(include-book "lateral-surface-area-of-a-revolution")
 
 (defun imcircle*norm-der (x)
   (* 2 (acl2-pi) (imf x)  (circle-der-sum-sqrt x))
@@ -9,8 +9,8 @@
 
 (defthm imcircle*norm-der-continuous
   (implies (and (standardp x)
-		(inside-interval-p x (circle-der-sum-sqrt-domain))
-		(inside-interval-p y (circle-der-sum-sqrt-domain))
+		(inside-interval-p x (circle-domain))
+		(inside-interval-p y (circle-domain))
 		(i-close x y))
 	   (i-close (imcircle*norm-der x) (imcircle*norm-der y))
 	   )
@@ -23,22 +23,19 @@
 				      (rc-derivative rcircle-derivative)
 				      (ic-derivative icircle-derivative)
 				      (rc-der-sqr rcircle-der-sqr)
-				      (der-sum-sqrt-domain circle-der-sum-sqrt-domain)
+				      (c-domain circle-domain)
 				      (ic-der-sqr icircle-der-sqr)
 				      (der-sqr-sum circle-der-sqr-sum)
 				      (der-sum-sqrt circle-der-sum-sqrt)
 				      )
 	   )
-	  ("Subgoal 2"
-	   :use (:instance circle-differentiable)
-	   )
-	  ("Subgoal 3"
+	  ("Subgoal 1"
 	   :use (:instance circle-der-lemma)
 	   )
-	  ("Subgoal 4"
+	  ("Subgoal 2"
 	   :use (:instance  circle-der-continuous)
 	   )
-	  ("Subgoal 6"
+	  ("Subgoal 4"
 	   :use (:instance circle-equal)
 	   )
 	  )
@@ -62,15 +59,15 @@
   (defthm limited-riemann-imcircle*der-sum-sqrt-small-partition
     (implies (and (realp a) (standardp a)
 		  (realp b) (standardp b)
-		  (inside-interval-p a (circle-der-sum-sqrt-domain))
-		  (inside-interval-p b (circle-der-sum-sqrt-domain))
+		  (inside-interval-p a (circle-domain))
+		  (inside-interval-p b (circle-domain))
 		  (< a b))
 	     (i-limited (riemann-imcircle*der-sum-sqrt (make-small-partition a b))))
     
     :hints (("Goal"
 	     :use (
 		   (:functional-instance limited-riemann-rcfn-small-partition
-					 (rcfn-domain circle-der-sum-sqrt-domain)
+					 (rcfn-domain circle-domain)
 					 (riemann-rcfn riemann-imcircle*der-sum-sqrt)
 					 (map-rcfn map-imcircle*der-sum-sqrt)
 					 (rcfn imcircle*norm-der)
@@ -93,8 +90,8 @@
  (defun-std strict-int-imcircle*der-sum-sqrt (a b)
    (if (and (realp a)
 	    (realp b)
-	    (inside-interval-p a (circle-der-sum-sqrt-domain))
-	    (inside-interval-p b (circle-der-sum-sqrt-domain))
+	    (inside-interval-p a (circle-domain))
+	    (inside-interval-p b (circle-domain))
 	    (< a b))
        (standard-part (riemann-imcircle*der-sum-sqrt (make-small-partition a b)))
      0))
@@ -104,8 +101,8 @@
   (implies (and (standardp a)
                 (standardp b)
                 (<= a b)
-                (inside-interval-p a (circle-der-sum-sqrt-domain))
-                (inside-interval-p b (circle-der-sum-sqrt-domain))
+                (inside-interval-p a (circle-domain))
+                (inside-interval-p b (circle-domain))
                 (partitionp p)
                 (equal (car p) a)
                 (equal (car (last p)) b)
@@ -126,7 +123,7 @@
 				       (rc-derivative rcircle-derivative)
 				       (ic-derivative icircle-derivative)
 				       (rc-der-sqr rcircle-der-sqr)
-				       (der-sum-sqrt-domain circle-der-sum-sqrt-domain)
+				       (c-domain circle-domain)
 				       (ic-der-sqr icircle-der-sqr)
 				       (der-sqr-sum circle-der-sqr-sum)
 				       (der-sum-sqrt circle-der-sum-sqrt)
@@ -136,19 +133,19 @@
   )
 
 (defun f1-prime (x)
-  (if (inside-interval-p x (circle-der-sum-sqrt-domain))
+  (if (inside-interval-p x (circle-domain))
       (imcircle*norm-der x)
     0)
   )
 
 (defthm f1-prime-=
-  (implies (inside-interval-p x (circle-der-sum-sqrt-domain))
+  (implies (inside-interval-p x (circle-domain))
 	   (and (= (f1-prime x) (* 2 (acl2-pi) (rad) (rad) (acl2-sine x)))
 		(= (f1-prime x) (imcircle*norm-der x))))
   
   :hints (("Goal"
 	   :use ((:instance circle-der-sum-sqrt-eq)
-		 (:instance circle-der-sum-sqrt-domain-real)
+		 (:instance circle-domain-real)
 		 (:instance f1-prime)
 		 (:instance imcircle*norm-der)
 		 (:instance imf)
@@ -163,7 +160,7 @@
 (in-theory (disable f1-prime))
 
 (defun f1 (x)
-  (if (inside-interval-p x (circle-der-sum-sqrt-domain))
+  (if (inside-interval-p x (circle-domain))
       (- (* 2 (acl2-pi) (rad) (rad) (acl2-cosine x)))
     0)
   )
@@ -178,9 +175,9 @@
 
 (defthm f1-prime-continuous
   (implies (and (standardp x)
-		(inside-interval-p x (circle-der-sum-sqrt-domain))
+		(inside-interval-p x (circle-domain))
 		(i-close x y)
-		(inside-interval-p y (circle-der-sum-sqrt-domain)))
+		(inside-interval-p y (circle-domain)))
 	   (i-close (f1-prime x)
 		    (f1-prime y)))
   :hints (("Goal"
@@ -311,7 +308,7 @@
 
 (local
  (defthm f1-prime-deri-lemma
-   (implies (inside-interval-p x (circle-der-sum-sqrt-domain))
+   (implies (inside-interval-p x (circle-domain))
 	    (=  (* (imf x)  (circle-der-sum-sqrt x)) (* (rad) (rad) (acl2-sine x))))
    :hints (("Goal"
 	    :use ((:instance f1-prime-=)
@@ -325,8 +322,8 @@
 
 (defthmd f1-prime-is-derivative-lemma
   (implies (and (standardp x)
-		(inside-interval-p x (circle-der-sum-sqrt-domain))
-		(inside-interval-p y (circle-der-sum-sqrt-domain))
+		(inside-interval-p x (circle-domain))
+		(inside-interval-p y (circle-domain))
 		(i-close x y)
 		(not (= x y))
 		)
@@ -349,8 +346,8 @@
 						       (RAD)
 						       (ACL2-COSINE Y)
 						       (/ (+ X (- Y))))))))
-		 (:instance circle-der-sum-sqrt-domain-real)
-		 (:instance circle-der-sum-sqrt-domain-real (x y))
+		 (:instance circle-domain-real)
+		 (:instance circle-domain-real (x y))
 		 (:instance circle-der-sum-sqrt-eq)
 		 (:instance f1-prime-deri-lemma)
 		 )
@@ -360,8 +357,8 @@
 
 (defthmd f1-prime-is-derivative
   (implies (and (standardp x)
-		(inside-interval-p x (circle-der-sum-sqrt-domain))
-		(inside-interval-p y (circle-der-sum-sqrt-domain))
+		(inside-interval-p x (circle-domain))
+		(inside-interval-p y (circle-domain))
 		(i-close x y)
 		(not (= x y))
 		)
@@ -403,18 +400,18 @@
   (defthm limited-riemann-f1-prime-small-partition
     (implies (and (realp a) (standardp a)
 		  (realp b) (standardp b)
-		  (inside-interval-p a (circle-der-sum-sqrt-domain))
-		  (inside-interval-p b (circle-der-sum-sqrt-domain))
+		  (inside-interval-p a (circle-domain))
+		  (inside-interval-p b (circle-domain))
 		  (< a b))
 	     (i-limited (riemann-f1-prime (make-small-partition a b))))
     :hints (("Goal"
 	     :use (:functional-instance limited-riemann-rcfn-small-partition
-					(rcfn-domain circle-der-sum-sqrt-domain)
+					(rcfn-domain circle-domain)
 					(rcfn f1-prime)
 					(map-rcfn map-f1-prime)
 					(riemann-rcfn riemann-f1-prime)))
 	    ("Subgoal 2"
-	     :use ((:instance circle-der-sum-sqrt-domain-non-trivial)
+	     :use ((:instance circle-domain-non-trivial)
 		   (:instance f1-prime-continuous)))
 	    
 	    ("Subgoal 4"
@@ -434,8 +431,8 @@
  (defun-std strict-int-f1-prime (a b)
    (if (and (realp a)
 	    (realp b)
-	    (inside-interval-p a (circle-der-sum-sqrt-domain))
-	    (inside-interval-p b (circle-der-sum-sqrt-domain))
+	    (inside-interval-p a (circle-domain))
+	    (inside-interval-p b (circle-domain))
 	    (< a b))
        (standard-part (riemann-f1-prime (make-small-partition a b)))
      0))
@@ -447,15 +444,15 @@
     (- (strict-int-f1-prime b a))))
 
 (defthm apply-ftc-2-s-area
-  (implies (and (inside-interval-p a (circle-der-sum-sqrt-domain))
-		(inside-interval-p b (circle-der-sum-sqrt-domain)))
+  (implies (and (inside-interval-p a (circle-domain))
+		(inside-interval-p b (circle-domain)))
 	   (equal (int-f1-prime a b)
 		  (- (f1 b)
 		     (f1 a))))
   :hints (("Goal"
 	   :use (
 		 (:functional-instance ftc-2
-				       (rcdfn-domain circle-der-sum-sqrt-domain)
+				       (rcdfn-domain circle-domain)
 				       (rcdfn f1)
 				       (rcdfn-prime f1-prime)
 				       (map-rcdfn-prime map-f1-prime)

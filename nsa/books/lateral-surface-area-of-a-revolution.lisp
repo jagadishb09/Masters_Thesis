@@ -1,7 +1,7 @@
 (in-package "ACL2")
 
-(include-book "/Users/jagadishbapanapally/Documents/GitHub/Research/A-Mechanized-proof-of-the-curve-length-of-a-rectifiable-curve/Workspace/length-of-a-rectifiable-curve")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/trig")
+(include-book "length-of-a-rectifiable-curve")
+(include-book "nonstd/nsa/trig" :dir :system)
 
 (encapsulate
  ()
@@ -20,9 +20,9 @@
 
  (defthm c-continuous
    (implies (and (standardp x)
-		 (inside-interval-p x (der-sum-sqrt-domain))
+		 (inside-interval-p x (c-domain))
 		 (i-close x y)
-		 (inside-interval-p y (der-sum-sqrt-domain)))
+		 (inside-interval-p y (c-domain)))
 	    (and (i-close (c x) (c y))
 		 (i-close (realpart (c x)) (realpart (c y)))
 		 (i-close (imagpart (c x)) (imagpart (c y)))))
@@ -33,8 +33,8 @@
 			     (y (+ x (- y))))
 		  (:instance c-acl2numberp)
 		  (:instance c-acl2numberp (x y))
-		  (:instance der-sum-sqrt-domain-real)
-		  (:instance der-sum-sqrt-domain-real (x y))
+		  (:instance c-domain-real)
+		  (:instance c-domain-real (x y))
 		  (:instance re-im-close (x (c x)) (y (c y))))
 	    :in-theory (enable-disable (i-close)
 				       (c-differentiable
@@ -111,9 +111,9 @@
 
 (defthm surface-continuous
   (implies (and (standardp x)
-		(inside-interval-p x (der-sum-sqrt-domain))
+		(inside-interval-p x (c-domain))
 		(i-close x y)
-		(inside-interval-p y (der-sum-sqrt-domain)))
+		(inside-interval-p y (c-domain)))
 	   (i-close (* (imagpart (c x)) (der-sum-sqrt x)) (* (imagpart (c y)) (der-sum-sqrt y))))
   :hints (("Goal"
 	   :cases ((complexp (c x)) (realp (c x)))
@@ -157,9 +157,9 @@
 
 (defthm imc*der-sum-sqrt-continuous
   (implies (and (standardp x)
-		(inside-interval-p x (der-sum-sqrt-domain))
+		(inside-interval-p x (c-domain))
 		(i-close x y)
-		(inside-interval-p y (der-sum-sqrt-domain)))
+		(inside-interval-p y (c-domain)))
 	   (i-close (imc*der-sum-sqrt x) (imc*der-sum-sqrt y))
 	   )
       :hints (("Goal"
@@ -200,15 +200,15 @@
   (defthm limited-riemann-imc*der-sum-sqrt-small-partition
     (implies (and (realp a) (standardp a)
 		  (realp b) (standardp b)
-		  (inside-interval-p a (der-sum-sqrt-domain))
-		  (inside-interval-p b (der-sum-sqrt-domain))
+		  (inside-interval-p a (c-domain))
+		  (inside-interval-p b (c-domain))
 		  (< a b))
 	     (i-limited (riemann-imc*der-sum-sqrt (make-small-partition a b))))
     
     :hints (("Goal"
 	     :use (
 		   (:functional-instance limited-riemann-rcfn-small-partition
-					 (rcfn-domain der-sum-sqrt-domain)
+					 (rcfn-domain c-domain)
 					 (riemann-rcfn riemann-imc*der-sum-sqrt)
 					 (map-rcfn map-imc*der-sum-sqrt)
 					 (rcfn imc*der-sum-sqrt)
@@ -219,7 +219,7 @@
 	     :use (:instance intervalp-der-sqrt-domain)
 	     )
 	    ("Subgoal 2"
-	     :use ((:instance der-sum-sqrt-domain-non-trivial))
+	     :use ((:instance c-domain-non-trivial))
 	     )
 	    ("Subgoal 3"
 	     :use ((:instance imc*der-sum-sqrt-continuous (x x) (y y)))
@@ -231,8 +231,8 @@
  (defun-std strict-int-imc*der-sum-sqrt (a b)
    (if (and (realp a)
 	    (realp b)
-	    (inside-interval-p a (der-sum-sqrt-domain))
-	    (inside-interval-p b (der-sum-sqrt-domain))
+	    (inside-interval-p a (c-domain))
+	    (inside-interval-p b (c-domain))
 	    (< a b))
        (standard-part (riemann-imc*der-sum-sqrt (make-small-partition a b)))
      0))
@@ -242,8 +242,8 @@
   (implies (and (standardp a)
                 (standardp b)
                 (<= a b)
-                (inside-interval-p a (der-sum-sqrt-domain))
-                (inside-interval-p b (der-sum-sqrt-domain))
+                (inside-interval-p a (c-domain))
+                (inside-interval-p b (c-domain))
                 (partitionp p)
                 (equal (car p) a)
                 (equal (car (last p)) b)
@@ -254,7 +254,7 @@
   :hints (("Goal"
            :use (
                  (:functional-instance strict-int-rcfn-is-integral-of-rcfn
-				       (rcfn-domain der-sum-sqrt-domain)
+				       (rcfn-domain c-domain)
 				       (riemann-rcfn riemann-imc*der-sum-sqrt)
 				       (strict-int-rcfn strict-int-imc*der-sum-sqrt)
 				       (map-rcfn map-imc*der-sum-sqrt)

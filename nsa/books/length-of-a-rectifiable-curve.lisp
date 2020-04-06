@@ -1,56 +1,40 @@
 (in-package "ACL2")
 
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/inverse-square")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/nsa/intervals")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/nonstd/integrals/continuous-function")
-(include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/equalities")
+(include-book "nonstd/nsa/inverse-square" :dir :system)
+(include-book "nonstd/nsa/intervals" :dir :system)
+(include-book "nonstd/integrals/continuous-function" :dir :system)
+(include-book "arithmetic/equalities" :dir :system)
 
 (encapsulate
  ((c (x) t)
   (c-derivative (x) t)
-  (der-sum-sqrt-domain() t))
- (local (include-book "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/top-with-meta"))
+  (c-domain() t))
+ (local (include-book "arithmetic/top-with-meta" :dir :system))
 
  (local (defun c(x) x))
  (local (defun c-derivative (x) (declare (ignore x)) 1))
- (local (defun der-sum-sqrt-domain () (interval 0 1)))
+ (local (defun c-domain () (interval 0 1)))
 
  (defthm c-acl2numberp
    (implies (acl2-numberp x)
 	    (acl2-numberp (c x)))
    )
 
- (defthm der-sum-sqrt-domain-real
-   (implies (inside-interval-p x (der-sum-sqrt-domain))
-	    (realp x))
-   )
-
- (defthm der-sum-sqrt-domain-non-trivial
-   (or (null (interval-left-endpoint (der-sum-sqrt-domain)))
-       (null (interval-right-endpoint (der-sum-sqrt-domain)))
-       (< (interval-left-endpoint (der-sum-sqrt-domain))
-	  (interval-right-endpoint (der-sum-sqrt-domain))))
+ (defthm c-domain-non-trivial
+   (or (null (interval-left-endpoint (c-domain)))
+       (null (interval-right-endpoint (c-domain)))
+       (< (interval-left-endpoint (c-domain))
+	  (interval-right-endpoint (c-domain))))
    :rule-classes nil)
 
  (defthm intervalp-der-sqrt-domain
-   (interval-p (der-sum-sqrt-domain))
+   (interval-p (c-domain))
    )
-
- (defthm c-differentiable
-   (implies (and (standardp x)
-		 (inside-interval-p x (der-sum-sqrt-domain))
-		 (inside-interval-p y1 (der-sum-sqrt-domain))
-		 (inside-interval-p y2 (der-sum-sqrt-domain))
-		 (i-close x y1) (not (= x y1))
-		 (i-close x y2) (not (= x y2)))
-	    (and (i-limited (/ (- (c x) (c y1)) (- x y1)))
-		 (i-close (/ (- (c x) (c y1)) (- x y1))
-			  (/ (- (c x) (c y2)) (- x y2))))))
  
  (defthm c-der-lemma
    (implies (and (standardp x)
-		 (inside-interval-p x (der-sum-sqrt-domain))
-		 (inside-interval-p y (der-sum-sqrt-domain))
+		 (inside-interval-p x (c-domain))
+		 (inside-interval-p y (c-domain))
 		 (i-close x y) 
 		 (not (= x y))
 		 )
@@ -60,20 +44,93 @@
  (defthm c-der-continuous
    (implies 
     (and (standardp x)
-	 (inside-interval-p x (der-sum-sqrt-domain))
-	 (inside-interval-p y (der-sum-sqrt-domain))
+	 (inside-interval-p x (c-domain))
+	 (inside-interval-p y (c-domain))
 	 (i-close x y)
 	 )
     (i-close (c-derivative x) (c-derivative y)))
    )
  )
 
-
 (defthm-std c-der-std
   (implies (standardp x)
            (standardp (c-derivative x))
            )
   )
+
+(defthm c-domain-real
+  (implies (inside-interval-p x (c-domain))
+	   (realp x))
+  )
+
+(encapsulate
+ ()
+
+ (local
+  (defthm lemma-1
+    (implies (and (acl2-numberp a)
+		  (i-close a b))
+	     (acl2-numberp b))
+    :hints (
+	    ("Goal"
+	     :in-theory (enable nsa-theory)
+	     ))
+    ))
+ 
+ (local
+  (defthm c-differentiable-lemma1
+    (implies (and (standardp x)
+		  (inside-interval-p x (c-domain))
+		  (inside-interval-p y1 (c-domain))
+		  (i-close x y1) (not (= x y1)))
+	     (and (i-limited (/ (- (c x) (c y1)) (- x y1)))))
+    :hints (("Goal"
+	     :use ((:instance c-der-std)
+		   (:instance standards-are-limited-forward (x (c-derivative x)))
+		   (:instance c-der-lemma (x x) (y y1))
+		   (:instance i-close-symmetric (x (/ (- (c x) (c y1)) (- x y1))) (y (c-derivative x)))
+		   (:instance i-close-limited (x (c-derivative x)) (y (/ (- (c x) (c y1)) (- x y1))))
+		   (:instance c-acl2numberp)
+		   (:instance c-acl2numberp (x y1))
+		   (:instance c-domain-real)
+		   (:instance c-domain-real (x y1))
+		   (:instance lemma-1 (a (/ (- (c x) (c y1)) (- x y1))) (b (c-derivative x))))
+	     ))
+    ))
+
+ (local
+  (defthm c-differentiable-lemma2
+    (implies (and (standardp x)
+		  (inside-interval-p x (c-domain))
+		  (inside-interval-p y1 (c-domain))
+		  (inside-interval-p y2 (c-domain))
+		  (i-close x y1) (not (= x y1))
+		  (i-close x y2) (not (= x y2)))
+	     (i-close (/ (- (c x) (c y1)) (- x y1))
+		      (/ (- (c x) (c y2)) (- x y2))))
+    :hints (("Goal"
+	     :use ((:instance c-der-lemma (x x) (y y1))
+		   (:instance c-der-lemma (x x) (y y2))
+		   (:instance i-close-reflexive (x (c-derivative x))))
+	     ))
+    ))
+ 
+ (defthm c-differentiable
+   (implies (and (standardp x)
+		 (inside-interval-p x (c-domain))
+		 (inside-interval-p y1 (c-domain))
+		 (inside-interval-p y2 (c-domain))
+		 (i-close x y1) (not (= x y1))
+		 (i-close x y2) (not (= x y2)))
+	    (and (i-limited (/ (- (c x) (c y1)) (- x y1)))
+		 (i-close (/ (- (c x) (c y1)) (- x y1))
+			  (/ (- (c x) (c y2)) (- x y2)))))
+   :hints(("Goal"
+	   :use ((:instance c-differentiable-lemma1)
+		 (:instance c-differentiable-lemma2))
+	   ))
+   )
+ )
 
 (defun rc-derivative (x)
   (realpart (c-derivative x))
@@ -114,8 +171,8 @@
 
 (defthmd rc-ic-der-cont
   (implies (and (standardp x)
-		(inside-interval-p x (der-sum-sqrt-domain))
-		(inside-interval-p y (der-sum-sqrt-domain))
+		(inside-interval-p x (c-domain))
+		(inside-interval-p y (c-domain))
 		(i-close x y))
 	   (and (i-close (rc-derivative x) (rc-derivative y))
 		(i-close (ic-derivative x) (ic-derivative y))))
@@ -149,8 +206,8 @@
 
 (defthmd rc-der-sqr-cont
   (implies (and (standardp x)
-		(inside-interval-p x (der-sum-sqrt-domain))
-		(inside-interval-p y (der-sum-sqrt-domain))
+		(inside-interval-p x (c-domain))
+		(inside-interval-p y (c-domain))
 		(i-close x y))
 	   (i-close (rc-der-sqr x) (rc-der-sqr y)))
   :hints (("Goal"
@@ -185,8 +242,8 @@
 
 (defthmd ic-der-sqr-cont
   (implies (and (standardp x)
-		(inside-interval-p x (der-sum-sqrt-domain))
-		(inside-interval-p y (der-sum-sqrt-domain))
+		(inside-interval-p x (c-domain))
+		(inside-interval-p y (c-domain))
 		(i-close x y))
 	   (i-close (ic-der-sqr x) (ic-der-sqr y)))
   
@@ -263,8 +320,8 @@
 
 (defthm der-sqr-sum-cont
   (implies (and (standardp x)
-		(inside-interval-p x (der-sum-sqrt-domain))
-		(inside-interval-p y (der-sum-sqrt-domain))
+		(inside-interval-p x (c-domain))
+		(inside-interval-p y (c-domain))
                 (i-close x y))
            (i-close (der-sqr-sum x) (der-sqr-sum y)))
   
@@ -287,7 +344,7 @@
 (encapsulate
  ()
  
- (local (include-book  "/Users/jagadishbapanapally/Documents/acl2-8.2/acl2-sources/books/arithmetic/inequalities"))
+ (local (include-book  "arithmetic/inequalities" :dir :system))
  
  (local
   (defthm ineq-lemma1
@@ -556,8 +613,8 @@
  
  (defthm der-sum-sqrt-cont
    (implies (and (standardp x)
-		 (inside-interval-p x (der-sum-sqrt-domain))
-		 (inside-interval-p y (der-sum-sqrt-domain))
+		 (inside-interval-p x (c-domain))
+		 (inside-interval-p y (c-domain))
 		 (i-close x y)
 		 )
 	    (i-close (der-sum-sqrt x) 
@@ -596,15 +653,15 @@
 (defthmd limited-riemann-der-sum-sqrt-small-partition
   (implies (and (realp a) (standardp a)
                 (realp b) (standardp b)
-                (inside-interval-p a (der-sum-sqrt-domain))
-                (inside-interval-p b (der-sum-sqrt-domain))
+                (inside-interval-p a (c-domain))
+                (inside-interval-p b (c-domain))
                 (< a b))
            (i-limited (riemann-der-sum-sqrt (make-small-partition a b))))
   
   :hints (("Goal"
            :use (
                  (:functional-instance limited-riemann-rcfn-small-partition
-				       (rcfn-domain der-sum-sqrt-domain)
+				       (rcfn-domain c-domain)
 				       (riemann-rcfn riemann-der-sum-sqrt)
 				       (map-rcfn map-der-sum-sqrt)
 				       (rcfn der-sum-sqrt)
@@ -615,7 +672,7 @@
 	   :use (:instance intervalp-der-sqrt-domain)
 	   )
 	  ("Subgoal 2"
-           :use ((:instance der-sum-sqrt-domain-non-trivial))
+           :use ((:instance c-domain-non-trivial))
            )
           ("Subgoal 3"
            :use ((:instance der-sum-sqrt-cont(x x) (y y)))
@@ -631,8 +688,8 @@
   (defthm limited-riemann-der-sum-sqrt-small-partition-1
     (implies (and (realp a) (standardp a)
 		  (realp b) (standardp b)
-		  (inside-interval-p a (der-sum-sqrt-domain))
-		  (inside-interval-p b (der-sum-sqrt-domain))
+		  (inside-interval-p a (c-domain))
+		  (inside-interval-p b (c-domain))
 		  (< a b))
 	     (standardp( standard-part(riemann-der-sum-sqrt (make-small-partition a b)))))
     
@@ -647,8 +704,8 @@
  (defun-std strict-int-der-sum-sqrt (a b)
    (if (and (realp a)
 	    (realp b)
-	    (inside-interval-p a (der-sum-sqrt-domain))
-	    (inside-interval-p b (der-sum-sqrt-domain))
+	    (inside-interval-p a (c-domain))
+	    (inside-interval-p b (c-domain))
 	    (< a b))
        (standard-part (riemann-der-sum-sqrt (make-small-partition a b)))
      0))
@@ -658,8 +715,8 @@
   (implies (and (standardp a)
                 (standardp b)
                 (<= a b)
-                (inside-interval-p a (der-sum-sqrt-domain))
-                (inside-interval-p b (der-sum-sqrt-domain))
+                (inside-interval-p a (c-domain))
+                (inside-interval-p b (c-domain))
                 (partitionp p)
                 (equal (car p) a)
                 (equal (car (last p)) b)
@@ -670,7 +727,7 @@
   :hints (("Goal"
            :use (
                  (:functional-instance strict-int-rcfn-is-integral-of-rcfn
-				       (rcfn-domain der-sum-sqrt-domain)
+				       (rcfn-domain c-domain)
 				       (riemann-rcfn riemann-der-sum-sqrt)
 				       (strict-int-rcfn strict-int-der-sum-sqrt)
 				       (map-rcfn map-der-sum-sqrt)
