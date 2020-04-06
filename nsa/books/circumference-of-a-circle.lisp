@@ -3,6 +3,10 @@
 (include-book "nonstd/nsa/exp" :dir :system)
 (include-book "nonstd/nsa/trig" :dir :system)
 (include-book "arithmetic/top-with-meta" :dir :system)
+<<<<<<< HEAD:nsa/books/circumference-of-a-circle.lisp
+=======
+(include-book "nonstd/nsa/nsa" :dir :system)
+>>>>>>> 0d0dcb5be37b25c30813c6b56a613acf9b03ba74:A-Mechanized-proof-of-the-curve-length-of-a-rectifiable-curve/Workspace/circumference-of-a-circle.lisp
 (include-book "length-of-a-rectifiable-curve")
 
 (encapsulate 

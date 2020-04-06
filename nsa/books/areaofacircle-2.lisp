@@ -938,6 +938,7 @@
 	     :in-theory nil
 	     ))
     )
+<<<<<<< HEAD:nsa/books/areaofacircle-2.lisp
   )
 
  (local
@@ -971,6 +972,41 @@
     )
   )
 
+=======
+  )
+
+ (local
+  (defthm lemma-1-3
+    (implies (and (acl2-numberp a)
+		  (acl2-numberp b)
+		  (acl2-numberp c)
+		  (acl2-numberp d))
+	     (equal (* (/ a b) (/ c d))
+		    (/ (* a c) (* b d))))
+    )
+  )
+
+ (local
+  (defthm lemma-1
+    (implies (and 
+	      (acl2-numberp a)
+	      (acl2-numberp b)
+	      (acl2-numberp c)
+	      (acl2-numberp d))
+	     (equal (/ (- a b) (- c d))
+		    (/ (- b a) (- d c))
+		    )
+	     )
+    :hints (("Goal"
+	     :use ((:instance lemma-1-3
+			      (a -1) (b -1) (c (- a b)) (d (- c d)))
+		   (:instance lemma-1-2))
+	     
+	     ))
+    )
+  )
+
+>>>>>>> 0d0dcb5be37b25c30813c6b56a613acf9b03ba74:u-substitution/workspace/areaofacircle-2.lisp
  (defthmd differential-f-sine-o-f2-derivative-1
    (implies (and (inside-interval-p x (fi-domain))
 		 (standardp x)
