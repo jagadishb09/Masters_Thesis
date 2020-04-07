@@ -10,7 +10,7 @@
  (
   ((fi *) => *)
   ((f-o-fi-domain) => *)
-  ((F-prime *) => *)
+  ((f-prime *) => *)
   ((fi-prime *) => *)
   (fi-range () t)
   (consta () t)
@@ -91,17 +91,6 @@
 	  (interval-right-endpoint (fi-range))))
    :rule-classes nil)
 
- (defthm fi-differentiable
-   (implies (and (standardp x)
-		 (inside-interval-p x (f-o-fi-domain))
-		 (inside-interval-p y1 (f-o-fi-domain))
-		 (inside-interval-p y2 (f-o-fi-domain))
-		 (i-close x y1) (not (= x y1))
-		 (i-close x y2) (not (= x y2)))
-	    (and (i-limited (/ (- (fi x) (fi y1)) (- x y1)))
-		 (i-close (/ (- (fi x) (fi y1)) (- x y1))
-			  (/ (- (fi x) (fi y2)) (- x y2))))))
-
  (defthm intervalp-f-o-fi-domain
    (interval-p (f-o-fi-domain))
    :rule-classes (:type-prescription :rewrite))
@@ -128,6 +117,82 @@
   (implies (inside-interval-p x (f-o-fi-domain))
 	   (realp x))
   :rule-classes (:forward-chaining))
+
+
+(defthm-std fi-der-std
+  (implies (standardp x)
+           (standardp (fi-prime x))
+           )
+  )
+
+(encapsulate
+ ()
+
+ (local
+  (defthm lemma-1
+    (implies (and (acl2-numberp a)
+		  (i-close a b))
+	     (acl2-numberp b))
+    :hints (
+	    ("Goal"
+	     :in-theory (enable nsa-theory)
+	     ))
+    ))
+ 
+ (local
+  (defthm fi-differentiable-lemma1
+    (implies (and (standardp x)
+		  (inside-interval-p x (f-o-fi-domain))
+		  (inside-interval-p y1 (f-o-fi-domain))
+		  (i-close x y1) (not (= x y1)))
+	     (and (i-limited (/ (- (fi x) (fi y1)) (- x y1)))))
+    :hints (("Goal"
+	     :use ((:instance fi-der-std)
+		   (:instance standards-are-limited-forward (x (fi-prime x)))
+		   (:instance fi-prime-is-derivative (x x) (x1 y1))
+		   (:instance i-close-symmetric (x (/ (- (fi x) (fi y1)) (- x y1))) (y (fi-prime x)))
+		   (:instance i-close-limited (x (fi-prime x)) (y (/ (- (fi x) (fi y1)) (- x y1))))
+		   (:instance fi-real)
+		   (:instance fi-real (x y1))
+		   (:instance f-o-fi-domain-real)
+		   (:instance f-o-fi-domain-real (x y1))
+		   (:instance lemma-1 (a (/ (- (fi x) (fi y1)) (- x y1))) (b (fi-prime x))))
+	     ))
+    ))
+
+ (local
+  (defthm fi-differentiable-lemma2
+    (implies (and (standardp x)
+		  (inside-interval-p x (f-o-fi-domain))
+		  (inside-interval-p y1 (f-o-fi-domain))
+		  (inside-interval-p y2 (f-o-fi-domain))
+		  (i-close x y1) (not (= x y1))
+		  (i-close x y2) (not (= x y2)))
+	     (i-close (/ (- (fi x) (fi y1)) (- x y1))
+		      (/ (- (fi x) (fi y2)) (- x y2))))
+    :hints (("Goal"
+	     :use ((:instance fi-prime-is-derivative (x x) (x1 y1))
+		   (:instance fi-prime-is-derivative (x x) (x1 y2))
+		   (:instance i-close-reflexive (x (fi-prime x))))
+	     ))
+    ))
+ 
+ (defthm fi-differentiable
+   (implies (and (standardp x)
+		 (inside-interval-p x (f-o-fi-domain))
+		 (inside-interval-p y1 (f-o-fi-domain))
+		 (inside-interval-p y2 (f-o-fi-domain))
+		 (i-close x y1) (not (= x y1))
+		 (i-close x y2) (not (= x y2)))
+	    (and (i-limited (/ (- (fi x) (fi y1)) (- x y1)))
+		 (i-close (/ (- (fi x) (fi y1)) (- x y1))
+			  (/ (- (fi x) (fi y2)) (- x y2)))))
+   :hints(("Goal"
+	   :use ((:instance fi-differentiable-lemma1)
+		 (:instance fi-differentiable-lemma2))
+	   ))
+   )
+ )
 
 (local 
  (defthmd i-large-lemma

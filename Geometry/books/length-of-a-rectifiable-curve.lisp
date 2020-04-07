@@ -8,11 +8,7 @@
 (encapsulate
  ((c (x) t)
   (c-derivative (x) t)
-<<<<<<< HEAD:nsa/books/length-of-a-rectifiable-curve.lisp
   (c-domain() t))
-=======
-  (der-sum-sqrt-domain() t))
->>>>>>> 0d0dcb5be37b25c30813c6b56a613acf9b03ba74:A-Mechanized-proof-of-the-curve-length-of-a-rectifiable-curve/Workspace/length-of-a-rectifiable-curve.lisp
  (local (include-book "arithmetic/top-with-meta" :dir :system))
 
  (local (defun c(x) x))

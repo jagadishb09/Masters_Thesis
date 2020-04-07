@@ -1133,13 +1133,13 @@
 				       (consta consta1)
 				       )
 	    )
-	   ("Subgoal 11"
+	   ("Subgoal 10"
 	    :use (:instance circle-domain-in-domain-of-fi)
 	    )
-	   ("Subgoal 10"
+	   ("Subgoal 9"
 	    :use (:instance intervalp-fi-domain)
 	    )
-	   ("Subgoal 9"
+	   ("Subgoal 8"
 	    :use (:instance sub-func-differentiable)
 	    )
 	   ("Subgoal 7"
@@ -1225,28 +1225,28 @@
 		   )
 	     )
 	    
- 	    ("Subgoal 14"
+ 	    ("Subgoal 13"
  	     :use (:instance riemann-circle-sub-prime)
  	     :in-theory (enable dotprod)
  	     )
- 	    ("Subgoal 13"
+ 	    ("Subgoal 12"
  	     :use (:instance map-circle-sub-prime)
  	     )
- 	    ("Subgoal 12"
+ 	    ("Subgoal 11"
  	     :use (:instance circle-sub-prime)
  	     )
- 	    ("Subgoal 11"
+ 	    ("Subgoal 10"
  	     :use ((:instance derivative-circle-sub-definition)
  	    	   (:instance fi-domain)
  	    	   )
  	     )
- 	    ("Subgoal 10"
+ 	    ("Subgoal 9"
  	     :use (:instance circle-domain-in-domain-of-fi)
  	     )
- 	    ("Subgoal 9"
+ 	    ("Subgoal 8"
  	     :use (:instance intervalp-fi-domain)
  	     )
- 	    ("Subgoal 8"
+ 	    ("Subgoal 7"
  	     :use (:instance sub-func-differentiable)
  	     )
  	    ("Subgoal 6"
