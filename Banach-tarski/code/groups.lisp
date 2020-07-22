@@ -269,6 +269,40 @@
         ((equal (car w) (wb-inv)) (cons (wb) (word-inverse (cdr w))))))
 
 
+(defthmd weak-wordp-inverse
+  (implies (or (a-wordp x)
+	       (b-wordp x)
+	       (a-inv-wordp x)
+	       (b-inv-wordp x)
+	       (equal x '()))
+	   (weak-wordp (word-inverse x)))
+  )
+
+
+(defthmd weak-wordp-rev
+  (implies (weak-wordp x)
+	   (weak-wordp (reverse x)))
+  )
+
+
+(defthmd rev-word-inv-weak
+  (implies (reducedwordp x)
+	   (weak-wordp (reverse (word-inverse x))))
+  :hints (("Goal"
+	   :use ((:instance weak-wordp-inverse)
+		 (:instance weak-wordp-rev (x (reverse x))))
+	   ))
+  )
+
+(defthm rev-word-inv-reduced
+  (implies (reducedwordp x)
+	   (reducedwordp (reverse (word-inverse x))))
+  :hints (("Goal"
+	   :use ((:instance rev-word-inv-weak))
+	   ))
+  )
+
+
 
 
 
