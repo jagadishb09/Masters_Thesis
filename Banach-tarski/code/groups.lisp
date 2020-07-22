@@ -222,72 +222,6 @@
  )
 
 
-(defun a-inv-a-wordp (x)
-  (and (equal (car x) (wa-inv))
-       (a-wordp (cdr x)))
-  )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 (defthmd closure-weak-word
   (implies (and (weak-wordp x)
 		(weak-wordp y))
@@ -325,6 +259,378 @@
 		 )
 	   ))
   )
+
+
+(defun word-inverse (w)
+  (cond ((atom w) nil)
+	((equal (car w) (wa)) (cons (wa-inv) (word-inverse (cdr w))))
+        ((equal (car w) (wa-inv)) (cons (wa) (word-inverse (cdr w))))
+        ((equal (car w) (wb)) (cons (wb-inv) (word-inverse (cdr w))))
+        ((equal (car w) (wb-inv)) (cons (wb) (word-inverse (cdr w))))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;; (defun word-inverse (w)
+;;   (if (atom w)
+;;       nil
+;;     (let ((inv (word-inverse (cdr w))))
+;;       (cond ((equal (car w) (wa)) (append inv (list (wa-inv))))
+;; 	    ((equal (car w) (wa-inv)) (append inv (list (wa))))
+;; 	    ((equal (car w) (wb)) (append inv (list (wb-inv))))
+;; 	    ((equal (car w) (wb-inv)) (append inv (list (wb))))))))
+
+
+
+(defthm weak-wordp-inverse
+  (implies (or (a-wordp x)
+	       (b-wordp x)
+	       (a-inv-wordp x)
+	       (b-inv-wordp x)
+	       (equal x '()))
+	   (weak-wordp (word-inverse x)))
+  )
+
+(defthm reduced-wordp-inverse-1
+  (implies (or (a-wordp x)
+	       (b-wordp x)
+	       (a-inv-wordp x)
+	       (b-inv-wordp x))
+	   (reducedwordp (word-inverse x)))
+  :hints (("Goal"
+	   :use (:instance weak-wordp-inverse)
+	   ))
+  )
+
+(defthm reduced-wordp-inverse-2
+  (implies (equal x '())
+	   (reducedwordp (word-inverse x)))
+  )
+
+
+(defthm reduced-wordp-inverse
+  (implies (reducedwordp x)
+	   (reducedwordp (word-inverse x)))
+  :hints (("Goal"
+	   :use ((:instance reduced-wordp-inverse-1)
+		 (:instance reduced-wordp-inverse-2))
+	   ;:in-theory nil
+	   ))
+  )
+
+
+(defthmd weak-word-=
+  (implies (weak-wordp x)
+	   (or (equal x '())
+	       (and (equal (car x) (wa)) (weak-wordp (cdr x)))
+	       (and (equal (car x) (wa-inv)) (weak-wordp (cdr x)))
+	       (and (equal (car x) (wb)) (weak-wordp (cdr x)))
+	       (and (equal (car x) (wb-inv)) (weak-wordp (cdr x)))
+	       ))
+  )
+
+
+(defthmd member-weak-word
+  (implies (and (weak-wordp x)
+		(characterp y)
+		(not (equal x '()))
+		(member y x))
+	   (or (equal y (wa))
+	       (equal y (wb))
+	       (equal y (wa-inv))
+	       (equal y (wb-inv))))
+
+  :hints (("Goal"
+	   :use (:instance weak-word-= (x x))
+	   :in-theory (disable reducedwordp)
+	   )
+	  )
+  )
+
+
+(defthmd member-reducedword
+  (implies (and (reducedwordp x)
+		(characterp y)
+		(not (equal x '()))
+		(member y x))
+	   (or (equal y (wa))
+	       (equal y (wb))
+	       (equal y (wa-inv))
+	       (equal y (wb-inv))))
+  :hints (("Goal"
+	   :use ((:instance reducedwordp=>weak-wordp (x x))
+		 (:instance member-weak-word (x x) (y y)))
+	   :in-theory (disable reducedwordp)
+	   )
+	  )
+  )
+
+(defthmd mem-x=rev
+  (implies (and (character-listp x)
+		(characterp y)
+		(member y x))
+	   (member y (reverse x)))
+  :hints (("Goal"
+	   :in-theory (enable rev)
+	   ))
+  )
+
+(defthmd lemma1
+  (implies (reducedwordp x)
+	   (reducedwordp (cdr x)))
+  )
+
+(defthmd lemma2
+  (implies (character-listp x)
+	   (equal (car (last x)) (car (reverse x))))
+  :hints (("goal"
+	   :in-theory (enable rev)
+	   ))
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(skip-proofs
+ (defthm reduced-wordp-reverse
+   (implies (and (or (a-wordp x)
+		     (b-wordp x)
+		     (a-inv-wordp x)
+		     (b-inv-wordp x))
+		 (not (equal x '())))
+	    (weak-wordp (reverse x)))
+   :hints (("Goal"
+	    :use ((:instance lemma1)
+		  (:instance reducedwordp=>weak-wordp (x x))
+		  (:instance member-weak-word)
+		  (:instance mem-x=rev)
+		  (:instance weak-word-= (x x)))
+	    :in-theory (enable rev)
+	    ))
+   )
+ )
+
+
+
+
+
+(skip-proofs
+ (defthm inverse-compose=identity
+   (implies (a-wordp x)
+	    (equal (compose x (reverse (word-inverse x))) '()))
+   :hints (("Goal"
+	    :use ((:instance reduced-wordp-inverse)
+		  (:instance reduced-wordp-reverse (x (word-inverse x))))
+	    :in-theory (enable rev)
+	    )))
+ )
+
+
+
+(defun-sk reduced-identity-exists (x)
+  (exists i
+	  (implies (and (a-wordp x)
+			(reducedwordp i))
+		   (equal (compose x i) '())))
+  )
+
+
+(defthmd reduced-identity-exists-lemma
+  (implies (REDUCED-IDENTITY-EXISTS-WITNESS X)
+	   (reduced-identity-exists x))
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+(defun a-inv-a-wordp (x)
+  (and (equal (car x) (wa-inv))
+       (a-wordp (cdr x)))
+  )
+
+
+(defun-sk exists-x-a-in-a-wordp (y)
+  (exists x
+	  (equal (compose (wa-inv) (a-wordp x)) y))
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(defthm prop-2.1-1
+  (implies 
+   (a-inv-a-wordp x)
+   (weak-wordp x))
+  )
+
+
+(defthm prop-2.1-2
+ (implies (and (equal (append '(#\a) '(#\b)) nil)
+	       (character-listp x)
+	       (or (a-wordp x)
+		   (b-wordp x)
+		   (b-inv-wordp x)))
+	  (a-inv-a-wordp x)
+	  )
+ )
+
+(defthm cor-2.1
+  
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 (encapsulate
