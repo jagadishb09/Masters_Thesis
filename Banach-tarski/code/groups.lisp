@@ -278,8 +278,8 @@
   (IMPLIES (ATOM X)
          (IMPLIES (AND (WEAK-WORDP X)
                        (EQUAL (WORD-FIX X) X))
-                  (EQUAL (WORD-FIX (REVERSE X))
-                         (REVERSE X))))
+                  (EQUAL (WORD-FIX (REV X))
+                         (REV X))))
   )
 
 (encapsulate
@@ -315,7 +315,7 @@
  (local 
   (defthm weak-wordp-rev
     (implies (weak-wordp x)
-	     (weak-wordp (reverse x)))
+	     (weak-wordp (rev x)))
     )
   )
 
@@ -370,7 +370,7 @@
   (defthm word-fix-lemma3
     (implies (and (weak-wordp x)
 		  (not (atom x)))
-	     (equal (append (reverse (cdr x)) (list (car x))) (reverse x)))
+	     (equal (append (rev (cdr x)) (list (car x))) (rev x)))
     :hints (("Goal"
 	     :use (:instance character-listp-word (x x))
 	     :in-theory (enable rev)
@@ -384,8 +384,8 @@
     (implies (and (not (atom x))
 		  (word-fix (cdr x)))
 	     (and (cdr x)
-		  (not (equal (reverse (cdr x)) nil))
-		  (not (atom (reverse (cdr x))))))
+		  (not (equal (rev (cdr x)) nil))
+		  (not (atom (rev (cdr x))))))
     )
   )
 
@@ -401,12 +401,12 @@
  (local
   (defthm word-fix-lemma7
     (implies (and (not (atom x))
-		  (not (atom (reverse (cdr x))))
+		  (not (atom (rev (cdr x))))
 		  (reducedwordp x))
-	     (cond ((equal (nth (- (len (reverse (cdr x))) 1) (reverse (cdr x))) (wa)) (not (equal (car x) (wa-inv))))
-		   ((equal (nth (- (len (reverse (cdr x))) 1) (reverse (cdr x))) (wb)) (not (equal (car x) (wb-inv))))
-		   ((equal (nth (- (len (reverse (cdr x))) 1) (reverse (cdr x))) (wb-inv)) (not (equal (car x) (wb))))
-		   ((equal (nth (- (len (reverse (cdr x))) 1) (reverse (cdr x))) (wa-inv)) (not (equal (car x) (wa))))
+	     (cond ((equal (nth (- (len (rev (cdr x))) 1) (rev (cdr x))) (wa)) (not (equal (car x) (wa-inv))))
+		   ((equal (nth (- (len (rev (cdr x))) 1) (rev (cdr x))) (wb)) (not (equal (car x) (wb-inv))))
+		   ((equal (nth (- (len (rev (cdr x))) 1) (rev (cdr x))) (wb-inv)) (not (equal (car x) (wb))))
+		   ((equal (nth (- (len (rev (cdr x))) 1) (rev (cdr x))) (wa-inv)) (not (equal (car x) (wa))))
 		   )
 	     )
     )
@@ -418,17 +418,17 @@
 		 ;(cdr x)
 		 (IMPLIES (AND (WEAK-WORDP (CDR X))
 			       (EQUAL (WORD-FIX (CDR X)) (CDR X)))
-			  (EQUAL (WORD-FIX (REVERSE (CDR X)))
-				 (REVERSE (CDR X)))))
+			  (EQUAL (WORD-FIX (REV (CDR X)))
+				 (REV (CDR X)))))
 	    (IMPLIES (AND (WEAK-WORDP X)
 			  (EQUAL (WORD-FIX X) X))
-		     (EQUAL (WORD-FIX (REVERSE X))
-			    (REVERSE X))))
+		     (EQUAL (WORD-FIX (REV X))
+			    (REV X))))
    :hints (("Goal"
 	    :use ((:instance weak-word-cdr (x x))
 		  (:instance word-fix-cdr (x x))
 		  (:instance weak-wordp-rev (x (cdr x)))
-		  (:instance word-fix-lemma2 (x (reverse (cdr x))) (y (car x)))
+		  (:instance word-fix-lemma2 (x (rev (cdr x))) (y (car x)))
 		  (:instance word-fix-lemma3 (x x))
 		  (:instance word-fix-lemma5 (x x))
 		  (:instance word-fix-lemma6 (x x))
@@ -444,7 +444,7 @@
 (defthmd word-fix-lemma-1
   (implies (and (weak-wordp x)
 		(equal (word-fix x) x))
-	   (equal (word-fix (reverse x)) (reverse x)))
+	   (equal (word-fix (rev x)) (rev x)))
   :hints (("Subgoal *1/10"
 	   :use ((:instance word-fix-lemma))
 	   )
@@ -474,21 +474,21 @@
 
 (defthmd weak-wordp-rev
   (implies (weak-wordp x)
-	   (weak-wordp (reverse x)))
+	   (weak-wordp (rev x)))
   )
 
 
 
 (defthmd rev-word-inv-reduced
   (implies (reducedwordp x)
-	   (reducedwordp (reverse x)))
+	   (reducedwordp (rev x)))
   :hints (("Goal"
 	   :use ((:instance reducedwordp=>weak-wordp)
 		 (:instance word-fix=reducedwordp)
 		 (:instance weak-wordp-rev)
 		 (:instance word-fix-lemma-1)
 		 (:instance word-fix=reducedwordp-1 (x x))
-		 (:instance word-fix=reducedwordp-1 (x (reverse x))))
+		 (:instance word-fix=reducedwordp-1 (x (rev x))))
 	   :in-theory nil
 		 
 	   ))
@@ -503,10 +503,10 @@
   )
 
 (defun word-inverse (x)
-  (reverse (word-flip x))
+  (rev (word-flip x))
   )
 
-(defthmd weak-wordp-inverse
+(defthmd weak-wordp-flip
   (implies (or (a-wordp x)
 	       (b-wordp x)
 	       (a-inv-wordp x)
@@ -518,6 +518,14 @@
 (defthmd weak-wordp-flip-1
   (implies (weak-wordp x)
 	   (weak-wordp (word-flip x)))
+  )
+
+(defthmd weak-wordp-inverse
+  (implies (weak-wordp x)
+	   (weak-wordp (word-inverse x)))
+  :hints (("Goal"
+	   :use (:instance weak-wordp-flip-1)
+	   ))
   )
 
 (defthmd reduced-wordp-flip-1
@@ -580,13 +588,80 @@
 
 
 
-(defthmd last-x-=car-rev
-  (implies (character-listp x)
-	   (equal (car (last x)) (car (reverse x))))
+
+
+
+(defthmd rev-word-inv-lemma1
+  (implies (weak-wordp x)
+	   (equal (nth n x)
+		  (if (< (nfix n) (len x))
+		      (cond ((equal (nth n (word-flip x)) (wb)) (wb-inv))
+			    ((equal (nth n (word-flip x)) (wa)) (wa-inv))
+			    ((equal (nth n (word-flip x)) (wb-inv)) (wb))
+			    ((equal (nth n (word-flip x)) (wa-inv)) (wa))
+			    ((equal x '()) nil))
+		    nil
+		    )
+		  )
+	   )
   :hints (("Goal"
-	   :in-theory (enable rev)
+	   :in-theory (enable nth)
 	   ))
   )
+
+
+(defthmd rev-word-inv-lemma2
+  (implies (weak-wordp x)
+	   (equal (nth n (word-flip x))
+		  (if (< (nfix n) (len x))
+		      (cond ((equal (nth n x) (wb)) (wb-inv))
+			    ((equal (nth n x) (wa)) (wa-inv))
+			    ((equal (nth n x) (wb-inv)) (wb))
+			    ((equal (nth n x) (wa-inv)) (wa))
+			    ((equal x '()) nil))
+		    nil
+		    )
+		  )
+	   )
+  :hints (("Goal"
+	   :in-theory (enable nth)
+	   ))
+  )
+
+(defthmd len-lemma
+  (implies (weak-wordp x)
+	   (and (equal (len x) (len (rev x)))
+		(equal (len x) (len (word-flip x)))
+		(equal (len x) (len (rev (word-flip x))))
+		(equal (len x) (len (word-inverse x))))))
+
+(encapsulate
+ ()
+
+ (local (include-book "arithmetic-5/top" :dir :system))
+
+ (defthmd rev-word-inv-lemma3
+   (implies (weak-wordp x)
+	    (equal (nth n x)
+		   (if (< (nfix n) (len x))
+		       (cond ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wb)) (wb-inv))
+			     ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wa)) (wa-inv))
+			     ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wb-inv)) (wb))
+			     ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wa-inv)) (wa))
+			     ((equal x '()) nil))
+		     nil
+		     )
+		   )
+	    )
+   :hints (("Goal"
+	    :use ((:instance rev-word-inv-lemma1)
+		  (:instance rev-word-inv-lemma2)
+		  (:instance len-lemma))
+	    :in-theory (enable nth rev)
+	    :do-not-induct t
+	    ))
+   )
+ )
 
 (defthmd character-listp-word
   (implies (or (reducedwordp x)
@@ -594,12 +669,170 @@
 	   (character-listp x))
   )
 
+
+
+(defthmd inverse-compose=identity-lemma-1
+  (implies (and (reducedwordp x)
+		(equal x '()))
+	   (and (equal (compose x (word-inverse x)) '())
+		(iff (equal x '()) (equal (word-inverse x) '()))))
+  )
+
+(defthmd reduced-cdr
+  (implies (reducedwordp x)
+	   (reducedwordp (cdr x)))
+  )
+
+(defthmd weak-word-=
+  (implies (weak-wordp x)
+	   (or (equal x '())
+	       (and (equal (car x) (wa)) (weak-wordp (cdr x)))
+	       (and (equal (car x) (wa-inv)) (weak-wordp (cdr x)))
+	       (and (equal (car x) (wb)) (weak-wordp (cdr x)))
+	       (and (equal (car x) (wb-inv)) (weak-wordp (cdr x)))
+	       ))
+  )
+
+(defthmd nth-lemma
+  (implies (and (character-listp x)
+		(not x)
+		(characterp (nth n x)))
+	   (and (>= n 0)
+		(< n (len x))))
+  )
+
+(defthmd inverse-compose=identity
+  (implies (reducedwordp x)
+	   (equal (word-fix (append x (word-inverse x))) '()))
+  :hints (("Goal"
+	   :use (
+		 (:instance word-fix=reducedwordp (x (word-inverse x)))
+		 (:instance word-fix=reducedwordp (x x))
+	   	 (:instance reducedwordp-word-inverse (x x))
+	   	 (:instance len-lemma (x x))
+		 (:instance inverse-compose=identity-lemma-1)
+		 (:instance closure-prop (x x) (y (word-inverse x)))
+		 (:instance reducedwordp=>weak-wordp (x x))
+		 (:instance reducedwordp=>weak-wordp (x (word-inverse x)))
+		 (:instance reducedwordp=>weak-wordp (x (word-flip x)))
+		 (:instance rev-word-inv-lemma3)
+		 (:instance reduced-cdr (x x))
+		 (:instance reduced-cdr (x (word-inverse x)))
+		 (:instance reduced-cdr (x (word-flip x)))
+		 (:instance weak-word-= (x x))
+		 (:instance weak-word-= (x (word-inverse x)))
+		 (:instance weak-word-= (x (word-flip x)))
+		 (:instance nth-lemma)
+		 (:instance character-listp-word (x x))
+		 (:instance character-listp-word (x (word-inverse x)))
+		 (:instance character-listp-word (x (word-flip x)))
+		 (:instance reduced-wordp-flip (x x))
+		 (:instance weak-wordp-flip-1 (x x))
+	   	 )
+	   :in-theory (enable append nth rev)
+	   :do-not-induct t
+	   ))
+  )
+
+;; (encapsulate
+;;  ()
+
+;;  (local (include-book "arithmetic-5/top" :dir :system))
+
+;;  (defthmd rev-word-inv-lemma4
+;;    (implies (and (weak-wordp x)
+;; 		 (integerp n))
+;; 	    (equal (nth n (word-inverse x))
+;; 		   (if (< (nfix n) (len x))
+;; 		       (cond ((equal (nth (- (len x) (+ 1 (nfix n))) x) (wb)) (wb-inv))
+;; 			     ((equal (nth (- (len x) (+ 1 (nfix n))) x) (wa)) (wa-inv))
+;; 			     ((equal (nth (- (len x) (+ 1 (nfix n))) x) (wb-inv)) (wb))
+;; 			     ((equal (nth (- (len x) (+ 1 (nfix n))) x) (wa-inv)) (wa))
+;; 			     ((equal (word-inverse x) '()) nil))
+;; 		     nil
+;; 		     )
+;; 		   )
+;; 	    )
+;;    :hints (("Goal"
+;; 	    :use ((:instance rev-word-inv-lemma1)
+;; 		  (:instance rev-word-inv-lemma2)
+;; 		  (:instance rev-word-inv-lemma3)
+;; 		  (:instance weak-wordp-inverse)
+;; 		  (:instance len-lemma)
+;; 		  (:instance character-listp-word (x x))
+;; 		  (:instance character-listp-word (x (word-inverse x))))
+;; 	    :in-theory (enable nth rev word-inverse nfix)
+;; 	    :do-not-induct t
+;; 	    ))
+;;    )
+;;  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;; (defthmd len=reduced=word-inverse
+;;   (implies (reducedwordp x)
+;; 	   (equal (len x) (len (word-inverse x))))
+;;   )
+
+
+
+
+
+
+
+
+
+(defthmd last-x-=car-rev
+  (implies (character-listp x)
+	   (equal (car (last x)) (car (rev x))))
+  :hints (("Goal"
+	   :in-theory (enable rev)
+	   ))
+  )
+
+
+
 (defthmd rev-word-inv-lemma1
   (implies (and (character-listp x)
 		(integerp n)
 		(>= n 0)
 		(< n (len x)))
-	   (equal (nth n x) (nth (- (len x) (+ n 1)) (reverse x))))
+	   (equal (nth n x) (nth (- (len x) (+ n 1)) (rev x))))
   :hints (("Goal"
 	   ;:in-theory (enable len nth)
 	   ;:do-not-induct t
@@ -620,9 +853,10 @@
 
 (defthmd rev-word-inv-lemma3
   (implies (weak-wordp x)
-	   (and (equal (len x) (len (reverse x)))
+	   (and (equal (len x) (len (rev x)))
 		(equal (len x) (len (word-flip x)))
-		(equal (len x) (len (reverse (word-flip x)))))))
+		(equal (len x) (len (rev (word-flip x))))
+		(equal (len x) (len (word-inverse x))))))
   
 
 (defthmd rev-word-inv-lemma4
@@ -630,10 +864,10 @@
 		  (integerp n)
 		  (>= n 0)
 		  (< n (len x)))
-	     (cond ((equal (nth n x) (wb-inv)) (equal (nth (- (len x) (+ n 1)) (reverse (word-flip x))) (wb)))
-		   ((equal (nth n x) (wa-inv)) (equal (nth (- (len x) (+ n 1)) (reverse (word-flip x))) (wa)))
-		   ((equal (nth n x) (wb)) (equal (nth (- (len x) (+ n 1)) (reverse (word-flip x))) (wb-inv)))
-		   ((equal (nth n x) (wa)) (equal (nth (- (len x) (+ n 1)) (reverse (word-flip x))) (wa-inv)))
+	     (cond ((equal (nth n x) (wb-inv)) (equal (nth (- (len x) (+ n 1)) (rev (word-flip x))) (wb)))
+		   ((equal (nth n x) (wa-inv)) (equal (nth (- (len x) (+ n 1)) (rev (word-flip x))) (wa)))
+		   ((equal (nth n x) (wb)) (equal (nth (- (len x) (+ n 1)) (rev (word-flip x))) (wb-inv)))
+		   ((equal (nth n x) (wa)) (equal (nth (- (len x) (+ n 1)) (rev (word-flip x))) (wa-inv)))
 		   ((equal x '()) (equal x '()))))
     :hints (("Goal"
 	     :use ((:instance rev-word-inv-lemma2 (x x))
@@ -643,7 +877,7 @@
 	     ))
     )
 
-(defthmd rev-word-inv-lemma
+(defthmd rev-word-inv-lemma5
   (implies (and (weak-wordp x)
 		(integerp n)
 		(>= n 0)
@@ -659,9 +893,115 @@
   )
 
 
+(defthmd rev-word-inv-lemma6
+  (implies (and (weak-wordp x)
+		(< (nfix n) (len x)))
+	   (cond ((equal (nth n x) (wb-inv)) (equal (nth (- (len x) (+ n 1)) (word-inverse x)) (wb)))
+		 ((equal (nth n x) (wa-inv)) (equal (nth (- (len x) (+ n 1)) (word-inverse x)) (wa)))
+		 ((equal (nth n x) (wb)) (equal (nth (- (len x) (+ n 1)) (word-inverse x)) (wb-inv)))
+		 ((equal (nth n x) (wa)) (equal (nth (- (len x) (+ n 1)) (word-inverse x)) (wa-inv)))
+		 ((equal x '()) (equal x '()))))
+)
+
+(defthmd reduced-cdr
+  (implies (reducedwordp x)
+	   (reducedwordp (cdr x)))
+  )
+
+(defthmd weak-word-=
+  (implies (weak-wordp x)
+	   (or (equal x '())
+	       (and (equal (car x) (wa)) (weak-wordp (cdr x)))
+	       (and (equal (car x) (wa-inv)) (weak-wordp (cdr x)))
+	       (and (equal (car x) (wb)) (weak-wordp (cdr x)))
+	       (and (equal (car x) (wb-inv)) (weak-wordp (cdr x)))
+	       ))
+  )
+
+
+(defthmd inverse-compose=identity-lemma-1
+  (implies (and (reducedwordp x)
+		(equal x '()))
+	   (and (equal (compose x (word-inverse x)) '())
+		(iff (equal x '()) (equal (word-inverse x) '()))))
+  )
+
+(defthmd inverse-compose=identity
+  (implies (reducedwordp x)
+	   (equal (word-fix (append x (word-inverse x))) '()))
+  :hints (("Goal"
+	   :use (
+		 (:instance word-fix=reducedwordp (x (word-inverse x)))
+		 (:instance word-fix=reducedwordp (x x))
+	   	 (:instance reducedwordp-word-inverse (x x))
+	   	 (:instance len=reduced=word-inverse (x x))
+		 (:instance inverse-compose=identity-lemma-1)
+		 (:instance closure-prop (x x) (y (word-inverse x)))
+		 (:instance reducedwordp=>weak-wordp (x x))
+		 (:instance reducedwordp=>weak-wordp (x (word-inverse x)))
+		 (:instance rev-word-inv-lemma)
+		 (:instance reduced-cdr (x x))
+		 (:instance reduced-cdr (x (word-inverse x)))
+		 (:instance weak-word-= (x x))
+		 (:instance weak-word-= (x (word-inverse x)))
+	   	 )
+	   :in-theory (enable append nth rev)
+	   :do-not-induct t
+	   )
+	  ;; ("Subgoal 16"
+	  ;;  :use (
+	  ;; 	 (:instance reducedwordp-word-inverse (x x))
+	  ;; 	 (:instance len=reduced=word-inverse (x x))
+	  ;; 	 )
+	  ;;  :expand (WORD-FIX (APPEND X (REV (WORD-FLIP X))))
+	  ;;  )
+	  )
+  )
+
+
+  :hints (("Goal"
+	   :use ((:instance reducedwordp=>weak-wordp (x x))
+		 (:instance reducedwordp=>weak-wordp (x (word-inverse x)))
+		 (:instance word-fix=reducedwordp (x (word-inverse x)))
+		 (:instance reduced-wordp-inverse (x x))
+		 (:instance rev-word-inv-reduced (x (word-flip x)))
+		 (:instance compose-lemma (x (last x)) (y (word-inverse x)))
+		 (:instance rev-word-inv-lemma1 (x x))
+		 (:instance inverse-compose=identity-lemma (x x))
+		 (:instance inverse-compose=identity-lemma-1 (x x))
+		 )
+	   :in-theory (enable word-fix append)
+	   ;:do-not-induct t
+	   ))
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (defthmd weak-wordp-rev
   (implies (weak-wordp x)
-	   (weak-wordp (reverse x)))
+	   (weak-wordp (rev x)))
   )
 
 
@@ -675,18 +1015,27 @@
 	       ))
   )
 
+(defthmd inverse-compose=identity-lemma-1
+  (implies (and (reducedwordp x)
+		(reducedwordp (word-inverse x))
+		(equal (word-inverse x) '()))
+	   (equal (compose x (word-inverse x)) '()))
+  )
+
+
+
 
 
 ;; (defthmd reducedwordp-rev-lemma
 ;;   (implies (and (reducedwordp x)
 ;; 		(equal x '()))
-;; 	   (reducedwordp (reverse x)))
+;; 	   (reducedwordp (rev x)))
 ;;   )
 
 ;; (defthmd reducedwordp-rev-lemma1
 ;;     (implies (and (reducedwordp x)
 ;; 		  (not (equal x '())))
-;; 	     (not (equal (reverse x) '()))))
+;; 	     (not (equal (rev x) '()))))
   
 
 ;; (defthmd reducedwordp-rev
@@ -694,7 +1043,7 @@
 ;; 		(integerp n)
 ;; 		(>= n 0)
 ;; 		(< n (len x)))
-;; 		(reducedwordp (reverse x)))
+;; 		(reducedwordp (rev x)))
 ;;   :hints (("Goal"
 ;; 	   :use ((:instance rev-word-inv-lemma1 (x x) (n n))
 ;; 		 (:instance character-listp-word (x x))
@@ -810,7 +1159,7 @@
 		(reducedwordp y)
 		(equal (car (last x)) (wa))
 		(equal (car y) (wa-inv)))
-	   (equal (compose x y) (compose (reverse (cdr (reverse x))) (cdr y))))
+	   (equal (compose x y) (compose (rev (cdr (rev x))) (cdr y))))
 
   :hints (("Goal"
 	   :use ((:instance compose-lemma (x (last x)) (y y)))
@@ -909,7 +1258,7 @@
 
 (defthmd rev-rev=x
   (implies (character-listp x)
-	   (equal (reverse (reverse x)) x))
+	   (equal (rev (rev x)) x))
   )
 
 
@@ -919,16 +1268,16 @@
 
 (defthmd weak-wordp-rev
   (implies (weak-wordp x)
-	   (weak-wordp (reverse x)))
+	   (weak-wordp (rev x)))
   )
 
 
 (defthmd rev-word-inv-weak
   (implies (reducedwordp x)
-	   (weak-wordp (reverse (word-inverse x))))
+	   (weak-wordp (rev (word-inverse x))))
   :hints (("Goal"
 	   :use ((:instance weak-wordp-inverse)
-		 (:instance weak-wordp-rev (x (reverse x))))
+		 (:instance weak-wordp-rev (x (rev x))))
 	   ))
   )
 
@@ -977,11 +1326,11 @@
 
  (defthmd rev-rev-lemma
    (implies (and (character-listp x)
-		 (not (a-wordp (reverse x)))
+		 (not (a-wordp (rev x)))
 		 (NOT (EQUAL (CAR (REV X)) #\b))
 		 (NOT (EQUAL (CAR (REV X)) #\c))
 		 (NOT (EQUAL (CAR (REV X)) #\d))
-		 (not (equal (reverse x) '())))
+		 (not (equal (rev x) '())))
 	    (not (reducedwordp x)))
 
    :hints (("Subgoal 8"
@@ -1025,7 +1374,7 @@
 
 (defthmd rev-word-inv-reduced
   (implies (reducedwordp x)
-	   (reducedwordp (reverse x)))
+	   (reducedwordp (rev x)))
 
   :hints (("Subgoal 32"
 	   :use ((:instance character-listp-word (x x))
@@ -1059,7 +1408,7 @@
 
 (defthmd last-x-=car-rev
   (implies (character-listp x)
-	   (equal (car (last x)) (car (reverse x))))
+	   (equal (car (last x)) (car (rev x))))
   :hints (("Goal"
 	   :in-theory (enable rev)
 	   ))
@@ -1136,7 +1485,7 @@
 
 (defthm rev-word-inv-reduced
   (implies (reducedwordp x)
-	   (reducedwordp (reverse x)))
+	   (reducedwordp (rev x)))
   :hints (("Subgoal 32"
 	   :use ((:instance character-listp-word (x x))
 		 (:instance lemma2)
@@ -1148,14 +1497,14 @@
   )
   :hints (("Goal"
 	   :use ((:instance weak-wordp-rev)
-		 (:instance weak-word-= (x (reverse x)))
+		 (:instance weak-word-= (x (rev x)))
 		 (:instance weak-word-= (x x))
 		 (:instance reduced-cdr)
 		 (:instance weak-cdr(x x))
-		 (:instance weak-cdr(x (reverse x)))
+		 (:instance weak-cdr(x (rev x)))
 		 (:instance reducedwordp=>weak-wordp (x x))
 		 (:instance character-listp-word (x x))
-		 (:instance character-listp-word (x (reverse x)))
+		 (:instance character-listp-word (x (rev x)))
 		 ;(:instance last-x-=car-rev (x x))
 		 (:instance char-listp-cdr (x x)))
 	   :in-theory (enable rev)
@@ -1255,10 +1604,10 @@
 
 ;; (defthmd rev-word-inv-lemma1
 ;;   (implies (weak-wordp x)
-;; 	   (cond ((equal (car (last x)) (wb-inv)) (equal (car (reverse (word-flip x))) (wb)))
-;; 		 ((equal (car (last x)) (wa-inv)) (equal (car (reverse (word-flip x))) (wa)))
-;; 		 ((equal (car (last x)) (wa)) (equal (car (reverse (word-flip x))) (wa-inv)))
-;; 		 ((equal (car (last x)) (wb)) (equal (car (reverse (word-flip x))) (wb-inv)))
+;; 	   (cond ((equal (car (last x)) (wb-inv)) (equal (car (rev (word-flip x))) (wb)))
+;; 		 ((equal (car (last x)) (wa-inv)) (equal (car (rev (word-flip x))) (wa)))
+;; 		 ((equal (car (last x)) (wa)) (equal (car (rev (word-flip x))) (wa-inv)))
+;; 		 ((equal (car (last x)) (wb)) (equal (car (rev (word-flip x))) (wb-inv)))
 ;; 		 ((equal x '()) (equal x '()))))
 ;;   :hints (("Goal"
 ;; 	   :use (
@@ -1319,14 +1668,14 @@
 
 ;; (defthmd rev-word-inv-reduced
 ;;   (implies (reducedwordp x)
-;; 	   (reducedwordp (reverse x)))
+;; 	   (reducedwordp (rev x)))
 ;;   :hints (("Goal"
 ;; 	   :use ((:instance reducedwordp=>weak-wordp)
 ;; 		 (:instance word-fix=reducedwordp)
 ;; 		 (:instance weak-wordp-rev)
 ;; 		 (:instance word-fix-lemma-1)
 ;; 		 (:instance word-fix=reducedwordp-1 (x x))
-;; 		 (:instance word-fix=reducedwordp-1 (x (reverse x))))
+;; 		 (:instance word-fix=reducedwordp-1 (x (rev x))))
 ;; 	   :in-theory nil
 		 
 ;; 	   ))
@@ -1353,10 +1702,10 @@
 
 ;; (defthmd rev-word-inv-lemma1
 ;;   (implies (weak-wordp x)
-;; 	   (cond ((equal (car (last x)) (wb-inv)) (equal (car (reverse (word-flip x))) (wb)))
-;; 		 ((equal (car (last x)) (wa-inv)) (equal (car (reverse (word-flip x))) (wa)))
-;; 		 ((equal (car (last x)) (wa)) (equal (car (reverse (word-flip x))) (wa-inv)))
-;; 		 ((equal (car (last x)) (wb)) (equal (car (reverse (word-flip x))) (wb-inv)))
+;; 	   (cond ((equal (car (last x)) (wb-inv)) (equal (car (rev (word-flip x))) (wb)))
+;; 		 ((equal (car (last x)) (wa-inv)) (equal (car (rev (word-flip x))) (wa)))
+;; 		 ((equal (car (last x)) (wa)) (equal (car (rev (word-flip x))) (wa-inv)))
+;; 		 ((equal (car (last x)) (wb)) (equal (car (rev (word-flip x))) (wb-inv)))
 ;; 		 ((equal x '()) (equal x '()))))
 ;;   :hints (("Goal"
 ;; 	   :use (
@@ -1371,7 +1720,7 @@
 
   ;; :hints (("Goal"
   ;; 	   :use ((:instance reduced-wordp-inverse)
-  ;; 		 (:instance reduced-wordp-reverse (x (word-inverse x))))
+  ;; 		 (:instance reduced-wordp-rev (x (word-inverse x))))
   ;; 	   :in-theory (enable rev)
   ;; 	   )))
 
@@ -1382,7 +1731,7 @@
 ;; (defthmd rev-word-inv-reduced-base
 ;;   (implies (and (endp x)
 ;; 		(reducedwordp x))
-;; 	   (reducedwordp (reverse x)))
+;; 	   (reducedwordp (rev x)))
 ;;   )
 
 
@@ -1391,19 +1740,19 @@
 ;;    (implies (and (reducedwordp x)
 ;; 		 (implies (and (not (endp x))
 ;; 			       (reducedwordp (cdr x)))
-;; 			  (reducedwordp (reverse (cdr x)))))
-;; 		 (reducedwordp (reverse x)))
+;; 			  (reducedwordp (rev (cdr x)))))
+;; 		 (reducedwordp (rev x)))
 ;;    )
 ;;  )
 
 
 ;; (defthmd rev-word-inv-reduced
 ;;   (implies (reducedwordp x)
-;; 	   (reducedwordp (reverse x)))
+;; 	   (reducedwordp (rev x)))
 ;;   :hints (("Goal"
 ;; 	   :use ((:instance rev-word-inv-reduced-base)
 ;; 		 (:instance rev-word-inv-reduced-induction))
-;; 	   ;:induct (reducedwordp (reverse x))
+;; 	   ;:induct (reducedwordp (rev x))
 	   
 ;; 	   ))
 ;;   )
@@ -1414,7 +1763,7 @@
 ;;   (implies (and (weak-wordp x)
 ;; 		(equal (car (last x)) (wb-inv))
 ;; 		(equal y (word-inverse x)))
-;; 	   (equal (car (reverse y)) (wb)))
+;; 	   (equal (car (rev y)) (wb)))
 ;;   :hints (("Goal"
 ;; 	   :use (
 ;; 		 (:instance weak-wordp-inverse-1 (x x))
@@ -1430,7 +1779,7 @@
 ;;   (implies (and (weak-wordp x)
 ;; 		(equal (car (last x)) (wb))
 ;; 		(equal y (word-inverse x)))
-;; 	   (equal (car (reverse y)) (wb-inv)))
+;; 	   (equal (car (rev y)) (wb-inv)))
 ;;   :hints (("Goal"
 ;; 	   :use (
 ;; 		 (:instance weak-wordp-inverse-1 (x x))
@@ -1448,7 +1797,7 @@
 ;;   (implies (and (weak-wordp x)
 ;; 		(equal (car (last x)) (wa))
 ;; 		(equal y (word-inverse x)))
-;; 	   (equal (car (reverse y)) (wa-inv)))
+;; 	   (equal (car (rev y)) (wa-inv)))
 ;;   :hints (("Goal"
 ;; 	   :use (
 ;; 		 (:instance weak-wordp-inverse-1 (x x))
@@ -1464,7 +1813,7 @@
 ;;   (implies (and (weak-wordp x)
 ;; 		(equal (car (last x)) (wa-inv))
 ;; 		(equal y (word-inverse x)))
-;; 	   (equal (car (reverse y)) (wa)))
+;; 	   (equal (car (rev y)) (wa)))
 ;;   :hints (("Goal"
 ;; 	   :use (
 ;; 		 (:instance weak-wordp-inverse-1 (x x))
@@ -1605,7 +1954,7 @@
   (implies (and (character-listp x)
 		(characterp y)
 		(member y x))
-	   (member y (reverse x)))
+	   (member y (rev x)))
   :hints (("Goal"
 	   :in-theory (enable rev)
 	   ))
@@ -1618,7 +1967,7 @@
 
 (defthmd lemma2
   (implies (character-listp x)
-	   (equal (car (last x)) (car (reverse x))))
+	   (equal (car (last x)) (car (rev x))))
   :hints (("goal"
 	   :in-theory (enable rev)
 	   ))
@@ -1647,13 +1996,13 @@
 
 
 (skip-proofs
- (defthm reduced-wordp-reverse
+ (defthm reduced-wordp-rev
    (implies (and (or (a-wordp x)
 		     (b-wordp x)
 		     (a-inv-wordp x)
 		     (b-inv-wordp x))
 		 (not (equal x '())))
-	    (weak-wordp (reverse x)))
+	    (weak-wordp (rev x)))
    :hints (("Goal"
 	    :use ((:instance lemma1)
 		  (:instance reducedwordp=>weak-wordp (x x))
