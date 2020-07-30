@@ -291,7 +291,133 @@
 
 ;;;;;;;;;;;;;;;;;;associative property
 
-(skip-proofs
+(encapsulate
+ ()
+
+ (local
+  (defthm weak-wordp-equivalent-assoc
+    (implies (weak-wordp x)
+	     (reducedwordp (word-fix x))))
+  )
+
+ (local
+  (defthm reducedwordp=>weak-wordp-assoc
+    (IMPLIES (reducedwordp x)
+	     (weak-wordp x)))
+  )
+
+ (local
+  (defthm word-fix=reducedwordp-assoc
+    (implies (reducedwordp x)
+	     (equal (word-fix x) x))
+    )
+  )
+
+ (local
+  (defthm word-fix=reducedwordp-1-assoc
+    (implies (and (weak-wordp x)
+		  (equal (word-fix x) x))
+	     (reducedwordp x))
+    :hints (("Goal"
+	     :use (:instance weak-wordp-equivalent (x x))
+	     ))
+    )
+  )
+ (local
+  (defthm weak-word-cdr-assoc
+    (implies (weak-wordp x)
+	     (weak-wordp (cdr x)))
+    )
+  )
+
+ (local
+  (defthm character-listp-word-assoc
+    (implies (or (reducedwordp x)
+		 (weak-wordp x))
+	     (character-listp x))
+    )
+  )
+
+ (local
+  (defthm reduced-cdr-assoc
+    (implies (reducedwordp x)
+	     (reducedwordp (cdr x)))
+    )
+  )
+
+ (local
+  (defthm closure-weak-word-assoc
+    (implies (and (weak-wordp x)
+		  (weak-wordp y))
+	     (weak-wordp (append x y)))
+    )
+  )
+
+ (local
+  (defthm closure-lemma-assoc
+    (implies (and (reducedwordp x)
+		  (reducedwordp y))
+	     (weak-wordp (append x y)))
+    :hints (("Goal"
+	     :use ((:instance a-wordp=>weak-wordp (x x))
+		   (:instance b-wordp=>weak-wordp (x x))
+		   (:instance a-inv-wordp=>weak-wordp (x x))
+		   (:instance b-inv-wordp=>weak-wordp (x x))
+		   (:instance a-wordp=>weak-wordp (x y))
+		   (:instance b-wordp=>weak-wordp (x y))
+		   (:instance a-inv-wordp=>weak-wordp (x y))
+		   (:instance b-inv-wordp=>weak-wordp (x y))
+		   (:instance closure-weak-word)
+		   )
+	     ))
+    )
+  )
+
+
+ (local
+  (defthm closure-prop-assoc
+    (implies (and (reducedwordp x)
+		  (reducedwordp y))
+	     (reducedwordp (compose x y))
+	     )
+    :hints (("Goal"
+	     :use ((:instance closure-lemma (x x) (y y))
+		   (:instance weak-wordp-equivalent (x (append x y)))
+		   )
+	     ))
+    )
+  )
+
+ (local
+  (defthm wordfix-wordfix
+    (implies (reducedwordp x)
+	     (equal (word-fix (word-fix x)) (word-fix x)))
+    )
+  )
+
+ (local
+  (defthm append-nil-assoc                    ; as above, but with defaults and
+    (implies (character-listp x)             ; a backchain limit
+	     (equal (append x nil) x))
+    :rule-classes ((:rewrite 
+			     :backchain-limit-lst (3) ; or equivalently, 3
+			     :match-free :all)))
+  )
+
+ (local
+
+  (defthm weak-word-=
+    (implies (weak-wordp x)
+	     (or (equal x '())
+		 (and (equal (car x) (wa)) (weak-wordp (cdr x)))
+		 (and (equal (car x) (wa-inv)) (weak-wordp (cdr x)))
+		 (and (equal (car x) (wb)) (weak-wordp (cdr x)))
+		 (and (equal (car x) (wb-inv)) (weak-wordp (cdr x)))
+		 ))
+    )
+  )
+
+
  (defthmd assoc-prop
    (implies (and (reducedwordp x)
 		 (reducedwordp y)
@@ -299,9 +425,21 @@
 	    (equal (compose (compose x y) z) (compose x (compose y z))))
    :hints (("Goal"
 	    :in-theory (enable append)
-	    ))
+	    )
+	   ;; ("Subgoal 101"
+	   ;;  :use ((:instance character-listp-word-assoc (x y))
+	   ;; 	  (:instance character-listp-word-assoc (x z))
+	   ;; 	  (:instance word-fix=reducedwordp-assoc (x y))
+	   ;; 	  (:instance word-fix=reducedwordp-assoc (x z))
+	   ;; 	  (:instance wordfix-wordfix (x y))
+	   ;; 	  (:instance wordfix-wordfix (x z))
+	   ;; 	  )
+	   ;;  :in-theory (enable append)
+	   ;;  )
+	   )
    )
- )
+ 
+)
 
 
 
@@ -1226,9 +1364,6 @@
 	   (and (>= n 0)
 		(< n (len x))))
   )
-
-
-
 
 
 (defthmd inverse-compose=identity
