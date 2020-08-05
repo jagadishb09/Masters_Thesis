@@ -318,6 +318,21 @@
 
 
 
+;; (defthm word-fix-rev-lemma2
+;;   (implies (weak-wordp x)
+;; 	   (equal (append (word-fix (rev (cdr (rev x)))) (word-fix (append (last (rev (cdr (rev x)))) (last x))))
+;; 		  (word-fix x)))
+;;   :hints (("Goal"
+;; 	   :use ((:instance word-fix-rev-lemma1
+;; 			    (x (rev (cdr (rev x))))
+;; 			    (y (car (last (rev (cdr (rev x))))))
+;; 			    (z (
+			    
+;; 	   :in-theory (enable word-fix append)
+;; 	   ))
+;;   )
+
+
 (encapsulate
  ()
 
@@ -462,17 +477,7 @@
     )
   )
 
-
- (local
-  (skip-proofs
-   (defthmd word-fix-lemma
-     (implies (weak-wordp x)
-	      (equal (word-fix (rev x)) (rev (word-fix x))))
-     )
-   )
-  )
-
- (local
+  (local
   (defthm compose-assoc-lemma
     (implies (and (weak-wordp x)
 		  (weak-wordp y))
@@ -506,6 +511,44 @@
 	     :in-theory (enable word-fix append)
 	     ))
     )
+  )
+
+
+ (local
+  (defthm word-fix-rev-lemma1
+    (implies (and (weak-wordp x)
+		  (characterp y)
+		  (characterp z)
+		  (weak-wordp (list y))
+		  (weak-wordp (list z)))
+	     (equal (word-fix (append x (list y) (list z)))
+		    (append (word-fix (append x (list y)))
+			    (word-fix (append (list y) (list z))))))
+    :hints (("Subgoal *1/2"
+	     :use ((:instance closure-weak-word-assoc (x x) (y (list y)))
+		   (:instance closure-weak-word-assoc (x (append x (list y))) (y (list z)))
+		   (:instance word-fix (w (append x (list y) (list z))))
+		   (:instance word-fix (w (append x (list y))))
+		   (:instance weak-word-cdr-assoc (x (append x (list y) (list z))))
+		   (:instance weak-word-cdr-assoc (x (append x (list y))))
+		   (:instance weak-wordp-equivalent-assoc (x (append x (list y) (list z))))
+		   (:instance weak-wordp-equivalent-assoc (x (append x (list y))))
+		   (:instance reducedwordp=>weak-wordp-assoc (x (word-fix (append x (list y) (list z)))))
+		   (:instance reducedwordp=>weak-wordp-assoc (x (word-fix (append x (list y)))))
+		   )
+	     :in-theory (enable word-fix append)
+	     ))
+    )
+  )
+
+ 
+ (local
+  (skip-proofs
+   (defthmd word-fix-lemma
+     (implies (weak-wordp x)
+	      (equal (word-fix (rev x)) (rev (word-fix x))))
+     )
+   )
   )
 
  (defthm assoc-prop
