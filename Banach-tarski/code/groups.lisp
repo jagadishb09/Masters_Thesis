@@ -524,7 +524,7 @@
 	     (equal (word-fix (append x (list y) (list z)))
 		    (append (word-fix (append x (list y)))
 			    (word-fix (append (list y) (list z))))))
-    :hints (("Subgoal *1/2"
+    :hints (("Goal"
 	     :use ((:instance closure-weak-word-assoc (x x) (y (list y)))
 		   (:instance closure-weak-word-assoc (x (append x (list y))) (y (list z)))
 		   (:instance closure-weak-word-assoc (x (cdr x)) (y (list y)))
@@ -541,8 +541,10 @@
 		   (:instance weak-wordp-equivalent-assoc (x (append (cdr x) (list y))))
 		   (:instance reducedwordp=>weak-wordp-assoc (x (word-fix (append (cdr x) (list y) (list z)))))
 		   (:instance reducedwordp=>weak-wordp-assoc (x (word-fix (append (cdr x) (list y)))))
+		   (:instance weak-word-cdr-assoc)
 		   )
-	     :in-theory (enable word-fix append)
+	     ;:induct t
+	     ;:in-theory (enable word-fix append)
 	     ))
     )
   )
