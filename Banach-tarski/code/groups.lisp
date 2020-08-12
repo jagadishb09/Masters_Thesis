@@ -293,48 +293,6 @@
 ;;;;;;;;;;;;;;;;;;associative property
 
 
-
-;; (defthmd word-fix-lemma
-;;   (implies (and (weak-wordp x)
-;; 		(not (equal x '())))
-;; 	   (equal (word-fix x) (append (word-fix (list (car x) (car (word-fix (cdr x)))))
-;; 				       (cdr (word-fix (cdr x))))))
-;;   :hints (("Goal"
-;; 	   :use ((:instance weak-wordp-equivalent (x (cdr x)))
-;; 		 (:instance character-listp-word (x x))
-;; 		 (:instance character-listp-word (x (cdr x)))
-;; 		 (:instance word-fix (w x))
-;; 		 (:instance weak-word-cdr (x x))
-;; 		 (:instance weak-wordp-equivalent (x x))
-;; 		 (:instance reducedwordp=>weak-wordp (x x))
-;; 		 (:instance reducedwordp=>weak-wordp (x (cdr x)))
-;; 		 (:instance weak-wordp-equivalent (x (cdr x)))
-;; 	   	 (:instance reducedwordp=>weak-wordp (x (word-fix (cdr x)))))
-;; 	   :in-theory (enable append)
-;; 	   ;:do-not-induct t
-;; 	   ))
-;;   )
-
-
-
-
-;; (defthm word-fix-rev-lemma2
-;;   (implies (weak-wordp x)
-;; 	   (equal (append (word-fix (rev (cdr (rev x)))) (word-fix (append (last (rev (cdr (rev x)))) (last x))))
-;; 		  (word-fix x)))
-;;   :hints (("Goal"
-;; 	   :use ((:instance word-fix-rev-lemma1
-;; 			    (x (rev (cdr (rev x))))
-;; 			    (y (car (last (rev (cdr (rev x))))))
-;; 			    (z (
-			    
-;; 	   :in-theory (enable word-fix append)
-;; 	   ))
-;;   )
-
-
-
-
 (encapsulate
  ()
 
@@ -440,11 +398,11 @@
   )
 
  (local
-  (defthm append-nil-assoc                    ; as above, but with defaults and
-    (implies (character-listp x)             ; a backchain limit
+  (defthm append-nil-assoc                   
+    (implies (character-listp x)             
 	     (equal (append x nil) x))
     :rule-classes ((:rewrite 
-		    :backchain-limit-lst (3) ; or equivalently, 3
+		    :backchain-limit-lst (3)
 		    :match-free :all)))
   )
 
@@ -491,43 +449,6 @@
 		   ))
     )
   )
-
- ;; (local
- ;;  (skip-proofs
- ;;   (defthm word-fix-rev-1/8
- ;;     (IMPLIES (AND (CONSP X)
- ;; 		   (WORD-FIX (CDR X))
- ;; 		   (EQUAL (CAR (WORD-FIX (CDR X))) #\c)
- ;; 		   (EQUAL (CAR X) #\d)
- ;; 		   (WEAK-WORDP (CDR X))
- ;; 		   (NOT (CDR (WORD-FIX (CDR X)))))
- ;; 	      (EQUAL (WORD-FIX (APPEND X '(#\a)))
- ;; 		     '(#\a)))
- ;;     )
- ;;   )
- ;;  )
-
- ;; (local
- ;;  (defthm word-fix-rev-lemma1-assoc
- ;;    (implies (and (weak-wordp x)
- ;; 		  (equal y (wa))
- ;; 		  ;(equal z (wb))
- ;; 		  (equal (word-fix x) '()))
- ;; 	     (equal (word-fix (append x (list y)))
- ;; 		    (list y)))
- ;;    :hints (("Subgoal *1/12"
- ;; 	     :use ((:instance weak-word-cdr-assoc (x x))
- ;; 		   (:instance weak-wordp-equivalent-assoc (x (cdr x)))
- ;; 		   (:instance reducedwordp=>weak-wordp-assoc (x (word-fix (cdr x)))))
- ;; 	     )
- ;; 	    ("Subgoal *1/8''"
- ;; 	     :use (:instance word-fix-rev-1/8)
- ;; 	     )
-
- ;; 	    )
- ;;    )
- ;;  )
- 
 
  (local
   (defthm compose-assoc-lemma
@@ -1010,6 +931,83 @@
 
 
 
+
+
+;; (defthmd word-fix-lemma
+;;   (implies (and (weak-wordp x)
+;; 		(not (equal x '())))
+;; 	   (equal (word-fix x) (append (word-fix (list (car x) (car (word-fix (cdr x)))))
+;; 				       (cdr (word-fix (cdr x))))))
+;;   :hints (("Goal"
+;; 	   :use ((:instance weak-wordp-equivalent (x (cdr x)))
+;; 		 (:instance character-listp-word (x x))
+;; 		 (:instance character-listp-word (x (cdr x)))
+;; 		 (:instance word-fix (w x))
+;; 		 (:instance weak-word-cdr (x x))
+;; 		 (:instance weak-wordp-equivalent (x x))
+;; 		 (:instance reducedwordp=>weak-wordp (x x))
+;; 		 (:instance reducedwordp=>weak-wordp (x (cdr x)))
+;; 		 (:instance weak-wordp-equivalent (x (cdr x)))
+;; 	   	 (:instance reducedwordp=>weak-wordp (x (word-fix (cdr x)))))
+;; 	   :in-theory (enable append)
+;; 	   ;:do-not-induct t
+;; 	   ))
+;;   )
+
+
+
+
+;; (defthm word-fix-rev-lemma2
+;;   (implies (weak-wordp x)
+;; 	   (equal (append (word-fix (rev (cdr (rev x)))) (word-fix (append (last (rev (cdr (rev x)))) (last x))))
+;; 		  (word-fix x)))
+;;   :hints (("Goal"
+;; 	   :use ((:instance word-fix-rev-lemma1
+;; 			    (x (rev (cdr (rev x))))
+;; 			    (y (car (last (rev (cdr (rev x))))))
+;; 			    (z (
+			    
+;; 	   :in-theory (enable word-fix append)
+;; 	   ))
+;;   )
+
+
+ ;; (local
+ ;;  (skip-proofs
+ ;;   (defthm word-fix-rev-1/8
+ ;;     (IMPLIES (AND (CONSP X)
+ ;; 		   (WORD-FIX (CDR X))
+ ;; 		   (EQUAL (CAR (WORD-FIX (CDR X))) #\c)
+ ;; 		   (EQUAL (CAR X) #\d)
+ ;; 		   (WEAK-WORDP (CDR X))
+ ;; 		   (NOT (CDR (WORD-FIX (CDR X)))))
+ ;; 	      (EQUAL (WORD-FIX (APPEND X '(#\a)))
+ ;; 		     '(#\a)))
+ ;;     )
+ ;;   )
+ ;;  )
+
+ ;; (local
+ ;;  (defthm word-fix-rev-lemma1-assoc
+ ;;    (implies (and (weak-wordp x)
+ ;; 		  (equal y (wa))
+ ;; 		  ;(equal z (wb))
+ ;; 		  (equal (word-fix x) '()))
+ ;; 	     (equal (word-fix (append x (list y)))
+ ;; 		    (list y)))
+ ;;    :hints (("Subgoal *1/12"
+ ;; 	     :use ((:instance weak-word-cdr-assoc (x x))
+ ;; 		   (:instance weak-wordp-equivalent-assoc (x (cdr x)))
+ ;; 		   (:instance reducedwordp=>weak-wordp-assoc (x (word-fix (cdr x)))))
+ ;; 	     )
+ ;; 	    ("Subgoal *1/8''"
+ ;; 	     :use (:instance word-fix-rev-1/8)
+ ;; 	     )
+
+ ;; 	    )
+ ;;    )
+ ;;  )
+ 
 
 
  ;; (local
