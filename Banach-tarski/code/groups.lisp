@@ -438,19 +438,6 @@
   )
 
  (local
-  (defthm word-fix-rev-lemma1
-    (implies (and (weak-wordp x)
-		  (equal (word-fix x) '()))
-	     (cond ((equal (car x) (wa)) (equal (car (word-fix (cdr x))) (wa-inv)))
-		   ((equal (car x) (wa-inv)) (equal (car (word-fix (cdr x))) (wa)))
-		   ((equal (car x) (wb)) (equal (car (word-fix (cdr x))) (wb-inv)))
-		   ((equal (car x) (wb-inv)) (equal (car (word-fix (cdr x))) (wb)))
-		   ((equal (car x) nil) (equal (car x) nil))
-		   ))
-    )
-  )
-
- (local
   (defthm compose-assoc-lemma
     (implies (and (weak-wordp x)
 		  (weak-wordp y))
@@ -931,6 +918,84 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ;; (local
+ ;;  (defthm word-fix-rev-lemma1
+ ;;    (implies (and (weak-wordp x)
+ ;; 		  (equal (word-fix x) '()))
+ ;; 	     (cond ((equal (car x) (wa)) (equal (car (word-fix (cdr x))) (wa-inv)))
+ ;; 		   ((equal (car x) (wa-inv)) (equal (car (word-fix (cdr x))) (wa)))
+ ;; 		   ((equal (car x) (wb)) (equal (car (word-fix (cdr x))) (wb-inv)))
+ ;; 		   ((equal (car x) (wb-inv)) (equal (car (word-fix (cdr x))) (wb)))
+ ;; 		   ((equal (car x) nil) (equal (car x) nil))
+ ;; 		   ))
+ ;;    )
+ ;;  )
 
 
 ;; (defthmd word-fix-lemma
