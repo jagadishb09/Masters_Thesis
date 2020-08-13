@@ -437,6 +437,47 @@
     )
   )
 
+
+ (local
+  (skip-proofs
+   (defthm word-fix-rev-lemma1-1
+     (implies (and (weak-wordp x)
+		   (not (word-fix x))
+		   (characterp y)
+		   (weak-wordp (list y)))
+	      (equal (word-fix (append x (list y)))
+		     (list y)))
+     )
+   )
+  )
+  
+ 
+ (local
+  (defthm word-fix-rev-lemma1-assoc
+    (implies (and (weak-wordp x)
+		  (equal y (wb))
+		  (equal (last (word-fix x)) '(#\a)))
+	     (equal (word-fix (append x (list y)))
+		    (append (word-fix x) (list y))))
+    :hints (("Subgoal *1/3"
+	     :use (:instance word-fix-rev-lemma1-1 (x (cdr x)))
+	     ))
+    )
+  )
+
+ (local
+  (defthm word-fix-rev-lemma2-assoc
+    (implies (and (weak-wordp x)
+		  (equal y (wb))
+		  (equal (last (word-fix x)) '(#\d)))
+	     (equal (word-fix (append x (list y)))
+		    (word-fix (rev (cdr (rev x))))))
+    :hints (("Subgoal *1/3"
+	     :use (:instance word-fix-rev-lemma1-1 (x (cdr x)))
+	     ))
+    )
+  )
+
  (local
   (defthm compose-assoc-lemma
     (implies (and (weak-wordp x)
@@ -475,7 +516,7 @@
  
  (local
   (skip-proofs
-   (defthmd word-fix-lemma
+   (defthm word-fix-lemma
      (implies (weak-wordp x)
 	      (equal (word-fix (rev x)) (rev (word-fix x))))
      )
