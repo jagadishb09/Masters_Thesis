@@ -397,22 +397,114 @@
 	    )   
     )
   )
+ )
 
+(encapsulate
+ ()
+ 
+ (local
+  (defthm word-fix-rev-lemma-assoc-lemma1
+    (implies (and (weak-wordp x)
+		  (word-fix (cdr x)))
+	     (cdr x))
+    )
+  )
+
+ ;(local (in-theory nil))
+
+ (local
+  (defthmd word-fix-rev-lemma-assoc-lemma
+    (implies (and (not (atom x))
+		  (word-fix (cdr x))
+		  (IMPLIES (AND (WEAK-WORDP (CDR X))
+				(CHARACTERP Y)
+				(WEAK-WORDP (LIST Y)))
+			   (EQUAL (WORD-FIX (APPEND (CDR X) (LIST Y)))
+				  (WORD-FIX (APPEND (WORD-FIX (CDR X)) (LIST Y))))))
+	     (IMPLIES (AND (WEAK-WORDP X)
+			   (CHARACTERP Y)
+			   (WEAK-WORDP (LIST Y)))
+		      (EQUAL (WORD-FIX (APPEND X (LIST Y)))
+			     (WORD-FIX (APPEND (WORD-FIX X) (LIST Y))))))
+    :hints (("Goal"
+
+	     :use ((:instance word-fix-rev-lemma-assoc-lemma1 (x x))
+		   (:instance weak-word-cdr (x x))
+		   (:instance WORD-FIX (w (APPEND X (LIST Y))))
+		   (:instance WORD-FIX (w (APPEND (WORD-FIX X) (LIST Y))))
+		   (:instance word-fix (w x))
+		   ;(:instance weak-wordp (w x))
+		   ;(:instance weak-wordp (w (cdr x)))
+		   )
+	     :do-not-induct t
+	     :in-theory (enable append cons car cdr)
+	     ;:in-theory nil
+
+	     )
+
+	    ("Subgoal 110"
+	     :in-theory (disable append)
+	     )
+
+	    ;; ("Subgoal 108"
+	    ;;  :in-theory (enable append)
+	    ;;  )
+	    
+	    )
+    )
+  )
+
+ 
  (defthmd word-fix-rev-lemma-assoc-1
    (implies (and (weak-wordp x)
 		 (characterp y)
 		 (weak-wordp (list y)))
 	    (equal (word-fix (append x (list y)))
 		   (word-fix (append (word-fix x) (list y)))))
+   :hints (("Subgoal *1/11"
+	    :use (:instance word-fix-rev-lemma-assoc-lemma (x x))
+	    )
 
-   ;; :hints (("Subgoal *1/11"
+	   ("Subgoal *1/10"
+	    :use (:instance word-fix-rev-lemma-assoc-lemma (x x))
+	    )
 
-   ;; 	    :use ((:instance 
+	   ("Subgoal *1/9"
+	    :use (:instance word-fix-rev-lemma-assoc-lemma (x x))
+	    )
 
-   ;; 		   )
-   ;; 	    ))
-   
-   ;; )
+	   ("Subgoal *1/8"
+	    :use (:instance word-fix-rev-lemma-assoc-lemma (x x))
+	    )
+
+	   ("Subgoal *1/7"
+	    :use (:instance word-fix-rev-lemma-assoc-lemma (x x))
+	    )
+
+	   ("Subgoal *1/6"
+	    :use (:instance word-fix-rev-lemma-assoc-lemma (x x))
+	    )
+
+	   ("Subgoal *1/5"
+	    :use (:instance word-fix-rev-lemma-assoc-lemma (x x))
+	    )
+
+	   ("Subgoal *1/4"
+	    :use (:instance word-fix-rev-lemma-assoc-lemma (x x))
+	    )
+
+	   ("Subgoal *1/3"
+	    :use (:instance word-fix-rev-lemma-assoc-lemma (x x))
+	    )
+
+	   ("Subgoal *1/2"
+	    :use (:instance word-fix-rev-lemma-assoc-lemma (x x))
+	    )
+
+	   )
+
+
+   )
  
  )
 
