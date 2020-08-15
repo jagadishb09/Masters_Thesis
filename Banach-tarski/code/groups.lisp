@@ -290,6 +290,20 @@
 	   ))
   )
 
+(defthmd word-fix-rev-lemma4
+  (implies (and (reducedwordp (list x))
+		(characterp x)
+		(reducedwordp y)
+		(reducedwordp (list z))
+		(characterp z))
+	   (equal (word-fix (append (list x) y (list z)))
+		  (word-fix (append (word-fix (append (list x) y)) (list z)))))
+
+  :hints (("Goal"
+	   :in-theory (enable append)
+	   ))
+  )
+
 ;;;;;;;;;;;;;;;;;;associative property
 
 
@@ -359,7 +373,7 @@
    )
 
  (local
-  (defthm word-fix-rev-lemma2
+  (defthmd word-fix-rev-lemma2
     (implies (and (reducedwordp x)
 		  (characterp y)
 		  (reducedwordp x)
@@ -397,6 +411,34 @@
 	    )   
     )
   )
+
+ (local
+  (defthmd word-fix-rev-lemma4
+    (implies (and (reducedwordp x)
+		  (<= (len x) 1)
+		  
+		  (reducedwordp y)
+		  (reducedwordp z)
+		  (<= (len z) 1))
+	     (equal (word-fix (append x y z))
+		    (word-fix (append (word-fix (append x y)) z))))
+    )
+  )
+
+ (local
+  (defthm word-fix-rev-lemma3
+    (implies (and (characterp x)
+		  (weak-wordp (list x))
+		  (reducedwordp y)
+		  (characterp z)
+		  (weak-wordp (list z)))
+	     (equal (word-fix (append (list x) y (list z)))
+		    (word-fix (append (word-fix (append (list x) y)) (list z)))))
+    )
+
+  )
+
+ 
  )
 
 (encapsulate
