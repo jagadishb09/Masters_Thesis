@@ -851,7 +851,8 @@
 	       (and (equal (list (car (last x))) (last x))
 		    (listp (rev (cdr (rev x))))
 		    (listp (list (car (last x))))
-		    (listp (last x))))
+		    (listp (last x))
+		    (character-listp (list (car x)))))
       :hints (("Goal"
 	       :in-theory (enable last car character-listp rev)
 	       ))
@@ -1069,7 +1070,17 @@
    )
 
   (local
-   (defthm lemma11
+   (defthmd lemma11
+     (implies (weak-wordp x)
+	      (if x (and (weak-wordp (list (car x)))
+			 (weak-wordp (last x)))
+		(weak-wordp (last x)))
+	      )
+     )
+   )
+
+  (local
+   (defthm lemma12
      (implies (and (weak-wordp x)
 		   (word-fix (cdr x))
 		   x)
@@ -1080,14 +1091,15 @@
 	      :use ((:instance compose-assoc-lemma (x (list (car x))) (y (cdr x)))
 		    (:instance lemma10 (x (car x)) (y (word-fix (cdr x))))
 		    (:instance weak-word-cdr (x x))
-		    (:instance 
+		    (:instance lemma11 (x x))
 		    (:instance weak-wordp-equivalent-assoc (x (word-fix (cdr x)))))
-	      :in-theory nil
+					;:in-theory nil
+	      :do-not-induct t
 	      ))
      )
    )
   
-  (defthmd word-fix-lemma1
+  (defthmd word-fix-lemma2
     (implies (and (weak-wordp x)
 		  (not (atom x))
 		  (EQUAL (WORD-FIX (REV (CDR X)))
@@ -1111,13 +1123,15 @@
 		   (:instance character-listp-word-assoc (x (word-fix (cdr x))))
 		   (:instance lemma5 (x (word-fix (cdr x))))
 		   (:instance lemma6 (x x))
+		   
+		   
 		   )
 	     :in-theory nil
 	     :do-not-induct t
 	     ))
     )
 
-  (defthmd word-fix-lemma2
+  (defthmd word-fix-lemma1
     (implies (and (weak-wordp x)
 		  (not (atom x))
 		  (EQUAL (WORD-FIX (REV (CDR X)))
@@ -1126,10 +1140,45 @@
 	     (equal (word-fix (rev x)) (rev (word-fix x))))
     :hints (("Goal"
 	     :cases ((not x)
-		     x))
+		     x)
+	     :do-not-induct t
+	     )
 	    ("Subgoal 1"
-
-	     ))
+	     :cases ((not (word-fix (cdr x)))
+		     (word-fix (cdr x)))
+	     :use (
+		   (:instance lemma5 (x (word-fix (append (last (rev (word-fix (cdr x))))
+							  (list (car x))))))
+		   (:instance word-fix-lemma2 (x x))
+		   (:instance lemma7 
+			      (x (rev (word-fix (append (last (rev (word-fix (cdr x))))
+							(list (car x))))))
+			      (y (cdr (fix (cdr x)))))
+		   (:instance lemma9
+			      (x (last (rev (word-fix (cdr x)))))
+			      (y (list (car x))))
+		   (:instance lemma12 (x x))
+		   (:instance lemma11 (x x))
+		   (:instance weak-word-cdr (x x))
+		   (:instance weak-wordp-equivalent-assoc (x (cdr x)))
+		   (:instance reducedwordp=>weak-wordp-assoc (x (cdr x)))
+		   (:instance weak-wordp-rev (x (word-fix (cdr x))))
+		   (:instance character-listp-word-assoc (x x))
+		   (:instance lemma11 (x (rev (word-fix (cdr x)))))
+		   (:instance closure-weak-word-assoc
+			      (x (last (rev (word-fix (cdr x)))))
+			      (y (list (car x))))
+		   (:instance weak-wordp-equivalent-assoc
+			      (x (append (last (rev (word-fix (cdr x))))
+					 (list (car x)))))
+		   (:instance character-listp-word-assoc
+			      (x (word-fix (append (last (rev (word-fix (cdr x))))
+						   (list (car x))))))
+		   )
+		   :in-theory (enable append)
+		   
+	     )
+	    )								    
     )
   
   
