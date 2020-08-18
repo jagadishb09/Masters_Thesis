@@ -931,7 +931,6 @@
 		  (:instance word-fix-rev-lemma (x (append x y)))
 		  (:instance compose-assoc-lemma1 (x (rev z)) (y (rev y)) (z (rev x)))
 		  (:instance word-fix-rev-lemma (x (append (rev z) (rev y) (rev x)))))
-					;:in-theory nil
 	    :do-not-induct t
 	    ))
    
@@ -1350,5 +1349,3 @@
 	   :use (:instance reduced-inverse-lemma)
 	   ))
   )
-
-
