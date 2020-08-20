@@ -609,7 +609,8 @@
 		   (characterp y))
 	      (and (equal (append x (list y))
 			  (append (list (car x)) (cdr x) (list y)))
-		   (characterp (car x))))
+		   (characterp (car x))
+		   (consp (append x (list y)))))
      :hints (("Goal"
 	      :in-theory (enable append)
 	      ))
