@@ -524,7 +524,6 @@
      )
    )
   
-
   (local
    (defthmd word-fix-rev-lemma1
      (implies (and (weak-wordp x)
@@ -585,8 +584,9 @@
 	      )
      )
    )
-
+  
   (local
+   (skip-proofs
     (defthmd word-fix-rev-lemma3-1
       (implies (and (characterp x)
 		    (weak-wordp (list x))
@@ -599,8 +599,8 @@
 	       :in-theory (enable append)
 	       ))
       )
+    )
    )
-  
 
   (local
    (skip-proofs
@@ -750,7 +750,7 @@
    )
 
   (local
-   (defthmd lemma12
+   (defthm lemma12
      (implies (and (weak-wordp x)
 		   (word-fix (cdr x))
 		   x)
@@ -1157,6 +1157,8 @@
   (implies (weak-wordp x)
 	   (weak-wordp (rev x)))
   )
+
+
 
 (defthmd rev-word-inv-reduced
   (implies (reducedwordp x)
