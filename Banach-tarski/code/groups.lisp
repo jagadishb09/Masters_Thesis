@@ -659,7 +659,6 @@
 				(x (append (word-fix (append (list x) (list (car y)))) (cdr y)))
 				(y z))
 		     )
-	       :in-theory (enable append rev)
 	       ))
       )
    )
