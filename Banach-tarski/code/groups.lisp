@@ -641,7 +641,8 @@
 
 	      ("Subgoal 1"
 	       
-	       :use ((:instance lemma-13 (x x))
+	       :use ((:instance word-fix (w (append x (list y))))
+		     (:instance lemma-13 (x x))
 		     (:instance character-listp-word-assoc (x x))
 		     (:instance lemma11 (x x))
 		     (:instance weak-word-cdr (x x))
