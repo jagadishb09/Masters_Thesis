@@ -607,8 +607,9 @@
      (implies (and (character-listp x)
 		   x
 		   (characterp y))
-	      (equal (append x (list y))
-		     (append (list (car x)) (cdr x) (list y))))
+	      (and (equal (append x (list y))
+			  (append (list (car x)) (cdr x) (list y)))
+		   (characterp (car x))))
      :hints (("Goal"
 	      :in-theory (enable append)
 	      ))
