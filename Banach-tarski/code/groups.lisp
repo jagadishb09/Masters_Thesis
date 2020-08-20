@@ -506,12 +506,13 @@
      (implies (and (character-listp x)
 		   x)
 	      (and (equal (list (car (last x))) (last x))
+		   (equal (append (list (car x)) (cdr x)) x)
 		   (listp (rev (cdr (rev x))))
 		   (listp (list (car (last x))))
 		   (listp (last x))
 		   (character-listp (list (car x)))))
      :hints (("Goal"
-	      :in-theory (enable last car character-listp rev)
+	      :in-theory (enable last car character-listp rev append)
 	      ))
      )
    )
@@ -667,6 +668,7 @@
 		     (:instance compose-assoc-lemma
 				(x (list (car x)))
 				(y (cdr x)))
+		     (:instance lemma3 (x x))
 		     )
 	       :in-theory nil
 	       :do-not-induct t
@@ -991,6 +993,7 @@
 		    (:instance character-listp-word-assoc
 			       (x (word-fix (append (last (rev (word-fix (cdr x))))
 						    (list (car x))))))
+		    
 		    )
 	      :in-theory (enable append)
 	      
