@@ -614,6 +614,27 @@
 	      ))
      )
    )
+  
+
+  (local
+   (skip-proofs
+    (defthmd word-fix-rev-lemma3-induct
+      (implies (and (not (atom x))
+		    (implies (and (weak-wordp (cdr x))
+				  (characterp y)
+				  (weak-wordp (list y)))
+			     (equal (word-fix (append (cdr x) (list y)))
+				    (word-fix (append (word-fix (cdr x)) (list y))))))
+	       (implies (and (weak-wordp x)
+			     (characterp y)
+			     (weak-wordp (list y)))
+			(equal (word-fix (append x (list y)))
+			       (word-fix (append (word-fix x) (list y)))))
+	       )
+      )
+    )
+   )
+	       
 
   (local
    ;(skip-proofs
@@ -647,22 +668,44 @@
 				(z y))
 		     )
 	       )
+	      
 	      ("Subgoal *1/9"
-	       :use ((:instance lemma-13 (x x))
-		     (:instance character-listp-word-assoc (x x))
-		     (:instance compose-assoc-lemma1
-				(x (list (car x)))
-				(y (cdr x))
-				(z (list y)))
-		     (:instance compose-assoc-lemma
-				(x (list (car x)))
-				(y (append (word-fix (cdr x)) (list y))))
-		     (:instance weak-word-cdr (x x))
-		     (:instance weak-wordp-equivalent-assoc (x (cdr x)))
-		     (:instance word-fix-rev-lemma3-1
-				(x (car x))
-				(y (word-fix (cdr x)))
-				(z y))
+	       :use ((:instance word-fix-rev-lemma3-induct (x x))
+		     )
+	       )
+
+	      ("Subgoal *1/8"
+	       :use ((:instance word-fix-rev-lemma3-induct (x x))
+		     )
+	       )
+
+	      ("Subgoal *1/7"
+	       :use ((:instance word-fix-rev-lemma3-induct (x x))
+		     )
+	       )
+
+	      ("Subgoal *1/6"
+	       :use ((:instance word-fix-rev-lemma3-induct (x x))
+		     )
+	       )
+
+	      ("Subgoal *1/5"
+	       :use ((:instance word-fix-rev-lemma3-induct (x x))
+		     )
+	       )
+
+	      ("Subgoal *1/4"
+	       :use ((:instance word-fix-rev-lemma3-induct (x x))
+		     )
+	       )
+
+	      ("Subgoal *1/3"
+	       :use ((:instance word-fix-rev-lemma3-induct (x x))
+		     )
+	       )
+
+	      ("Subgoal *1/2"
+	       :use ((:instance word-fix-rev-lemma3-induct (x x))
 		     )
 	       )
 	      
