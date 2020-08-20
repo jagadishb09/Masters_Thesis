@@ -586,21 +586,21 @@
    )
   
   (local
-   (skip-proofs
+   ;(skip-proofs
     (defthmd word-fix-rev-lemma3-1
       (implies (and (characterp x)
 		    (weak-wordp (list x))
 		    (reducedwordp y)
 		    (characterp z)
 		    (weak-wordp (list z)))
-	       (equal (word-fix (append (list (car x)) y (list z)))
-		      (word-fix (append (word-fix (append (list (car x)) y)) (list z)))))
+	       (equal (word-fix (append (list x) y (list z)))
+		      (word-fix (append (word-fix (append (list x) y)) (list z)))))
       :hints (("Goal"
 	       :in-theory (enable append)
 	       ))
       )
     )
-   )
+   
 
   (local
    (defthmd lemma-13
@@ -610,6 +610,7 @@
 	      (and (equal (append x (list y))
 			  (append (list (car x)) (cdr x) (list y)))
 		   (characterp (car x))
+		   (equal (car (car x)))
 		   (consp (append x (list y)))))
      :hints (("Goal"
 	      :in-theory (enable append)
