@@ -577,6 +577,32 @@
    )
 
   (local
+   (defthmd lemma11
+     (implies (weak-wordp x)
+	      (if x (and (weak-wordp (list (car x)))
+			 (weak-wordp (last x)))
+		(weak-wordp (last x)))
+	      )
+     )
+   )
+
+  (local
+    (defthmd word-fix-rev-lemma3-1
+      (implies (and (characterp x)
+		    (weak-wordp (list x))
+		    (reducedwordp y)
+		    (characterp z)
+		    (weak-wordp (list z)))
+	       (equal (word-fix (append (list (car x)) y (list z)))
+		      (word-fix (append (word-fix (append (list (car x)) y)) (list z)))))
+      :hints (("Goal"
+	       :in-theory (enable append)
+	       ))
+      )
+   )
+  
+
+  (local
    (skip-proofs
     (defthmd word-fix-rev-lemma3
       (implies (and (weak-wordp x)
@@ -724,17 +750,7 @@
    )
 
   (local
-   (defthmd lemma11
-     (implies (weak-wordp x)
-	      (if x (and (weak-wordp (list (car x)))
-			 (weak-wordp (last x)))
-		(weak-wordp (last x)))
-	      )
-     )
-   )
-
-  (local
-   (defthm lemma12
+   (defthmd lemma12
      (implies (and (weak-wordp x)
 		   (word-fix (cdr x))
 		   x)
@@ -1141,8 +1157,6 @@
   (implies (weak-wordp x)
 	   (weak-wordp (rev x)))
   )
-
-
 
 (defthmd rev-word-inv-reduced
   (implies (reducedwordp x)
