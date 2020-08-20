@@ -656,6 +656,7 @@
 				(y (word-fix (cdr x)))
 				(z y))
 		     )
+	       :do-not-induct t
 	       )
 
 	      )
