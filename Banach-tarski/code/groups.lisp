@@ -620,7 +620,6 @@
   
 
   (local
-   ;(skip-proofs
     (defthmd word-fix-rev-lemma3-induct
       (implies (and (not (atom x))
 		    (implies (and (weak-wordp (cdr x))
@@ -644,7 +643,6 @@
 	      ("Subgoal 1"
 	       
 	       :use (
-		     ;(:instance word-fix (w (append x (list y))))
 		     (:instance lemma-13 (x x))
 		     (:instance character-listp-word-assoc (x x))
 		     (:instance lemma11 (x x))
@@ -676,12 +674,10 @@
 
 	      )
       )
-    ;)
    )
 	       
 
   (local
-   ;(skip-proofs
     (defthmd word-fix-rev-lemma3
       (implies (and (weak-wordp x)
 		    (characterp y)
@@ -755,7 +751,6 @@
 	      
 	      )
       )
-   ; )
    )
 
   
@@ -909,7 +904,6 @@
 		    (:instance weak-word-cdr (x x))
 		    (:instance lemma11 (x x))
 		    (:instance weak-wordp-equivalent-assoc (x (word-fix (cdr x)))))
-					;:in-theory nil
 	      :do-not-induct t
 	      ))
      )
