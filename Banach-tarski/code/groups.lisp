@@ -633,7 +633,7 @@
 		     (:instance compose-assoc-lemma1
 				(x (list (car x)))
 				(y (cdr x))
-				(x (list y)))
+				(z (list y)))
 		     (:instance compose-assoc-lemma
 				(x (list (car x)))
 				(y (append (word-fix (cdr x)) (list y))))
