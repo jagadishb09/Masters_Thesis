@@ -661,6 +661,7 @@
 				(y (word-fix (cdr x)))
 				(z y))
 		     )
+	       :in-theory nil
 	       :do-not-induct t
 	       )
 
