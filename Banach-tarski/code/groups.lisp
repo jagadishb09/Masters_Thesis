@@ -664,6 +664,9 @@
 				(x (car x))
 				(y (word-fix (cdr x)))
 				(z y))
+		     (:instance compose-assoc-lemma
+				(x (list (car x)))
+				(y (cdr x)))
 		     )
 	       :in-theory nil
 	       :do-not-induct t
