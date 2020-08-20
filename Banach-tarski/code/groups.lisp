@@ -628,6 +628,8 @@
 	       :cases ((not x)
 		       x)
 
+	       )
+	      ("Subgoal *1/11"
 	       :use ((:instance lemma-13 (x x))
 		     (:instance character-listp-word-assoc (x x))
 		     (:instance compose-assoc-lemma1
@@ -644,7 +646,8 @@
 				(y (word-fix (cdr x)))
 				(z y))
 		     )
-	       ))
+	       )
+	      )
       )
    ; )
    )
