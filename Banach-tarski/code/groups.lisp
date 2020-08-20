@@ -603,15 +603,52 @@
    )
 
   (local
-   (skip-proofs
+   (defthmd lemma-13
+     (implies (and (character-listp x)
+		   x
+		   (characterp y))
+	      (equal (append x (list y))
+		     (append (list (car x)) (cdr x) (list y))))
+     :hints (("Goal"
+	      :in-theory (enable append)
+	      ))
+     )
+   )
+
+  (local
+   ;(skip-proofs
     (defthmd word-fix-rev-lemma3
       (implies (and (weak-wordp x)
 		    (characterp y)
 		    (weak-wordp (list y)))
 	       (equal (word-fix (append x (list y)))
-		      (word-fix (append (word-fix x) (list y))))))
-    )
+		      (word-fix (append (word-fix x) (list y)))))
+
+      :hints (("Goal"
+	       :cases ((not x)
+		       x)
+
+	       :use ((:instance lemma-13 (x x))
+		     (:instance character-listp-word-assoc (x x))
+		     (:instance compose-assoc-lemma1
+				(x (list (car x)))
+				(y (cdr x))
+				(x (list y)))
+		     (:instance compose-assoc-lemma
+				(x (list (car x)))
+				(y (append (word-fix (cdr x)) (list y))))
+		     (:instance weak-word-cdr (x x))
+		     (:instance weak-wordp-equivalent-assoc (x (cdr x)))
+		     (:instance word-fix-rev-lemma3-1
+				(x (car x))
+				(y (word-fix (cdr x)))
+				(z y))
+		     )
+	       ))
+      )
+   ; )
    )
+
   
   (local
    (defthmd word-fix-rev-lemma4
