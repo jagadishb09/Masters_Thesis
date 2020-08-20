@@ -586,7 +586,7 @@
    )
   
   (local
-   ;(skip-proofs
+   (skip-proofs
     (defthmd word-fix-rev-lemma3-1
       (implies (and (characterp x)
 		    (weak-wordp (list x))
@@ -600,7 +600,7 @@
 	       ))
       )
     )
-   
+   )
 
   (local
    (defthmd lemma-13
@@ -610,7 +610,6 @@
 	      (and (equal (append x (list y))
 			  (append (list (car x)) (cdr x) (list y)))
 		   (characterp (car x))
-		   (equal (car (car x)))
 		   (consp (append x (list y)))))
      :hints (("Goal"
 	      :in-theory (enable append)
