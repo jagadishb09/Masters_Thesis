@@ -642,14 +642,19 @@
 	       
 	       :use ((:instance lemma-13 (x x))
 		     (:instance character-listp-word-assoc (x x))
+		     (:instance lemma11 (x x))
+		     (:instance weak-word-cdr (x x))
 		     (:instance compose-assoc-lemma1
 				(x (list (car x)))
 				(y (cdr x))
 				(z (list y)))
+		     (:instance weak-wordp-equivalent-assoc (x (cdr x)))
+		     (:instance reducedwordp=>weak-wordp-assoc (x (word-fix (cdr x))))
+		     (:instance closure-weak-word-assoc (x (word-fix (cdr x))) (y (list y)))
 		     (:instance compose-assoc-lemma
 				(x (list (car x)))
 				(y (append (word-fix (cdr x)) (list y))))
-		     (:instance weak-word-cdr (x x))
+		     
 		     (:instance weak-wordp-equivalent-assoc (x (cdr x)))
 		     (:instance word-fix-rev-lemma3-1
 				(x (car x))
