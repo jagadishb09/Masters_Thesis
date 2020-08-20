@@ -540,7 +540,6 @@
    (defthmd word-fix-rev-lemma2
      (implies (and (reducedwordp x)
 		   (characterp y)
-		   (reducedwordp x)
 		   (weak-wordp (list y)))
 	      (equal (word-fix (append x (list y)))
 		     (append (rev (cdr (rev x))) (word-fix (append (last x) (list y))))))
@@ -585,9 +584,31 @@
 	      )
      )
    )
+
+  (local
+   (defthmd word-fix-rev-lemma3-12
+     (implies (and (characterp x)
+		   (weak-wordp (list x))
+		   y
+		   (reducedwordp y))
+	      (equal (word-fix (append (list x) y))
+		     (append (word-fix (append (list x) (list (car y)))) (cdr y))))
+     )
+   )
+
+  (local
+   (defthmd lemma8
+     (implies (and (weak-wordp x)
+		   (<= (len x) 1))
+	      (or (equal x nil)
+		  (equal x '(#\a))
+		  (equal x '(#\b))
+		  (equal x '(#\c))
+		  (equal x '(#\d))))
+     )
+   )
   
   (local
-   (skip-proofs
     (defthmd word-fix-rev-lemma3-1
       (implies (and (characterp x)
 		    (weak-wordp (list x))
@@ -597,10 +618,50 @@
 	       (equal (word-fix (append (list x) y (list z)))
 		      (word-fix (append (word-fix (append (list x) y)) (list z)))))
       :hints (("Goal"
-	       :in-theory (enable append)
+	       :cases ((<= (len y) 1)
+		       (> (len y) 1))
+	       :do-not-induct t
+	       )
+
+	      ("Subgoal 2"
+	       :use ((:instance reducedwordp=>weak-wordp-assoc (x y))
+		     (:instance lemma8 (x (list x)))
+		     (:instance lemma8 (x y))
+		     (:instance lemma8 (x (list z))))
+	       
+
+	       )
+	      
+	      ("Subgoal 1"
+	       
+	       :use (
+		     (:instance compose-assoc-lemma1
+				(x (list x))
+				(y y)
+				(z (list z)))
+
+		     (:instance word-fix-rev-lemma2 (x y) (y z))
+
+		     (:instance lemma11 (x y))
+		     (:instance reducedwordp=>weak-wordp-assoc (x y))
+		     (:instance closure-weak-word-assoc (x y) (y (list z)))
+		     (:instance weak-wordp-equivalent-assoc (x (append y (list z))))
+		     (:instance word-fix-rev-lemma3-12
+				(x x)
+				(y (append (rev (cdr (rev y))) (word-fix (append (last y) (list z)))))
+				)
+		     (:instance word-fix-rev-lemma3-12 (x x) (y y))
+		     (:instance closure-weak-word-assoc
+				(x (list x))
+				(y y))
+		     (:instance weak-wordp-equivalent-assoc (x (word-fix (append (list x) y))))
+		     (:instance word-fix-rev-lemma2
+				(x (append (word-fix (append (list x) (list (car y)))) (cdr y)))
+				(y z))
+		     )
+	       :in-theory (enable append rev)
 	       ))
       )
-    )
    )
 
   (local
@@ -811,18 +872,6 @@
 	      (equal (rev (append x y))
 		     (append (rev y) (rev x))))
      
-     )
-   )
-
-  (local
-   (defthmd lemma8
-     (implies (and (weak-wordp x)
-		   (<= (len x) 1))
-	      (or (equal x nil)
-		  (equal x '(#\a))
-		  (equal x '(#\b))
-		  (equal x '(#\c))
-		  (equal x '(#\d))))
      )
    )
 
@@ -1373,7 +1422,6 @@
   :hints (("Goal"
 	   :use ((:instance reduced-wordp-flip-1)
 		 (:instance reduced-wordp-flip-2))
-					;:in-theory nil
 	   ))
   )
 
