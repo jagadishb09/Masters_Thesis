@@ -1,3 +1,5 @@
+(IN-PACKAGE "ACL2")
+
 (include-book "std/typed-lists/character-listp" :dir :system)
 (include-book "std/lists/top" :dir :system)
 
