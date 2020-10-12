@@ -129,17 +129,15 @@
 
 
 (defthmd funs-lemmas-1
-  (implies (realp x)
-	   (and (m-= (m-* (id-rotation) (a-rotation x)) (a-rotation x))
-		(m-= (m-* (id-rotation) (a-inv-rotation x)) (a-inv-rotation x))
-		(m-= (m-* (id-rotation) (b-rotation x)) (b-rotation x))
-		(m-= (m-* (id-rotation) (b-inv-rotation x)) (b-inv-rotation x))
-		(m-= (m-* (a-rotation x) (id-rotation)) (a-rotation x))
-		(m-= (m-* (a-inv-rotation x) (id-rotation)) (a-inv-rotation x))
-		(m-= (m-* (b-rotation x) (id-rotation)) (b-rotation x))
-		(m-= (m-* (b-inv-rotation x) (id-rotation)) (b-inv-rotation x))
-		)
-	   )
+  (and (m-= (m-* (id-rotation) (a-rotation x)) (a-rotation x))
+       (m-= (m-* (id-rotation) (a-inv-rotation x)) (a-inv-rotation x))
+       (m-= (m-* (id-rotation) (b-rotation x)) (b-rotation x))
+       (m-= (m-* (id-rotation) (b-inv-rotation x)) (b-inv-rotation x))
+       (m-= (m-* (a-rotation x) (id-rotation)) (a-rotation x))
+       (m-= (m-* (a-inv-rotation x) (id-rotation)) (a-inv-rotation x))
+       (m-= (m-* (b-rotation x) (id-rotation)) (b-rotation x))
+       (m-= (m-* (b-inv-rotation x) (id-rotation)) (b-inv-rotation x))
+       )
   :hints (("Goal"
 	   :in-theory (enable 
 		       alist2p array2p aset2 aref2 compress2 header
@@ -163,8 +161,7 @@
   )
 
 (defthmd array2p-funs
-  (implies (and (symbolp y)
-		(realp x))
+  (implies (symbolp y)
 	   (and (array2p y (id-rotation))
 		(array2p y (a-rotation x))
 		(array2p y (a-inv-rotation x))
@@ -200,20 +197,16 @@
 	)
   )
 
-(local
- (defthm rotation-=
-   (implies (and (reducedwordp w)
-		 (not (atom w))
-		 (realp x))
-	    
-	    (cond 
-	     ((equal (car w) (wa)) (equal (rotation w x) (m-* (a-rotation x) (rotation (cdr w) x))))
-	     ((equal (car w) (wa-inv)) (equal (rotation w x) (m-* (a-inv-rotation x) (rotation (cdr w) x))))
-	     ((equal (car w) (wb)) (equal (rotation w x) (m-* (b-rotation x) (rotation (cdr w) x))))
-	     ((equal (car w) (wb-inv)) (equal (rotation w x) (m-* (b-inv-rotation x) (rotation (cdr w) x))))
-	     )
-	    ))
- )
+(defthmd rotation-=
+  (implies (and (reducedwordp w)
+		(not (atom w)))	   
+	   (cond 
+	    ((equal (car w) (wa)) (equal (rotation w x) (m-* (a-rotation x) (rotation (cdr w) x))))
+	    ((equal (car w) (wa-inv)) (equal (rotation w x) (m-* (a-inv-rotation x) (rotation (cdr w) x))))
+	    ((equal (car w) (wb)) (equal (rotation w x) (m-* (b-rotation x) (rotation (cdr w) x))))
+	    ((equal (car w) (wb-inv)) (equal (rotation w x) (m-* (b-inv-rotation x) (rotation (cdr w) x))))
+	    )
+	   ))
 
 
 (defthmd
@@ -229,12 +222,23 @@
 			(second (dimensions name M2)))))
   )
 
+(defthmd
+  dimensions-array2p-m-*-1
+  (implies (and (array2p name M1)
+		(array2p name M2)
+		(equal (first (dimensions name M1)) 3)
+		(equal (second (dimensions name M1)) 3)
+		(equal (first (dimensions name M2)) 3)
+		(equal (second (dimensions name M2)) 1))
+	   (equal (dimensions name (m-* M1 M2))
+		  (list (first (dimensions name M1))
+			(second (dimensions name M2)))))
+  )
 
 (defthmd rotation-props-ind-case-0
   (IMPLIES
    (AND (NOT (ATOM W))
 	(IMPLIES (AND (REDUCEDWORDP (CDR W))
-		      (REALP X)
 		      (SYMBOLP NAME))
 		 (AND (ARRAY2P NAME (ROTATION (CDR W) X))
 		      (EQUAL (CAR (DIMENSIONS NAME (ROTATION (CDR W) X)))
@@ -242,7 +246,6 @@
 		      (EQUAL (CADR (DIMENSIONS NAME (ROTATION (CDR W) X)))
 			     3))))
    (IMPLIES (AND (REDUCEDWORDP W)
-		 (REALP X)
 		 (SYMBOLP NAME))
 	    (ARRAY2P NAME (ROTATION W X))
 	    ))
@@ -294,7 +297,6 @@
   (IMPLIES
    (AND (NOT (ATOM W))
 	(IMPLIES (AND (REDUCEDWORDP (CDR W))
-		      (REALP X)
 		      (SYMBOLP NAME))
 		 (AND (ARRAY2P NAME (ROTATION (CDR W) X))
 		      (EQUAL (CAR (DIMENSIONS NAME (ROTATION (CDR W) X)))
@@ -302,7 +304,6 @@
 		      (EQUAL (CADR (DIMENSIONS NAME (ROTATION (CDR W) X)))
 			     3))))
    (IMPLIES (AND (REDUCEDWORDP W)
-		 (REALP X)
 		 (SYMBOLP NAME))
 	    (and 
 	     (EQUAL (CAR (DIMENSIONS NAME (ROTATION W X)))
@@ -371,7 +372,6 @@
 
 (defthmd rotation-props
   (implies (and (reducedwordp w)
-		(realp x)
 		(symbolp name))
 	   (and (array2p name (rotation w x))
 		(equal (first (dimensions name (rotation w x))) 3)
@@ -406,18 +406,73 @@
 	(t nil))
   )
 
-;; (defthm rotation-implies
-;;   (implies (and (reducedwordp w)
-;; 		(equal x (acl2-sqrt 2)))
-;; 	   (and (integerp (int-point (m-* (rotation w x) (point-p)) 0 0 (len w) x))
-;; 		(integerp (int-point (m-* (rotation w x) (point-p)) 1 0 (len w) x))
-;; 		(integerp (int-point (m-* (rotation w x) (point-p)) 2 0 (len w) x))
-;; 		)
-;; 	   )
-;;   :hints (("Goal"
-;; 	   :in-theory (disable acl2-sqrt)
-;; 	   ))
-;;   )
+(defthmd m-*-rotation-point-dim
+  (implies (and (reducedwordp w)
+		(symbolp name))
+	   (and (array2p name (m-* (rotation w x) (point-p)))
+		(equal (first (dimensions name (m-* (rotation w x) (point-p)))) 3)
+		(equal (second (dimensions name (m-* (rotation w x) (point-p)))) 1))
+	   )
+  :hints (("Goal"
+	   :use ((:instance rotation-props (w w) (x x) (name name))
+		 (:instance dimensions-array2p-m-*-1
+			    (m1 (rotation w x))
+			    (m2 (point-p))
+			    (name name))
+		 (:instance array2p-funs
+			    (y name))
+		 )
+	   :in-theory (disable rotation)
+	   ))
+  )
+
+
+(skip-proofs
+ (defthmd rotation-values-ind-case
+   (IMPLIES
+    (AND (CONSP W)
+	 (IMPLIES (AND (REDUCEDWORDP (CDR W))
+		       (EQUAL X (ACL2-SQRT 2)))
+		  (AND (INTEGERP (INT-POINT (M-* (ROTATION (CDR W) X) (POINT-P))
+					    0 0 (LEN (CDR W))
+					    X))
+		       (INTEGERP (INT-POINT (M-* (ROTATION (CDR W) X) (POINT-P))
+					    1 0 (LEN (CDR W))
+					    X))
+		       (INTEGERP (INT-POINT (M-* (ROTATION (CDR W) X) (POINT-P))
+					    2 0 (LEN (CDR W))
+					    X)))))
+    (IMPLIES (AND (REDUCEDWORDP W)
+		  (EQUAL X (ACL2-SQRT 2)))
+	     (AND (INTEGERP (INT-POINT (M-* (ROTATION W X) (POINT-P))
+				       0 0 (LEN W)
+				       X))
+		  (INTEGERP (INT-POINT (M-* (ROTATION W X) (POINT-P))
+				       1 0 (LEN W)
+				       X))
+		  (INTEGERP (INT-POINT (M-* (ROTATION W X) (POINT-P))
+				       2 0 (LEN W)
+				       X)))))
+   :hints (("Goal"
+	    :in-theory (disable acl2-sqrt)
+	    ))
+   )
+ )
+  
+
+(defthmd rotation-values
+  (implies (and (reducedwordp w)
+		(equal x (acl2-sqrt 2)))
+	   (and (integerp (int-point (m-* (rotation w x) (point-p)) 0 0 (len w) x))
+		(integerp (int-point (m-* (rotation w x) (point-p)) 1 0 (len w) x))
+		(integerp (int-point (m-* (rotation w x) (point-p)) 2 0 (len w) x))
+		)
+	   )
+  :hints (("Subgoal *1/1"
+	   :use ((:instance rotation-values-ind-case))
+	   :in-theory (disable acl2-sqrt)
+	   ))
+  )
 
 
 
