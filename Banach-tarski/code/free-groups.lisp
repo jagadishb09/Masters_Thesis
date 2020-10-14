@@ -427,97 +427,51 @@
 	   ))
   )
 
-
-(encapsulate
- ()
- 
- (local
-  (defthm lemma1
-    (implies (and (symbolp name)
-		  (realp a)
-		  (realp b)
-		  (realp c)
-		  (realp x)
-		  (array2p name m1)
-		  (equal (first (dimensions name m1)) 3)
-		  (equal (second (dimensions name m1)) 1)
-		  (equal (aref2 name m1 0 0) a)
-		  (equal (aref2 name m1 1 0) b)
-		  (equal (aref2 name m1 2 0) c))
-	     (and (realp (aref2 name m1 0 0))
-		  (realp (aref2 name m1 1 0))
-		  (realp (aref2 name m1 2 0))
-		  )
-	     )
-    )
-  )
-
- (local
-  (defthm lemma2
-    (implies (and (realp x)
-		  (symbolp name))
-	     (and 
-	      (EQUAL (CAR (DIMENSIONS NAME (a-rotation x))) 3)
-              (EQUAL (CADR (DIMENSIONS NAME (a-rotation x))) 3)
-	      ;(aref2 
-	      )
-	     )
-    :hints (("Goal"
-	     :in-theory (enable array2p header dimensions)
-	     ))
-    )
-  )
-
- ;(local (in-theory (enable aref2)))
- 
- (defthmd rotation-values-ind-case-lemma1
-   (implies (and (symbolp name)
-		 (realp a)
-		 (realp b)
-		 (realp c)
-		 (realp x)
-		 (array2p name m1)
-		 (equal (first (dimensions name m1)) 3)
-		 (equal (second (dimensions name m1)) 1)
-		 (equal (aref2 name m1 0 0) a)
-		 (equal (aref2 name m1 1 0) b)
-		 (equal (aref2 name m1 2 0) c))
-	    (equal (aref2 name (m-* (a-rotation x) m1) 0 0) a)
-	    )
-   :hints (("Goal"
-	    :use ((:instance aref2-m-* (m1 (a-rotation x)) (m2 m1) (i 0) (j 0))
-		  ;(:instance array2p-funs (y name))
-		  ;(:instance lemma1 (name '$arg2))
-		  ;(:instance lemma1 (name '$arg1))
-		  ;(:instance array2p-alist2p (name name) (l m1))
-		  ;(:instance array2p-alist2p (name name) (l (a-rotation x)))
-		  )
-	    :in-theory nil
-	    )
-	   ("Subgoal 10"
-	    :use ((:instance array2p-funs (y name))
-		  (:instance array2p-alist2p (name name) (l m1))
-		  (:instance array2p-alist2p (name name) (l (a-rotation x)))
-		  )
-	    )
-	   ("Subgoal 5"
-	    :use ((:instance array2p-funs (y name))
-		  (:instance array2p-alist2p (name name) (l m1))
-		  (:instance array2p-alist2p (name name) (l (a-rotation x)))
-		  )
-	    )
-	   ("Subgoal 4"
-	    :use ((:instance a-rotation (x x))
-		  (:instance lemma2 (x x))
-		  (:instance lemma1 (name '$arg2))
-		  (:instance lemma1 (name '$arg1))
-		  (:instance dot (m1 (a-rotation x)) (m2 m1) (i 0) (j 2) (k 0))
-		  )
-	    ;:in-theory (enable dot)
-	    )
+(defthmd rotation-values-ind-case-lemma1-1
+  (implies (and (symbolp name)
+		(realp a)
+		(realp b)
+		(realp c)
+		(equal (aref2 name m1 0 0) a)
+		(equal (aref2 name m1 1 0) b)
+		(equal (aref2 name m1 2 0) c))
+	   (and (equal (aref2 '$arg2 m1 0 0) a)
+		(equal (aref2 '$arg2 m1 1 0) b)
+		(equal (aref2 '$arg2 m1 2 0) c))
 	   )
-   )
- )
+  :hints (("Goal"
+	   :in-theory (enable aref2 default header)
+	   ))
+
+  )
+
+(defthmd rotation-values-ind-case-lemma1
+  (implies (and (symbolp name)
+		(realp a)
+		(realp b)
+		(realp c)
+		(realp x)
+		(array2p name m1)
+		(equal (first (dimensions name m1)) 3)
+		(equal (second (dimensions name m1)) 1)
+		(equal (aref2 name m1 0 0) a)
+		(equal (aref2 name m1 1 0) b)
+		(equal (aref2 name m1 2 0) c))
+	   (and (equal (aref2 name (m-* (a-rotation x) m1) 0 0) a)
+		(equal (aref2 name (m-* (a-rotation x) m1) 1 0) (/ (- b (* 2 x c)) 3))
+		(equal (aref2 name (m-* (a-rotation x) m1) 2 0) (/ (+ (* 2 x b) c) 3)))
+	   )
+  :hints (("Goal"
+	   :use (
+		 (:instance array2p-funs (y name))
+		 (:instance array2p-alist2p (name name) (l m1))
+		 (:instance array2p-alist2p (name name) (l (a-rotation x)))
+		 (:instance rotation-values-ind-case-lemma1-1)
+		 )
+	   :in-theory (enable aref2)
+	   ))
+  )
+
 
 (skip-proofs
  (defthmd rotation-values-ind-case
