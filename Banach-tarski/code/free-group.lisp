@@ -564,207 +564,401 @@
    )
  )
 
-					;(encapsulate
-					;()
-
-;; (local
-;;  (defthmd lemma-0
-;;    (implies (and (integerp x)
-;; 		  (integerp y))
-;; 	     (integerp (+ x y)))
-;;    )
-;;  )
-
-;; (local
-;;  (defthmd lemma-1
-;;    (implies (integerp n)
-;; 	     (equal (* (expt 3 (- n 1)) 3) (expt 3 n)))
-;; 	;	  (equal (expt 3 (- n 1)) (/ (expt 3 n) 3))
-;; 	;	  (equal (expt 3 n) (* (expt 3 (- n 1)) 3))))
-;;    )
-;;  )
-
-;; (local
-;;  (defthmd lemma-2
-;;    (implies (integerp x)
-;; 	     (integerp (* x 3)))
-;;    )
-;;  )
-
-;; (local
-;;  (defthmd lemma-3
-;;    (implies (integerp n)
-;; 	     (equal (/ (expt 3 n) 3) (expt 3 (- n 1))))    
-;;    )
-;;  )
-
-;; (local
-;;  (defthmd lemma-4
-;;    (implies (integerp x)
-;; 	     (integerp (* x 4)))
-;;    )
-;;  )
 
 (encapsulate
  ()
 
  (local
-  (skip-proofs
-   (defthmd lemma-0
-     (implies (and (acl2-numberp a)
-		   (equal x (acl2-sqrt 2))
-		   (integerp n)
-		   (>= n 0)
-		   (integerp (* (/ a x) (expt 3 (- n 1)))))
-	      (integerp (* (/ a x) (expt 3 n)))
-	      )
-     )
-   )
+  (defthmd lemma-0-1
+    (implies (integerp n)
+	     (equal (* (expt 3 (- n 1)) 3) (expt 3 n)))
+    )
   )
 
  (local
-  (skip-proofs
-   (defthmd lemma-1
-     (implies (and (acl2-numberp b)
-		   (acl2-numberp c)
-		   (equal x (acl2-sqrt 2))
-		   (integerp n)
-		   (>= n 0)
-		   (integerp (* b (expt 3 (- n 1))))
-		   (integerp (* (/ c x) (expt 3 (- n 1)))))
-	      (integerp (* (/ (- b (* 2 x c)) 3) (expt 3 n)))
+  (defthmd lemma-0-2
+    (implies (integerp x)
+	     (integerp (* x 3)))
+    )
+  )
+
+ (local
+  (defthmd lemma-0
+    (implies (and (acl2-numberp a)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0)
+		  (integerp (* (/ a x) (expt 3 (- n 1)))))
+	     (integerp (* (/ a x) (expt 3 n)))
+	     )
+
+    :hints (("Goal"
+	     :use ((:instance lemma-0-1)
+		   (:instance lemma-0-2 (x (* (/ a x) (expt 3 (- n 1)))))
+		   )
+	     ))
+    )
+  )
+
+ (local
+  (defthmd lemma-1-1
+    (implies (integerp n)
+	     (and (equal (expt 3 n) (* (expt 3 (- n 1)) 3))
+		  (equal (/ (expt 3 n) 3) (expt 3 (- n 1))))
+	     )
+    )
+  )
+
+ (local
+  (defthmd lemma-1-2
+    (implies (integerp x)
+	     (and (integerp (* x 4))
+		  (integerp (* 4 x))
+		  (integerp (* x -4))
+		  (integerp (- x))))
+    )
+  )
+
+ (local
+  (defthmd lemma-1-3
+    (implies (and (integerp x)
+		  (integerp y))
+	     (and (integerp (+ x y))
+		  (integerp (- x y))))
+    )
+  )
+
+ (local
+  (defthmd sqrt-2-lemmas
+    (equal (acl2-sqrt 2) (/ 2 (acl2-sqrt 2)))
+    :hints (("Goal"
+	     :use (:instance sqrt-* (x 2) (y 2))
+	     ))
+    )
+  )
+
+ (local
+  (defthmd lemma-1-4
+    (implies (and (integerp n)
+		  (acl2-numberp b)
+		  (acl2-numberp c)
+		  )
+	     (equal (* (/ (- b (* 2 x c)) 3) (expt 3 n))
+		    (- (* b (expt 3 (- n 1))) (* 2 x c (expt 3 (- n 1)))))
+	     )
+    :hints (("Goal"
+	     :use (:instance lemma-1-1)
+	     ))
+    )
+  )
+
+ (local
+  (defthmd lemma-1-5
+    (implies (and (integerp n)
+		  (acl2-numberp c)
+		  (equal x (acl2-sqrt 2))
+		  )
+	     (equal (* 2 x c (expt 3 (- n 1)))
+		    (* 4 (/ c x) (expt 3 (- n 1))))
+	     )
+    :hints (("Goal"
+	     :use
+	     (
+	      (:instance sqrt-* (x 2) (y 2))
+	      (:instance sqrt-4)
+	      (:instance sqrt-2-lemmas)
 	      )
-     )
-   )
+	     :in-theory (disable acl2-sqrt)
+	     ))
+    )
+  )
+ 
+
+ (local
+  (defthmd lemma-1
+    (implies (and (acl2-numberp b)
+		  (acl2-numberp c)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0)
+		  (integerp (* b (expt 3 (- n 1))))
+		  (integerp (* (/ c x) (expt 3 (- n 1)))))
+	     (integerp (* (/ (- b (* 2 x c)) 3) (expt 3 n)))
+	     )
+
+    :hints (("Goal"
+	     :use (
+		   (:instance lemma-1-2 (x (* (/ c x) (expt 3 (- n 1)))))
+		   (:instance lemma-1-3
+			      (x (* b (expt 3 (- n 1))))
+			      (y (* 4 (/ c x) (expt 3 (- n 1)))))
+		   (:instance lemma-1-4)
+		   (:instance lemma-1-5)
+		   )
+	     :in-theory nil
+	     ))
+    )
+  )
+
+ (local
+  (defthmd lemma-2-1
+    (implies (and (acl2-numberp b)
+		  (acl2-numberp c)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0))
+	     (equal (* (/ (/ (+ (* 2 x b) c) 3) x) (expt 3 n))
+		    (+ (* 2 b (expt 3 (- n 1))) (* (/ c x) (expt 3 (- n 1))))
+		    )
+	     )
+    :hints (("Goal"
+	     :in-theory (disable acl2-sqrt)
+	     ))
+    )
+  )
+ 
+ (local
+  (defthmd lemma-2
+    (implies (and (acl2-numberp b)
+		  (acl2-numberp c)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0)
+		  (integerp (* b (expt 3 (- n 1))))
+		  (integerp (* (/ c x) (expt 3 (- n 1)))))
+	     (integerp (* (/ (/ (+ (* 2 x b) c) 3) x) (expt 3 n)))
+	     )
+    :hints (("Goal"
+	     :use ((:instance lemma-2-1))
+	     :in-theory (disable acl2-sqrt)
+	     ))
+    )
   )
 
 
  (local
-  (skip-proofs
-   (defthmd lemma-2
-     (implies (and (acl2-numberp b)
-		   (acl2-numberp c)
-		   (equal x (acl2-sqrt 2))
-		   (integerp n)
-		   (>= n 0)
-		   (integerp (* b (expt 3 (- n 1))))
-		   (integerp (* (/ c x) (expt 3 (- n 1)))))
-	      (integerp (* (/ (/ (+ (* 2 x b) c) 3) x) (expt 3 n)))
-	      )
-     )
-   )
+  (defthmd lemma-3-1
+    (implies (and (integerp n)
+		  (acl2-numberp b)
+		  (acl2-numberp c)
+		  )
+	     (equal (* (/ (+ b (* 2 x c)) 3) (expt 3 n))
+		    (+ (* b (expt 3 (- n 1))) (* 2 x c (expt 3 (- n 1)))))
+	     )
+    :hints (("Goal"
+	     :use (:instance lemma-1-1)
+	     ))
+    )
+  )
+ 
+ 
+ (local
+  (defthmd lemma-3
+    (implies (and (acl2-numberp b)
+		  (acl2-numberp c)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0)
+		  (integerp (* b (expt 3 (- n 1))))
+		  (integerp (* (/ c x) (expt 3 (- n 1)))))
+	     (integerp (* (/ (+ b (* 2 x c)) 3) (expt 3 n)))
+	     )
+    :hints (("Goal"
+	     :use (
+		   (:instance lemma-1-2 (x (* (/ c x) (expt 3 (- n 1)))))
+		   (:instance lemma-1-3
+			      (x (* b (expt 3 (- n 1))))
+			      (y (* 4 (/ c x) (expt 3 (- n 1)))))
+		   (:instance lemma-3-1)
+		   (:instance lemma-1-5)
+		   )
+	     :in-theory nil
+	     ))
+    )
   )
 
  (local
-  (skip-proofs
-   (defthmd lemma-3
-     (implies (and (acl2-numberp b)
-		   (acl2-numberp c)
-		   (equal x (acl2-sqrt 2))
-		   (integerp n)
-		   (>= n 0)
-		   (integerp (* b (expt 3 (- n 1))))
-		   (integerp (* (/ c x) (expt 3 (- n 1)))))
-	      (integerp (* (/ (+ b (* 2 x c)) 3) (expt 3 n)))
-	      )
-     )
-   )
+  (defthmd lemma-4-1
+    (implies (and (acl2-numberp b)
+		  (acl2-numberp c)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0))
+	     (equal (* (/ (/ (- c (* 2 x b)) 3) x) (expt 3 n))
+		    (- (* (/ c x) (expt 3 (- n 1))) (* 2 b (expt 3 (- n 1))))
+		    )
+	     )
+    :hints (("Goal"
+	     :in-theory (disable acl2-sqrt)
+	     ))
+    )
   )
 
  (local
-  (skip-proofs
-   (defthmd lemma-4
-     (implies (and (acl2-numberp b)
-		   (acl2-numberp c)
-		   (equal x (acl2-sqrt 2))
-		   (integerp n)
-		   (>= n 0)
-		   (integerp (* b (expt 3 (- n 1))))
-		   (integerp (* (/ c x) (expt 3 (- n 1)))))
-	      (integerp (* (/ (/ (- c (* 2 x b)) 3) x) (expt 3 n)))
-	      )
-     )
-   )
-  )
-
-
- (local
-  (skip-proofs
-   (defthmd lemma-5
-     (implies (and (acl2-numberp a)
-		   (acl2-numberp b)
-		   (equal x (acl2-sqrt 2))
-		   (integerp n)
-		   (>= n 0)
-		   (integerp (* (/ a x) (expt 3 (- n 1))))
-		   (integerp (* b (expt 3 (- n 1)))))
-	      (integerp (* (/ (/ (- a (* 2 x b)) 3) x) (expt 3 n)))
-	      )
-     )
-   )
+  (defthmd lemma-4
+    (implies (and (acl2-numberp b)
+		  (acl2-numberp c)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0)
+		  (integerp (* b (expt 3 (- n 1))))
+		  (integerp (* (/ c x) (expt 3 (- n 1)))))
+	     (integerp (* (/ (/ (- c (* 2 x b)) 3) x) (expt 3 n)))
+	     )
+    :hints (("Goal"
+	     :use (
+		   (:instance lemma-4-1)
+		   )
+	     ))
+    )
   )
 
  (local
-  (skip-proofs
-   (defthmd lemma-6
-     (implies (and (acl2-numberp a)
-		   (acl2-numberp b)
-		   (equal x (acl2-sqrt 2))
-		   (integerp n)
-		   (>= n 0)
-		   (integerp (* (/ a x) (expt 3 (- n 1))))
-		   (integerp (* b (expt 3 (- n 1)))))
-	      (integerp (* (/ (+ b (* 2 x a)) 3) (expt 3 n)))
-	      )
-     )
-   )
-  )
-
-
- (local
-  (skip-proofs
-   (defthmd lemma-7
-     (implies (and (acl2-numberp c)
-		   (equal x (acl2-sqrt 2))
-		   (integerp n)
-		   (>= n 0)
-		   (integerp (* (/ c x) (expt 3 (- n 1)))))
-	      (integerp (* (/ c x) (expt 3 n)))
-	      )
-     )
-   )
+  (defthmd lemma-5-1
+    (implies (and (acl2-numberp a)
+		  (acl2-numberp b)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0))
+	     (equal (* (/ (/ (- a (* 2 x b)) 3) x) (expt 3 n))
+		    (- (* (/ a x) (expt 3 (- n 1))) (* 2 b (expt 3 (- n 1))))
+		    )
+	     )
+    :hints (("Goal"
+	     :in-theory (disable acl2-sqrt)
+	     ))
+    )
   )
 
  (local
-  (skip-proofs
-   (defthmd lemma-8
-     (implies (and (acl2-numberp a)
-		   (acl2-numberp b)
-		   (equal x (acl2-sqrt 2))
-		   (integerp n)
-		   (>= n 0)
-		   (integerp (* (/ a x) (expt 3 (- n 1))))
-		   (integerp (* b (expt 3 (- n 1)))))
-	      (integerp (* (/ (/ (+ a (* 2 x b)) 3) x) (expt 3 n)))
-	      )
-     )
-   )
+  (defthmd lemma-5
+    (implies (and (acl2-numberp a)
+		  (acl2-numberp b)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0)
+		  (integerp (* (/ a x) (expt 3 (- n 1))))
+		  (integerp (* b (expt 3 (- n 1)))))
+	     (integerp (* (/ (/ (- a (* 2 x b)) 3) x) (expt 3 n)))
+	     )
+    :hints (("Goal"
+	     :use (
+		   (:instance lemma-5-1)
+		   )
+	     ))
+    )
   )
 
  (local
-  (skip-proofs
-   (defthmd lemma-9
-     (implies (and (acl2-numberp a)
-		   (acl2-numberp b)
-		   (equal x (acl2-sqrt 2))
-		   (integerp n)
-		   (>= n 0)
-		   (integerp (* (/ a x) (expt 3 (- n 1))))
-		   (integerp (* b (expt 3 (- n 1)))))
-	      (integerp (* (/ (- b (* 2 x a)) 3) (expt 3 n)))
-	      )
-     )
-   )
+  (defthmd lemma-6-1
+    (implies (and (integerp n)
+		  (acl2-numberp b)
+		  (acl2-numberp a)
+		  )
+	     (equal (* (/ (+ b (* 2 x a)) 3) (expt 3 n))
+		    (+ (* b (expt 3 (- n 1))) (* 2 x a (expt 3 (- n 1)))))
+	     )
+    :hints (("Goal"
+	     :use (:instance lemma-1-1)
+	     ))
+    )
+  )
+
+ (local
+  (defthmd lemma-6
+    (implies (and (acl2-numberp a)
+		  (acl2-numberp b)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0)
+		  (integerp (* (/ a x) (expt 3 (- n 1))))
+		  (integerp (* b (expt 3 (- n 1)))))
+	     (integerp (* (/ (+ b (* 2 x a)) 3) (expt 3 n)))
+	     )
+    :hints (("Goal"
+	     :use (
+		   (:instance lemma-1-2 (x (* (/ a x) (expt 3 (- n 1)))))
+		   (:instance lemma-1-3
+			      (x (* b (expt 3 (- n 1))))
+			      (y (* 4 (/ a x) (expt 3 (- n 1)))))
+		   (:instance lemma-6-1)
+		   (:instance lemma-1-5 (c a))
+		   )
+	     :in-theory nil
+	     ))
+    )
+  )
+
+ (local
+  (defthmd lemma-7
+    (implies (and (acl2-numberp c)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0)
+		  (integerp (* (/ c x) (expt 3 (- n 1)))))
+	     (integerp (* (/ c x) (expt 3 n)))
+	     )
+    :hints (("Goal"
+	     :use ((:instance lemma-1-1)
+		   (:instance lemma-0-2 (x (* (/ c x) (expt 3 (- n 1)))))
+		   )
+	     :in-theory (disable acl2-sqrt)
+	     ))
+    )
+  )
+
+ (local
+  (defthmd lemma-8-1
+    (implies (and (acl2-numberp b)
+		  (acl2-numberp a)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0))
+	     (equal (* (/ (/ (+ a (* 2 x b)) 3) x) (expt 3 n))
+		    (+ (* (/ a x) (expt 3 (- n 1))) (* 2 b (expt 3 (- n 1))))
+		    )
+	     )
+    :hints (("Goal"
+	     :in-theory (disable acl2-sqrt)
+	     ))
+    )
+  )
+
+ (local
+  (defthmd lemma-8
+    (implies (and (acl2-numberp a)
+		  (acl2-numberp b)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0)
+		  (integerp (* (/ a x) (expt 3 (- n 1))))
+		  (integerp (* b (expt 3 (- n 1)))))
+	     (integerp (* (/ (/ (+ a (* 2 x b)) 3) x) (expt 3 n)))
+	     )
+    :hints (("Goal"
+	     :use (
+		   (:instance lemma-8-1)
+		   )
+	     :in-theory (disable acl2-sqrt)
+	     ))
+    )
+  )
+
+ (local
+  (defthmd lemma-9
+    (implies (and (acl2-numberp a)
+		  (acl2-numberp b)
+		  (equal x (acl2-sqrt 2))
+		  (integerp n)
+		  (>= n 0)
+		  (integerp (* (/ a x) (expt 3 (- n 1))))
+		  (integerp (* b (expt 3 (- n 1)))))
+	     (integerp (* (/ (- b (* 2 x a)) 3) (expt 3 n)))
+	     )
+    :hints (("Goal"
+	     :use (:instance lemma-1 (b b) (c a))
+	     ))
+    )
   )
  
 
@@ -966,706 +1160,3 @@
 	    ))
    )
  )
-
-
-
-
-;; (defthm a-rotation-equiv
-;;   (equal (a-rotation x)
-;; 	 `((:header :dimensions (3 3)
-;; 		    :maximum-length 10)
-;; 	   ((0 . 0) . 1)
-;; 	   ((0 . 1) . 0)
-;; 	   ((0 . 2) . 0)
-;; 	   ((1 . 0) . 0)
-;; 	   ((1 . 1) . 1/3)
-;; 	   ((1 . 2) . ,(* -2/3 x) )
-;; 	   ((2 . 0) . 0)
-;; 	   ((2 . 1) . ,(* 2/3 x) )
-;; 	   ((2 . 2) . 1/3)
-;; 	   )
-;; 	 )
-
-;;   )
-
-;; (defthm a-inv-rotation-equiv
-;;   (equal (a-inv-rotation x)
-;; 	 `((:header :dimensions (3 3)
-;; 		    :maximum-length 10)
-;; 	   ((0 . 0) . 1)
-;; 	   ((0 . 1) . 0)
-;; 	   ((0 . 2) . 0)
-;; 	   ((1 . 0) . 0)
-;; 	   ((1 . 1) . 1/3)
-;; 	   ((1 . 2) . ,(* 2/3 x) )
-;; 	   ((2 . 0) . 0)
-;; 	   ((2 . 1) . ,(* -2/3 x) )
-;; 	   ((2 . 2) . 1/3) 
-;; 	   )
-;; 	 )
-
-;;   )
-
-;; (defthm b-rotation-equiv
-;;   (equal (b-rotation x)
-;; 	 `((:header :dimensions (3 3)
-;; 		    :maximum-length 10)
-;; 	   ((0 . 0) . 1/3)
-;; 	   ((0 . 1) . ,(* -2/3 x) )
-;; 	   ((0 . 2) . 0)
-;; 	   ((1 . 0) . ,(* 2/3 x) )
-;; 	   ((1 . 1) . 1/3)
-;; 	   ((1 . 2) . 0)
-;; 	   ((2 . 0) . 0)
-;; 	   ((2 . 1) . 0)
-;; 	   ((2 . 2) . 1)    
-;; 	   )
-;; 	 )
-
-;;   )
-
-;; (defthm b-inv-rotation-equiv
-;;   (equal (b-inv-rotation x)
-;; 	 `((:header :dimensions (3 3)
-;; 		    :maximum-length 10)
-;; 	   ((0 . 0) . 1/3)
-;; 	   ((0 . 1) . ,(* 2/3 x) )
-;; 	   ((0 . 2) . 0)
-;; 	   ((1 . 0) . ,(* -2/3 x) )
-;; 	   ((1 . 1) . 1/3)
-;; 	   ((1 . 2) . 0)
-;; 	   ((2 . 0) . 0)
-;; 	   ((2 . 1) . 0)
-;; 	   ((2 . 2) . 1)
-;; 	   )
-;; 	 )
-
-;;   )
-
-;; )
-
-
-;; (defthm array2p-funs
-;;   (implies (symbolp x)
-;; 	   (and (array2p x (id-rotation))
-;; 		(array2p x (a-rotation))
-;; 		(array2p x (a-inv-rotation))
-;; 		(array2p x (b-rotation))
-;; 		(array2p x (b-inv-rotation))
-;; 		(array2p x (point-p))
-;; 		)
-;; 	   )
-;;   :hints (("Goal"
-;; 	   :in-theory (enable array2p)
-;; 	   ))
-;;   )
-
-
-
-
-
-
-
-;; (defthm acl2-numberp-sqrt-2
-;;   (and (acl2-numberp (acl2-sqrt 2))
-;;        (i-limited (acl2-sqrt 2))
-;;        (acl2-numberp (* -2/3 (acl2-sqrt 2)))
-;;        (realp (* -2/3 (acl2-sqrt 2)))
-;;        (realp (* 2/3 (acl2-sqrt 2)))
-;;        (realp (acl2-sqrt 2))
-;;        (equal (* (acl2-sqrt 2) (acl2-sqrt 2)) 2)
-;;        (> (acl2-sqrt 2) 1)
-;;        (equal (/ (acl2-sqrt 2) (acl2-sqrt 2)) 1)
-;;        (equal (/ 0 (acl2-sqrt 2)) 0)
-;;        (not (equal (acl2-sqrt 2) 0)))
-;;   )
-
-
-;; (defun compress21 (name l n i j default)
-;;   (declare (xargs :guard (and (array2p name l)
-;;                               (integerp n)
-;;                               (integerp i)
-;;                               (integerp j)
-;;                               (<= n i)
-;;                               (<= 0 j))
-;;                   :measure (nfix (- i n))))
-
-;;   (cond ((zp (- i n)) nil)
-;;         (t (append (compress211 name l n 0 j default)
-;;                    (compress21 name l (+ n 1) i j default)))))
-
-
-;; (defthm compress213
-
-
-;;   (encapsulate
-;;    ()
-;;    (local (include-book "arithmetic-5/top" :dir :system))
-
-;;    (local
-;;     (defthm compress21-lemma
-;;       (implies (and (syntaxp (natp i))
-;; 		    (syntaxp (natp n))
-;; 		    )
-;; 	       (equal (compress21 name l n i j default)
-;; 		      (if (zp (- i n)) nil
-;; 			(append (compress211 name l n 0 j default)
-;; 				(compress21 name l (+ n 1) i j default)))))
-;;       :hints (("Goal"
-;; 	       :in-theory (enable compress21 compress211)
-;; 	       ))		 
-;;       )
-
-;;     (defthm compress213
-;;       )
-
-
-;;     (local
-;;      (defthm lemma1
-;;        (implies (acl2-numberp x)
-;; 		(equal  (COMPRESS21 '$ARG2
-;; 				    (LIST* '(:HEADER :DIMENSIONS (3 3)
-;; 						     :MAXIMUM-LENGTH 10)
-;; 					   '((0 . 0) . 1)
-;; 					   '((0 . 1) . 0)
-;; 					   '((0 . 2) . 0)
-;; 					   '((1 . 0) . 0)
-;; 					   '((1 . 1) . 1/3)
-;; 					   (CONS '(1 . 2) (* -2/3 x))
-;; 					   '((2 . 0) . 0)
-;; 					   (CONS '(2 . 1) (* 2/3 x))
-;; 					   '(((2 . 2) . 1/3)))
-;; 				    0 3 3 NIL)
-
-;; 			`(((0 . 0) . 1)
-;; 			  ((0 . 1) . 0)
-;; 			  ((0 . 2) . 0)
-;; 			  ((1 . 0) . 0)
-;; 			  ((1 . 1) . 1/3)
-;; 			  ((1 . 2) . ,(* -2/3 x) )
-;; 			  ((2 . 0) . 0)
-;; 			  ((2 . 1) . ,(* 2/3 x) )
-;; 			  ((2 . 2) . 1/3)))
-;; 		)
-;;        :hints (("Goal"
-;; 		:in-theory (enable compress21 compress211)
-;; 		))
-
-;;        )
-;;      )
-
-
-;;     )
-
-;;    (local (in-theory (disable acl2-sqrt)))
-;;    (defthmd funs-lemmas-1
-;;      (m-= (m-* (id-rotation) (a-rotation x)) (a-rotation x))
-;;      :hints (("Goal"
-;; 	      :in-theory (enable 
-;; 			  alist2p array2p aset2 aref2 compress2 header
-;; 			  dimensions maximum-length default
-;; 			  matrixp compress21
-;; 			  m-=
-;; 			  m-0
-;; 			  m-1
-;; 			  m-trans
-;; 			  m-unary--
-;; 			  s-*
-;; 			  m-binary-+
-;; 			  m-binary-*
-;; 			  m-/
-;; 			  m-singularp
-;; 			  M-BINARY-*-ROW-1
-;; 			  m-=-row-1)
-;; 	      )
-;; 	     ;; ("Subgoal 2.3"
-;; 	     ;;  :use (:definition compress21)
-;; 	     ;;  )
-;; 	     )
-;;      )
-;;    )
-
-
-;;   :hints (("Goal"
-;; 	   :use ((:instance acl2-numberp-sqrt-2)
-;; 		 )
-;; 	   :in-theory (enable m-* alist2p m-= dimensions header compress2 default compress21)
-;; 	   )
-
-;; 	  ("Subgoal 3"
-;; 	   :use ((:instance array2p-funs (x '$arg1))
-;; 		 (:instance array2p-funs (x '$arg2))
-;; 		 (:instance COMPRESS21
-;; 			    (name '$ARG2)
-;; 			    (l (LIST* '(:HEADER :DIMENSIONS (3 3)
-;; 						:MAXIMUM-LENGTH 15)
-;; 				      '((0 . 0) . 1)
-;; 				      '((0 . 1) . 0)
-;; 				      '((0 . 2) . 0)
-;; 				      '((1 . 0) . 0)
-;; 				      '((1 . 1) . 1/3)
-;; 				      (CONS '(1 . 2) (* -2/3 (ACL2-SQRT 2)))
-;; 				      '((2 . 0) . 0)
-;; 				      (CONS '(2 . 1) (* 2/3 (ACL2-SQRT 2)))
-;; 				      '(((2 . 2) . 1/3))))
-;; 			    (n 0)
-;; 			    (i 3)
-;; 			    (j 3)
-;; 			    (default NIL)
-;; 			    ))
-;; 					; :in-theory (enable compress2 compress21 alistp header dimensions maximum-length default)
-;; 	   )
-
-;; 	  ("Subgoal 2"
-;; 	   :use ((:instance acl2-numberp-sqrt-2)
-;; 		 (:instance COMPRESS21
-;; 			    (name '$ARG2)
-;; 			    (l (LIST* '(:HEADER :DIMENSIONS (3 3)
-;; 						:MAXIMUM-LENGTH 15)
-;; 				      '((0 . 0) . 1)
-;; 				      '((0 . 1) . 0)
-;; 				      '((0 . 2) . 0)
-;; 				      '((1 . 0) . 0)
-;; 				      '((1 . 1) . 1/3)
-;; 				      (CONS '(1 . 2) (* -2/3 (ACL2-SQRT 2)))
-;; 				      '((2 . 0) . 0)
-;; 				      (CONS '(2 . 1) (* 2/3 (ACL2-SQRT 2)))
-;; 				      '(((2 . 2) . 1/3))))
-;; 			    (n 0)
-;; 			    (i 3)
-;; 			    (j 3)
-;; 			    (default NIL)
-;; 			    )
-
-;; 		 (:instance COMPRESS21
-;; 			    (name '$ARG1)
-;; 			    (l (LIST* '(:HEADER :DIMENSIONS (3 3)
-;; 						:MAXIMUM-LENGTH 10
-;; 						:DEFAULT 0
-;; 						:NAME MATRIX-PRODUCT)
-;; 				      '((2 . 2) . 1/3)
-;; 				      (CONS '(2 . 1) (* 2/3 (ACL2-SQRT 2)))
-;; 				      '((2 . 0) . 0)
-;; 				      (CONS '(1 . 2) (* -2/3 (ACL2-SQRT 2)))
-;; 				      '(((1 . 1) . 1/3)
-;; 					((1 . 0) . 0)
-;; 					((0 . 2) . 0)
-;; 					((0 . 1) . 0)
-;; 					((0 . 0) . 1))))
-;; 			    (n 0)
-;; 			    (i 3)
-;; 			    (j 3)
-;; 			    (default 0))
-
-;; 		 (:instance m-=-row-1
-;; 			    (m1 (LIST* '(:HEADER :DIMENSIONS (3 3)
-;; 						 :MAXIMUM-LENGTH 10
-;; 						 :DEFAULT 0
-;; 						 :NAME MATRIX-PRODUCT)
-;; 				       '((0 . 0) . 1)
-;; 				       '((1 . 1) . 1/3)
-;; 				       (CONS '(1 . 2) (* -2/3 (ACL2-SQRT 2)))
-;; 				       (CONS '(2 . 1) (* 2/3 (ACL2-SQRT 2)))
-;; 				       '(((2 . 2) . 1/3))))
-;; 			    (m2            (LIST* '(:HEADER :DIMENSIONS (3 3)
-;; 							    :MAXIMUM-LENGTH 15)
-;; 						  '((0 . 0) . 1)
-;; 						  '((0 . 1) . 0)
-;; 						  '((0 . 2) . 0)
-;; 						  '((1 . 0) . 0)
-;; 						  '((1 . 1) . 1/3)
-;; 						  (CONS '(1 . 2) (* -2/3 (ACL2-SQRT 2)))
-;; 						  '((2 . 0) . 0)
-;; 						  (CONS '(2 . 1) (* 2/3 (ACL2-SQRT 2)))
-;; 						  '(((2 . 2) . 1/3))))
-;; 			    (m 2)
-;; 			    (n 2))
-
-;; 		 )
-;; 	   :in-theory (enable aref2 compress21 m-= default header)
-
-;; 	   )
-
-;; 	  ("Subgoal 1"
-
-;; 	   :use (
-;; 		 (:instance COMPRESS21
-;; 			    (name '$ARG2)
-;; 			    (l (LIST* '(:HEADER :DIMENSIONS (3 3)
-;; 						:MAXIMUM-LENGTH 15)
-;; 				      '((0 . 0) . 1)
-;; 				      '((0 . 1) . 0)
-;; 				      '((0 . 2) . 0)
-;; 				      '((1 . 0) . 0)
-;; 				      '((1 . 1) . 1/3)
-;; 				      (CONS '(1 . 2) (* -2/3 (ACL2-SQRT 2)))
-;; 				      '((2 . 0) . 0)
-;; 				      (CONS '(2 . 1) (* 2/3 (ACL2-SQRT 2)))
-;; 				      '(((2 . 2) . 1/3))))
-;; 			    (n 0)
-;; 			    (i 3)
-;; 			    (j 3)
-;; 			    (default NIL)
-;; 			    )
-;; 		 )
-
-;; 	   :in-theory (enable compress21)
-;; 	   )	   
-;; 	  )
-;;   )
-;; )
-
-
-
-
-
-
-
-
-;; (defthm rotation-implies-lemma
-;;   (equal (/ (aref2 '$arg1
-;; 		   '((:HEADER :DIMENSIONS (3 1)
-;; 			      :MAXIMUM-LENGTH 4
-;; 			      :DEFAULT 0
-;; 			      :NAME MATRIX-PRODUCT)
-;; 		     ((2 . 0) . 0)
-;; 		     ((1 . 0) . 1)
-;; 		     ((0 . 0) . 0))
-;; 		   0 0) (acl2-sqrt 2))
-;; 	 0)
-
-;;   )
-
-;; (defthm rotation-implies-lemma2
-;;   (equal (INT-POINT '((:HEADER :DIMENSIONS (3 1)
-;; 			       :MAXIMUM-LENGTH 4
-;; 			       :DEFAULT 0
-;; 			       :NAME MATRIX-PRODUCT)
-;; 		      ((2 . 0) . 0)
-;; 		      ((1 . 0) . 1)
-;; 		      ((0 . 0) . 0))
-;; 		    0 0 0)
-;; 	 0)
-
-;;   :hints (("Goal"
-;; 	   :use ((:instance rotation-implies-lemma)
-;; 		 (:instance int-point
-;; 			    (x '((:HEADER :DIMENSIONS (3 1)
-;; 					  :MAXIMUM-LENGTH 4
-;; 					  :DEFAULT 0
-;; 					  :NAME MATRIX-PRODUCT)
-;; 				 ((2 . 0) . 0)
-;; 				 ((1 . 0) . 1)
-;; 				 ((0 . 0) . 0)))
-;; 			    (i 0)
-;; 			    (j 0)
-;; 			    (n 0)
-;; 			    ))
-;; 	   :in-theory nil
-
-;; 	   ))
-
-;;   )
-
-;; (encapsulate
-;;  ()
-;;  (local (include-book "arithmetic-5/top" :dir :system))
-
-
-;; 					;(integerp (int-point (m-* (rotation w) (point-p)) 0 0 (len w)))
-;; 					;(integerp (int-point (m-* (rotation w) (point-p)) 0 0 (len w)))))
-
-;;  :hints (
-;; 	 ("Goal"
-;; 					; :use ((:instance acl2-numberp-sqrt-2)
-;; 					;	  (:instance rotation-implies-lemma)
-;; 					;	  (:instance rotation-implies-lemma2)
-;; 					;)
-;; 					;:in-theory nil
-;; 	  )
-;; 	 ("Subgoal 9"
-;; 	  :use (;(:instance acl2-numberp-sqrt-2)
-;; 		(:instance rotation-implies-lemma2)
-;; 		)
-;; 	  :in-theory nil
-;; 	  )
-
-;; 	 )
-;;  )
-;; )
-
-;; ("Subgoal *1/2"
-;;  :use ((:instance acl2-numberp-sqrt-2)
-;;        (:instance int-point
-;; 		  (x '((:HEADER :DIMENSIONS (3 1)
-;; 				:MAXIMUM-LENGTH 4
-;; 				:DEFAULT 0
-;; 				:NAME MATRIX-PRODUCT)
-;; 		       ((2 . 0) . 0)
-;; 		       ((1 . 0) . 1)
-;; 		       ((0 . 0) . 0)))
-;; 		  (i 0)
-;; 		  (j 0)
-;; 		  (n 0)
-
-;; 		  )
-;;        )
-;;  )
-;; )
-;; )
-;; )
-
-;; (:instance int-point
-;; 	   (x '((:HEADER :DIMENSIONS (3 1)
-;; 			 :MAXIMUM-LENGTH 4
-;; 			 :DEFAULT 0
-;; 			 :NAME MATRIX-PRODUCT)
-;; 		((2 . 0) . 0)
-;; 		((1 . 0) . 1)
-;; 		((0 . 0) . 0)))
-;; 	   (i 0)
-;; 	   (j 0)
-;; 	   (n 0))
-;; )
-;; :in-theory (enable aref2 int-point m-*)
-;; ))
-
-;; )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-;; ;; (defthmd acl2-numberp-2-1
-;; ;;   (acl2-numberp (aref2 'delta (a-rotation) 1 2))
-;; ;;   )
-
-;; 					;(in-theory (disable a-rotation))
-
-;; (encapsulate
-;;  ()
-
-;; 					;(local (in-theory (disable aref2)))
-
-;;  (defthmd funs-lemmas-1
-;;    (m-= (m-* (id-rotation) (a-rotation)) (a-rotation))
-;;    )
-;;  :hints (("Goal"
-;; 	  :use ((:instance acl2-numberp-sqrt-2))
-;; 	  ))
-;;  )
-;; :hints (("Goal"
-;; 	 :use ((:instance acl2-numberp-sqrt-2))
-;; 	 :in-theory (disable a-rotation id-rotation)
-;; 	 )
-;; 	("Subgoal 3"
-;; 	 :in-theory (enable m-binary-*-row-1 dot compress21 )
-;; 	 )
-;; 	)
-;; )
-;; )
-;; (m-= (m-* (id-rotation) (a-rotation)) (a-rotation)))
-;; :hints (("Goal"
-;; 	 :use ((:instance acl2-numberp-sqrt-2))
-;; 	 :in-theory (enable array2p m-= m-* M-BINARY-*-ROW-1 M-BINARY-*-ROW dot compress2 aref2 header alist2p dimensions compress21 alistp default)
-;; 	 ))
-;; )
-;; )
-;; (m-= (m-* (id-rotation) (a-inv-rotation)) (a-inv-rotation))
-;; (m-= (m-* (id-rotation) (b-rotation)) (b-rotation))
-;; (m-= (m-* (id-rotation) (b-inv-rotation)) (b-inv-rotation))
-;; (m-= (m-* (a-rotation) (id-rotation)) (a-rotation))
-;; (m-= (m-* (a-inv-rotation) (id-rotation)) (a-inv-rotation))
-;; (m-= (m-* (b-rotation) (id-rotation)) (b-rotation))
-;; (m-= (m-* (b-inv-rotation) (id-rotation)) (b-inv-rotation))
-;; )
-
-;; :hints (("Goal"
-;; 	 :use ((:instance acl2-numberp-sqrt-2)
-;; 	       (:instance aref2-rots (x '$arg1))
-;; 	       (:instance aref2-rots (x '$arg))
-;; 	       (:instance aref2-rots (x '$arg2)))
-;; 	 :in-theory (enable array2p m-= m-* M-BINARY-*-ROW-1 M-BINARY-*-ROW compress2)
-;; 	 ))
-;; )
-;; )
-
-
-
-;; ("Subgoal 8"
-;;  :use (:instance acl2-numberp-sqrt-2)
-;;  :in-theory (enable array2p m-= m-* aref2  M-BINARY-*-ROW-1 M-BINARY-*-ROW alistp dimensions compress2 assoc-keyword alist2p)
-;;  )
-;; ("Subgoal 7"
-;;  :use (:instance acl2-numberp-sqrt-2)
-;;  :in-theory (enable array2p m-= m-* aref2  M-BINARY-*-ROW-1 M-BINARY-*-ROW alistp dimensions compress2 assoc-keyword alist2p)
-;;  )
-
-;; ("Subgoal 16"
-;;  :use ((:instance acl2-numberp-sqrt-2)
-;;        (:instance acl2-numberp-sqrt-2-2))
-;;  :in-theory (enable array2p m-= m-* aref2  M-BINARY-*-ROW-1 M-BINARY-*-ROW alistp dimensions compress2 assoc-keyword alist2p)
-;;  )
-
-;; )
-;; )
-;; (m-= (m-* (a-inv-rotation) (a-rotation)) (id-rotation))
-;; (m-= (m-* (a-rotation) (a-inv-rotation)) (id-rotation))
-;; (m-= (m-* (b-rotation) (b-inv-rotation)) (id-rotation))
-;; (m-= (m-* (b-inv-rotation) (b-rotation)) (id-rotation))
-;; )
-;; :hints (("Goal"
-;; 	 :use (:instance acl2-numberp-sqrt-2)
-;; 	 :in-theory (enable array2p m-= m-* aref2  M-BINARY-*-ROW-1 M-BINARY-*-ROW alistp dimensions compress2 assoc-keyword alist2p)
-;; 	 )
-
-;; 	)
-
-;; )
-
-;; (defthmd fix-lemma
-;;   (equal (+ 1/9 (fix (
-
-;; 		      )
-
-;; 		     (defthmd funs-lemma1
-;; 		       (m-= (m-* (a-rotation) (a-inv-rotation)) (id-rotation))
-;; 		       :hints (("Goal"
-;; 				:use (:instance acl2-numberp-sqrt-2)
-;; 				:in-theory (disable acl2-sqrt)
-;; 				))
-;; 		       )
-
-
-;; 		     (defthm rotation-implies
-;; 		       (implies (reducedwordp w)
-;; 				(and (integerp (* (/ (aref2 'delta (m-* (rotation w) (point-p)) 0 0) (acl2-sqrt 2)) (expt 3 (len w))))
-;; 				     (integerp (* (aref2 'delta (m-* (rotation w) (point-p)) 1 0) (expt 3 (len w))))
-;; 				     (integerp (* (/ (aref2 'delta (m-* (rotation w) (point-p)) 2 0) (acl2-sqrt 2)) (expt 3 (len w))))
-;; 				     )
-;; 				)
-;; 		       )
-
-
-;; 		     (defthm lemma1
-;; 		       (implies (i-limited x)
-;; 				(acl2-numberp x))
-;; 		       )
-
-
-
-
-
-
-
-;; (defthmd acl2-numberp-sqrt-2-1
-;;   (acl2-numberp (* -2/3 (acl2-sqrt 2)))
-;;   )
-
-;; (defthm aref2-rots
-;;   (implies (symbolp x)
-;; 	   (and (equal (aref2 x (a-rotation) 0 0) 1)
-;; 		(equal (aref2 x (a-rotation) 0 1) 0)
-;; 		(equal (aref2 x (a-rotation) 0 2) 0)
-;; 		(equal (aref2 x (a-rotation) 1 0) 0)
-;; 		(equal (aref2 x (a-rotation) 1 1) 1/3)
-;; 		(equal (aref2 x (a-rotation) 2 0) 0)
-;; 		(equal (aref2 x (a-rotation) 2 2) 1/3)
-;; 		(equal (aref2 x (a-inv-rotation) 0 0) 1)
-;; 		(equal (aref2 x (a-inv-rotation) 0 1) 0)
-;; 		(equal (aref2 x (a-inv-rotation) 0 2) 0)
-;; 		(equal (aref2 x (a-inv-rotation) 1 0) 0)
-;; 		(equal (aref2 x (a-inv-rotation) 1 1) 1/3)
-;; 		(equal (aref2 x (a-inv-rotation) 2 0) 0)
-;; 		(equal (aref2 x (a-inv-rotation) 2 2) 1/3)
-
-
-;; 		(equal (aref2 x (b-rotation) 0 0) 1/3)
-;; 		(equal (aref2 x (b-rotation) 0 2) 0)
-;; 		(equal (aref2 x (b-rotation) 1 1) 1/3)
-;; 		(equal (aref2 x (b-rotation) 1 2) 0)
-;; 		(equal (aref2 x (b-rotation) 2 0) 0)
-;; 		(equal (aref2 x (b-rotation) 2 1) 0)
-;; 		(equal (aref2 x (b-rotation) 2 2) 1)
-
-;; 		(equal (aref2 x (b-inv-rotation) 0 0) 1/3)
-;; 		(equal (aref2 x (b-inv-rotation) 0 2) 0)
-;; 		(equal (aref2 x (b-inv-rotation) 1 1) 1/3)
-;; 		(equal (aref2 x (b-inv-rotation) 1 2) 0)
-;; 		(equal (aref2 x (b-inv-rotation) 2 0) 0)
-;; 		(equal (aref2 x (b-inv-rotation) 2 1) 0)
-;; 		(equal (aref2 x (b-inv-rotation) 2 2) 1)
-
-;; 		(equal (aref2 x (a-rotation) 1 2) (* -2/3 (acl2-sqrt 2)))
-;; 		(equal (aref2 x (a-rotation) 2 1) (* 2/3 (acl2-sqrt 2)))
-;; 		(equal (aref2 x (a-inv-rotation) 1 2) (* 2/3 (acl2-sqrt 2)))
-;; 		(equal (aref2 x (a-inv-rotation) 2 1) (* -2/3 (acl2-sqrt 2)))
-;; 		(equal (aref2 x (b-rotation) 0 1) (* -2/3 (acl2-sqrt 2)))
-;; 		(equal (aref2 x (b-rotation) 1 0) (* 2/3 (acl2-sqrt 2)))
-;; 		(equal (aref2 x (b-inv-rotation) 0 1) (* 2/3 (acl2-sqrt 2)))
-;; 		(equal (aref2 x (b-inv-rotation) 1 0) (* -2/3 (acl2-sqrt 2)))
-;; 		))
-;;   :hints (("Goal"
-;; 	   :use (:instance acl2-numberp-sqrt-2)
-;; 	   :in-theory (enable array2p aref2)
-;; 	   ))
-;;   )
-
-
-;;  (and (or (eq key :header)
-;;                            (and (consp key)
-;;                                 (let ((i1 (car key))
-;;                                       (j1 (cdr key)))
-;;                                   (and (integerp i1)
-;;                                        (integerp j1)
-;;                                        (integerp i)
-;;                                        (integerp j)
-;;                                        (>= i1 0)
-;;                                        (< i1 i)
-;;                                        (>= j1 0)
-;;                                        (< j1 j))))))
-
-;; (and (consp (caar (cdr (defarray))))
-;;                                 (let ((i1 (car (caar (cdr (defarray)))))
-;;                                       (j1 (cdr (caar (cdr (defarray))))))
-;;                                   (and (integerp i1)
-;;                                        (integerp j1)
-;;                                        (integerp 3)
-;;                                        (integerp 3)
-;;                                        (>= i1 0)
-;;                                        (< i1 3)
-;;                                        (>= j1 0)
-;;                                        (< j1 3))))
-
-
-;; (defun bounded-integer-alistp2 (l i j)
-;;   (declare (xargs :guard t))
-;;   (cond ((atom l) (null l))
-;;         (t (and (consp (car l))
-;;                 (let ((key (caar l)))
-;;                   (and (or (eq key :header)
-;;                            (and (consp key)
-;;                                 (let ((i1 (car key))
-;;                                       (j1 (cdr key)))
-;;                                   (and (integerp i1)
-;;                                        (integerp j1)
-;;                                        (integerp i)
-;;                                        (integerp j)
-;;                                        (>= i1 0)
-;;                                        (< i1 i)
-;;                                        (>= j1 0)
-;;                                        (< j1 j)))))))
-;;                 (bounded-integer-alistp2 (cdr l) i j))
-
-
-
-
