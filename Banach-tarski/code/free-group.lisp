@@ -1006,9 +1006,14 @@
   (and (acl2-numberp (acl2-sqrt 2))
        (i-limited (acl2-sqrt 2))
        (realp (acl2-sqrt 2))
+       (equal (* (acl2-sqrt 2) (acl2-sqrt 2)) 2)
+       (equal (/ 2 (acl2-sqrt 2)) (acl2-sqrt 2))
        (> (acl2-sqrt 2) 1)
        (not (equal (acl2-sqrt 2) 0)))
   :hints (("Goal"
+	   :use ((:instance sqrt-* (x 2) (y 2))
+
+		 )
 	   :in-theory (disable acl2-sqrt)
 	   ))
   )
@@ -1160,3 +1165,471 @@
 	    ))
    )
  )
+
+(defun n-f(w x)
+  (cons (int-point (m-* (rotation w x) (point-p)) 0 0 (len w) (acl2-sqrt 2))
+	(cons (int-point (m-* (rotation w x) (point-p)) 1 0 (len w) (acl2-sqrt 2))
+	      (cons (int-point (m-* (rotation w x) (point-p)) 2 0 (len w) (acl2-sqrt 2)) nil)))
+  )
+
+(encapsulate
+ ()
+
+ (local
+  (defthmd len-lemma
+    (implies (reducedwordp w)
+	     (and (equal (len (cons (wa) w)) (+ (len w) 1))
+		  (integerp (len w)))
+	     )
+    )
+  )
+
+ (local
+  (defthmd n-f-a-r-lemma
+    (implies (reducedwordp w)
+	     (equal (rotation (cons (wa) w) x)
+		    (m-* (a-rotation x) (rotation w x))))
+    )
+  )
+
+ (local
+  (defthmd expt-lemma
+    (implies (integerp n)
+	     (equal (expt 3 (+ n 1)) (* (expt 3 n) 3)))
+    )
+  )
+
+ (local
+  (defthmd sub4-lemma0
+    (implies
+     (EQUAL (+ (* 1/3
+		  (AREF2 '$ARG1
+			 (M-* (ROTATION W (ACL2-SQRT 2))
+			      '((:HEADER :DIMENSIONS (3 1)
+					 :MAXIMUM-LENGTH 15)
+				((0 . 0) . 0)
+				((1 . 0) . 1)
+				((2 . 0) . 0)))
+			 2 0))
+	       (* 2/3 (ACL2-SQRT 2)
+		  (AREF2 '$ARG1
+			 (M-* (ROTATION W (ACL2-SQRT 2))
+			      '((:HEADER :DIMENSIONS (3 1)
+					 :MAXIMUM-LENGTH 15)
+				((0 . 0) . 0)
+				((1 . 0) . 1)
+				((2 . 0) . 0)))
+			 1 0)))
+	    (AREF2 '$ARG1
+		   (M-* (A-ROTATION (ACL2-SQRT 2))
+			(ROTATION W (ACL2-SQRT 2))
+			'((:HEADER :DIMENSIONS (3 1)
+				   :MAXIMUM-LENGTH 15)
+			  ((0 . 0) . 0)
+			  ((1 . 0) . 1)
+			  ((2 . 0) . 0)))
+		   2 0))
+     (EQUAL 
+      (AREF2 '$ARG1
+	     (M-* (A-ROTATION (ACL2-SQRT 2))
+		  (ROTATION W (ACL2-SQRT 2))
+		  '((:HEADER :DIMENSIONS (3 1)
+			     :MAXIMUM-LENGTH 15)
+		    ((0 . 0) . 0)
+		    ((1 . 0) . 1)
+		    ((2 . 0) . 0)))
+	     2 0)
+      (+ 
+       (* 2/3 (ACL2-SQRT 2)
+	  (AREF2 '$ARG1
+		 (M-* (ROTATION W (ACL2-SQRT 2))
+		      '((:HEADER :DIMENSIONS (3 1)
+				 :MAXIMUM-LENGTH 15)
+			((0 . 0) . 0)
+			((1 . 0) . 1)
+			((2 . 0) . 0)))
+		 1 0))
+       (* 1/3
+	  (AREF2 '$ARG1
+		 (M-* (ROTATION W (ACL2-SQRT 2))
+		      '((:HEADER :DIMENSIONS (3 1)
+				 :MAXIMUM-LENGTH 15)
+			((0 . 0) . 0)
+			((1 . 0) . 1)
+			((2 . 0) . 0)))
+		 2 0)))
+      )
+     
+     )
+    )
+  )
+
+ (local
+  (defthmd sub4-lemma1
+    (equal
+     (AREF2 '$ARG1
+	    (M-* (ROTATION (CONS #\a W) (ACL2-SQRT 2))
+		 '((:HEADER :DIMENSIONS (3 1)
+			    :MAXIMUM-LENGTH 15)
+		   ((0 . 0) . 0)
+		   ((1 . 0) . 1)
+		   ((2 . 0) . 0)))
+	    2 0)
+     (AREF2 '$ARG1
+	    (M-* (A-ROTATION (ACL2-SQRT 2))
+		 (ROTATION W (ACL2-SQRT 2))
+		 '((:HEADER :DIMENSIONS (3 1)
+			    :MAXIMUM-LENGTH 15)
+		   ((0 . 0) . 0)
+		   ((1 . 0) . 1)
+		   ((2 . 0) . 0)))
+	    2 0)
+     )
+    )
+  )
+
+ (local
+  (defthmd sub4-lemma2
+    (implies
+     (EQUAL (+ (* 1/3
+		  (AREF2 '$ARG1
+			 (M-* (ROTATION W (ACL2-SQRT 2))
+			      '((:HEADER :DIMENSIONS (3 1)
+					 :MAXIMUM-LENGTH 15)
+				((0 . 0) . 0)
+				((1 . 0) . 1)
+				((2 . 0) . 0)))
+			 2 0))
+	       (* 2/3 (ACL2-SQRT 2)
+		  (AREF2 '$ARG1
+			 (M-* (ROTATION W (ACL2-SQRT 2))
+			      '((:HEADER :DIMENSIONS (3 1)
+					 :MAXIMUM-LENGTH 15)
+				((0 . 0) . 0)
+				((1 . 0) . 1)
+				((2 . 0) . 0)))
+			 1 0)))
+	    (AREF2 '$ARG1
+		   (M-* (A-ROTATION (ACL2-SQRT 2))
+			(ROTATION W (ACL2-SQRT 2))
+			'((:HEADER :DIMENSIONS (3 1)
+				   :MAXIMUM-LENGTH 15)
+			  ((0 . 0) . 0)
+			  ((1 . 0) . 1)
+			  ((2 . 0) . 0)))
+		   2 0))
+     
+     (EQUAL (* 3 (/ (ACL2-SQRT 2))
+	       (AREF2 '$ARG1
+		      (M-* (ROTATION (CONS #\a W) (ACL2-SQRT 2))
+			   '((:HEADER :DIMENSIONS (3 1)
+				      :MAXIMUM-LENGTH 15)
+			     ((0 . 0) . 0)
+			     ((1 . 0) . 1)
+			     ((2 . 0) . 0)))
+		      2 0))
+	    (+ (* 2
+		  (AREF2 '$ARG1
+			 (M-* (ROTATION W (ACL2-SQRT 2))
+			      '((:HEADER :DIMENSIONS (3 1)
+					 :MAXIMUM-LENGTH 15)
+				((0 . 0) . 0)
+				((1 . 0) . 1)
+				((2 . 0) . 0)))
+			 1 0))
+	       (* (/ (ACL2-SQRT 2))
+		  (AREF2 '$ARG1
+			 (M-* (ROTATION W (ACL2-SQRT 2))
+			      '((:HEADER :DIMENSIONS (3 1)
+					 :MAXIMUM-LENGTH 15)
+				((0 . 0) . 0)
+				((1 . 0) . 1)
+				((2 . 0) . 0)))
+			 2 0))))
+     )
+
+    :hints (("Goal"
+	     :use (
+		   (:instance sub4-lemma0)
+		   (:instance sub4-lemma1)
+		   )
+	     :in-theory (disable m-* aref2 acl2-sqrt)
+	     ))
+    
+    )
+  )
+
+ (local
+  (defthmd sub2-lemma
+    (implies (and (acl2-numberp x)
+		  (equal (+ (* 1/3 x) (* -2/3 (acl2-sqrt 2) y)) z))
+	     (equal (+ (* 3 z) (* 4 (/ (acl2-sqrt 2)) y)) x))
+    :hints (("Goal"
+	     :use (:instance sqrt-2-lemmas)
+	     :in-theory (disable acl2-sqrt)
+	     ))
+    )
+  )
+
+  (defthmd n-f-a-r
+    (implies (and (reducedwordp w)
+		  (equal x (acl2-sqrt 2)))
+	     (equal (n-f (cons (wa) w) x) (cons (* 3 (car (n-f w x))) (cons (- (car (cdr (n-f w x))) (* 4 (car (cdr (cdr (n-f w x)))))) (cons (+ (* 2 (car (cdr (n-f w x)))) (car (cdr (cdr (n-f w x))))) nil)))))
+    :hints (("Goal"
+	     :use ((:instance m-*-rotation-point-dim (w w) (x x) (name '$arg1))
+		   (:instance rotation-values-ind-case-lemma1 (name '$arg1) (m1 (m-* (rotation w x) (point-p))))
+		   (:instance acl2-nump-rot (w w) (name '$arg1) (x x))
+		   (:instance sqrt-2-lemmas)
+		   (:instance len-lemma (w w))
+		   (:instance n-f-a-r-lemma (w w) (x (acl2-sqrt 2)))
+		   (:instance n-f (w w) (x x))
+		   (:instance n-f (w (cons (wa) w)) (x x))
+		   (:instance associativity-of-m-*
+			      (m1 (a-rotation x))
+			      (m2 (rotation w x))
+			      (m3 (point-p)))
+		   (:instance expt-lemma (n (len w)))
+		   )
+	     :in-theory (disable aref2 rotation a-rotation b-rotation m-* a-inv-rotation b-inv-rotation point-p acl2-sqrt rotation reducedwordp)
+	     :do-not-induct t
+	     )
+
+	    ("Subgoal 4"
+	     :use (
+		   (:instance sub4-lemma0)
+		   (:instance sub4-lemma1)
+		   (:instance sub4-lemma2)
+		   )
+	     )
+
+	    ("Subgoal 2"
+	     :use (
+		   (:instance sub2-lemma
+			      (x (AREF2 '$ARG1
+					(M-* (ROTATION W (ACL2-SQRT 2))
+					     '((:HEADER :DIMENSIONS (3 1)
+							:MAXIMUM-LENGTH 15)
+					       ((0 . 0) . 0)
+					       ((1 . 0) . 1)
+					       ((2 . 0) . 0)))
+					1 0))
+			      (y (AREF2 '$ARG1
+					(M-* (ROTATION W (ACL2-SQRT 2))
+					     '((:HEADER :DIMENSIONS (3 1)
+							:MAXIMUM-LENGTH 15)
+					       ((0 . 0) . 0)
+					       ((1 . 0) . 1)
+					       ((2 . 0) . 0)))
+					2 0))
+			      (z (AREF2 '$ARG1
+					(M-* (A-ROTATION (ACL2-SQRT 2))
+					     (ROTATION W (ACL2-SQRT 2))
+					     '((:HEADER :DIMENSIONS (3 1)
+							:MAXIMUM-LENGTH 15)
+					       ((0 . 0) . 0)
+					       ((1 . 0) . 1)
+					       ((2 . 0) . 0)))
+					1 0))
+			      
+			      )
+
+		    )
+	     )
+	    
+	    )
+    )
+  )
+
+(defun n-mod3 (w x)
+  (cons (mod (car (n-f w x)) 3) (cons (mod (car (cdr (n-f w x))) 3) (cons (mod (car (cdr (cdr (n-f w x) )))  3) nil)))
+  )
+
+(encapsulate
+ ()
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-1
+    (implies (and (integerp a)
+		  (integerp c))
+	     (equal (mod (+ a (* 3 c))  3)
+		    (mod a 3)
+		    )
+	     )
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-2
+    (equal (mod 0 3)
+	   0)
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-3
+    (equal (- b (* 4 c))
+	   (- (- b c) (* 3 c)))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-4
+    (equal (+  (* 2 b) c)
+	   (+ (- c b) (* 3 b)))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-5
+    (implies (and (integerp b)
+		  (integerp c))
+	     (and (equal (- b (* 4 c))
+			 (- (- b c) (* 3 c)))
+		  (equal (mod (- b (* 4 c)) 3)
+			 (mod (- b  c) 3))
+		  (equal (mod (+ (* 2 b) c) 3)
+			 (mod (- c b) 3))))
+    :hints (("Goal"
+	     :use ((:instance n-mod3-a-r-lemma1-3 (b b) (c c))
+		   (:instance n-mod3-a-r-lemma1-1 (a (- b c)) (c (- c)))
+		   (:instance n-mod3-a-r-lemma1-4 (b b) (c c))
+		   (:instance n-mod3-a-r-lemma1-1 (a (- c b)) (c b))
+		   )
+	     ))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-6
+    (implies (and (reducedwordp w)
+		  (equal x (acl2-sqrt 2)))
+	     (and (integerp (car (n-f w x)))
+		  (integerp (cadr (n-f w x)))
+		  (integerp (caddr (n-f w x)))
+		  (equal (car (n-f (CONS (WA) W) x)) (* 3 (CAR (n-f W x))))
+		  (equal (cadr (n-f (CONS (WA) W) x))
+			 (+ (CADR (n-f W x))
+			    (- (* 4 (CADDR (n-f W x))))))
+		  (equal (caddr (n-f (CONS (WA) W) x))
+			 (+ (* 2 (CADR (n-f W x)))
+			    (CADDR (n-f W x)))))
+	     
+	     )
+    :hints (("Goal"
+	     :use ((:instance rotation-values (w w) (x x))
+		   (:instance n-f-a-r (w w) (x x))
+		   (:instance n-f (w (cons (wa) w)) (x x)))
+	     :in-theory (disable int-point acl2-sqrt rotation reducedwordp)
+	     ))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1
+    (implies (and (reducedwordp w)
+		  (equal x (acl2-sqrt 2)))
+	     (equal (n-mod3 (cons (wa) w) x)
+		    (cons 0 (cons (mod (- (car (cdr (n-f w x)))  (car (cdr (cdr (n-f w x))))) 3)
+				  (cons (mod (- (car (cdr (cdr (n-f w x)))) (car (cdr (n-f w x)))) 3) nil)))
+
+		    )
+	     )
+    :hints (("Goal"
+	     :use (
+		   (:instance n-mod3 (w (cons (wa) w)) (x x))
+		   (:instance n-mod3-a-r-lemma1-1 (a 0) (c (car (n-f w x))))
+		   (:instance n-mod3-a-r-lemma1-5 (b (cadr (n-f w x))) (c (caddr (n-f w x))))
+		   (:instance n-mod3-a-r-lemma1-6 (w w) (x x))
+		   )
+	     :in-theory (disable int-point rotation reducedwordp acl2-sqrt n-f)
+	     :do-not-induct t
+	     )	   
+	    )
+    )
+  )
+ )
+
+ (defthmd n-mod3-a-r
+   (implies (and (reducedwordp w)
+		 (equal x (acl2-sqrt 2)))
+	    (equal (n-mod3 (cons (wa) w) x)
+		   (cons 0 (cons (mod (- (car (cdr (n-mod3 w x)))  (car (cdr (cdr (n-mod3 w x))))) 3)
+				 (cons (mod (- (car (cdr (cdr (n-mod3 w x)))) (car (cdr (n-mod3 w x)))) 3) nil)))
+
+		   )
+	    )
+   :hints (("Goal"
+	    :use (
+		  (:instance n-f-a-r (w w) (x x))
+		  (:instance N (w (cons (wa) w)) (x x))
+		  (:instance N (w w) (x x))
+		  (:instance n-f (w w) (x x))
+		  (:instance n-f (w w))
+					;(:instance N (w (cons (wa) w)) (x x))
+		  (:instance rotation-values (w w) (x x))
+		  (:instance N-a-r-lemma0 (a 0) (c (car (n-f w x))))
+		  (:instance N-a-r-lemma0
+			     (a (- (car (cdr (n-f w x)))  (car (cdr (cdr (n-f w x))))))
+			     (c (* (- (car (cdr (cdr (n-f w x))))))))
+		  (:instance N-a-r-lemma0
+			     (a (- (car (cdr (cdr (n-f w x)))) (car (cdr (n-f w x)))))
+			     (c (car (cdr (n-f w x))))
+			     )
+		  (:instance mod--
+			     (x (cadr (n-f w x)))
+			     (y (caddr (n-f w x)))
+			     (z 3))
+
+		  (:instance mod--
+			     (y (cadr (n-f w x)))
+			     (x (caddr (n-f w x)))
+			     (z 3))
+		  
+		  )
+	    ))
+   
+   )
+ )
+ 
+ 
+ ;; (defthmd N-a-r
+ ;;   (implies (and (reducedwordp w)
+ ;; 		 (equal x (acl2-sqrt 2)))
+ ;; 	    (equal (N (cons (wa) w) x)
+ ;; 		   (cons 0 (cons (mod (- (car (cdr (N w x)))  (car (cdr (cdr (N w x))))) 3)
+ ;; 				 (cons (mod (- (car (cdr (cdr (N w x)))) (car (cdr (N w x)))) 3) nil)))
+
+ ;; 		   )
+ ;; 	    )
+ ;;   :hints (("Goal"
+ ;; 	    :use (
+ ;; 		  (:instance n-f-a-r (w w) (x x))
+ ;; 		  (:instance N (w (cons (wa) w)) (x x))
+ ;; 		  (:instance N (w w) (x x))
+ ;; 		  (:instance n-f (w w) (x x))
+ ;; 		  (:instance n-f (w w))
+ ;; 					;(:instance N (w (cons (wa) w)) (x x))
+ ;; 		  (:instance rotation-values (w w) (x x))
+ ;; 		  (:instance N-a-r-lemma0 (a 0) (c (car (n-f w x))))
+ ;; 		  (:instance N-a-r-lemma0
+ ;; 			     (a (- (car (cdr (n-f w x)))  (car (cdr (cdr (n-f w x))))))
+ ;; 			     (c (* (- (car (cdr (cdr (n-f w x))))))))
+ ;; 		  (:instance N-a-r-lemma0
+ ;; 			     (a (- (car (cdr (cdr (n-f w x)))) (car (cdr (n-f w x)))))
+ ;; 			     (c (car (cdr (n-f w x))))
+ ;; 			     )
+ ;; 		  (:instance mod--
+ ;; 			     (x (cadr (n-f w x)))
+ ;; 			     (y (caddr (n-f w x)))
+ ;; 			     (z 3))
+
+ ;; 		  (:instance mod--
+ ;; 			     (y (cadr (n-f w x)))
+ ;; 			     (x (caddr (n-f w x)))
+ ;; 			     (z 3))
+		  
+ ;; 		  )
+ ;; 	    ))
+   
+ ;;   )
+ ;; )
