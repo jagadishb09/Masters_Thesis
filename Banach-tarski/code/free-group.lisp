@@ -1446,6 +1446,23 @@
 
 (encapsulate
  ()
+ (local (include-book "workshops/1999/embedded/Exercises/Exercise1-2/Exercise1.2" :dir :system))
+
+ (defthmd n-mod3-=
+   (and  (equal (mod (car (n-f w x)) 3)
+		(car (n-mod3 w x)))
+	 (equal (mod (cadr (n-f w x)) 3)
+		(cadr (n-mod3 w x)))
+	 (equal (mod (caddr (n-f w x)) 3)
+		(caddr (n-mod3 w x))))
+   :hints (("Goal"
+	    :use ((:instance n-mod3 (w w) (x x)))
+	    ))
+   )
+ )
+
+(encapsulate
+ ()
 
  (local
   (defthmd n-mod3-a-r-lemma1-1
@@ -1455,13 +1472,6 @@
 		    (mod a 3)
 		    )
 	     )
-    )
-  )
-
- (local
-  (defthmd n-mod3-a-r-lemma1-2
-    (equal (mod 0 3)
-	   0)
     )
   )
 
@@ -1547,8 +1557,30 @@
 	    )
     )
   )
- )
 
+ (local (include-book "workshops/1999/embedded/Exercises/Exercise1-2/Exercise1.2" :dir :system))
+
+ (local
+  (defthmd n-mod3-a-r-1
+    (implies (and (integerp x)
+		  (integerp y)
+		  (not (equal y 0)))
+	     (integerp (mod x y)))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-2
+    (and (equal (mod (cadr (n-f w x)) 3)
+		(cadr (n-mod3 w x)))
+	 (equal (mod (caddr (n-f w x)) 3)
+		(caddr (n-mod3 w x))))
+    :hints (("Goal"
+	     :use ((:instance n-mod3 (w w) (x x)))
+	     ))
+    )
+  )
+ 
  (defthmd n-mod3-a-r
    (implies (and (reducedwordp w)
 		 (equal x (acl2-sqrt 2)))
@@ -1560,21 +1592,10 @@
 	    )
    :hints (("Goal"
 	    :use (
-		  (:instance n-f-a-r (w w) (x x))
-		  (:instance N (w (cons (wa) w)) (x x))
-		  (:instance N (w w) (x x))
-		  (:instance n-f (w w) (x x))
-		  (:instance n-f (w w))
-					;(:instance N (w (cons (wa) w)) (x x))
-		  (:instance rotation-values (w w) (x x))
-		  (:instance N-a-r-lemma0 (a 0) (c (car (n-f w x))))
-		  (:instance N-a-r-lemma0
-			     (a (- (car (cdr (n-f w x)))  (car (cdr (cdr (n-f w x))))))
-			     (c (* (- (car (cdr (cdr (n-f w x))))))))
-		  (:instance N-a-r-lemma0
-			     (a (- (car (cdr (cdr (n-f w x)))) (car (cdr (n-f w x)))))
-			     (c (car (cdr (n-f w x))))
-			     )
+		  (:instance n-mod3-a-r-lemma1 (w w) (x x))
+		  (:instance n-mod3-a-r-lemma1-6 (w w) (x x))
+		  (:instance n-mod3-a-r-1 (x (cadr (n-f w x))) (y 3))
+		  (:instance n-mod3-a-r-1 (x (caddr (n-f w x))) (y 3))
 		  (:instance mod--
 			     (x (cadr (n-f w x)))
 			     (y (caddr (n-f w x)))
@@ -1584,52 +1605,13 @@
 			     (y (cadr (n-f w x)))
 			     (x (caddr (n-f w x)))
 			     (z 3))
+		  (:instance n-mod3-=)
 		  
 		  )
+	    :in-theory nil
+	    :do-not-induct t
 	    ))
    
    )
  )
  
- 
- ;; (defthmd N-a-r
- ;;   (implies (and (reducedwordp w)
- ;; 		 (equal x (acl2-sqrt 2)))
- ;; 	    (equal (N (cons (wa) w) x)
- ;; 		   (cons 0 (cons (mod (- (car (cdr (N w x)))  (car (cdr (cdr (N w x))))) 3)
- ;; 				 (cons (mod (- (car (cdr (cdr (N w x)))) (car (cdr (N w x)))) 3) nil)))
-
- ;; 		   )
- ;; 	    )
- ;;   :hints (("Goal"
- ;; 	    :use (
- ;; 		  (:instance n-f-a-r (w w) (x x))
- ;; 		  (:instance N (w (cons (wa) w)) (x x))
- ;; 		  (:instance N (w w) (x x))
- ;; 		  (:instance n-f (w w) (x x))
- ;; 		  (:instance n-f (w w))
- ;; 					;(:instance N (w (cons (wa) w)) (x x))
- ;; 		  (:instance rotation-values (w w) (x x))
- ;; 		  (:instance N-a-r-lemma0 (a 0) (c (car (n-f w x))))
- ;; 		  (:instance N-a-r-lemma0
- ;; 			     (a (- (car (cdr (n-f w x)))  (car (cdr (cdr (n-f w x))))))
- ;; 			     (c (* (- (car (cdr (cdr (n-f w x))))))))
- ;; 		  (:instance N-a-r-lemma0
- ;; 			     (a (- (car (cdr (cdr (n-f w x)))) (car (cdr (n-f w x)))))
- ;; 			     (c (car (cdr (n-f w x))))
- ;; 			     )
- ;; 		  (:instance mod--
- ;; 			     (x (cadr (n-f w x)))
- ;; 			     (y (caddr (n-f w x)))
- ;; 			     (z 3))
-
- ;; 		  (:instance mod--
- ;; 			     (y (cadr (n-f w x)))
- ;; 			     (x (caddr (n-f w x)))
- ;; 			     (z 3))
-		  
- ;; 		  )
- ;; 	    ))
-   
- ;;   )
- ;; )
