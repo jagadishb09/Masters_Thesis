@@ -1008,6 +1008,8 @@
        (realp (acl2-sqrt 2))
        (equal (* (acl2-sqrt 2) (acl2-sqrt 2)) 2)
        (equal (/ 2 (acl2-sqrt 2)) (acl2-sqrt 2))
+       (equal (/ 4 (acl2-sqrt 2)) (* 2 (acl2-sqrt 2)))
+       (equal (* 4 (/ (acl2-sqrt 2))) (* 2 (acl2-sqrt 2)))
        (> (acl2-sqrt 2) 1)
        (not (equal (acl2-sqrt 2) 0)))
   :hints (("Goal"
@@ -1171,6 +1173,423 @@
 	(cons (int-point (m-* (rotation w x) (point-p)) 1 0 (len w) (acl2-sqrt 2))
 	      (cons (int-point (m-* (rotation w x) (point-p)) 2 0 (len w) (acl2-sqrt 2)) nil)))
   )
+
+(encapsulate
+ ()
+
+ (local
+  (defthmd len-wa-inv-lemma
+    (implies (reducedwordp w)
+	     (and (equal (len (cons (wa-inv) w)) (+ (len w) 1))
+		  (integerp (len w)))
+	     )
+    )
+  )
+
+ (local
+  (defthmd n-f-a-inv-r-lemma
+    (implies (reducedwordp w)
+	     (equal (rotation (cons (wa-inv) w) x)
+		    (m-* (a-inv-rotation x) (rotation w x))))
+    )
+  )
+
+ (local
+  (defthmd expt-lemma
+    (implies (integerp n)
+	     (equal (expt 3 (+ n 1)) (* (expt 3 n) 3)))
+    )
+  )
+
+ (local
+  (defthmd wa-inv-sub4-lemma
+    (implies (equal (+ (* 1/3 y) (* -2/3 (acl2-sqrt 2) x))
+		    z)
+	     (equal (+ (* 2 x) (* 3 (/ (acl2-sqrt 2)) z))
+		    (* (/ (acl2-sqrt 2)) y)))
+    :hints (("Goal"
+	     :use (:instance sqrt-2-lemmas)
+	     
+	     ))
+    )
+  )
+ 
+ (local
+  (defthmd wa-inv-sub2-lemma
+    (implies (equal (+ (* 1/3 b) (* 2/3 (acl2-sqrt 2) c))
+		    z)
+	     (equal (* 3 z)
+		    (+ b (* 4 (/ (acl2-sqrt 2)) c))))
+    :hints (("Goal"
+	     :use ((:instance sqrt-2-lemmas))
+	     :in-theory (disable acl2-sqrt)
+	     ))
+    )
+  )
+ 
+ (defthmd n-f-a-inv-r
+   (implies (and (reducedwordp w)
+		 (equal x (acl2-sqrt 2)))
+	    (equal (n-f (cons (wa-inv) w) x) (cons (* 3 (car (n-f w x))) (cons (+ (car (cdr (n-f w x))) (* 4 (car (cdr (cdr (n-f w x)))))) (cons (- (car (cdr (cdr (n-f w x)))) (* 2 (car (cdr (n-f w x))))) nil)))))
+   :hints (("Goal"
+	    :use ((:instance m-*-rotation-point-dim (w w) (x x) (name '$arg1))
+		  (:instance rotation-values-ind-case-lemma1 (name '$arg1) (m1 (m-* (rotation w x) (point-p))))
+		  (:instance acl2-nump-rot (w w) (name '$arg1) (x x))
+		  (:instance sqrt-2-lemmas)
+		  (:instance len-wa-inv-lemma (w w))
+		  (:instance n-f-a-inv-r-lemma (w w) (x (acl2-sqrt 2)))
+		  (:instance n-f (w w) (x x))
+		  (:instance n-f (w (cons (wa-inv) w)) (x x))
+		  (:instance associativity-of-m-*
+			     (m1 (a-inv-rotation x))
+			     (m2 (rotation w x))
+			     (m3 (point-p)))
+		  (:instance expt-lemma (n (len w)))
+		  )
+	    :in-theory (disable aref2 rotation a-rotation b-rotation m-* a-inv-rotation b-inv-rotation point-p acl2-sqrt rotation reducedwordp)
+	    :do-not-induct t
+	    )
+	   ("Subgoal 4"
+	    :use (:instance wa-inv-sub4-lemma
+			    (x (AREF2 '$ARG1
+				      (M-* (ROTATION W (ACL2-SQRT 2))
+					   '((:HEADER :DIMENSIONS (3 1)
+						      :MAXIMUM-LENGTH 15)
+					     ((0 . 0) . 0)
+					     ((1 . 0) . 1)
+					     ((2 . 0) . 0)))
+				      1 0))
+			    (y (AREF2 '$ARG1
+				      (M-* (ROTATION W (ACL2-SQRT 2))
+					   '((:HEADER :DIMENSIONS (3 1)
+						      :MAXIMUM-LENGTH 15)
+					     ((0 . 0) . 0)
+					     ((1 . 0) . 1)
+					     ((2 . 0) . 0)))
+				      2 0))
+			    (z (AREF2 '$ARG1
+				      (M-* (ROTATION (CONS #\b W) (ACL2-SQRT 2))
+					   '((:HEADER :DIMENSIONS (3 1)
+						      :MAXIMUM-LENGTH 15)
+					     ((0 . 0) . 0)
+					     ((1 . 0) . 1)
+					     ((2 . 0) . 0)))
+				      2 0))
+			    )
+	    )
+
+	   ("Subgoal 2"
+	    :use (:instance wa-inv-sub2-lemma
+			    (z (AREF2 '$ARG1
+				      (M-* (ROTATION (CONS #\b W) (ACL2-SQRT 2))
+					   '((:HEADER :DIMENSIONS (3 1)
+						      :MAXIMUM-LENGTH 15)
+					     ((0 . 0) . 0)
+					     ((1 . 0) . 1)
+					     ((2 . 0) . 0)))
+				      1 0))
+			    (b (AREF2 '$ARG1
+				      (M-* (ROTATION W (ACL2-SQRT 2))
+					   '((:HEADER :DIMENSIONS (3 1)
+						      :MAXIMUM-LENGTH 15)
+					     ((0 . 0) . 0)
+					     ((1 . 0) . 1)
+					     ((2 . 0) . 0)))
+				      1 0))
+			    (c (AREF2 '$ARG1
+				      (M-* (ROTATION W (ACL2-SQRT 2))
+					   '((:HEADER :DIMENSIONS (3 1)
+						      :MAXIMUM-LENGTH 15)
+					     ((0 . 0) . 0)
+					     ((1 . 0) . 1)
+					     ((2 . 0) . 0)))
+				      2 0)
+			       )
+			    )
+	    )
+	   
+	   )
+   )
+ )
+
+
+(encapsulate
+ ()
+
+ (local
+  (defthmd len-wb-lemma
+    (implies (reducedwordp w)
+	     (and (equal (len (cons (wb) w)) (+ (len w) 1))
+		  (integerp (len w)))
+	     )
+    )
+  )
+
+ (local
+  (defthmd n-f-b-r-lemma
+    (implies (reducedwordp w)
+	     (equal (rotation (cons (wb) w) x)
+		    (m-* (b-rotation x) (rotation w x))))
+    )
+  )
+
+ (local
+  (defthmd expt-lemma
+    (implies (integerp n)
+	     (equal (expt 3 (+ n 1)) (* (expt 3 n) 3)))
+    )
+  )
+
+ (local
+  (defthmd wb-sub6-lemma
+    (implies (equal (+ (* 1/3 a) (* -2/3 (acl2-sqrt 2) b)) x)
+	     (equal (+ (* 2 b) (* 3 (/ (acl2-sqrt 2)) x))
+		    (* (/ (acl2-sqrt 2)) a)))
+    :hints (("Goal"
+	     :use (:instance sqrt-2-lemmas)
+	     :in-theory (disable acl2-sqrt)
+	     ))
+    )
+  )
+
+ 
+ (local
+  (defthmd wb-sub2-lemma
+    (implies (equal (+ (* 1/3 b) (* 2/3 (acl2-sqrt 2) a))
+		    y)
+	     (equal (* 3 y)
+		    (+ b (* 4 (/ (acl2-sqrt 2)) a))))
+    :hints (("Goal"
+	     :use ((:instance sqrt-2-lemmas))
+	     :in-theory (disable acl2-sqrt)
+	     ))
+    )
+  )
+ 
+ (defthmd n-f-b-r
+   (implies (and (reducedwordp w)
+		 (equal x (acl2-sqrt 2)))
+	    (equal (n-f (cons (wb) w) x) (cons (- (car (n-f w x)) (* 2 (car (cdr (n-f w x)))))
+					       (cons (+ (* 4 (car (n-f w x))) (car (cdr (n-f w x))))
+						     (cons (* 3 (car (cdr (cdr (n-f w x))))) nil)))))
+   :hints (("Goal"
+	    :use ((:instance m-*-rotation-point-dim (w w) (x x) (name '$arg1))
+		  (:instance rotation-values-ind-case-lemma1 (name '$arg1) (m1 (m-* (rotation w x) (point-p))))
+		  (:instance acl2-nump-rot (w w) (name '$arg1) (x x))
+		  (:instance sqrt-2-lemmas)
+		  (:instance len-wb-lemma (w w))
+		  (:instance n-f-b-r-lemma (w w) (x (acl2-sqrt 2)))
+		  (:instance n-f (w w) (x x))
+		  (:instance n-f (w (cons (wb) w)) (x x))
+		  (:instance associativity-of-m-*
+			     (m1 (b-rotation x))
+			     (m2 (rotation w x))
+			     (m3 (point-p)))
+		  (:instance expt-lemma (n (len w)))
+		  )
+	    :in-theory (disable aref2 rotation a-rotation b-rotation m-* a-inv-rotation b-inv-rotation point-p acl2-sqrt rotation reducedwordp)
+	    :do-not-induct t
+	    )
+	   ("Subgoal 6"
+	    :use (:instance wb-sub6-lemma
+	   		    (x (AREF2 '$ARG1
+				      (M-* (B-ROTATION (ACL2-SQRT 2))
+					   (ROTATION W (ACL2-SQRT 2))
+					   '((:HEADER :DIMENSIONS (3 1)
+						      :MAXIMUM-LENGTH 15)
+					     ((0 . 0) . 0)
+					     ((1 . 0) . 1)
+					     ((2 . 0) . 0)))
+				      0 0))
+	   		    (a (AREF2 '$ARG1
+				      (M-* (ROTATION W (ACL2-SQRT 2))
+					   '((:HEADER :DIMENSIONS (3 1)
+						      :MAXIMUM-LENGTH 15)
+					     ((0 . 0) . 0)
+					     ((1 . 0) . 1)
+					     ((2 . 0) . 0)))
+				      0 0))
+	   		    (b (AREF2 '$ARG1
+				      (M-* (ROTATION W (ACL2-SQRT 2))
+					   '((:HEADER :DIMENSIONS (3 1)
+						      :MAXIMUM-LENGTH 15)
+					     ((0 . 0) . 0)
+					     ((1 . 0) . 1)
+					     ((2 . 0) . 0)))
+				      1 0))
+	   		    )
+	    )
+
+	   ("Subgoal 2"
+	    :use (:instance wb-sub2-lemma
+	   		    (y (AREF2 '$ARG1
+	   			      (M-* (ROTATION (CONS #\c W) (ACL2-SQRT 2))
+	   				   '((:HEADER :DIMENSIONS (3 1)
+	   					      :MAXIMUM-LENGTH 15)
+	   				     ((0 . 0) . 0)
+	   				     ((1 . 0) . 1)
+	   				     ((2 . 0) . 0)))
+	   			      1 0))
+	   		    (b (AREF2 '$ARG1
+	   			      (M-* (ROTATION W (ACL2-SQRT 2))
+	   				   '((:HEADER :DIMENSIONS (3 1)
+	   					      :MAXIMUM-LENGTH 15)
+	   				     ((0 . 0) . 0)
+	   				     ((1 . 0) . 1)
+	   				     ((2 . 0) . 0)))
+	   			      1 0))
+	   		    (a (AREF2 '$ARG1
+				      (M-* (ROTATION W (ACL2-SQRT 2))
+					   '((:HEADER :DIMENSIONS (3 1)
+						      :MAXIMUM-LENGTH 15)
+					     ((0 . 0) . 0)
+					     ((1 . 0) . 1)
+					     ((2 . 0) . 0)))
+				      0 0))
+			    )
+	    )
+	   
+	   )
+   )
+ )
+
+
+(encapsulate
+ ()
+
+ (local
+  (defthmd len-wb-inv-lemma
+    (implies (reducedwordp w)
+	     (and (equal (len (cons (wb-inv) w)) (+ (len w) 1))
+		  (integerp (len w)))
+	     )
+    )
+  )
+
+ (local
+  (defthmd n-f-b-inv-r-lemma
+    (implies (reducedwordp w)
+	     (equal (rotation (cons (wb-inv) w) x)
+		    (m-* (b-inv-rotation x) (rotation w x))))
+    )
+  )
+
+ (local
+  (defthmd expt-lemma
+    (implies (integerp n)
+	     (equal (expt 3 (+ n 1)) (* (expt 3 n) 3)))
+    )
+  )
+
+
+ (local
+  (defthmd wb-inv-sub2-lemma1-1
+    (equal (* 4 (/ (acl2-sqrt 2)) a)
+	   (* 2 (acl2-sqrt 2) a))
+        :hints (("Goal"
+	     :use ((:instance sqrt-2-lemmas))
+	     :in-theory (disable acl2-sqrt iter-sqrt)
+	     :do-not-induct t
+	     ))
+    )
+  )
+ 
+ (local
+  (defthmd wb-inv-sub2-lemma1-2
+    (EQUAL (* 3
+	      (+ (* 1/3 B)
+		 (- (* 2/3 X A))))
+	   (- B (* 2 x A))))
+  )
+
+ (local
+  (defthmd wb-inv-sub2-lemma1
+    (implies (equal (+ (* 1/3 b) (* -2/3 (acl2-sqrt 2) a)) y)
+	     (equal (- (+ (* 3 y) (* 4 (/ (acl2-sqrt 2)) a)) b)
+		    0))
+    :hints (("Goal"
+	     :use ((:instance sqrt-2-lemmas)
+		   (:instance wb-inv-sub2-lemma1-1 (a a))
+		   (:instance wb-inv-sub2-lemma1-2 (b b) (a a) (x (acl2-sqrt 2))))
+	     :in-theory (disable acl2-sqrt iter-sqrt)
+	     :do-not-induct t
+	     ))
+    )
+  )
+
+ (local
+  (defthmd wb-inv-sub2-lemma
+    (implies (and (acl2-numberp b)
+		  (equal (+ (* 1/3 b) (* -2/3 (acl2-sqrt 2) a)) y))
+	     (equal (+ (* 3 y) (* 4 (/ (acl2-sqrt 2)) a))
+		    b))
+    :hints (("Goal"
+	     :use (
+		   (:instance wb-inv-sub2-lemma1))
+	     :in-theory (disable acl2-sqrt iter-sqrt)
+	     :do-not-induct t
+	     ))
+    )
+  )
+ 
+ (defthmd n-f-b-inv-r
+   (implies (and (reducedwordp w)
+		 (equal x (acl2-sqrt 2)))
+	    (equal (n-f (cons (wb-inv) w) x) (cons (+ (car (n-f w x)) (* 2 (car (cdr (n-f w x)))))
+						   (cons (- (car (cdr (n-f w x))) (* 4 (car (n-f w x))))
+							 (cons (* 3 (car (cdr (cdr (n-f w x))))) nil)))))
+   :hints (("Goal"
+	    :use ((:instance m-*-rotation-point-dim (w w) (x x) (name '$arg1))
+		  (:instance rotation-values-ind-case-lemma1 (name '$arg1) (m1 (m-* (rotation w x) (point-p))))
+		  (:instance acl2-nump-rot (w w) (name '$arg1) (x x))
+		  (:instance sqrt-2-lemmas)
+		  (:instance len-wb-inv-lemma (w w))
+		  (:instance n-f-b-inv-r-lemma (w w) (x (acl2-sqrt 2)))
+		  (:instance n-f (w w) (x x))
+		  (:instance n-f (w (cons (wb-inv) w)) (x x))
+		  (:instance associativity-of-m-*
+			     (m1 (b-inv-rotation x))
+			     (m2 (rotation w x))
+			     (m3 (point-p)))
+		  (:instance expt-lemma (n (len w)))
+		  )
+	    :in-theory (disable aref2 rotation a-rotation b-rotation m-* a-inv-rotation b-inv-rotation point-p acl2-sqrt rotation reducedwordp)
+	    :do-not-induct t
+	    )
+
+
+	   ("Subgoal 2"
+	    :use (:instance wb-inv-sub2-lemma
+			    (y (AREF2 '$ARG1
+				      (M-* (ROTATION (CONS #\d W) (ACL2-SQRT 2))
+					   '((:HEADER :DIMENSIONS (3 1)
+						      :MAXIMUM-LENGTH 15)
+					     ((0 . 0) . 0)
+					     ((1 . 0) . 1)
+					     ((2 . 0) . 0)))
+				      1 0))
+			    (a (AREF2 '$ARG1
+				      (M-* (ROTATION W (ACL2-SQRT 2))
+					   '((:HEADER :DIMENSIONS (3 1)
+						      :MAXIMUM-LENGTH 15)
+					     ((0 . 0) . 0)
+					     ((1 . 0) . 1)
+					     ((2 . 0) . 0)))
+				      0 0))
+			    (b (AREF2 '$ARG1
+				      (M-* (ROTATION W (ACL2-SQRT 2))
+					   '((:HEADER :DIMENSIONS (3 1)
+						      :MAXIMUM-LENGTH 15)
+					     ((0 . 0) . 0)
+					     ((1 . 0) . 1)
+					     ((2 . 0) . 0)))
+				      1 0))
+			    )
+	    )
+	   )
+   )
+ )
+
 
 (encapsulate
  ()
@@ -1371,74 +1790,74 @@
     )
   )
 
-  (defthmd n-f-a-r
-    (implies (and (reducedwordp w)
-		  (equal x (acl2-sqrt 2)))
-	     (equal (n-f (cons (wa) w) x) (cons (* 3 (car (n-f w x))) (cons (- (car (cdr (n-f w x))) (* 4 (car (cdr (cdr (n-f w x)))))) (cons (+ (* 2 (car (cdr (n-f w x)))) (car (cdr (cdr (n-f w x))))) nil)))))
-    :hints (("Goal"
-	     :use ((:instance m-*-rotation-point-dim (w w) (x x) (name '$arg1))
-		   (:instance rotation-values-ind-case-lemma1 (name '$arg1) (m1 (m-* (rotation w x) (point-p))))
-		   (:instance acl2-nump-rot (w w) (name '$arg1) (x x))
-		   (:instance sqrt-2-lemmas)
-		   (:instance len-lemma (w w))
-		   (:instance n-f-a-r-lemma (w w) (x (acl2-sqrt 2)))
-		   (:instance n-f (w w) (x x))
-		   (:instance n-f (w (cons (wa) w)) (x x))
-		   (:instance associativity-of-m-*
-			      (m1 (a-rotation x))
-			      (m2 (rotation w x))
-			      (m3 (point-p)))
-		   (:instance expt-lemma (n (len w)))
-		   )
-	     :in-theory (disable aref2 rotation a-rotation b-rotation m-* a-inv-rotation b-inv-rotation point-p acl2-sqrt rotation reducedwordp)
-	     :do-not-induct t
-	     )
-
-	    ("Subgoal 4"
-	     :use (
-		   (:instance sub4-lemma0)
-		   (:instance sub4-lemma1)
-		   (:instance sub4-lemma2)
-		   )
-	     )
-
-	    ("Subgoal 2"
-	     :use (
-		   (:instance sub2-lemma
-			      (x (AREF2 '$ARG1
-					(M-* (ROTATION W (ACL2-SQRT 2))
-					     '((:HEADER :DIMENSIONS (3 1)
-							:MAXIMUM-LENGTH 15)
-					       ((0 . 0) . 0)
-					       ((1 . 0) . 1)
-					       ((2 . 0) . 0)))
-					1 0))
-			      (y (AREF2 '$ARG1
-					(M-* (ROTATION W (ACL2-SQRT 2))
-					     '((:HEADER :DIMENSIONS (3 1)
-							:MAXIMUM-LENGTH 15)
-					       ((0 . 0) . 0)
-					       ((1 . 0) . 1)
-					       ((2 . 0) . 0)))
-					2 0))
-			      (z (AREF2 '$ARG1
-					(M-* (A-ROTATION (ACL2-SQRT 2))
-					     (ROTATION W (ACL2-SQRT 2))
-					     '((:HEADER :DIMENSIONS (3 1)
-							:MAXIMUM-LENGTH 15)
-					       ((0 . 0) . 0)
-					       ((1 . 0) . 1)
-					       ((2 . 0) . 0)))
-					1 0))
-			      
-			      )
-
-		    )
-	     )
-	    
+ (defthmd n-f-a-r
+   (implies (and (reducedwordp w)
+		 (equal x (acl2-sqrt 2)))
+	    (equal (n-f (cons (wa) w) x) (cons (* 3 (car (n-f w x))) (cons (- (car (cdr (n-f w x))) (* 4 (car (cdr (cdr (n-f w x)))))) (cons (+ (* 2 (car (cdr (n-f w x)))) (car (cdr (cdr (n-f w x))))) nil)))))
+   :hints (("Goal"
+	    :use ((:instance m-*-rotation-point-dim (w w) (x x) (name '$arg1))
+		  (:instance rotation-values-ind-case-lemma1 (name '$arg1) (m1 (m-* (rotation w x) (point-p))))
+		  (:instance acl2-nump-rot (w w) (name '$arg1) (x x))
+		  (:instance sqrt-2-lemmas)
+		  (:instance len-lemma (w w))
+		  (:instance n-f-a-r-lemma (w w) (x (acl2-sqrt 2)))
+		  (:instance n-f (w w) (x x))
+		  (:instance n-f (w (cons (wa) w)) (x x))
+		  (:instance associativity-of-m-*
+			     (m1 (a-rotation x))
+			     (m2 (rotation w x))
+			     (m3 (point-p)))
+		  (:instance expt-lemma (n (len w)))
+		  )
+	    :in-theory (disable aref2 rotation a-rotation b-rotation m-* a-inv-rotation b-inv-rotation point-p acl2-sqrt rotation reducedwordp)
+	    :do-not-induct t
 	    )
-    )
-  )
+
+	   ("Subgoal 4"
+	    :use (
+		  (:instance sub4-lemma0)
+		  (:instance sub4-lemma1)
+		  (:instance sub4-lemma2)
+		  )
+	    )
+
+	   ("Subgoal 2"
+	    :use (
+		  (:instance sub2-lemma
+			     (x (AREF2 '$ARG1
+				       (M-* (ROTATION W (ACL2-SQRT 2))
+					    '((:HEADER :DIMENSIONS (3 1)
+						       :MAXIMUM-LENGTH 15)
+					      ((0 . 0) . 0)
+					      ((1 . 0) . 1)
+					      ((2 . 0) . 0)))
+				       1 0))
+			     (y (AREF2 '$ARG1
+				       (M-* (ROTATION W (ACL2-SQRT 2))
+					    '((:HEADER :DIMENSIONS (3 1)
+						       :MAXIMUM-LENGTH 15)
+					      ((0 . 0) . 0)
+					      ((1 . 0) . 1)
+					      ((2 . 0) . 0)))
+				       2 0))
+			     (z (AREF2 '$ARG1
+				       (M-* (A-ROTATION (ACL2-SQRT 2))
+					    (ROTATION W (ACL2-SQRT 2))
+					    '((:HEADER :DIMENSIONS (3 1)
+						       :MAXIMUM-LENGTH 15)
+					      ((0 . 0) . 0)
+					      ((1 . 0) . 1)
+					      ((2 . 0) . 0)))
+				       1 0))
+			     
+			     )
+
+		  )
+	    )
+	   
+	   )
+   )
+ )
 
 (defun n-mod3 (w x)
   (cons (mod (car (n-f w x)) 3) (cons (mod (car (cdr (n-f w x))) 3) (cons (mod (car (cdr (cdr (n-f w x) )))  3) nil)))
@@ -1614,4 +2033,4 @@
    
    )
  )
- 
+
