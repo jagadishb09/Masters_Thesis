@@ -1870,17 +1870,250 @@
    )
  )
 
+
+
+(defthmd n-mod3-nil
+  (equal (n-mod3 nil (acl2-sqrt 2))
+	 '(0 1 0)))
+
+(defthm N-mod3-a-n
+  (implies (and (integerp n)
+		(> n 0)
+		(equal x (acl2-sqrt 2)))
+	   (or (equal (n-mod3 (a-word n) x) '(0 1 2))
+	       (equal (n-mod3 (a-word n) x) '(0 2 1))))
+
+  :hints (("Goal"
+	   :use ((:instance n-mod3-nil)
+		 (:instance n-mod3-a-n-r (w nil) (n n)))
+	   
+	   :in-theory (disable n-mod3 acl2-sqrt m-* int-point n-f)
+	   ))
+  )
+
+(defthm N-mod3-b-n-a-n
+  (implies (and (integerp n)
+		(> n 0)
+		(equal x (acl2-sqrt 2)))
+	   (or (equal (n-mod3 (append (b-word n) (a-word n)) x) '(1 1 0))
+	       (equal (n-mod3 (append (b-word n) (a-word n)) x) '(2 2 0))
+	       (equal (n-mod3 (append (b-word n) (a-word n)) x) '(2 1 0))
+	       (equal (n-mod3 (append (b-word n) (a-word n)) x) '(1 2 0))))
+
+  :hints (("Goal"
+	   :use ((:instance n-mod3-a-n (n n) (x x))
+		 (:instance n-mod3-b-n-r (w (a-word n)) (n n)))
+	   
+	   :in-theory (disable n-mod3 acl2-sqrt m-* int-point n-f b-word a-word)
+	   ))
+  )
+
+(defthm N-mod3-b-inv-n-a-n
+  (implies (and (integerp n)
+		(> n 0)
+		(equal x (acl2-sqrt 2)))
+	   (or (equal (n-mod3 (append (b-inv-word n) (a-word n)) x) '(1 1 0))
+	       (equal (n-mod3 (append (b-inv-word n) (a-word n)) x) '(2 2 0))
+	       (equal (n-mod3 (append (b-inv-word n) (a-word n)) x) '(2 1 0))
+	       (equal (n-mod3 (append (b-inv-word n) (a-word n)) x) '(1 2 0))))
+
+  :hints (("Goal"
+	   :use ((:instance n-mod3-a-n (n n) (x x))
+		 (:instance n-mod3-b-inv-n-r (w (a-word n)) (n n)))
+	   
+	   :in-theory (disable n-mod3 acl2-sqrt m-* int-point n-f b-inv-word a-word)
+	   ))
+  )
+
+(defthm N-mod3-a-inv-n
+  (implies (and (integerp n)
+		(> n 0)
+		(equal x (acl2-sqrt 2)))
+	   (or (equal (n-mod3 (a-inv-word n) x) '(0 1 1))
+	       (equal (n-mod3 (a-inv-word n) x) '(0 2 2))))
+
+  :hints (("Goal"
+	   :use ((:instance n-mod3-nil)
+		 (:instance n-mod3-a-inv-n-r (w nil) (n n)))
+	   
+	   :in-theory (disable n-mod3 acl2-sqrt m-* int-point n-f)
+	   ))
+  )
+
+
+(defthm N-mod3-b-n-a-inv-n
+  (implies (and (integerp n)
+		(> n 0)
+		(equal x (acl2-sqrt 2)))
+	   (or (equal (n-mod3 (append (b-word n) (a-inv-word n)) x) '(1 1 0))
+	       (equal (n-mod3 (append (b-word n) (a-inv-word n)) x) '(2 2 0))
+	       (equal (n-mod3 (append (b-word n) (a-inv-word n)) x) '(2 1 0))
+	       (equal (n-mod3 (append (b-word n) (a-inv-word n)) x) '(1 2 0))))
+
+  :hints (("Goal"
+	   :use ((:instance n-mod3-a-inv-n (n n) (x x))
+		 (:instance n-mod3-b-n-r (w (a-inv-word n)) (n n)))
+	   
+	   :in-theory (disable n-mod3 acl2-sqrt m-* int-point n-f b-word a-inv-word)
+	   ))
+  )
+
+(defthm N-mod3-b-inv-n-a-inv-n
+  (implies (and (integerp n)
+		(> n 0)
+		(equal x (acl2-sqrt 2)))
+	   (or (equal (n-mod3 (append (b-inv-word n) (a-inv-word n)) x) '(1 1 0))
+	       (equal (n-mod3 (append (b-inv-word n) (a-inv-word n)) x) '(2 2 0))
+	       (equal (n-mod3 (append (b-inv-word n) (a-inv-word n)) x) '(2 1 0))
+	       (equal (n-mod3 (append (b-inv-word n) (a-inv-word n)) x) '(1 2 0))))
+
+  :hints (("Goal"
+	   :use ((:instance n-mod3-a-inv-n (n n) (x x))
+		 (:instance n-mod3-b-inv-n-r (w (a-inv-word n)) (n n)))
+	   
+	   :in-theory (disable n-mod3 acl2-sqrt m-* int-point n-f b-inv-word a-inv-word)
+	   ))
+  )
+
+(defthm N-mod3-b-n
+  (implies (and (integerp n)
+		(> n 0)
+		(equal x (acl2-sqrt 2)))
+	   (or (equal (n-mod3 (b-word n) x) '(1 1 0))
+	       (equal (n-mod3 (b-word n) x) '(2 2 0))))
+
+  :hints (("Goal"
+	   :use ((:instance n-mod3-nil)
+		 (:instance n-mod3-b-n-r (w nil) (n n)))
+	   
+	   :in-theory (disable n-mod3 acl2-sqrt m-* int-point n-f)
+	   ))
+  )
+
+(defthm N-mod3-a-n-b-n
+  (implies (and (integerp n)
+		(> n 0)
+		(equal x (acl2-sqrt 2)))
+	   (or (equal (n-mod3 (append (a-word n) (b-word n)) x) '(0 1 2))
+	       (equal (n-mod3 (append (a-word n) (b-word n)) x) '(0 2 1))
+	       (equal (n-mod3 (append (a-word n) (b-word n)) x) '(0 1 1))
+	       (equal (n-mod3 (append (a-word n) (b-word n)) x) '(0 2 2))))
+
+  :hints (("Goal"
+	   :use ((:instance n-mod3-b-n (n n) (x x))
+		 (:instance n-mod3-a-n-r (w (b-word n)) (n n)))
+	   
+	   :in-theory (disable n-mod3 acl2-sqrt m-* int-point n-f b-word a-word)
+	   ))
+  )
+
+(defthm N-mod3-a-inv-n-b-n
+  (implies (and (integerp n)
+		(> n 0)
+		(equal x (acl2-sqrt 2)))
+	   (or (equal (n-mod3 (append (a-inv-word n) (b-word n)) x) '(0 1 2))
+	       (equal (n-mod3 (append (a-inv-word n) (b-word n)) x) '(0 2 1))
+	       (equal (n-mod3 (append (a-inv-word n) (b-word n)) x) '(0 1 1))
+	       (equal (n-mod3 (append (a-inv-word n) (b-word n)) x) '(0 2 2))))
+
+  :hints (("Goal"
+	   :use ((:instance n-mod3-b-n (n n) (x x))
+		 (:instance n-mod3-a-inv-n-r (w (b-word n)) (n n)))
+	   
+	   :in-theory (disable n-mod3 acl2-sqrt m-* int-point n-f b-word a-inv-word)
+	   ))
+  )
+
+(defthm N-mod3-b-inv-n
+  (implies (and (integerp n)
+		(> n 0)
+		(equal x (acl2-sqrt 2)))
+	   (or (equal (n-mod3 (b-inv-word n) x) '(2 1 0))
+	       (equal (n-mod3 (b-inv-word n) x) '(1 2 0))))
+
+  :hints (("Goal"
+	   :use ((:instance n-mod3-nil)
+		 (:instance n-mod3-b-inv-n-r (w nil) (n n)))
+	   
+	   :in-theory (disable n-mod3 acl2-sqrt m-* int-point n-f)
+	   ))
+  )
+
+(defthm N-mod3-a-n-b-inv-n
+  (implies (and (integerp n)
+		(> n 0)
+		(equal x (acl2-sqrt 2)))
+	   (or (equal (n-mod3 (append (a-word n) (b-inv-word n)) x) '(0 1 2))
+	       (equal (n-mod3 (append (a-word n) (b-inv-word n)) x) '(0 2 1))
+	       (equal (n-mod3 (append (a-word n) (b-inv-word n)) x) '(0 1 1))
+	       (equal (n-mod3 (append (a-word n) (b-inv-word n)) x) '(0 2 2))))
+
+  :hints (("Goal"
+	   :use ((:instance n-mod3-b-inv-n (n n) (x x))
+		 (:instance n-mod3-a-n-r (w (b-inv-word n)) (n n)))
+	   
+	   :in-theory (disable n-mod3 acl2-sqrt m-* int-point n-f a-word b-inv-word)
+	   ))
+  )
+
+(defthm N-mod3-a-inv-n-b-inv-n
+  (implies (and (integerp n)
+		(> n 0)
+		(equal x (acl2-sqrt 2)))
+	   (or (equal (n-mod3 (append (a-inv-word n) (b-inv-word n)) x) '(0 1 2))
+	       (equal (n-mod3 (append (a-inv-word n) (b-inv-word n)) x) '(0 2 1))
+	       (equal (n-mod3 (append (a-inv-word n) (b-inv-word n)) x) '(0 1 1))
+	       (equal (n-mod3 (append (a-inv-word n) (b-inv-word n)) x) '(0 2 2))))
+
+  :hints (("Goal"
+	   :use ((:instance n-mod3-b-inv-n (n n) (x x))
+		 (:instance n-mod3-a-inv-n-r (w (b-inv-word n)) (n n)))
+	   
+	   :in-theory (disable n-mod3 acl2-sqrt m-* int-point n-f b-inv-word a-inv-word)
+	   ))
+  )
+
+
+
+
+
+
+
+
+
+;; (defthmd test-lemma1
+;;   (implies (and (weak-wordp w)
+;; 		(atom w))
+;; 	   (equal (rotation w (acl2-sqrt 2)) (id-rotation))))
+
+;; (defthmd test-lemma2
+;;   (m-= (m-* (id-rotation) (id-rotation))
+;;        (id-rotation)))
+
+;; (defthmd test-lemma3
+;;   (implies (and (weak-wordp w)
+;; 		(atom w))
+;; 	   (m-= (m-* (rotation w (acl2-sqrt 2)) (id-rotation))
+;; 		(rotation w (acl2-sqrt 2))))
+;;   :hints (("Goal"
+;; 	   :use ((:instance test-lemma1)
+;; 		 (:instance test-lemma2))
+;; 	   :in-theory nil
+
+;; 	   ))
+;;   )
+
 ;; (defthmd test-lemma
 ;;   (implies (weak-wordp w)
-;; 	   (equal (m-* (rotation w (acl2-sqrt 2)) (id-rotation))
-;; 		  (rotation w (acl2-sqrt 2))))
+;; 	   (m-= (m-* (rotation w (acl2-sqrt 2)) (id-rotation))
+;; 		(rotation w (acl2-sqrt 2))))
 ;;   :hints (("Goal"
 
 ;; 	   :in-theory (disable acl2-sqrt)
 ;; 	   )
 ;; 	  ("Subgoal *1/1"
-;; 	   :use (:instance rotation (w w) (x (acl2-sqrt 2)))
-;; 	   :in-theory (enable m-*)
+;; 	   :use (:instance test-lemma3)
+;; 					;:in-theory (enable m-*)
 ;; 	   )
 ;; 	  )
 
