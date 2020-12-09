@@ -1861,3 +1861,865 @@
    )
  )
 
+
+(encapsulate
+ ()
+ (local (include-book "workshops/1999/embedded/Exercises/Exercise1-2/Exercise1.2" :dir :system))
+ (defthmd mod--frgrp
+   (implies
+    (and (force (integerp x))
+	 (force (integerp y))
+	 (force (integerp z))
+	 (force (not (equal z 0))))
+    (equal (mod (- x y) z)
+	   (mod (- (mod x z) (mod y z)) z)))
+   :hints (("Goal" :use (hack-24 hack-25))))
+
+ (defthmd mod--frgrp-1
+   (implies
+    (and (force (integerp x))
+	 (force (integerp y))
+	 (force (integerp z))
+	 (force (not (equal z 0))))
+    (equal 
+     (mod (- (mod x z) (mod y z)) z)
+     (mod (- x y) z)))
+   :hints (("Goal" :use (mod--frgrp))))
+
+ (defthmd intp-x-y
+   (implies (and (integerp x)
+		 (integerp y))
+	    (integerp (mod y x)))
+   )
+
+ (defthmd mod-+-frgrp
+   (implies
+    (and (integerp x)
+	 (integerp y)
+	 (integerp z)
+	 (not (equal z 0)))
+    (equal (mod (+ x y) z)
+	   (mod (+ (mod x z) (mod y z)) z)))
+   :hints (("Goal"
+	    :in-theory nil
+	    :use (:instance mod-+-exp))
+	   )
+   )
+ 
+ )
+
+
+(defun n-mod3 (w x)
+  (cons (mod (car (n-f w x)) 3) (cons (mod (car (cdr (n-f w x))) 3) (cons (mod (car (cdr (cdr (n-f w x) )))  3) nil)))
+  )
+
+(defthmd n-mod3-=
+  (and  (equal (mod (car (n-f w x)) 3)
+	       (car (n-mod3 w x)))
+	(equal (mod (cadr (n-f w x)) 3)
+	       (cadr (n-mod3 w x)))
+	(equal (mod (caddr (n-f w x)) 3)
+	       (caddr (n-mod3 w x))))
+  :hints (("Goal"
+	   :in-theory (disable mod n-f)
+	   ))
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;; 
+;;;;N(a^n)
+;;;;;;;;;;;;;;;;;;;;;;;;;
+(encapsulate
+ ()
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-1
+    (implies (and (integerp a)
+		  (integerp c))
+	     (equal (mod (+ a (* 3 c))  3)
+		    (mod a 3)
+		    )
+	     )
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-3
+    (equal (- b (* 4 c))
+	   (- (- b c) (* 3 c)))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-4
+    (equal (+  (* 2 b) c)
+	   (+ (- c b) (* 3 b)))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-5
+    (implies (and (integerp b)
+		  (integerp c))
+	     (and (equal (- b (* 4 c))
+			 (- (- b c) (* 3 c)))
+		  (equal (mod (- b (* 4 c)) 3)
+			 (mod (- b  c) 3))
+		  (equal (mod (+ (* 2 b) c) 3)
+			 (mod (- c b) 3))))
+    :hints (("Goal"
+	     :use ((:instance n-mod3-a-r-lemma1-3 (b b) (c c))
+		   (:instance n-mod3-a-r-lemma1-1 (a (- b c)) (c (- c)))
+		   (:instance n-mod3-a-r-lemma1-4 (b b) (c c))
+		   (:instance n-mod3-a-r-lemma1-1 (a (- c b)) (c b))
+		   )
+	     ))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-6
+    (implies (and (weak-wordp w)
+		  (equal x (acl2-sqrt 2)))
+	     (and (integerp (car (n-f w x)))
+		  (integerp (cadr (n-f w x)))
+		  (integerp (caddr (n-f w x)))
+		  (equal (car (n-f (CONS (WA) W) x)) (* 3 (CAR (n-f W x))))
+		  (equal (cadr (n-f (CONS (WA) W) x))
+			 (+ (CADR (n-f W x))
+			    (- (* 4 (CADDR (n-f W x))))))
+		  (equal (caddr (n-f (CONS (WA) W) x))
+			 (+ (* 2 (CADR (n-f W x)))
+			    (CADDR (n-f W x)))))
+	     
+	     )
+    :hints (("Goal"
+	     :use ((:instance rotation-values (w w) (x x))
+		   (:instance n-f-a-r (w w) (x x))
+		   (:instance n-f (w w) (x x))
+		   (:instance n-f (w (cons (wa) w)) (x x)))
+	     :in-theory (disable int-point acl2-sqrt rotation reducedwordp mod)
+	     ))
+    )
+  )
+
+ (defthmd integerp-n-mod3
+   (implies (and (weak-wordp w)
+		 (equal x (acl2-sqrt 2)))
+	    (and (integerp (car (n-mod3 w x)))
+		 (integerp (cadr (n-mod3 w x)))
+		 (integerp (caddr (n-mod3 w x)))
+		 )
+	    )
+   :hints (("Goal"
+	    :use ((:instance n-mod3-=)
+		  (:instance n-mod3-a-r-lemma1-6 (w w) (x x))
+		  (:instance intp-x-y (x 3) (y (car (n-f w x))))
+		  (:instance intp-x-y (x 3) (y (car (cdr (n-f w x)))))
+		  (:instance intp-x-y (x 3) (y (car (cdr (cdr (n-f w x))))))
+		  )
+	    :in-theory nil
+	    ))
+
+   )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1
+    (implies (and (weak-wordp w)
+		  (equal x (acl2-sqrt 2)))
+	     (equal (n-mod3 (cons (wa) w) x)
+		    (cons 0 (cons (mod (- (car (cdr (n-f w x)))  (car (cdr (cdr (n-f w x))))) 3)
+				  (cons (mod (- (car (cdr (cdr (n-f w x)))) (car (cdr (n-f w x)))) 3) nil)))
+
+		    )
+	     )
+    :hints (("Goal"
+	     :use (
+		   (:instance n-mod3 (w (cons (wa) w)) (x x))
+		   (:instance n-mod3-a-r-lemma1-1 (a 0) (c (car (n-f w x))))
+		   (:instance n-mod3-a-r-lemma1-5 (b (cadr (n-f w x))) (c (caddr (n-f w x))))
+		   (:instance n-mod3-a-r-lemma1-6 (w w) (x x))
+		   )
+	     :in-theory (disable int-point rotation reducedwordp acl2-sqrt n-f mod)
+	     :do-not-induct t
+	     )	   
+	    )
+    )
+  )
+
+
+
+ (local
+  (defthmd n-mod3-a-r-1
+    (implies (and (integerp x)
+		  (integerp y)
+		  (not (equal y 0)))
+	     (integerp (mod x y)))
+    )
+  )
+ 
+ (defthmd n-mod3-a-r
+   (implies (and (weak-wordp w)
+		 (equal x (acl2-sqrt 2)))
+	    (equal (n-mod3 (cons (wa) w) x)
+		   (cons 0 (cons (mod (- (car (cdr (n-mod3 w x)))  (car (cdr (cdr (n-mod3 w x))))) 3)
+				 (cons (mod (- (car (cdr (cdr (n-mod3 w x)))) (car (cdr (n-mod3 w x)))) 3) nil)))
+
+		   )
+	    )
+   :hints (("Goal"
+	    :use (
+		  (:instance n-mod3-a-r-lemma1 (w w) (x x))
+		  (:instance n-mod3-a-r-lemma1-6 (w w) (x x))
+		  (:instance n-mod3-a-r-1 (x (cadr (n-f w x))) (y 3))
+		  (:instance n-mod3-a-r-1 (x (caddr (n-f w x))) (y 3))
+		  (:instance mod--frgrp
+			     (x (cadr (n-f w x)))
+			     (y (caddr (n-f w x)))
+			     (z 3))
+
+		  (:instance mod--frgrp
+			     (y (cadr (n-f w x)))
+			     (x (caddr (n-f w x)))
+			     (z 3))
+		  (:instance n-mod3-=)
+		  
+		  )
+	    :in-theory nil
+	    :do-not-induct t
+	    ))
+   
+   )
+ )
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;N(a-inv^n)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(encapsulate
+ ()
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-1
+    (implies (and (integerp a)
+		  (integerp c))
+	     (equal (mod (+ a (* 3 c))  3)
+		    (mod a 3)
+		    )
+	     )
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-3
+    (equal (+ b (* 4 c))
+	   (+ (+ b c) (* 3 c)))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-4
+    (equal (- c  (* 2 b))
+	   (- (+ c b) (* 3 b)))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-5
+    (implies (and (integerp b)
+		  (integerp c))
+	     (and (equal (+ b (* 4 c))
+			 (+ (+ b c) (* 3 c)))
+		  (equal (mod (+ b (* 4 c)) 3)
+			 (mod (+ b  c) 3))
+		  (equal (mod (- c (* 2 b)) 3)
+			 (mod (+ c b) 3))))
+    :hints (("Goal"
+	     :use ((:instance n-mod3-a-r-lemma1-3 (b b) (c c))
+		   (:instance n-mod3-a-r-lemma1-1 (a (+ b c)) (c c))
+		   (:instance n-mod3-a-r-lemma1-4 (b b) (c c))
+		   (:instance n-mod3-a-r-lemma1-1 (a (+ c b)) (c (- b)))
+		   )
+	     ))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1-6
+    (implies (and (weak-wordp w)
+		  (equal x (acl2-sqrt 2)))
+	     (and (integerp (car (n-f w x)))
+		  (integerp (cadr (n-f w x)))
+		  (integerp (caddr (n-f w x)))
+		  (equal (car (n-f (CONS (WA-inv) W) x)) (* 3 (CAR (n-f W x))))
+		  (equal (cadr (n-f (CONS (WA-inv) W) x))
+			 (+ (CADR (n-f W x))
+			    (+ (* 4 (CADDR (n-f W x))))))
+		  (equal (caddr (n-f (CONS (WA-inv) W) x))
+			 (- (CADDR (n-f W x)) (* 2 (CADR (n-f W x))))))
+	     
+	     )
+    :hints (("Goal"
+	     :use ((:instance rotation-values (w w) (x x))
+		   (:instance n-f-a-inv-r (w w) (x x))
+		   (:instance n-f (w w) (x x))
+		   (:instance n-f (w (cons (wa-inv) w)) (x x)))
+	     :in-theory (disable int-point acl2-sqrt rotation reducedwordp mod)
+	     ))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-a-r-lemma1
+    (implies (and (weak-wordp w)
+		  (equal x (acl2-sqrt 2)))
+	     (equal (n-mod3 (cons (wa-inv) w) x)
+		    (cons 0 (cons (mod (+ (car (cdr (n-f w x)))  (car (cdr (cdr (n-f w x))))) 3)
+				  (cons (mod (+ (car (cdr (cdr (n-f w x)))) (car (cdr (n-f w x)))) 3) nil)))
+
+		    )
+	     )
+    :hints (("Goal"
+	     :use (
+		   (:instance n-mod3 (w (cons (wa-inv) w)) (x x))
+		   (:instance n-mod3-a-r-lemma1-1 (a 0) (c (car (n-f w x))))
+		   (:instance n-mod3-a-r-lemma1-5 (b (cadr (n-f w x))) (c (caddr (n-f w x))))
+		   (:instance n-mod3-a-r-lemma1-6 (w w) (x x))
+		   )
+	     :in-theory (disable int-point rotation reducedwordp acl2-sqrt n-f mod)
+	     :do-not-induct t
+	     )	   
+	    )
+    )
+  )
+
+
+
+ (local
+  (defthmd n-mod3-a-r-1
+    (implies (and (integerp x)
+		  (integerp y)
+		  (not (equal y 0)))
+	     (integerp (mod x y)))
+    )
+  )
+ 
+ (defthmd n-mod3-a-inv-r
+   (implies (and (weak-wordp w)
+		 (equal x (acl2-sqrt 2)))
+	    (equal (n-mod3 (cons (wa-inv) w) x)
+		   (cons 0 (cons (mod (+ (car (cdr (n-mod3 w x)))  (car (cdr (cdr (n-mod3 w x))))) 3)
+				 (cons (mod (+ (car (cdr (cdr (n-mod3 w x)))) (car (cdr (n-mod3 w x)))) 3) nil)))
+
+		   )
+	    )
+   :hints (("Goal"
+	    :use (
+		  (:instance n-mod3-a-r-lemma1 (w w) (x x))
+		  (:instance n-mod3-a-r-lemma1-6 (w w) (x x))
+		  (:instance n-mod3-a-r-1 (x (cadr (n-f w x))) (y 3))
+		  (:instance n-mod3-a-r-1 (x (caddr (n-f w x))) (y 3))
+		  (:instance mod-+-frgrp
+			     (x (cadr (n-f w x)))
+			     (y (caddr (n-f w x)))
+			     (z 3))
+
+		  (:instance mod-+-frgrp
+			     (y (cadr (n-f w x)))
+			     (x (caddr (n-f w x)))
+			     (z 3))
+		  (:instance n-mod3-=)
+		  
+		  )
+	    :in-theory nil
+	    :do-not-induct t
+	    ))
+   
+   )
+ )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;N(b^n)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(encapsulate
+ ()
+
+ (local
+  (defthmd n-mod3-b-r-lemma1-1
+    (implies (and (integerp a)
+		  (integerp c))
+	     (equal (mod (+ a (* 3 c))  3)
+		    (mod a 3)
+		    )
+	     )
+    )
+  )
+
+ (local
+  (defthmd n-mod3-b-r-lemma1-3
+    (equal (+ b (* 4 c))
+	   (+ (+ b c) (* 3 c)))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-b-r-lemma1-4
+    (equal (- c  (* 2 b))
+	   (- (+ c b) (* 3 b)))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-b-r-lemma1-5
+    (implies (and (integerp b)
+		  (integerp c))
+	     (and (equal (+ b (* 4 c))
+			 (+ (+ b c) (* 3 c)))
+		  (equal (mod (+ b (* 4 c)) 3)
+			 (mod (+ b  c) 3))
+		  (equal (mod (- c (* 2 b)) 3)
+			 (mod (+ c b) 3))))
+    :hints (("Goal"
+	     :use ((:instance n-mod3-b-r-lemma1-3 (b b) (c c))
+		   (:instance n-mod3-b-r-lemma1-1 (a (+ b c)) (c c))
+		   (:instance n-mod3-b-r-lemma1-4 (b b) (c c))
+		   (:instance n-mod3-b-r-lemma1-1 (a (+ c b)) (c (- b)))
+		   )
+	     ))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-b-r-lemma1-6
+    (implies (and (weak-wordp w)
+		  (equal x (acl2-sqrt 2)))
+	     (and (integerp (car (n-f w x)))
+		  (integerp (cadr (n-f w x)))
+		  (integerp (caddr (n-f w x)))
+		  (equal (car (n-f (CONS (Wb) W) x)) (- (CAR (n-f W x)) (* 2 (CADR (n-f W x)))))	  
+		  (equal (cadr (n-f (CONS (Wb) W) x))
+			 (+ (CADR (n-f W x))
+			    (+ (* 4 (CAR (n-f W x))))))
+		  (equal (caddr (n-f (CONS (Wb) W) x))
+			 (* 3 (CAddR (n-f W x))))))
+    :hints (("Goal"
+	     :use ((:instance rotation-values (w w) (x x))
+		   (:instance n-f-b-r (w w) (x x))
+		   (:instance n-f (w w) (x x))
+		   (:instance n-f (w (cons (wb) w)) (x x)))
+	     :in-theory (disable acl2-sqrt int-point n-f rotation weak-wordp)
+	     ))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-b-r-lemma1
+    (implies (and (weak-wordp w)
+		  (equal x (acl2-sqrt 2)))
+	     (equal (n-mod3 (cons (wb) w) x)
+		    (cons (mod (+ (car (n-f w x))  (car (cdr (n-f w x)))) 3)
+			  (cons (mod (+ (car (cdr (n-f w x))) (car (n-f w x))) 3) (cons 0 nil))))
+
+	     )
+    :hints (("Goal"
+	     :use (
+		   (:instance n-mod3 (w (cons (wb) w)) (x x))
+		   (:instance n-mod3-b-r-lemma1-1 (a 0) (c (caddr (n-f w x))))
+		   (:instance n-mod3-b-r-lemma1-5 (b (cadr (n-f w x))) (c (car (n-f w x))))
+		   (:instance n-mod3-b-r-lemma1-6 (w w) (x x))
+		   )
+	     :in-theory (disable int-point rotation reducedwordp acl2-sqrt n-f mod)
+	     :do-not-induct t
+	     )	   
+	    )
+    )
+  )
+
+
+
+ (local
+  (defthmd n-mod3-b-r-1
+    (implies (and (integerp x)
+		  (integerp y)
+		  (not (equal y 0)))
+	     (integerp (mod x y)))
+    )
+  )
+ 
+ (defthmd n-mod3-b-r
+   (implies (and (weak-wordp w)
+		 (equal x (acl2-sqrt 2)))
+	    (equal (n-mod3 (cons (wb) w) x)
+		   (cons (mod (+ (car (n-mod3 w x))  (car (cdr (n-mod3 w x)))) 3)
+			 (cons (mod (+ (car (cdr (n-mod3 w x))) (car (n-mod3 w x))) 3) (cons 0 nil))))
+	    )
+   :hints (("Goal"
+	    :use (
+		  (:instance n-mod3-b-r-lemma1 (w w) (x x))
+		  (:instance n-mod3-b-r-lemma1-6 (w w) (x x))
+		  (:instance n-mod3-b-r-1 (x (cadr (n-f w x))) (y 3))
+		  (:instance n-mod3-b-r-1 (x (car (n-f w x))) (y 3))
+		  (:instance mod-+-frgrp
+			     (x (cadr (n-f w x)))
+			     (y (car (n-f w x)))
+			     (z 3))
+
+		  (:instance mod-+-frgrp
+			     (y (cadr (n-f w x)))
+			     (x (car (n-f w x)))
+			     (z 3))
+		  (:instance n-mod3-=)
+		  
+		  )
+	    :in-theory nil
+	    :do-not-induct t
+	    ))
+   
+   )
+ )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;N(b-inv^n)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(encapsulate
+ ()
+
+ (local
+  (defthmd n-mod3-b-inv-r-lemma1-1
+    (implies (and (integerp a)
+		  (integerp c))
+	     (equal (mod (+ a (* 3 c))  3)
+		    (mod a 3)
+		    )
+	     )
+    )
+  )
+
+ (local
+  (defthmd n-mod3-b-inv-r-lemma1-3
+    (equal (- b (* 4 c))
+	   (- (- b c) (* 3 c)))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-b-inv-r-lemma1-4
+    (equal (+  (* 2 b) c)
+	   (+ (- c b) (* 3 b)))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-b-inv-r-lemma1-5
+    (implies (and (integerp b)
+		  (integerp c))
+	     (and (equal (- b (* 4 c))
+			 (- (- b c) (* 3 c)))
+		  (equal (mod (- b (* 4 c)) 3)
+			 (mod (- b  c) 3))
+		  (equal (mod (+ (* 2 b) c) 3)
+			 (mod (- c b) 3))))
+    :hints (("Goal"
+	     :use ((:instance n-mod3-b-inv-r-lemma1-3 (b b) (c c))
+		   (:instance n-mod3-b-inv-r-lemma1-1 (a (- b c)) (c (- c)))
+		   (:instance n-mod3-b-inv-r-lemma1-4 (b b) (c c))
+		   (:instance n-mod3-b-inv-r-lemma1-1 (a (- c b)) (c b))
+		   )
+	     ))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-b-inv-r-lemma1-6
+    (implies (and (weak-wordp w)
+		  (equal x (acl2-sqrt 2)))
+	     (and (integerp (car (n-f w x)))
+		  (integerp (cadr (n-f w x)))
+		  (integerp (caddr (n-f w x)))
+		  (equal (caddr (n-f (CONS (Wb-inv) W) x)) (* 3 (CAddR (n-f W x))))
+		  (equal (cadr (n-f (CONS (Wb-inv) W) x))
+			 (+ (CADR (n-f W x))
+			    (- (* 4 (CAR (n-f W x))))))
+		  (equal (car (n-f (CONS (Wb-inv) W) x))
+			 (+ (* 2 (CADR (n-f W x)))
+			    (CAR (n-f W x)))))
+	     
+	     )
+    :hints (("Goal"
+	     :use ((:instance rotation-values (w w) (x x))
+		   (:instance n-f-b-inv-r (w w) (x x))
+		   (:instance n-f (w w) (x x))
+		   (:instance n-f (w (cons (wb-inv) w)) (x x)))
+	     :in-theory (disable int-point acl2-sqrt rotation reducedwordp mod weak-wordp n-f int-point)
+	     :do-not-induct t
+	     ))
+    )
+  )
+
+ (local
+  (defthmd n-mod3-b-inv-r-lemma1
+    (implies (and (weak-wordp w)
+		  (equal x (acl2-sqrt 2)))
+	     (equal (n-mod3 (cons (wb-inv) w) x)
+		    (cons (mod (- (car (n-f w x))  (car (cdr (n-f w x)))) 3)
+			  (cons (mod (- (car (cdr (n-f w x))) (car (n-f w x))) 3) (cons 0 nil))))
+	     )
+    :hints (("Goal"
+	     :use (
+		   (:instance n-mod3 (w (cons (wa) w)) (x x))
+		   (:instance n-mod3-b-inv-r-lemma1-1 (a 0) (c (caddr (n-f w x))))
+		   (:instance n-mod3-b-inv-r-lemma1-5 (b (cadr (n-f w x))) (c (car (n-f w x))))
+		   (:instance n-mod3-b-inv-r-lemma1-6 (w w) (x x))
+		   )
+	     :in-theory (disable int-point rotation reducedwordp acl2-sqrt n-f mod)
+	     :do-not-induct t
+	     )	   
+	    )
+    )
+  )
+
+
+ (local
+  (defthmd n-mod3-b-inv-r-1
+    (implies (and (integerp x)
+		  (integerp y)
+		  (not (equal y 0)))
+	     (integerp (mod x y)))
+    )
+  )
+ 
+ (defthmd n-mod3-b-inv-r
+   (implies (and (weak-wordp w)
+		 (equal x (acl2-sqrt 2)))
+	    (equal (n-mod3 (cons (wb-inv) w) x)
+		   (cons (mod (- (car (n-mod3 w x))  (car (cdr (n-mod3 w x)))) 3)
+			 (cons (mod (- (car (cdr (n-mod3 w x))) (car (n-mod3 w x))) 3) (cons 0 nil))))
+	    )
+   :hints (("Goal"
+	    :use (
+		  (:instance n-mod3-b-inv-r-lemma1 (w w) (x x))
+		  (:instance n-mod3-b-inv-r-lemma1-6 (w w) (x x))
+		  (:instance n-mod3-b-inv-r-1 (x (cadr (n-f w x))) (y 3))
+		  (:instance n-mod3-b-inv-r-1 (x (caddr (n-f w x))) (y 3))
+		  (:instance mod--frgrp
+			     (x (cadr (n-f w x)))
+			     (y (car (n-f w x)))
+			     (z 3))
+
+		  (:instance mod--frgrp
+			     (y (cadr (n-f w x)))
+			     (x (car (n-f w x)))
+			     (z 3))
+		  (:instance n-mod3-=)
+		  
+		  )
+	    :in-theory nil
+	    :do-not-induct t
+	    ))
+   
+   )
+ )
+
+(defthmd n-mod3-nil
+  (equal (n-mod3 nil (acl2-sqrt 2))
+	 '(0 1 0)))
+
+
+(defthmd weak-cons-car-cdr
+  (implies (and (character-listp x)
+		(not (atom x)))
+	   (equal (cons (car x) (cdr x)) x))
+  )
+
+(defthmd n-mod3-a-r-wa
+  (implies (and (weak-wordp w)
+		(equal (car w) (wa))
+		(equal x (acl2-sqrt 2)))
+	   (equal (n-mod3 w x)
+		  (cons 0 (cons (mod (- (car (cdr (n-mod3 (cdr w) x)))  (car (cdr (cdr (n-mod3 (cdr w) x))))) 3)
+				(cons (mod (- (car (cdr (cdr (n-mod3 (cdr w) x)))) (car (cdr (n-mod3 (cdr w) x)))) 3) nil)))
+
+		  )
+	   )
+  :hints (("Goal"
+	   :use (
+		 (:instance n-mod3-a-r (w (cdr w)) (x x))
+		 (:instance weak-word-cdr (x w))
+		 (:instance weak-cons-car-cdr (x w))
+		 (:instance character-listp-word (x w))
+		 )
+	   :in-theory (disable n-mod3 weak-wordp acl2-sqrt)
+	   :do-not-induct t
+	   ))
+  
+  )
+
+(defthmd n-mod3-a-inv-r-wa-inv
+  (implies (and (weak-wordp w)
+		(equal (car w) (wa-inv))
+		(equal x (acl2-sqrt 2)))
+	   (equal (n-mod3 w x)
+		  (cons 0 (cons (mod (+ (car (cdr (n-mod3 (cdr w) x)))  (car (cdr (cdr (n-mod3 (cdr w) x))))) 3)
+				(cons (mod (+ (car (cdr (cdr (n-mod3 (cdr w) x)))) (car (cdr (n-mod3 (cdr w) x)))) 3) nil)))
+
+		  )
+	   )
+  :hints (("Goal"
+	   :use (
+		 (:instance n-mod3-a-inv-r (w (cdr w)) (x x))
+		 (:instance weak-word-cdr (x w))
+		 (:instance weak-cons-car-cdr (x w))
+		 (:instance character-listp-word (x w))
+		 )
+	   :in-theory (disable n-mod3 weak-wordp acl2-sqrt)
+	   :do-not-induct t
+	   ))
+  )
+
+(defthmd n-mod3-b-r-wb
+  (implies (and (weak-wordp w)
+		(equal (car w) (wb))
+		(equal x (acl2-sqrt 2)))
+	   (equal (n-mod3 w x)
+		  (cons (mod (+ (car (n-mod3 (cdr w) x))  (car (cdr (n-mod3 (cdr w) x)))) 3)
+			(cons (mod (+ (car (cdr (n-mod3 (cdr w) x))) (car (n-mod3 (cdr w) x))) 3) (cons 0 nil))))
+	   )
+  :hints (("Goal"
+	   :use (
+		 (:instance n-mod3-b-r (w (cdr w)) (x x))
+		 (:instance weak-word-cdr (x w))
+		 (:instance weak-cons-car-cdr (x w))
+		 (:instance character-listp-word (x w))
+		 )
+	   :in-theory (disable n-mod3 weak-wordp acl2-sqrt)
+	   :do-not-induct t
+	   ))
+  )
+
+(defthmd n-mod3-b-inv-r-wb-inv
+  (implies (and (weak-wordp w)
+		(equal (car w) (wb-inv))
+		(equal x (acl2-sqrt 2)))
+	   (equal (n-mod3 w x)
+		  (cons (mod (- (car (n-mod3 (cdr w) x))  (car (cdr (n-mod3 (cdr w) x)))) 3)
+			(cons (mod (- (car (cdr (n-mod3 (cdr w) x))) (car (n-mod3 (cdr w) x))) 3) (cons 0 nil))))
+	   )
+  :hints (("Goal"
+	   :use (
+		 (:instance n-mod3-b-inv-r (w (cdr w)) (x x))
+		 (:instance weak-word-cdr (x w))
+		 (:instance weak-cons-car-cdr (x w))
+		 (:instance character-listp-word (x w))
+		 )
+	   :in-theory (disable n-mod3 weak-wordp acl2-sqrt)
+	   :do-not-induct t
+	   ))
+  )
+
+(defthmd reducedword-cdr
+  (implies (reducedwordp x)
+	   (reducedwordp (cdr x)))
+  )
+
+(defthmd n-mod3-red-lemma-final
+  (implies (and (reducedwordp w)
+		(equal x (acl2-sqrt 2))
+		(> (len w) 0))
+	   (cond ((equal (car w) (wa))
+		  (or (equal (n-mod3 w x) '(0 1 2))
+		      (equal (n-mod3 w x) '(0 2 1)))
+		  )
+		 ((equal (car w) (wa-inv))
+		  (or (equal (n-mod3 w x) '(0 1 1))
+		      (equal (n-mod3 w x) '(0 2 2))))
+		 ((equal (car w) (wb))
+		  (or (equal (n-mod3 w x) '(1 1 0))
+		      (equal (n-mod3 w x) '(2 2 0))))
+		 ((equal (car w) (wb-inv))
+		  (or (equal (n-mod3 w x) '(2 1 0))
+		      (equal (n-mod3 w x) '(1 2 0))))
+		 )
+	   )
+
+  :hints (
+	  ("Goal"
+	   :in-theory (e/d (reducedwordp) (acl2-sqrt n-mod3))
+	   )
+	  ("Subgoal *1/1"
+	   :cases ((> (len (cdr w)) 0)
+		   (= (len (cdr w)) 0))
+	   )
+	  ("Subgoal *1/1.1"
+	   :cases ((equal (car w) (wa))
+		   (equal (car w) (wa-inv))
+		   (equal (car w) (wb))
+		   (equal (car w) (wb-inv))
+		   )
+	   :use ((:instance sqrt-2-lemmas)
+		 (:instance n-mod3-nil)
+		 (:instance reducedwordp=>weak-wordp (x w))
+		 (:instance n-mod3-a-r-wa (w w) (x x))
+		 (:instance n-mod3-a-inv-r-wa-inv (w w) (x x))
+		 (:instance n-mod3-b-r-wb (w w) (x x))
+		 (:instance n-mod3-b-inv-r-wb-inv (w w) (x x))
+		 )
+	   :in-theory (disable acl2-sqrt m-* n-mod3)
+	   )
+
+	  ("Subgoal *1/1.2"
+	   :cases ((equal (car w) (wa))
+		   (equal (car w) (wa-inv))
+		   (equal (car w) (wb))
+		   (equal (car w) (wb-inv))
+		   )
+	   :use (:instance reducedword-cdr (x w))
+	   :in-theory (disable n-mod3 acl2-sqrt)
+	   )
+	  ("Subgoal *1/1.2.1"
+	   :cases ((equal (car (cdr w)) (wa))
+		   (equal (car (cdr w)) (wa-inv))
+		   (equal (car (cdr w)) (wb))
+		   (equal (car (cdr w)) (wb-inv))
+		   )
+	   :use ((:instance reducedwordp=>weak-wordp (x w))
+		 (:instance n-mod3-b-inv-r-wb-inv (w w) (x x)))
+	   )
+	  ("Subgoal *1/1.2.2"
+	   :cases ((equal (car (cdr w)) (wa))
+		   (equal (car (cdr w)) (wa-inv))
+		   (equal (car (cdr w)) (wb))
+		   (equal (car (cdr w)) (wb-inv))
+		   )
+	   :use ((:instance reducedwordp=>weak-wordp (x w))
+		 (:instance n-mod3-b-r-wb (w w) (x x)))
+	   )
+	  ("Subgoal *1/1.2.3"
+	   :cases ((equal (car (cdr w)) (wa))
+		   (equal (car (cdr w)) (wa-inv))
+		   (equal (car (cdr w)) (wb))
+		   (equal (car (cdr w)) (wb-inv))
+		   )
+	   :use ((:instance reducedwordp=>weak-wordp (x w))
+		 (:instance n-mod3-a-inv-r-wa-inv (w w) (x x)))
+	   )
+	  ("Subgoal *1/1.2.4"
+	   :cases ((equal (car (cdr w)) (wa))
+		   (equal (car (cdr w)) (wa-inv))
+		   (equal (car (cdr w)) (wb))
+		   (equal (car (cdr w)) (wb-inv))
+		   )
+	   :use ((:instance reducedwordp=>weak-wordp (x w))
+		 (:instance n-mod3-a-r-wa (w w) (x x)))
+	   )
+	  )
+  )
+
+
