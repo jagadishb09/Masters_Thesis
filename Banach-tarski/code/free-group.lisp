@@ -2723,3 +2723,25 @@
   )
 
 
+(defthmd n-mod3-red-lemma-=
+  (implies (and (reducedwordp w)
+		(equal x (acl2-sqrt 2))
+		(> (len w) 0))
+	   (or (equal (n-mod3 w x) '(0 1 2))
+	       (equal (n-mod3 w x) '(0 2 1))
+	       (equal (n-mod3 w x) '(0 1 1))
+	       (equal (n-mod3 w x) '(0 2 2))
+	       (equal (n-mod3 w x) '(1 1 0))
+	       (equal (n-mod3 w x) '(2 2 0))
+	       (equal (n-mod3 w x) '(2 1 0))
+	       (equal (n-mod3 w x) '(1 2 0))
+	       )
+	   )
+
+  :hints (
+	  ("Goal"
+	   :use (:instance n-mod3-red-lemma-final (w w) (x x))
+	   :in-theory (e/d () (acl2-sqrt n-mod3))
+	   )
+	  )
+  )
