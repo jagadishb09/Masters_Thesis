@@ -1,0 +1,262 @@
+
+(local (include-book "arithmetic-5/support/expt" :dir :system))
+
+(defthmd intep-expt-n
+  (implies (and (integerp n)
+		(> n 0))
+	   (integerp (expt 3 n)))
+  :hints (("Goal"
+	   :in-theory (enable expt)
+	   ))
+  )
+
+
+(defthmd 31/3-integerp
+  (implies (integerp c)
+	   (equal (* 1/3 3 c) c))
+  )
+
+(local
+ (defthmd 3*int-mod-=0
+   (implies (and (integerp c)
+		 (>= c 0))
+	    (equal (mod (* 3 c) 3)
+		   0
+		   )
+	    )
+   :hints (("Goal"
+	    :use (:instance 31/3-integerp (c c))
+	    :in-theory (enable mod)
+	    ))
+   )
+ )
+
+(defthmd expt-3-n-lemma
+  (implies (integerp n)
+	   (equal (* 3 (expt 3 (+ n -1))) (expt 3 n)))
+  )
+
+(defthmd n-mod3-3-n-=0-1
+  (implies (acl2-numberp y)
+	   (and (equal (* 3 1/3 3 1/3 y) y)
+		(equal (* 3 1/3 y) y)))
+  )
+
+(defthmd n-mod3-3-n-=0
+  (implies (and (integerp n)
+		(> n 0))
+	   (equal (mod (expt 3 n) 3) 0))  
+  :hints (("Goal"
+	   :in-theory (disable mod)
+	   )
+	  ("Subgoal *1/5"
+	   :use (
+		 (:instance 3*int-mod-=0 (c (expt 3 (- n 1))))
+		 (:instance intep-expt-n (n (- n 1)))
+		 (:instance n-mod3-3-n-=0-1 (y (expt 3 n)))
+		 (:instance expt-3-n-lemma (n n)))
+	   )
+	  )
+  )
+
+
+;; (defthmd m-*rot=id*p-lemma
+;;   (implies (and (array2p name m1)
+;; 		(equal (first (dimensions name m1)) 3)
+;; 		(equal (second (dimensions name m1)) 3)
+;; 		(m-= m1 (id-rotation)))
+;; 	   (m-= (m-* m1 (point-p)) (point-p)))
+;;   :hints (("Goal"
+;; 	   :in-theory (e/d (m-= m-=-row-1 compress2 header default compress21) (rotation acl2-sqrt))
+;; 	   :do-not-induct t
+;; 	   ))
+;;   )
+
+ (defthmd acl2-nump-rot
+   (implies (and (acl2-numberp x)
+		 (symbolp name)
+		 (weak-wordp w))
+	    (and (ACL2-NUMBERP (aref2 name (M-* (ROTATION w X) (POINT-P)) 0 0))
+		 (ACL2-NUMBERP (aref2 name (M-* (ROTATION w X) (POINT-P)) 1 0))
+		 (ACL2-NUMBERP (aref2 name (M-* (ROTATION w X) (POINT-P)) 2 0))))
+   
+   :hints (("Subgoal *1/5"
+	    :use (:instance acl2-nump-rot-ind)
+	    )
+	   ("Subgoal *1/4"
+	    :use (:instance acl2-nump-rot-ind)
+	    )
+	   ("Subgoal *1/3"
+	    :use (:instance acl2-nump-rot-ind)
+	    )
+	   ("Subgoal *1/2"
+	    :use (:instance acl2-nump-rot-ind)
+	    )
+	   ("Subgoal *1/1"
+	    :in-theory (enable weak-wordp rotation aref2)
+	    )
+	   
+	   )
+   )
+
+(defthmd rotation-props
+  (implies (and (weak-wordp w)
+		(symbolp name))
+	   (and (array2p name (rotation w x))
+		(equal (first (dimensions name (rotation w x))) 3)
+		(equal (second (dimensions name (rotation w x))) 3))
+	   )
+  :hints (("Subgoal *1/5"
+	   :use ((:instance rotation-props-ind-case-0)
+		 (:instance rotation-props-ind-case-1))
+	   )
+	  ("Subgoal *1/4"
+	   :use ((:instance rotation-props-ind-case-0)
+		 (:instance rotation-props-ind-case-1))
+	   )
+	  ("Subgoal *1/3"
+	   :use ((:instance rotation-props-ind-case-0)
+		 (:instance rotation-props-ind-case-1))
+	   )
+	  ("Subgoal *1/2"
+	   :use ((:instance rotation-props-ind-case-0)
+		 (:instance rotation-props-ind-case-1))
+	   )
+	  ("Subgoal *1/1"
+	   :in-theory (enable dimensions header maximum-length)
+	   )
+	  )
+  )
+
+(defun int-point (a i j n x)
+  (cond ((and (equal i 0) (equal j 0)) (* (/ (aref2 '$arg1 a i j) x) (expt 3 n)))
+	((and (equal i 2) (equal j 0)) (* (/ (aref2 '$arg1 a i j) x) (expt 3 n)))
+	((and (equal i 1) (equal j 0)) (* (aref2 '$arg1 a i j) (expt 3 n)))
+	(t nil))
+  )
+
+(defun n-f(w x)
+  (cons (int-point (m-* (rotation w x) (point-p)) 0 0 (len w) (acl2-sqrt 2))
+	(cons (int-point (m-* (rotation w x) (point-p)) 1 0 (len w) (acl2-sqrt 2))
+	      (cons (int-point (m-* (rotation w x) (point-p)) 2 0 (len w) (acl2-sqrt 2)) nil)))
+  )
+
+(defun n-mod3 (w x)
+  (cons (mod (car (n-f w x)) 3) (cons (mod (car (cdr (n-f w x))) 3) (cons (mod (car (cdr (cdr (n-f w x) )))  3) nil)))
+  )
+
+(defthmd n-mod3-rotation=id-1
+  (implies (and (array2p name m1)
+		(acl2-numberp (aref2 name m1 0 0))
+		(acl2-numberp (aref2 name m1 1 0))
+		(acl2-numberp (aref2 name m1 2 0))
+		(equal (first (dimensions name m1)) 3)
+		(equal (second (dimensions name m1)) 1)
+		(m-= m1 (point-p)))
+	   (and (equal (aref2 name m1 0 0) 0)
+		(equal (aref2 name m1 1 0) 1)
+		(equal (aref2 name m1 2 0) 0)))
+  :hints (("Goal"
+	   :use (:instance array2p-alist2p (name name) (l m1))
+	   :in-theory (enable aref2 default header alist2p array2p m-= m-=-row-1 m-=-row)
+	   :do-not-induct t
+	   )
+	  )
+  )
+
+(defthmd n-mod3-rotation=id-2
+  (implies (and (reducedwordp w)
+		(equal x (acl2-sqrt 2))
+		(symbolp name)
+		(m-= (rotation w x) (id-rotation)))
+	   (and (m-= (m-* (rotation w x) (point-p)) (point-p))
+		(array2p name (m-* (rotation w x) (point-p)))
+		(equal (first (dimensions name (m-* (rotation w x) (point-p)))) 3)
+		(equal (second (dimensions name (m-* (rotation w x) (point-p)))) 1)
+		)
+	   )
+  :hints (("Goal"
+	   :use ((:instance rotation-props (w w) (name name))
+		 (:instance reducedwordp=>weak-wordp (x w))
+		 )
+	   :in-theory (enable array2p dimensions header)
+	   :do-not-induct t
+		 
+	   ))
+  )
+
+
+(defthmd n-mod3-rotation=id-3
+  (implies (and (reducedwordp w)
+		(equal x (acl2-sqrt 2))
+		(> (len w) 0)
+		(m-= (rotation w x) (id-rotation)))
+	   (and (m-= (rotation w (acl2-sqrt 2)) (id-rotation))
+		(M-= (ROTATION W (ACL2-SQRT 2))
+                   '((:HEADER :DIMENSIONS (3 3)
+                              :MAXIMUM-LENGTH 10)
+                     ((0 . 0) . 1)
+                     ((0 . 1) . 0)
+                     ((0 . 2) . 0)
+                     ((1 . 0) . 0)
+                     ((1 . 1) . 1)
+                     ((1 . 2) . 0)
+                     ((2 . 0) . 0)
+                     ((2 . 1) . 0)
+                     ((2 . 2) . 1)))
+		(consp w)))
+  )
+
+(defthmd n-mod3-rotation=id-4
+  (implies (reducedwordp w)
+	   (integerp (len w))))
+
+(defthmd n-mod3-rotation=id
+  (implies (and (reducedwordp w)
+		(equal x (acl2-sqrt 2))
+		(> (len w) 0)
+		(m-= (rotation w x) (id-rotation)))
+	   (equal (n-mod3 w x) '(0 1 0)))
+  :hints (("Goal"
+	   :use (
+		 (:instance n-mod3-rotation=id-2 (w w) (x x) (name '$arg1))
+		 (:instance acl2-nump-rot (w w) (name '$arg1) (x x))
+		 (:instance n-mod3-rotation=id-1 (m1 (m-* (rotation w x) (point-p))) (name '$arg1))		 
+		 (:instance sqrt-2-lemmas)
+		 (:instance rotation-props (w w) (name '$arg1))
+		 (:instance n-mod3-rotation=id-3 (w w) (x (acl2-sqrt 2)))
+		 (:instance n-mod3-3-n-=0 (n (len w)))
+		 (:instance n-mod3-rotation=id-4 (w w))
+		 ;(:instance rotation-props (w w) (name '$arg1))
+		 (:instance reducedwordp=>weak-wordp (x w))
+		 (:instance n-mod3 (w w) (x (acl2-sqrt 2)))
+		 (:instance n-f (w w) (x (acl2-sqrt 2)))
+		 (:instance int-point (a (m-* (rotation w x) (point-p))) (i 0) (j 0) (n (len w)) (x (acl2-sqrt 2)))
+		 (:instance int-point (a (m-* (rotation w x) (point-p))) (i 1) (j 0) (n (len w)) (x (acl2-sqrt 2)))
+		 (:instance int-point (a (m-* (rotation w x) (point-p))) (i 2) (j 0) (n (len w)) (x (acl2-sqrt 2)))
+					;(:instance rotation-props (w w) (name '$arg1))
+		 ;(:instance m-*rot=id*p-lemma (name '$arg1) (m1 (rotation w x)))
+		 
+		 )
+		 
+	   :in-theory (e/d () (aref2 acl2-sqrt rotation m-* m-= reducedwordp M-=-IMPLIES-EQUAL-M-*-1 M-=-IS-AN-EQUIVALENCE M-BINARY-* mod point-p COMMUTATIVITY-OF-*))
+	   ;(e/d () (aref2 acl2-sqrt rotation m-* m-= reducedwordp))
+	   ;(disable acl2-sqrt aref2 m-= m-* rotation reducedwordp)
+	   ;(disable acl2-sqrt rotation)
+	   ;(e/d (aref2 m-= m-=-row-1 compress2 compress21 aref2) (acl2-sqrt rotation reducedwordp))
+	   :do-not-induct t
+	   )
+
+	  ;; ("Goal'''"
+	  ;;  :in-theory (e/d (n-mod3) (acl2-sqrt))
+	  ;;  )
+	    
+	  
+	  ("Subgoal 2"
+	   :use (:instance n-mod3-rotation=id-3 (w w) (x (acl2-sqrt 2)))
+	   :in-theory nil
+	   )
+	  
+	  )
+  )
+
