@@ -19,7 +19,6 @@
   #\d
   )
 
-
 (defthmd abcd-chars
   (and (characterp (wa))
        (characterp (wa-inv))
@@ -59,7 +58,6 @@
 					    (equal firstw (wa-inv))
 					    (equal firstw (wb-inv)))
 					(wordp restw firstw))))))
-
 
 (defun a-wordp(w)
   (and (equal (car w) (wa))
@@ -133,9 +131,6 @@
 		   (cdr (cdr w))
 		 w)))))))
 
-
-
-
 (defun compose (x y)
   (word-fix (append x y))
   )
@@ -198,7 +193,6 @@
 		 (equal x '()))
 	     (equal (word-fix x) x))))
 
-
  (defthmd word-fix=a-wordp
    (IMPLIES (a-wordp x)
 	    (equal (word-fix x) x))
@@ -251,16 +245,15 @@
 	   (reducedwordp (cdr x)))
   )
 
-
-;;;;;;;;;;;;closure property
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;closure property;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defthmd closure-weak-word
   (implies (and (weak-wordp x)
 		(weak-wordp y))
 	   (weak-wordp (append x y)))
   )
-
 
 (defthmd closure-lemma
   (implies (and (reducedwordp x)
@@ -292,7 +285,9 @@
 	   ))
   )
 
-;;;;;;;;associative property;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;associative property;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (encapsulate
  ()
@@ -309,7 +304,6 @@
 	     (weak-wordp x)))
   )
  
-
  (local
   (defthm word-fix=reducedwordp-assoc
     (implies (reducedwordp x)
@@ -379,7 +373,6 @@
     )
   )
 
-
  (local
   (defthm closure-prop-assoc
     (implies (and (reducedwordp x)
@@ -433,7 +426,6 @@
     )
   )
  
-
  (local
   (defthm weak-wordp-rev
     (implies (weak-wordp x)
@@ -441,7 +433,6 @@
     )
   )
  
-
  (local
   (defthm compose-assoc-lemma
     (implies (and (weak-wordp x)
@@ -477,6 +468,19 @@
     )
   )
 
+ (defthmd compose-assoc-lemma-export
+   (implies (and (weak-wordp x)
+		 (weak-wordp y))
+	    (equal (word-fix (append x (word-fix y))) (word-fix (append x y)))
+	    )
+   :hints (("Goal"
+	    :use ((:instance compose-assoc-lemma (x x) (y y))
+
+		  )
+	    :in-theory (enable word-fix append)
+	    ))
+   ) 
+
  (encapsulate
   ()
 
@@ -502,22 +506,19 @@
      )
    )
   
-
-  (local
-   (defthmd lemma3
-     (implies (and (character-listp x)
-		   x)
-	      (and (equal (list (car (last x))) (last x))
-		   (equal (append (list (car x)) (cdr x)) x)
-		   (listp (rev (cdr (rev x))))
-		   (listp (list (car (last x))))
-		   (listp (last x))
-		   (character-listp (list (car x)))))
-     :hints (("Goal"
-	      :in-theory (enable last car character-listp rev append)
-	      ))
-     )
-   )
+  (defthmd lemma3
+    (implies (and (character-listp x)
+		  x)
+	     (and (equal (list (car (last x))) (last x))
+		  (equal (append (list (car x)) (cdr x)) x)
+		  (listp (rev (cdr (rev x))))
+		  (listp (list (car (last x))))
+		  (listp (last x))
+		  (character-listp (list (car x)))))
+    :hints (("Goal"
+	     :in-theory (enable last car character-listp rev append)
+	     ))
+    )
 
   (local
    (defthmd lemma4
@@ -577,27 +578,23 @@
      )
    )
 
-  (local
-   (defthmd lemma11
-     (implies (weak-wordp x)
-	      (if x (and (weak-wordp (list (car x)))
-			 (weak-wordp (last x)))
-		(weak-wordp (last x)))
-	      )
-     )
-   )
-
-  (local
-   (defthmd word-fix-rev-lemma3-12
-     (implies (and (characterp x)
-		   (weak-wordp (list x))
-		   y
-		   (reducedwordp y))
-	      (equal (word-fix (append (list x) y))
-		     (append (word-fix (append (list x) (list (car y)))) (cdr y))))
-     )
-   )
-
+  (defthmd lemma11
+    (implies (weak-wordp x)
+	     (if x (and (weak-wordp (list (car x)))
+			(weak-wordp (last x)))
+	       (weak-wordp (last x)))
+	     )
+    )
+  
+  (defthmd word-fix-rev-lemma3-12
+    (implies (and (characterp x)
+		  (weak-wordp (list x))
+		  y
+		  (reducedwordp y))
+	     (equal (word-fix (append (list x) y))
+		    (append (word-fix (append (list x) (list (car y)))) (cdr y))))
+    )
+  
   (local
    (defthmd lemma8
      (implies (and (weak-wordp x)
@@ -611,58 +608,53 @@
    )
   
   (local
-    (defthmd word-fix-rev-lemma3-1
-      (implies (and (characterp x)
-		    (weak-wordp (list x))
-		    (reducedwordp y)
-		    (characterp z)
-		    (weak-wordp (list z)))
-	       (equal (word-fix (append (list x) y (list z)))
-		      (word-fix (append (word-fix (append (list x) y)) (list z)))))
-      :hints (("Goal"
-	       :cases ((<= (len y) 1)
-		       (> (len y) 1))
-	       :do-not-induct t
-	       )
+   (defthmd word-fix-rev-lemma3-1
+     (implies (and (characterp x)
+		   (weak-wordp (list x))
+		   (reducedwordp y)
+		   (characterp z)
+		   (weak-wordp (list z)))
+	      (equal (word-fix (append (list x) y (list z)))
+		     (word-fix (append (word-fix (append (list x) y)) (list z)))))
+     :hints (("Goal"
+	      :cases ((<= (len y) 1)
+		      (> (len y) 1))
+	      :do-not-induct t
+	      )
+	     ("Subgoal 2"
+	      :use ((:instance reducedwordp=>weak-wordp-assoc (x y))
+		    (:instance lemma8 (x (list x)))
+		    (:instance lemma8 (x y))
+		    (:instance lemma8 (x (list z))))	       
+	      )	      
+	     ("Subgoal 1"
+	      :use (
+		    (:instance compose-assoc-lemma1
+			       (x (list x))
+			       (y y)
+			       (z (list z)))
 
-	      ("Subgoal 2"
-	       :use ((:instance reducedwordp=>weak-wordp-assoc (x y))
-		     (:instance lemma8 (x (list x)))
-		     (:instance lemma8 (x y))
-		     (:instance lemma8 (x (list z))))
-	       
+		    (:instance word-fix-rev-lemma2 (x y) (y z))
 
-	       )
-	      
-	      ("Subgoal 1"
-	       
-	       :use (
-		     (:instance compose-assoc-lemma1
-				(x (list x))
-				(y y)
-				(z (list z)))
-
-		     (:instance word-fix-rev-lemma2 (x y) (y z))
-
-		     (:instance lemma11 (x y))
-		     (:instance reducedwordp=>weak-wordp-assoc (x y))
-		     (:instance closure-weak-word-assoc (x y) (y (list z)))
-		     (:instance weak-wordp-equivalent-assoc (x (append y (list z))))
-		     (:instance word-fix-rev-lemma3-12
-				(x x)
-				(y (append (rev (cdr (rev y))) (word-fix (append (last y) (list z)))))
-				)
-		     (:instance word-fix-rev-lemma3-12 (x x) (y y))
-		     (:instance closure-weak-word-assoc
-				(x (list x))
-				(y y))
-		     (:instance weak-wordp-equivalent-assoc (x (word-fix (append (list x) y))))
-		     (:instance word-fix-rev-lemma2
-				(x (append (word-fix (append (list x) (list (car y)))) (cdr y)))
-				(y z))
-		     )
-	       ))
-      )
+		    (:instance lemma11 (x y))
+		    (:instance reducedwordp=>weak-wordp-assoc (x y))
+		    (:instance closure-weak-word-assoc (x y) (y (list z)))
+		    (:instance weak-wordp-equivalent-assoc (x (append y (list z))))
+		    (:instance word-fix-rev-lemma3-12
+			       (x x)
+			       (y (append (rev (cdr (rev y))) (word-fix (append (last y) (list z)))))
+			       )
+		    (:instance word-fix-rev-lemma3-12 (x x) (y y))
+		    (:instance closure-weak-word-assoc
+			       (x (list x))
+			       (y y))
+		    (:instance weak-wordp-equivalent-assoc (x (word-fix (append (list x) y))))
+		    (:instance word-fix-rev-lemma2
+			       (x (append (word-fix (append (list x) (list (car y)))) (cdr y)))
+			       (y z))
+		    )
+	      ))
+     )
    )
 
   (local
@@ -680,142 +672,115 @@
      )
    )
   
-
   (local
-    (defthmd word-fix-rev-lemma3-induct
-      (implies (and (not (atom x))
-		    (implies (and (weak-wordp (cdr x))
-				  (characterp y)
-				  (weak-wordp (list y)))
-			     (equal (word-fix (append (cdr x) (list y)))
-				    (word-fix (append (word-fix (cdr x)) (list y))))))
-	       (implies (and (weak-wordp x)
-			     (characterp y)
-			     (weak-wordp (list y)))
-			(equal (word-fix (append x (list y)))
-			       (word-fix (append (word-fix x) (list y)))))
-	       )
-
-      :hints (("Goal"
-	       :cases ((not x)
-		       x)
-
-	       )
-
-	      ("Subgoal 1"
-	       
-	       :use (
-		     (:instance lemma-13 (x x))
-		     (:instance character-listp-word-assoc (x x))
-		     (:instance lemma11 (x x))
-		     (:instance weak-word-cdr (x x))
-		     (:instance compose-assoc-lemma1
-				(x (list (car x)))
-				(y (cdr x))
-				(z (list y)))
-		     (:instance weak-wordp-equivalent-assoc (x (cdr x)))
-		     (:instance reducedwordp=>weak-wordp-assoc (x (word-fix (cdr x))))
-		     (:instance closure-weak-word-assoc (x (word-fix (cdr x))) (y (list y)))
-		     (:instance compose-assoc-lemma
-				(x (list (car x)))
-				(y (append (word-fix (cdr x)) (list y))))
-		     
-		     (:instance weak-wordp-equivalent-assoc (x (cdr x)))
-		     (:instance word-fix-rev-lemma3-1
-				(x (car x))
-				(y (word-fix (cdr x)))
-				(z y))
-		     (:instance compose-assoc-lemma
-				(x (list (car x)))
-				(y (cdr x)))
-		     (:instance lemma3 (x x))
-		     )
-	       :in-theory nil
-	       :do-not-induct t
-	       )
-
+   (defthmd word-fix-rev-lemma3-induct
+     (implies (and (not (atom x))
+		   (implies (and (weak-wordp (cdr x))
+				 (characterp y)
+				 (weak-wordp (list y)))
+			    (equal (word-fix (append (cdr x) (list y)))
+				   (word-fix (append (word-fix (cdr x)) (list y))))))
+	      (implies (and (weak-wordp x)
+			    (characterp y)
+			    (weak-wordp (list y)))
+		       (equal (word-fix (append x (list y)))
+			      (word-fix (append (word-fix x) (list y)))))
 	      )
-      )
-   )
-	       
-
-  (local
-    (defthmd word-fix-rev-lemma3
-      (implies (and (weak-wordp x)
-		    (characterp y)
-		    (weak-wordp (list y)))
-	       (equal (word-fix (append x (list y)))
-		      (word-fix (append (word-fix x) (list y)))))
-
-      :hints (("Goal"
-	       :cases ((not x)
-		       x)
-
-	       )
-	      ("Subgoal *1/11"
-	       :use ((:instance lemma-13 (x x))
-		     (:instance character-listp-word-assoc (x x))
-		     (:instance compose-assoc-lemma1
-				(x (list (car x)))
-				(y (cdr x))
-				(z (list y)))
-		     (:instance compose-assoc-lemma
-				(x (list (car x)))
-				(y (append (word-fix (cdr x)) (list y))))
-		     (:instance weak-word-cdr (x x))
-		     (:instance weak-wordp-equivalent-assoc (x (cdr x)))
-		     (:instance word-fix-rev-lemma3-1
-				(x (car x))
-				(y (word-fix (cdr x)))
-				(z y))
-		     )
-	       )
-	      
-	      ("Subgoal *1/9"
-	       :use ((:instance word-fix-rev-lemma3-induct (x x))
-		     )
-	       )
-
-	      ("Subgoal *1/8"
-	       :use ((:instance word-fix-rev-lemma3-induct (x x))
-		     )
-	       )
-
-	      ("Subgoal *1/7"
-	       :use ((:instance word-fix-rev-lemma3-induct (x x))
-		     )
-	       )
-
-	      ("Subgoal *1/6"
-	       :use ((:instance word-fix-rev-lemma3-induct (x x))
-		     )
-	       )
-
-	      ("Subgoal *1/5"
-	       :use ((:instance word-fix-rev-lemma3-induct (x x))
-		     )
-	       )
-
-	      ("Subgoal *1/4"
-	       :use ((:instance word-fix-rev-lemma3-induct (x x))
-		     )
-	       )
-
-	      ("Subgoal *1/3"
-	       :use ((:instance word-fix-rev-lemma3-induct (x x))
-		     )
-	       )
-
-	      ("Subgoal *1/2"
-	       :use ((:instance word-fix-rev-lemma3-induct (x x))
-		     )
-	       )
-	      
+     :hints (("Goal"
+	      :cases ((not x)
+		      x)
 	      )
-      )
+	     ("Subgoal 1"	       
+	      :use (
+		    (:instance lemma-13 (x x))
+		    (:instance character-listp-word-assoc (x x))
+		    (:instance lemma11 (x x))
+		    (:instance weak-word-cdr (x x))
+		    (:instance compose-assoc-lemma1
+			       (x (list (car x)))
+			       (y (cdr x))
+			       (z (list y)))
+		    (:instance weak-wordp-equivalent-assoc (x (cdr x)))
+		    (:instance reducedwordp=>weak-wordp-assoc (x (word-fix (cdr x))))
+		    (:instance closure-weak-word-assoc (x (word-fix (cdr x))) (y (list y)))
+		    (:instance compose-assoc-lemma
+			       (x (list (car x)))
+			       (y (append (word-fix (cdr x)) (list y))))
+		    
+		    (:instance weak-wordp-equivalent-assoc (x (cdr x)))
+		    (:instance word-fix-rev-lemma3-1
+			       (x (car x))
+			       (y (word-fix (cdr x)))
+			       (z y))
+		    (:instance compose-assoc-lemma
+			       (x (list (car x)))
+			       (y (cdr x)))
+		    (:instance lemma3 (x x))
+		    )
+	      :in-theory nil
+	      :do-not-induct t
+	      ))
+     )
    )
-
   
+  (local
+   (defthmd word-fix-rev-lemma3
+     (implies (and (weak-wordp x)
+		   (characterp y)
+		   (weak-wordp (list y)))
+	      (equal (word-fix (append x (list y)))
+		     (word-fix (append (word-fix x) (list y)))))
+
+     :hints (("Goal"
+	      :cases ((not x)
+		      x)
+	      )
+	     ("Subgoal *1/11"
+	      :use ((:instance lemma-13 (x x))
+		    (:instance character-listp-word-assoc (x x))
+		    (:instance compose-assoc-lemma1
+			       (x (list (car x)))
+			       (y (cdr x))
+			       (z (list y)))
+		    (:instance compose-assoc-lemma
+			       (x (list (car x)))
+			       (y (append (word-fix (cdr x)) (list y))))
+		    (:instance weak-word-cdr (x x))
+		    (:instance weak-wordp-equivalent-assoc (x (cdr x)))
+		    (:instance word-fix-rev-lemma3-1
+			       (x (car x))
+			       (y (word-fix (cdr x)))
+			       (z y))
+		    )
+	      )	      
+	     ("Subgoal *1/9"
+	      :use ((:instance word-fix-rev-lemma3-induct (x x)))
+	      )
+	     ("Subgoal *1/8"
+	      :use ((:instance word-fix-rev-lemma3-induct (x x)))
+	      )
+	     ("Subgoal *1/7"
+	      :use ((:instance word-fix-rev-lemma3-induct (x x)))
+	      )
+	     ("Subgoal *1/6"
+	      :use ((:instance word-fix-rev-lemma3-induct (x x)))
+	      )
+	     ("Subgoal *1/5"
+	      :use ((:instance word-fix-rev-lemma3-induct (x x)))
+	      )
+	     ("Subgoal *1/4"
+	      :use ((:instance word-fix-rev-lemma3-induct (x x)))
+	      )
+	     ("Subgoal *1/3"
+	      :use ((:instance word-fix-rev-lemma3-induct (x x)))
+	      )
+	     ("Subgoal *1/2"
+	      :use ((:instance word-fix-rev-lemma3-induct (x x)))
+	      )
+	     )
+     )
+   )
+
   (local
    (defthmd word-fix-rev-lemma4
      (implies (weak-wordp x)
@@ -983,9 +948,7 @@
 		    (:instance character-listp-word-assoc (x x))
 		    (:instance character-listp-word-assoc (x (word-fix (cdr x))))
 		    (:instance lemma5 (x (word-fix (cdr x))))
-		    (:instance lemma6 (x x))
-		    
-		    
+		    (:instance lemma6 (x x))		    
 		    )
 	      :in-theory nil
 	      :do-not-induct t
@@ -1036,16 +999,13 @@
 					  (list (car x)))))
 		    (:instance character-listp-word-assoc
 			       (x (word-fix (append (last (rev (word-fix (cdr x))))
-						    (list (car x))))))
-		    
+						    (list (car x))))))		    
 		    )
-	      :in-theory (enable append)
-	      
+	      :in-theory (enable append)	      
 	      )
 	     )								    
      )
    )
-  
   
   (defthmd word-fix-rev-lemma
     (implies (weak-wordp x)
@@ -1121,8 +1081,7 @@
 	    ("Subgoal *1/2"
 	     :use (:instance word-fix-lemma1 (x x))
 	     )
-	    )
-    
+	    )   
     )
   )
 
@@ -1139,12 +1098,13 @@
 		  (:instance compose-assoc-lemma1 (x (rev z)) (y (rev y)) (z (rev x)))
 		  (:instance word-fix-rev-lemma (x (append (rev z) (rev y) (rev x)))))
 	    :do-not-induct t
-	    ))
-   
+	    ))  
    )
  )
 
-;;;;;;;;;;;;;inverse exists;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;inverse exists;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defthmd basecase
   (IMPLIES (ATOM X)
@@ -1343,13 +1303,10 @@
 	   )
 	  ))
 
-
 (defthmd weak-wordp-rev
   (implies (weak-wordp x)
 	   (weak-wordp (rev x)))
   )
-
-
 
 (defthmd rev-word-inv-reduced
   (implies (reducedwordp x)
@@ -1426,7 +1383,6 @@
 	   ))
   )
 
-
 (defthmd reducedwordp-word-inverse
   (implies (reducedwordp x)
 	   (reducedwordp (word-inverse x)))
@@ -1444,7 +1400,6 @@
 	   (equal (append (rev (word-flip (cdr x))) (word-flip (list (car x)))) (rev (word-flip x)))
 	   )
   )
-
 
 (defthmd reduced-inverse-induct-lemma2
   (implies (and (character-listp x)
@@ -1473,7 +1428,6 @@
 		(not (atom x)))
 	   (equal (compose (list (car x)) (word-flip (list (car x)))) '())))
 
-
 (defthmd reduced-inverse-induct-lemma6
   (implies (and (reducedwordp x)
 		(not (atom x)))
@@ -1490,7 +1444,6 @@
 	   ))
   )
 
-
 (defthmd reduced-inverse-induct
   (IMPLIES (AND (NOT (ATOM X))
 		(IMPLIES (REDUCEDWORDP (CDR X))
@@ -1500,7 +1453,6 @@
 	   (IMPLIES (REDUCEDWORDP X)
 		    (EQUAL (COMPOSE X (REV (WORD-FLIP X)))
 			   NIL)))
-
   :hints (("Goal"
 	   :use ((:instance reduced-cdr (x x))
 		 (:instance reduced-wordp-flip (x (cdr x)))
@@ -1543,10 +1495,141 @@
 	   )
 	  ("Subgoal *1/2"
 	   :use ((:instance reduced-inverse-induct))
-	   )
-	  
+	   )	  
 	  )
   )
+
+(encapsulate
+ ()
+
+ (local
+  (defthmd rev-word-inv-lemma1
+    (implies (weak-wordp x)
+	     (equal (nth n x)
+		    (if (< (nfix n) (len x))
+			(cond ((equal (nth n (word-flip x)) (wb)) (wb-inv))
+			      ((equal (nth n (word-flip x)) (wa)) (wa-inv))
+			      ((equal (nth n (word-flip x)) (wb-inv)) (wb))
+			      ((equal (nth n (word-flip x)) (wa-inv)) (wa))
+			      ((equal x '()) nil))
+		      nil
+		      )
+		    )
+	     )
+    :hints (("Goal"
+	     :in-theory (enable nth)
+	     ))
+    )
+  )
+
+ (local
+  (defthmd rev-word-inv-lemma2
+    (implies (weak-wordp x)
+	     (equal (nth n (word-flip x))
+		    (if (< (nfix n) (len x))
+			(cond ((equal (nth n x) (wb)) (wb-inv))
+			      ((equal (nth n x) (wa)) (wa-inv))
+			      ((equal (nth n x) (wb-inv)) (wb))
+			      ((equal (nth n x) (wa-inv)) (wa))
+			      ((equal x '()) nil))
+		      nil
+		      )
+		    )
+	     )
+    :hints (("Goal"
+	     :in-theory (enable nth)
+	     ))
+    )
+  )
+
+ (local
+  (defthmd len-lemma-1
+    (implies (weak-wordp x)
+	     (and (equal (len x) (len (rev x)))
+		  (equal (len x) (len (word-flip x)))
+		  (equal (len x) (len (rev (word-flip x))))
+		  (equal (len x) (len (word-inverse x))))
+	     )
+    )
+  )
+
+ (local (include-book "arithmetic-5/top" :dir :system))
+
+ (local
+  (defthmd rev-word-inv-lemma3
+    (implies (weak-wordp x)
+	     (equal (nth n x)
+		    (if (< (nfix n) (len x))
+			(cond ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wb)) (wb-inv))
+			      ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wa)) (wa-inv))
+			      ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wb-inv)) (wb))
+			      ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wa-inv)) (wa))
+			      ((equal x '()) nil))
+		      nil
+		      )
+		    )
+	     )
+    :hints (("Goal"
+	     :use ((:instance rev-word-inv-lemma1)
+		   (:instance rev-word-inv-lemma2)
+		   (:instance len-lemma-1))
+	     :in-theory (enable nth rev)
+	     :do-not-induct t
+	     ))
+    )
+  )
+
+ (local
+  (defthmd len-x=len-inv-x
+    (implies (weak-wordp x)
+	     (equal (len x) (len (word-inverse x)))
+	     )
+    )
+  )
+
+ (defthmd inv-inv-x=x-1
+   (IMPLIES (AND (WEAK-WORDP X)
+		 (INTEGERP N)
+		 (<= 0 N)
+		 (< N
+		    (LEN (WORD-INVERSE (WORD-INVERSE X)))))
+	    (EQUAL (NTH N (WORD-INVERSE (WORD-INVERSE X)))
+		   (NTH N X)))
+   :hints (("Goal"
+	    :use ((:instance weak-wordp-inverse (x (word-inverse x)))
+		  (:instance len-x=len-inv-x (x x))
+		  (:instance len-x=len-inv-x (x (word-inverse x)))
+		  (:instance rev-word-inv-lemma3 (x x) (n n))
+		  (:instance rev-word-inv-lemma3 (x (word-inverse x)) (n (- (len x) (+ 1 (nfix n)))))
+		  (:instance weak-wordp-inverse (x x)))
+	    :in-theory (e/d (nth) (word-inverse))
+	    :do-not-induct t
+	    ))
+   )
+
+ (defthmd inv-inv-x=x
+   (implies (weak-wordp x)
+	    (equal (word-inverse (word-inverse x)) x))
+   :hints (("Goal"
+	    :do-not-induct t
+	    :in-theory (disable word-inverse)
+	    :use ((:functional-instance
+		   equal-by-nths
+		   (equal-by-nths-hyp (lambda () (weak-wordp x)))
+		   (equal-by-nths-lhs (lambda () (word-inverse (word-inverse x))))
+		   (equal-by-nths-rhs (lambda () (list-fix x)))))
+	    )
+	   ("Subgoal 2.1"
+	    :use ((:instance len-x=len-inv-x (x x))
+		  (:instance len-x=len-inv-x (x (word-inverse x)))
+		  (:instance weak-wordp-inverse (x x)))
+	    )
+	   ("Subgoal 1"
+	    :use ((:instance inv-inv-x=x-1 (x x)))
+	    )
+	   )
+   )
+ )
 
 (defthmd reduced-inverse
   (implies (reducedwordp x)
