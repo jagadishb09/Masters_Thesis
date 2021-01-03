@@ -1,11 +1,8 @@
-
 (IN-PACKAGE "ACL2")
 
 (include-book "workshops/2003/cowles-gamboa-van-baalen_matrix/support/matalg" :dir :system)
 (include-book "nonstd/nsa/sqrt" :dir :system)
 (include-book "groups")
-
-
 
 (defun id-rotation ()
   '((:header :dimensions (3 3)
@@ -130,7 +127,6 @@
 		  (m-=-row M1 M2 m (- n 1)))))
     )
   )
-
 
  (defthmd funs-lemmas-1
    (and (m-= (m-* (id-rotation) (a-rotation x)) (a-rotation x))
@@ -290,11 +286,9 @@
 			     (m1 (b-inv-rotation x)))
 		  (:instance array2p-funs (y name) (x x))
 		  )
-	    )
-	   
+	    )	   
 	   )
    )
-
 
  (defthmd rotation-props-ind-case-1
    (IMPLIES
@@ -369,7 +363,6 @@
 			     (m2 (rotation (cdr w) x)))
 		  (:instance array2p-funs (y name) (x x)))
 	    )
-
 	   )
    )
 
@@ -402,7 +395,6 @@
 	   )
    )
 
-
  (defthmd m-*-rotation-point-dim
    (implies (and (weak-wordp w)
 		 (symbolp name))
@@ -429,7 +421,6 @@
 	 ((and (equal i 1) (equal j 0)) (* (aref2 '$arg1 a i j) (expt 3 n)))
 	 (t nil))
    )
-
 
  (defthmd rotation-values-ind-case-lemma1-1
    (implies (and (symbolp name)
@@ -528,16 +519,12 @@
 			       (m1 (M-* (ROTATION (CDR W) X) (POINT-P)))
 			       (name name)
 			       (x x)
-			       )
-		    
+			       )		    
 		    )
-	      :do-not-induct t
-	      
-	      ))
-     
+	      :do-not-induct t	      
+	      ))  
      )
    )
-  
 
   (defthmd acl2-nump-rot
     (implies (and (acl2-numberp x)
@@ -675,7 +662,6 @@
 	      ))
      )
    )
-  
 
   (local
    (defthmd lemma-1
@@ -738,7 +724,6 @@
      )
    )
 
-
   (local
    (defthmd lemma-3-1
      (implies (and (integerp n)
@@ -753,7 +738,6 @@
 	      ))
      )
    )
-  
   
   (local
    (defthmd lemma-3
@@ -964,7 +948,6 @@
      )
    )
   
-
   (defthmd lemma-int
     (implies (and (acl2-numberp a)
 		  (acl2-numberp b)
@@ -1004,7 +987,6 @@
     )
   )
 
-
  (defthmd sqrt-2-lemmas
    (and (acl2-numberp (acl2-sqrt 2))
 	(i-limited (acl2-sqrt 2))
@@ -1021,6 +1003,37 @@
 		  )
 	    :in-theory (disable acl2-sqrt)
 	    ))
+   )
+
+ (defthmd funs-lemmas-2
+   (implies (equal x (acl2-sqrt 2))
+	    (and (m-= (m-* (a-rotation x) (a-inv-rotation x)) (id-rotation))
+		 (m-= (m-* (a-inv-rotation x) (a-rotation x)) (id-rotation))
+		 (m-= (m-* (b-rotation x) (b-inv-rotation x)) (id-rotation))
+		 (m-= (m-* (b-inv-rotation x) (b-rotation x)) (id-rotation))
+		 ))
+   :hints (("Goal"
+	    :use (:instance sqrt-2-lemmas)
+	    :in-theory (e/d 
+			(alist2p array2p aset2 aref2 compress2 header
+				 dimensions maximum-length default
+				 matrixp compress21
+				 m-=
+				 m-0
+				 m-1
+				 m-trans
+				 m-unary--
+				 s-*
+				 m-binary-+
+				 m-binary-*
+				 m-/
+				 m-singularp
+				 M-BINARY-*-ROW-1
+				 m-=-row-1
+				 m-=-row)
+			(acl2-sqrt))
+	    )
+	   )
    )
 
  (defthmd word-len-lemma
@@ -1280,7 +1293,6 @@
 				       2 0))
 			     )
 	     )
-
 	    ("Subgoal 2"
 	     :use (:instance wa-inv-sub2-lemma
 			     (z (AREF2 '$ARG1
@@ -1309,8 +1321,7 @@
 				       2 0)
 				)
 			     )
-	     )
-	    
+	     )	    
 	    )
     )
   )
@@ -1355,7 +1366,6 @@
      )
    )
 
-  
   (local
    (defthmd wb-sub2-lemma
      (implies (equal (+ (* 1/3 b) (* 2/3 (acl2-sqrt 2) a))
@@ -1422,7 +1432,6 @@
 				       1 0))
 			     )
 	     )
-
 	    ("Subgoal 2"
 	     :use (:instance wb-sub2-lemma
 			     (y (AREF2 '$ARG1
@@ -1450,12 +1459,10 @@
 					      ((2 . 0) . 0)))
 				       0 0))
 			     )
-	     )
-	    
+	     )	    
 	    )
     )
   )
-
 
  (encapsulate
   ()
@@ -1483,7 +1490,6 @@
 	      (equal (expt 3 (+ n 1)) (* (expt 3 n) 3)))
      )
    )
-
 
   (local
    (defthmd wb-inv-sub2-lemma1-1
@@ -1559,8 +1565,6 @@
 	     :in-theory (disable aref2 rotation a-rotation b-rotation m-* a-inv-rotation b-inv-rotation point-p acl2-sqrt rotation weak-wordp)
 	     :do-not-induct t
 	     )
-
-
 	    ("Subgoal 2"
 	     :use (:instance wb-inv-sub2-lemma
 			     (y (AREF2 '$ARG1
@@ -1680,8 +1684,7 @@
 			 ((1 . 0) . 1)
 			 ((2 . 0) . 0)))
 		  2 0)))
-       )
-      
+       )     
       )
      )
    )
@@ -1739,8 +1742,7 @@
 			   ((0 . 0) . 0)
 			   ((1 . 0) . 1)
 			   ((2 . 0) . 0)))
-		    2 0))
-      
+		    2 0))     
       (EQUAL (* 3 (/ (ACL2-SQRT 2))
 		(AREF2 '$ARG1
 		       (M-* (ROTATION (CONS #\a W) (ACL2-SQRT 2))
@@ -1769,7 +1771,6 @@
 				 ((2 . 0) . 0)))
 			  2 0))))
       )
-
      :hints (("Goal"
 	      :use (
 		    (:instance sub4-lemma0)
@@ -1777,7 +1778,6 @@
 		    )
 	      :in-theory (disable m-* aref2 acl2-sqrt)
 	      ))
-     
      )
    )
 
@@ -1815,7 +1815,6 @@
 	     :in-theory (disable aref2 rotation a-rotation b-rotation m-* a-inv-rotation b-inv-rotation point-p acl2-sqrt rotation weak-wordp)
 	     :do-not-induct t
 	     )
-
 	    ("Subgoal 4"
 	     :use (
 		   (:instance sub4-lemma0)
@@ -1852,16 +1851,12 @@
 					       ((1 . 0) . 1)
 					       ((2 . 0) . 0)))
 					1 0))
-			      
 			      )
-
 		   )
-	     )
-	    
+	     )	    
 	    )
     )
   )
-
 
  (encapsulate
   ()
@@ -1905,10 +1900,8 @@
 	     :in-theory nil
 	     :use (:instance mod-+-exp))
 	    )
-    )
-  
+    )  
   )
-
 
  (defun n-mod3 (w x)
    (cons (mod (car (n-f w x)) 3) (cons (mod (car (cdr (n-f w x))) 3) (cons (mod (car (cdr (cdr (n-f w x) )))  3) nil)))
@@ -1927,7 +1920,7 @@
    )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; 
-;;;;N(a^n)
+;;;;N(a)
 ;;;;;;;;;;;;;;;;;;;;;;;;;
  (encapsulate
   ()
@@ -1990,8 +1983,7 @@
 			     (- (* 4 (CADDR (n-f W x))))))
 		   (equal (caddr (n-f (CONS (WA) W) x))
 			  (+ (* 2 (CADR (n-f W x)))
-			     (CADDR (n-f W x)))))
-	      
+			     (CADDR (n-f W x)))))	      
 	      )
      :hints (("Goal"
 	      :use ((:instance rotation-values (w w) (x x))
@@ -2020,7 +2012,6 @@
 		   )
 	     :in-theory nil
 	     ))
-
     )
 
   (local
@@ -2046,8 +2037,6 @@
 	     )
      )
    )
-
-
 
   (local
    (defthmd n-mod3-a-r-1
@@ -2092,10 +2081,8 @@
     )
   )
 
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;N(a-inv^n)
+;;;N(a-inv)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -2179,7 +2166,6 @@
 	      (equal (n-mod3 (cons (wa-inv) w) x)
 		     (cons 0 (cons (mod (+ (car (cdr (n-f w x)))  (car (cdr (cdr (n-f w x))))) 3)
 				   (cons (mod (+ (car (cdr (cdr (n-f w x)))) (car (cdr (n-f w x)))) 3) nil)))
-
 		     )
 	      )
      :hints (("Goal"
@@ -2196,8 +2182,6 @@
      )
    )
 
-
-
   (local
    (defthmd n-mod3-a-r-1
      (implies (and (integerp x)
@@ -2213,7 +2197,6 @@
 	     (equal (n-mod3 (cons (wa-inv) w) x)
 		    (cons 0 (cons (mod (+ (car (cdr (n-mod3 w x)))  (car (cdr (cdr (n-mod3 w x))))) 3)
 				  (cons (mod (+ (car (cdr (cdr (n-mod3 w x)))) (car (cdr (n-mod3 w x)))) 3) nil)))
-
 		    )
 	     )
     :hints (("Goal"
@@ -2241,9 +2224,8 @@
     )
   )
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;N(b^n)
+;;;N(b)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -2325,7 +2307,6 @@
 	      (equal (n-mod3 (cons (wb) w) x)
 		     (cons (mod (+ (car (n-f w x))  (car (cdr (n-f w x)))) 3)
 			   (cons (mod (+ (car (cdr (n-f w x))) (car (n-f w x))) 3) (cons 0 nil))))
-
 	      )
      :hints (("Goal"
 	      :use (
@@ -2340,8 +2321,6 @@
 	     )
      )
    )
-
-
 
   (local
    (defthmd n-mod3-b-r-1
@@ -2379,14 +2358,13 @@
 		   )
 	     :in-theory nil
 	     :do-not-induct t
-	     ))
-    
+	     )) 
     )
   )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;N(b-inv^n)
+;;;;N(b-inv)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -2487,7 +2465,6 @@
      )
    )
 
-
   (local
    (defthmd n-mod3-b-inv-r-1
      (implies (and (integerp x)
@@ -2524,11 +2501,11 @@
 		   )
 	     :in-theory nil
 	     :do-not-induct t
-	     ))
-    
+	     ))   
     )
   )
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 
  (defthmd n-mod3-nil
    (equal (n-mod3 nil (acl2-sqrt 2))
 	  '(0 1 0)))
@@ -2723,7 +2700,6 @@
 	   )
    )
 
-
  (defthmd n-mod3-red-lemma-=
    (implies (and (reducedwordp w)
 		 (equal x (acl2-sqrt 2))
@@ -2746,9 +2722,7 @@
 	    )
 	   )
    )
-
  )
-
 
 (encapsulate
  ()
@@ -2762,7 +2736,6 @@
 	    :in-theory (enable expt)
 	    ))
    )
-
 
  (defthmd 31/3-integerp
    (implies (integerp c)
@@ -2873,8 +2846,7 @@
 		  (:instance reducedwordp=>weak-wordp (x w))		 
 		  )
 	    :do-not-induct t
-	    )
-	   
+	    )	   
 	   )
    )
 
@@ -2890,3 +2862,318 @@
    )
  )
 
+
+(defthmd rot-a*rot-b=rot-a+b
+  (implies (and (reducedwordp a)
+		(reducedwordp b)
+		(equal x (acl2-sqrt 2)))
+	   (m-= (m-* (rotation a x) (rotation b x)) (rotation (append a b) x)))
+  :hints (("Goal"
+	   :in-theory (disable acl2-sqrt)
+	   )
+	  ("Subgoal *1/1"
+	   :use (:instance funs-lemmas-1 (x x))
+	   :in-theory (disable acl2-sqrt)
+	   )
+	  )
+  )
+
+(encapsulate
+ ()
+ 
+ (local
+  (defthmd rot-a-rota-fix-a-ind-1-1
+    (implies (and (weak-wordp a)
+		  (weak-wordp (cdr a))
+		  (not (atom a))
+		  (word-fix (cdr a))
+		  (REDUCEDWORDP (WORD-FIX (CDR A))))
+	     (m-= (ROTATION (WORD-FIX (LIST (CAR A) (CAR (WORD-FIX (CDR A)))))
+			    (ACL2-SQRT 2))
+		  (ROTATION (LIST (CAR A) (CAR (WORD-FIX (CDR A))))
+			    (ACL2-SQRT 2))))
+    :hints (("Goal"
+	     :cases((and (equal (car a) (wa)) (equal (CAR (WORD-FIX (CDR A))) (wa)))
+		    (and (equal (car a) (wa)) (equal (CAR (WORD-FIX (CDR A))) (wa-inv)))
+		    (and (equal (car a) (wa)) (equal (CAR (WORD-FIX (CDR A))) (wb)))
+		    (and (equal (car a) (wa)) (equal (CAR (WORD-FIX (CDR A))) (wb-inv)))
+		    (and (equal (car a) (wa-inv)) (equal (CAR (WORD-FIX (CDR A))) (wa)))
+		    (and (equal (car a) (wa-inv)) (equal (CAR (WORD-FIX (CDR A))) (wa-inv)))
+		    (and (equal (car a) (wa-inv)) (equal (CAR (WORD-FIX (CDR A))) (wb)))
+		    (and (equal (car a) (wa-inv)) (equal (CAR (WORD-FIX (CDR A))) (wb-inv)))
+		    (and (equal (car a) (wb)) (equal (CAR (WORD-FIX (CDR A))) (wa)))
+		    (and (equal (car a) (wb)) (equal (CAR (WORD-FIX (CDR A))) (wa-inv)))
+		    (and (equal (car a) (wb)) (equal (CAR (WORD-FIX (CDR A))) (wb)))
+		    (and (equal (car a) (wb)) (equal (CAR (WORD-FIX (CDR A))) (wb-inv)))
+		    (and (equal (car a) (wb-inv)) (equal (CAR (WORD-FIX (CDR A))) (wa)))
+		    (and (equal (car a) (wb-inv)) (equal (CAR (WORD-FIX (CDR A))) (wa-inv)))
+		    (and (equal (car a) (wb-inv)) (equal (CAR (WORD-FIX (CDR A))) (wb)))
+		    (and (equal (car a) (wb-inv)) (equal (CAR (WORD-FIX (CDR A))) (wb-inv)))
+		    )
+	     :use ((:instance funs-lemmas-1 (x (acl2-sqrt 2)))
+		   (:instance funs-lemmas-2 (x (acl2-sqrt 2))))
+	     :in-theory (disable acl2-sqrt)
+	     :do-not-induct t
+	     ))
+    )
+  )
+
+ (local
+  (defthmd rot-a-rota-fix-a-ind-1
+    (IMPLIES (AND (NOT (ATOM A))
+		  (equal x (acl2-sqrt 2))
+		  (word-fix (cdr a))
+		  (WEAK-WORDP A))
+	     (M-= (ROTATION (WORD-FIX A) x)
+		  (m-* (rotation (append (list (car a)) (list (car (word-fix (cdr a))))) x)
+		       (rotation (cdr (word-fix (cdr a))) x))))
+    :hints (("Goal"
+	     :use ((:instance compose-assoc-lemma-export (x (list (car a))) (y (cdr a)))
+		   (:instance weak-word-cdr (x a))
+		   (:instance lemma3 (x (word-fix (cdr a))))
+		   (:instance character-listp-word (x (cdr a)))
+		   (:instance word-fix-rev-lemma3-12 (x (car a)) (y (word-fix (cdr a))))
+		   (:instance weak-wordp-equivalent (x (cdr a)))
+		   (:instance rot-a*rot-b=rot-a+b
+			      (a (word-fix (append (list (car a)) (list (car (word-fix (cdr a)))))))
+			      (b (cdr (word-fix (cdr a))))
+			      (x x))
+		   (:instance weak-wordp-equivalent (x (append (list (car a)) (list (car (word-fix (cdr a)))))))
+		   (:instance weak-wordp-equivalent (x (cdr a)))
+		   (:instance character-listp-word (x (word-fix (cdr a))))
+		   (:instance lemma11 (x a))
+		   (:instance rot-a-rota-fix-a-ind-1-1 (a a))
+		   )
+	     :do-not-induct t
+	     :in-theory (disable word-fix append rotation acl2-sqrt weak-wordp reducedwordp)	   
+	     )
+	    ("Subgoal 10"
+	     :in-theory (enable weak-wordp)
+	     )
+	    ("Subgoal 9"
+	     :in-theory (enable weak-wordp)
+	     )
+	    ("Subgoal 8"
+	     :in-theory (enable weak-wordp)
+	     )
+	    ("Subgoal 4"
+	     :in-theory (enable weak-wordp)
+	     )
+	    ("Subgoal 2"
+	     :in-theory (enable weak-wordp)
+	     )
+	    ("Subgoal 5"
+	     :in-theory (enable append weak-wordp)
+	     )
+	    )
+    )
+  )
+
+ (local
+  (defthmd rot-a-rota-fix-a-ind
+    (IMPLIES (AND (NOT (ATOM A))
+		  (M-= (ROTATION (WORD-FIX (CDR A))
+				 (ACL2-SQRT 2))
+		       (ROTATION (CDR A) (ACL2-SQRT 2)))
+		  (WEAK-WORDP A))
+	     (M-= (ROTATION (WORD-FIX A) (ACL2-SQRT 2))
+		  (ROTATION A (ACL2-SQRT 2))))
+    :hints (("Goal"
+	     :cases ((word-fix (cdr a))
+		     (not (word-fix (cdr a))))
+	     :do-not-induct t
+	     )
+	    ("Subgoal 2"
+	     :cases ((equal (car (word-fix (cdr a))) (wa))
+		     (equal (car (word-fix (cdr a))) (wa-inv))
+		     (equal (car (word-fix (cdr a))) (wb))
+		     (equal (car (word-fix (cdr a))) (wb-inv))
+		     )
+	     :use (
+		   (:instance weak-word-cdr (x a))
+		   (:instance weak-wordp-equivalent (x (cdr a)))
+		   (:instance rot-a-rota-fix-a-ind-1 (a a) (x (acl2-sqrt 2)))
+		   (:instance lemma3 (x a))
+		   (:instance rotation (w a) (x (acl2-sqrt 2)))
+		   (:instance lemma3 (x (word-fix (cdr a))))
+		   (:instance rot-a*rot-b=rot-a+b
+			      (a (list (car (word-fix (cdr a)))))
+			      (b (cdr (word-fix (cdr a))))
+			      (x (acl2-sqrt 2)))
+		   (:instance reduced-cdr (x (word-fix (cdr a))))
+		   )
+	     :in-theory (disable acl2-sqrt word-fix)
+	     )
+	    )
+    )
+  )
+
+ (defthmd rot-a-rot-fix-a
+   (implies (and (weak-wordp a)
+		 (equal x (acl2-sqrt 2)))
+	    (m-= (rotation (word-fix a) x) (rotation a x))
+	    )
+   :hints (("Goal"
+	    :in-theory (disable acl2-sqrt)
+	    )
+	   ("Subgoal *1/9"
+	    :use (:instance rot-a-rota-fix-a-ind (a a))
+	    )
+	   ("Subgoal *1/7"
+	    :use (:instance rot-a-rota-fix-a-ind (a a))
+	    )
+	   ("Subgoal *1/5"
+	    :use (:instance rot-a-rota-fix-a-ind (a a))
+	    )
+	   ("Subgoal *1/3"
+	    :use (:instance rot-a-rota-fix-a-ind (a a))
+	    )
+	   )
+   )
+ )
+
+(defthmd rot-a+b
+  (implies (and (reducedwordp a)
+		(reducedwordp b)
+		(equal x (acl2-sqrt 2)))
+	   (m-= (rotation (append a b) x) (rotation (compose a b) x)))
+  :hints (("Goal"
+	   :use ((:instance closure-weak-word (x a) (y b))
+		 (:instance reducedwordp=>weak-wordp (x a))
+		 (:instance reducedwordp=>weak-wordp (x b))
+		 (:instance rot-a-rot-fix-a (a (append a b)))
+		 )
+	   :in-theory (disable acl2-sqrt rotation)
+	   :do-not-induct nil
+	   )
+	  )
+  )
+
+(defthmd rot-a*rot-b-=
+  (implies (and (reducedwordp a)
+		(reducedwordp b)
+		(equal x (acl2-sqrt 2)))
+	   (m-= (m-* (rotation a x) (rotation b x)) (rotation (compose a b) x)))
+  :hints (("Goal"
+	   :use ((:instance rot-a*rot-b=rot-a+b (a a) (b b) (x x))
+		 (:instance rot-a+b (a a) (b b) (x x)))
+	   :in-theory (disable acl2-sqrt)
+	   ))
+  )
+
+(defthmd m-*rot-rot-inv=id
+  (implies (and (reducedwordp p)
+		(equal x (acl2-sqrt 2)))
+	   (m-= (m-* (rotation p x) (rotation (word-inverse p) x)) (id-rotation)))
+  :hints (("Goal"
+	   :use ((:instance rot-a*rot-b-= (a p) (b (word-inverse p)))
+		 (:instance reduced-inverse (x p))
+		 (:instance reducedwordp-word-inverse (x p)))
+	   :in-theory (disable acl2-sqrt compose word-inverse reducedwordp)
+	   ))
+  )
+
+(defthmd array2p=>a=b=>a*c=b*c
+  (implies (and (array2p name a)
+		(array2p name b)
+		(array2p name c)
+		(m-= a b))
+	   (m-= (m-* a c) (m-* b c)))
+  )
+
+(defthmd rot-a*rot-b=id
+  (implies (and (reducedwordp a)
+		(reducedwordp b)	 
+		(equal x (acl2-sqrt 2))
+		(m-= (rotation a x) (rotation b x)))
+	   (m-= (rotation (compose a (word-inverse b)) x) (id-rotation)))
+  :hints (("Goal"
+	   :use ((:instance array2p=>a=b=>a*c=b*c
+			    (a (rotation a x))
+			    (name '$arg1)
+			    (b (rotation b x))
+			    (c (rotation (word-inverse b) x)))
+		 (:instance rot-a*rot-b-= (a a) (b (word-inverse b)))
+		 (:instance rot-a*rot-b-= (a b) (b (word-inverse b)))
+		 (:instance reducedwordp-word-inverse (x b))
+		 (:instance m-*rot-rot-inv=id (p b))
+		 (:instance rotation-props (w a) (name '$arg1))
+		 (:instance rotation-props (w b) (name '$arg1))
+		 (:instance reducedwordp=>weak-wordp (x a))
+		 (:instance reducedwordp=>weak-wordp (x b))
+		 (:instance reducedwordp=>weak-wordp (x (word-inverse b)))
+		 (:instance rotation-props (w (word-inverse b)) (name '$arg1))
+		 )
+	   :in-theory (disable acl2-sqrt compose word-inverse reducedwordp)
+	   ))
+  )
+
+(defthmd redword-a-b-len=0
+  (implies (and (reducedwordp a)
+		(reducedwordp b)
+		(equal (len (compose a (word-inverse b))) 0))
+	   (equal (compose a (word-inverse b)) '()))
+  )
+
+(defthmd a!=b=>rot-a!=rot-b-1
+  (implies (and (reducedwordp a)
+		(reducedwordp b)
+		(not (atom a))
+		(not (atom b))		
+		(not (equal a b))
+		(equal x (acl2-sqrt 2)))
+	   (not (m-= (rotation a x) (rotation b x))))
+  :hints (("Goal"
+	   :cases ((> (len (compose a (word-inverse b))) 0)
+		   (= (len (compose a (word-inverse b))) 0))
+	   :do-not-induct t
+	   )
+	  ("Subgoal 2"
+	   :use ((:instance rot-a*rot-b=id (a a) (b b) (x x))
+		 (:instance reducedwordp-word-inverse (x b))
+		 (:instance closure-prop (x a) (y (word-inverse b)))
+		 (:instance rotaion-not=id (w (compose a (word-inverse b))) (x x))
+		 )
+
+	   )
+	  ("Subgoal 1"
+	   :use ((:instance reducedwordp-word-inverse (x b))
+		 (:instance assoc-prop (x a) (y (word-inverse b)) (z b))
+		 (:instance redword-a-b-len=0 (a a) (b b))
+		 (:instance inv-inv-x=x (x b))
+		 (:instance reduced-inverse (x (word-inverse b)))
+		 (:instance word-fix=reducedwordp (x a))
+		 (:instance word-fix=reducedwordp (x b)))
+	   :in-theory (disable acl2-sqrt word-fix rotation reducedwordp word-inverse)
+	   :do-not-induct t
+	   )
+	  )
+  )
+
+(defthmd a!=b=>rot-a!=rot-b
+  (implies (and (reducedwordp a)
+		(reducedwordp b)
+     		(not (equal a b))
+		(equal x (acl2-sqrt 2)))
+	   (not (m-= (rotation a x) (rotation b x))))
+  :hints (("Goal"
+	   :cases ((and (not (atom a)) (not (atom b)))
+		   (and (not (atom a)) (atom b))
+		   (and (atom a) (not (atom b))))
+	   :in-theory (disable acl2-sqrt)
+	   :do-not-induct t
+	   )
+	  ("Subgoal 3"
+	   :use ((:instance a!=b=>rot-a!=rot-b-1 (a a) (b b) (x x))
+		 )	   
+	   )
+	  ("Subgoal 2"
+	   :use ((:instance rotaion-not=id (w a))
+		 )	   
+	   )
+	  ("Subgoal 1"
+	   :use ((:instance rotaion-not=id (w b))
+		 )	   
+	   )
+	  )
+  )
