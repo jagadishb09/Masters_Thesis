@@ -245,6 +245,14 @@
 	   (reducedwordp (cdr x)))
   )
 
+(defthmd reducedwordp-car
+  (implies (reducedwordp w)
+           (or (equal (car w) #\a)
+               (equal (car w) #\b)
+               (equal (car w) #\c)
+               (equal (car w) #\d)
+               (equal w '()))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;closure property;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
