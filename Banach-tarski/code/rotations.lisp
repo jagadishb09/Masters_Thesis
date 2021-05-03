@@ -2,7 +2,6 @@
 (in-package "ACL2")
 
 (include-book "workshops/2003/cowles-gamboa-van-baalen_matrix/support/matalg" :dir :system)
-;(local (include-book "arithmetic-5/top" :dir :system))
 (include-book "free-group")
 
 (defun r3-matrixp (m)
@@ -48,15 +47,11 @@
                   (header :fake-name l)))
   :hints (("Goal" :in-theory (e/d (header) ()))))
 
-;(local (in-theory (enable normalize-header-name)))
-
 (defthm normalize-default-name
   (implies (syntaxp (not (equal name '':fake-name)))
            (equal (default name l)
                   (default :fake-name l)))
   :hints (("Goal" :in-theory (e/d (default) ()))))
-
-;(local (in-theory (enable normalize-default-name)))
 
 (defthm normalize-maximum-length-name
   (implies (syntaxp (not (equal name '':fake-name)))
@@ -64,23 +59,17 @@
                   (maximum-length :fake-name l)))
   :hints (("Goal" :in-theory (e/d (maximum-length) ()))))
 
-;(local (in-theory (enable normalize-maximum-length-name)))
-
 (defthm normalize-dimensions-name
   (implies (syntaxp (not (equal name '':fake-name)))
            (equal (dimensions name l)
                   (dimensions :fake-name l)))
   :hints (("Goal" :in-theory (e/d (dimensions) ()))))
 
-;(local (in-theory (enable normalize-dimensions-name)))
-
 (defthm normalize-compress11-name
   (implies (syntaxp (not (equal name '':fake-name)))
            (equal (compress11 name l i n default)
                   (compress11 :fake-name l i n default)))
   :hints (("Goal" :in-theory (e/d (compress11) ()))))
-
-;(local (in-theory (enable normalize-compress11-name)))
 
 (defthm normalize-compress1-name
   (implies (syntaxp (not (equal name '':fake-name)))
@@ -99,8 +88,6 @@
            (equal (compress21 name l n i j default)
                   (compress21 :fake-name l n i j default)))
   :hints (("Goal" :in-theory (e/d (compress21) ()))))
-
-;(local (in-theory (enable normalize-compress11-name)))
 
 (defthm normalize-compress2-name
   (implies (syntaxp (not (equal name '':fake-name)))
@@ -157,74 +144,6 @@
 	    :in-theory (enable aref2 header default))))
  )
 
-;; (encapsulate
-;;   ()
-
-;;   (local
-;;    (defthm compress21-lemma-1
-;;      (equal (compress21 name l n i j default)
-;;             (if (zp (- i n)) nil
-;;               (append (compress211 name l n 0 j default)
-;;                       (compress21 name l (+ n 1) i j default))))
-;;      :hints (("Goal"
-;;               :in-theory (enable compress21 compress211)
-;;               ))		 
-;;      )
-;;    )
-
-;;   (local
-;;    (defthm m-=-row-1-lemma-1
-;;      (equal (m-=-row-1 m1 m2 m n)
-;;             (if (zp m)
-;;                 (m-=-row m1 m2 0 n)
-;;               (and (m-=-row m1 m2 m n)
-;;                    (m-=-row-1 m1 m2 (- m 1) n))))
-;;      )
-;;    )
-
-;;   (local
-;;    (defthm m-=-row-lemma-1
-;;      (equal (m-=-row m1 m2 m n)
-;;             (if (zp n)
-;;                 (equal (fix (aref2 :fake-name M1 m 0))
-;;                        (fix (aref2 :fake-name M2 m 0)))
-;;               (and (equal (fix (aref2 :fake-name M1 m n))
-;;                           (fix (aref2 :fake-name M2 m n)))
-;;                    (m-=-row M1 M2 m (- n 1)))))
-;;      )
-;;    )
-
-;;   (local
-;;    (defthm lemma1
-;;      (implies (r3-matrixp m1)
-;;               (m-= (m-* m1 (id-rotation)) m1))
-;;      :hints (("Goal"
-;;               :use ((:instance array2p-alist2p-fname (l m1))
-;;                     (:instance array2p-alist2p-fname (l (id-rotation)))
-;;                     (:instance aref2-m-*-1 (m1 m1) (m2 (id-rotation)) (i 0) (j 0))
-;;                     (:instance aref2-m-*-1 (m1 m1) (m2 (id-rotation)) (i 0) (j 1))
-;;                     (:instance aref2-m-*-1 (m1 m1) (m2 (id-rotation)) (i 0) (j 2))
-;;                     (:instance aref2-m-*-1 (m1 m1) (m2 (id-rotation)) (i 1) (j 0))
-;;                     (:instance aref2-m-*-1 (m1 m1) (m2 (id-rotation)) (i 1) (j 1))
-;;                     (:instance aref2-m-*-1 (m1 m1) (m2 (id-rotation)) (i 1) (j 2))
-;;                     (:instance aref2-m-*-1 (m1 m1) (m2 (id-rotation)) (i 2) (j 0))
-;;                     (:instance aref2-m-*-1 (m1 m1) (m2 (id-rotation)) (i 2) (j 1))
-;;                     (:instance aref2-m-*-1 (m1 m1) (m2 (id-rotation)) (i 2) (j 2))
-;;                     (:instance aref2-m-* (m1 m1) (m2 (id-rotation)) (i 0) (j 0))
-;;                     (:instance aref2-m-* (m1 m1) (m2 (id-rotation)) (i 0) (j 1))
-;;                     (:instance aref2-m-* (m1 m1) (m2 (id-rotation)) (i 0) (j 2))
-;;                     (:instance aref2-m-* (m1 m1) (m2 (id-rotation)) (i 1) (j 0))
-;;                     (:instance aref2-m-* (m1 m1) (m2 (id-rotation)) (i 1) (j 1))
-;;                     (:instance aref2-m-* (m1 m1) (m2 (id-rotation)) (i 1) (j 2))
-;;                     (:instance aref2-m-* (m1 m1) (m2 (id-rotation)) (i 2) (j 0))
-;;                     (:instance aref2-m-* (m1 m1) (m2 (id-rotation)) (i 2) (j 1))
-;;                     (:instance aref2-m-* (m1 m1) (m2 (id-rotation)) (i 2) (j 2))
-;;                     (:instance array2p-funs (y :fake-name)))
-;; ;(:instance aref2-m-*-1 (m1 m1) (m2 (id-rotation))))
-;;               :in-theory (e/d (m-= m-* r3-matrixp M-BINARY-*-ROW-1 m-=-row m-=-row-1 compress2 compress21 compress211 dot) (aref2))
-;;               )))))
-;--
-
 (encapsulate
   ()
   (local
@@ -237,8 +156,6 @@
                     (:instance array2p-alist2p-fname (l m1)))
               :in-theory (enable header dimensions default m-*)
               )))))
-
-;; ---
 
 (encapsulate
   ()
@@ -490,19 +407,6 @@
                 (r3-matrixp m2))
            (r3-matrixp (m-* m1 m2)))
   )
-
-;; (defthm m1*m2=i
-;;   (implies (and (r3-matrixp m1)
-;;                 (r3-matrixp m2)
-;;                 (m-= (m-* m1 m2) (id-rotation)))
-;;            (m-= (r3-m-inverse m1) m2)))
-
-;; (skip-proofs
-;;   (defthm m-inverse-m-*-m1-m2
-;;     (implies (and (r3-matrixp m1)
-;;                   (r3-matrixp m2))
-;;              (m-= (r3-m-inverse (m-* m1 m2))
-;;                   (m-* (r3-m-inverse m2) (r3-m-inverse m1))))))
 
 (encapsulate
   ()
