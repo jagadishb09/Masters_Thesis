@@ -23,4 +23,4 @@ supportive-theorems.lisp: Theorems about symbol name of array2p which
                           were initially developed by Eric Smith of Kestrel Institute for 1-d arrays.
 			  I've extended them to 2-d arrays.
 
-hausdorff-paradox.lisp : In proogress (proof of Hausdorff paradox)
+hausdorff-paradox.lisp : In progress (proof of Hausdorff paradox)
