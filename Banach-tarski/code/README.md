@@ -18,3 +18,9 @@ free-group.lisp: Proved that if the characters #\a, #\b, #\c, #\d
 		 matrices form a free group of rank 2.
 
 rotations.lisp: Proved every matrix in the free group is a rotation in R3.
+
+supportive-theorems.lisp: Theorems about symbol name of array2p which
+                          were initially developed by Eric Smith of Kestrel Institute for 1-d arrays.
+			  I've extended them to 2-d arrays.
+
+hausdorff-paradox.lisp : In proogress (proof of Hausdorff paradox)
