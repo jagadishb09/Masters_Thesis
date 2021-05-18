@@ -3,6 +3,7 @@
 
 (include-book "workshops/2003/cowles-gamboa-van-baalen_matrix/support/matalg" :dir :system)
 (include-book "free-group")
+(local (include-book "supportive-theorems"))
 
 (defun r3-matrixp (m)
   (and (array2p :fake-name m)
@@ -40,80 +41,6 @@
 	    (realp (r3-m-determinant m)))
    )
  )
-
-(defthm normalize-header-name
-  (implies (syntaxp (not (equal name '':fake-name)))
-           (equal (header name l)
-                  (header :fake-name l)))
-  :hints (("Goal" :in-theory (e/d (header) ()))))
-
-(defthm normalize-default-name
-  (implies (syntaxp (not (equal name '':fake-name)))
-           (equal (default name l)
-                  (default :fake-name l)))
-  :hints (("Goal" :in-theory (e/d (default) ()))))
-
-(defthm normalize-maximum-length-name
-  (implies (syntaxp (not (equal name '':fake-name)))
-           (equal (maximum-length name l)
-                  (maximum-length :fake-name l)))
-  :hints (("Goal" :in-theory (e/d (maximum-length) ()))))
-
-(defthm normalize-dimensions-name
-  (implies (syntaxp (not (equal name '':fake-name)))
-           (equal (dimensions name l)
-                  (dimensions :fake-name l)))
-  :hints (("Goal" :in-theory (e/d (dimensions) ()))))
-
-(defthm normalize-compress11-name
-  (implies (syntaxp (not (equal name '':fake-name)))
-           (equal (compress11 name l i n default)
-                  (compress11 :fake-name l i n default)))
-  :hints (("Goal" :in-theory (e/d (compress11) ()))))
-
-(defthm normalize-compress1-name
-  (implies (syntaxp (not (equal name '':fake-name)))
-           (equal (compress1 name l)
-                  (compress1 :fake-name l)))
-  :hints (("Goal" :in-theory (e/d (compress1) ()))))
-
-(defthm normalize-compress211-name
-  (implies (syntaxp (not (equal name '':fake-name)))
-           (equal (compress211 name l i x j default)
-                  (compress211 :fake-name l i x j default)))
-  :hints (("Goal" :in-theory (e/d (compress211) ()))))
-
-(defthm normalize-compress21-name
-  (implies (syntaxp (not (equal name '':fake-name)))
-           (equal (compress21 name l n i j default)
-                  (compress21 :fake-name l n i j default)))
-  :hints (("Goal" :in-theory (e/d (compress21) ()))))
-
-(defthm normalize-compress2-name
-  (implies (syntaxp (not (equal name '':fake-name)))
-           (equal (compress2 name l)
-                  (compress2 :fake-name l)))
-  :hints (("Goal" :in-theory (e/d (compress2) ()))))
-
-(defthm normalize-aref2-name
-  (implies (syntaxp (not (equal name '':fake-name)))
-           (equal (aref2 name l i j)
-                  (aref2 :fake-name l i j)))
-  :hints (("Goal" :in-theory (e/d (aref2) ()))))
-
-(defthm normalize-array2p-name
-  (implies (and (syntaxp (not (equal name '':fake-name)))
-		(symbolp name))
-           (equal (array2p name l)
-                  (array2p :fake-name l)))
-  :hints (("Goal" :in-theory (e/d (array2p) ()))))
-
-(defthm normalize-alist2p-name
-  (implies (and (syntaxp (not (equal name '':fake-name)))
-		(symbolp name))
-           (equal (alist2p name l)
-                  (alist2p :fake-name l)))
-  :hints (("Goal" :in-theory (e/d (alist2p) ()))))
 
 (defthm
   array2p-alist2p-fname
@@ -213,7 +140,7 @@
 	    :in-theory (enable array2p header dimensions)
 	    :do-not-induct t
 	    ))
-   )   
+   )
  )
 
 (encapsulate
@@ -223,7 +150,6 @@
 
   (defthm r3-m-inverse-=
     (implies (r3-matrixp m)
-             
              (and (equal (aref2 :fakename (r3-m-inverse m) 0 0)
                          (/ (- (* (aref2 :fakename m 1 1) (aref2 :fakename m 2 2))
                                (* (aref2 :fakename m 2 1) (aref2 :fakename m 1 2)))
@@ -376,7 +302,7 @@
 		    (compress21 name l (+ n 1) i j default))))
    :hints (("Goal"
 	    :in-theory (enable compress21 compress211)
-	    ))		 
+	    ))
    )
  )
 
@@ -422,7 +348,7 @@
 
   (local
    (defthm lemma-1
-     (implies (and 
+     (implies (and
                (REALP (AREF2 :FAKE-NAME M 0 0))
                (REALP (AREF2 :FAKE-NAME M 0 1))
                (REALP (AREF2 :FAKE-NAME M 0 2))
@@ -601,7 +527,7 @@
               ))
      )
    )
-  
+
   (defthm m-*-m-m-inverse
     (implies (and (r3-matrixp m)
                   (not (= (r3-m-determinant m) 0)))
@@ -634,7 +560,7 @@
              )
             ("Subgoal 5"
              :in-theory (e/d (r3-m-inverse) (r3-m-determinant))
-             )                                                
+             )
             ("Subgoal 4"
              :in-theory (e/d (r3-m-inverse) (r3-m-determinant))
              )
@@ -646,7 +572,7 @@
              )
             ("Subgoal 1"
              :in-theory (e/d (r3-m-inverse) (r3-m-determinant))
-             )          
+             )
             )
     )
 
@@ -682,7 +608,7 @@
              )
             ("Subgoal 5"
              :in-theory (e/d (r3-m-inverse) (r3-m-determinant))
-             )                                                
+             )
             ("Subgoal 4"
              :in-theory (e/d (r3-m-inverse) (r3-m-determinant))
              )
@@ -694,7 +620,7 @@
              )
             ("Subgoal 1"
              :in-theory (e/d (r3-m-inverse) (r3-m-determinant))
-             )          
+             )
             )
     )
   )
@@ -804,7 +730,7 @@
                    (m-= x y)
                    (r3-matrixp z))
               (m-= (m-* x z) (m-* y z)))))
-  
+
   (local
    (defthm lemma7
      (implies (and (r3-matrixp m1)
@@ -825,7 +751,7 @@
 
   (local (in-theory nil))
   (local (include-book "arithmetic-5/top" :dir :system))
-  
+
   (defthm m-inverse-m-*-m1-m2
     (implies (and (r3-matrixp m1)
                   (not (= (r3-m-determinant m1) 0))
@@ -873,7 +799,7 @@
   ()
 
   (local (include-book "arithmetic-5/top" :dir :system))
-  
+
   (defthm base-rotations
     (implies (equal x (acl2-sqrt 2))
              (and (r3-rotationp (a-rotation x))
