@@ -1,11 +1,22 @@
+; Circumference of a circle
+;
+; Copyright (C) 2021 University of Wyoming
+;
+;
+; Main Author: Jagadish Bapanapally (jagadishb285@gmail.com)
+; Contributing Authors:
+;   Ruben Gamboa (ruben@uwyo.edu)
+
 (in-package "ACL2")
+
+; cert_param: (uses-acl2r)
 
 (include-book "nonstd/nsa/exp" :dir :system)
 (include-book "nonstd/nsa/trig" :dir :system)
 (include-book "arithmetic/top-with-meta" :dir :system)
-(include-book "length-of-a-rectifiable-curve")
+(include-book "nonstd/arc-length/length-of-a-rectifiable-curve" :dir :system)
 
-(encapsulate 
+(encapsulate
  ((rad() t))
  (local (defun rad() 1))
  (defthm rad-det
@@ -41,22 +52,22 @@
                   (* (rad) (+ (- (acl2-sine x)) (* #c(0 1) (acl2-cosine x))))
                   )
            )
-  
-  :hints (("Goal" 
+
+  :hints (("Goal"
            :use(:instance complex-definition (x (- (acl2-sine x))) (y (acl2-cosine x)))
            :in-theory (disable acl2-sine acl2-cosine)))
   )
 
 (encapsulate
  ()
- 
+
  (local
   (defthm lemma-1
     (equal (+ (- (/ a b) c) (* #c(0 1) (- (/ p b) r)))
-	   (- (/ (+ a (* #c(0 1) p)) b) (+ c (* #c(0 1) r))) 
+	   (- (/ (+ a (* #c(0 1) p)) b) (+ c (* #c(0 1) r)))
 	   )
     ))
- 
+
  (local
   (defthm lemma-2
     (implies (and (realp a)
@@ -66,7 +77,7 @@
 		  (i-close (/ p b) r))
 	     (i-close (/ (+ a (* #c(0 1) p)) b) (+ c (* #c(0 1) r)))
 	     )
-    
+
     :hints (("Goal"
 	     :use (
 		   (:instance i-small-plus-lemma(x (/ a b)) (y c) )
@@ -78,32 +89,32 @@
 		   )
 	     ))
     ))
- 
+
  (local
   (defthm lemma-3
     (equal (+ (- a b) (* c (- d e))) (- (+ a (* c d)) (+ b (* c e)))
 	   )
     ))
- 
+
  (local
   (defthm lemma-4
     (equal (* d (/ (- a b) c)) (/ (- (* d a) (* d b)) c))
     ))
- 
- 
+
+
  (defthmd close-limited
    (implies (and (i-close x y)
 		 (i-limited z))
 	    (i-close (* z x) (* z y))
 	    )
-   
+
    :hints (("Goal"
 	    :use (
 		  (:instance i-small-plus-lemma(x x) (y y))
 		  (:instance limited*small->small(x z) (y (- x y)))
 		  (:instance distributivity (y x) (z y) (x z))
 		  (:instance i-close-plus-lemma-2 (x (* z x)) (y (* z y)))
-		  
+
 		  )
 	    ))
    )
@@ -111,7 +122,7 @@
  (local (include-book "nonstd/workshops/2011/reid-gamboa-differentiator/support/exp-minimal" :dir :system))
 
  (local
-  (defderivative sin-eqn-deriv 
+  (defderivative sin-eqn-deriv
     (/ (- (acl2-exp (* #c(0 1) x))
 	  (acl2-exp (* #c(0 -1) x)))
        #c(0 2))))
@@ -128,9 +139,9 @@
 		     (acl2-cosine x)))
    :hints (("Goal" :use (:instance sin-eqn-deriv)
 	    :in-theory (enable acl2-sine acl2-cosine))))
- 
+
  (local
-  (defderivative cos-eqn-deriv 
+  (defderivative cos-eqn-deriv
     (/ (+ (ACL2-EXP (* #C(0 1) X))
 	  (ACL2-EXP (* #C(0 -1) X)))
        2)))
@@ -146,7 +157,7 @@
 		     (- (acl2-sine x))))
    :hints (("Goal" :use (:instance cos-eqn-deriv)
 	    :in-theory (enable acl2-sine acl2-cosine))))
- 
+
  (defthm circle-der-lemma
    (implies (and (standardp x)
 		 (realp x)
@@ -161,40 +172,40 @@
 		  (:instance rad-det)
 		  (:instance acl2-sine-derivative (x x) (y y) )
 		  (:instance acl2-cosine-derivative (x x) (y y) )
-		  (:instance lemma-2 
-			     (a (- (acl2-cosine x) (acl2-cosine y))) 
-			     (b (- x y)) 
-			     (c (- (acl2-sine x))) 
-			     (p (- (acl2-sine x) (acl2-sine y))) 
+		  (:instance lemma-2
+			     (a (- (acl2-cosine x) (acl2-cosine y)))
+			     (b (- x y))
+			     (c (- (acl2-sine x)))
+			     (p (- (acl2-sine x) (acl2-sine y)))
 			     (r (acl2-cosine x)))
-		  (:instance lemma-3 
-			     (a (acl2-cosine x)) 
-			     (b (acl2-cosine y)) 
-			     (c #c(0 1)) 
+		  (:instance lemma-3
+			     (a (acl2-cosine x))
+			     (b (acl2-cosine y))
+			     (c #c(0 1))
 			     (d (acl2-sine x)) (e (acl2-sine y))
 			     )
-		  (:instance close-limited 
+		  (:instance close-limited
 			     (x (/ (- (+ (acl2-cosine x) (* #c(0 1) (acl2-sine x))) (+ (acl2-cosine y) (* #c(0 1) (acl2-sine y)))) (- x y)))
 			     (y (+ (- (acl2-sine x)) (* #c(0 1) (acl2-cosine x))))
 			     (z (rad))
 			     )
-		  (:instance lemma-4 
+		  (:instance lemma-4
 			     (a (+ (acl2-cosine x) (* #c(0 1) (acl2-sine x))))
 			     (b (+ (acl2-cosine y) (* #c(0 1) (acl2-sine y))))
 			     (c (- x y))
 			     (d (rad))
 			     )
-		  
+
 		  (:instance circle-equal (x x))
 		  (:instance circle-equal (x y))
 		  (:instance circle-der-equal (x x))
-		  
+
 		  )
 	    :in-theory (disable circle circle-der)
 	    ))
    )
- 
- (local 
+
+ (local
   (defthm lemma-6
     (implies(and (standardp x)
 		 (realp x)
@@ -204,7 +215,7 @@
 	    (i-close (- (acl2-sine x)) (- (acl2-sine y)))
 	    )
     ))
- 
+
  (local
   (defthm lemma-5
     (implies(and (standardp x)
@@ -213,13 +224,13 @@
 		 (i-close x y)
 		 )
 	    (i-close (acl2-cosine x) (acl2-cosine y))
-	    
+
 	    )
     ))
- 
+
  (defthm circle-der-continuous
-   (implies 
-    (and 
+   (implies
+    (and
      (standardp x)
      (realp x)
      (realp y)
@@ -235,22 +246,22 @@
 		  (:instance i-small-plus-lemma (x (- (acl2-sine x))) (y (- (acl2-sine y))))
 		  (:instance i-small-plus-lemma (x (acl2-cosine x)) (y (acl2-cosine y)))
 		  (:instance limited*small->small (y (- (acl2-cosine x) (acl2-cosine y))) (x #c(0 1)))
-		  (:instance i-small-plus 
-			     (x (- (- (acl2-sine x)) (- (acl2-sine y)))) 
+		  (:instance i-small-plus
+			     (x (- (- (acl2-sine x)) (- (acl2-sine y))))
 			     (y (* #c(0 1) (- (acl2-cosine x) (acl2-cosine y))))
 			     )
-		  (:instance lemma-3 
-			     (a (- (acl2-sine x))) 
-			     (b (- (acl2-sine y))) 
-			     (c #c(0 1)) 
-			     (d (acl2-cosine x)) 
+		  (:instance lemma-3
+			     (a (- (acl2-sine x)))
+			     (b (- (acl2-sine y)))
+			     (c #c(0 1))
+			     (d (acl2-cosine x))
 			     (e (acl2-cosine y))
 			     )
 		  (:instance i-close-plus-lemma-2
 			     (x (+ (- (acl2-sine x)) (* #c(0 1) (acl2-cosine x))))
 			     (y (+ (- (acl2-sine y)) (* #c(0 1) (acl2-cosine y))))
 			     )
-		  (:instance close-limited 
+		  (:instance close-limited
 			     (x (+ (- (acl2-sine x)) (* #c(0 1) (acl2-cosine x))))
 			     (y (+ (- (acl2-sine y)) (* #c(0 1) (acl2-cosine y))))
 			     (z (rad))
@@ -261,9 +272,9 @@
 	    :in-theory (disable circle circle-der)
 	    )
 	   )
-   
+
    )
- 
+
  (defthm f-acl2num
    (implies (acl2-numberp x)
 	    (acl2-numberp (circle x))
@@ -271,11 +282,11 @@
    )
  )
 
-(defun rf(x) 
-  (realpart (circle x)) 
+(defun rf(x)
+  (realpart (circle x))
   )
 
-(defun imf(x) 
+(defun imf(x)
   (imagpart (circle x))
   )
 
@@ -337,7 +348,7 @@
 (encapsulate
  ()
  (local (include-book "nonstd/nsa/inverse-trig" :dir :system))
- 
+
  (local
   (defthm sine-bound
     (implies (realp x)
@@ -412,17 +423,17 @@
 
 
 (defthm circle-der-sum-sqrt-cont
-  (implies 
+  (implies
    (and (standardp x)
         (inside-interval-p x (circle-domain))
         (inside-interval-p y (circle-domain))
         (i-close x y)
         )
    (i-close
-    (circle-der-sum-sqrt x) 
+    (circle-der-sum-sqrt x)
     (circle-der-sum-sqrt y)
     ))
-  
+
   :hints (("Goal"
            :use (
                  (:functional-instance der-sum-sqrt-cont
@@ -431,19 +442,19 @@
 				       (der-sqr-sum circle-der-sqr-sum)
 				       (ic-der-sqr icircle-der-sqr)
 				       (rc-der-sqr rcircle-der-sqr)
-				       (ic-derivative icircle-derivative) 
+				       (ic-derivative icircle-derivative)
 				       (rc-derivative rcircle-derivative)
 				       (c-derivative circle-der)
 				       (c circle)
 				       )
                  ))
-          ("Subgoal 2" 
+          ("Subgoal 2"
            :use (
                  (:instance circle-der-continuous (x x) (y y))
                  )
            )
-          
-          ("Subgoal 1" 
+
+          ("Subgoal 1"
            :use (
                  (:instance circle-der-lemma (x x) (y y))
                  )
@@ -453,8 +464,8 @@
 
 (encapsulate
  ()
- 
- (local 
+
+ (local
   (defthm limited-riemann-circle-der-sum-sqrt-small-partition
     (implies (and (realp a) (standardp a)
 		  (realp b) (standardp b)
@@ -462,7 +473,7 @@
 		  (inside-interval-p b (circle-domain))
 		  (< a b))
 	     (i-limited (riemann-circle-der-sum-sqrt (make-small-partition a b))))
-    
+
     :hints (("Goal"
 	     :use (
 		   (:functional-instance limited-riemann-der-sum-sqrt-small-partition
@@ -473,7 +484,7 @@
 					 (der-sqr-sum circle-der-sqr-sum)
 					 (ic-der-sqr icircle-der-sqr)
 					 (rc-der-sqr rcircle-der-sqr)
-					 (ic-derivative icircle-derivative) 
+					 (ic-derivative icircle-derivative)
 					 (rc-derivative rcircle-derivative)
 					 (c-derivative circle-der)
 					 (c circle)
@@ -481,9 +492,9 @@
 		   )
 	     ))
     ))
- 
+
  (local (in-theory (disable riemann-circle-der-sum-sqrt)))
- 
+
  (defun-std strict-int-circle-der-sum-sqrt (a b)
    (if (and (realp a)
 	    (realp b)
@@ -506,7 +517,7 @@
                 (i-small (mesh p)))
            (i-close (riemann-circle-der-sum-sqrt p)
                     (strict-int-circle-der-sum-sqrt a b)))
-  
+
   :hints (("Goal"
            :use (
                  (:functional-instance strict-int-der-sum-sqrt-is-integral-of-der-sum-sqrt
@@ -517,7 +528,7 @@
 					 (der-sqr-sum circle-der-sqr-sum)
 					 (ic-der-sqr icircle-der-sqr)
 					 (rc-der-sqr rcircle-der-sqr)
-					 (ic-derivative icircle-derivative) 
+					 (ic-derivative icircle-derivative)
 					 (rc-derivative rcircle-derivative)
 					 (c-derivative circle-der)
 					 (c circle)
@@ -544,19 +555,19 @@
 
 (encapsulate
  ()
- 
+
  (local (include-book "nonstd/nsa/ln" :dir :system))
- 
+
  (local
   (defthm dis*-1
     (equal (+ (* a b c c) (* a b d d)) (* a b (+ (* c c) (* d d))))
     ))
- 
+
  (local
   (defthm dis+-1
     (equal (+ (* a a) (* b b)) (+ (* b b) (* a a)))
     ))
- 
+
  (local
   (defthm sin-cos-eq
     (EQUAL (* (RAD) (RAD))
@@ -568,8 +579,8 @@
 		 (RAD)
 		 (ACL2-SINE X)
 		 (ACL2-SINE X))))
-    :hints (("Goal" 
-	     :use(           
+    :hints (("Goal"
+	     :use(
 		  (:instance dis*-1 (a (rad)) (b (rad)) (c (acl2-cosine x)) (d (acl2-sine x)))
 		  (:instance dis+-1 (a (ACL2-COSINE X)) (b (ACL2-SINE X)))
 		  (:instance sin**2+cos**2(x x))
@@ -607,7 +618,7 @@
 		     (complex (- (* i r) (* j s))
 			      (+ (* i s) (* j r)))))))
   )
- 
+
  (local
   (defthm realpart-*-real
     (implies (realp x)
@@ -657,14 +668,14 @@
  (defthm circle-der-sum-sqrt-eq
    (implies (realp x)
 	    (equal (circle-der-sum-sqrt x) (rad)))
-   :hints (("Goal" 
+   :hints (("Goal"
 	    :use(
 		 (:instance rad-det)
 		 (:instance sin-cos-eq (x x))
 		 (:instance dis*-1 (a (rad)) (b (rad)) (c (acl2-cosine x)) (d (acl2-sine x)))
-		 (:instance realpart-*-real (x (rad)) 
+		 (:instance realpart-*-real (x (rad))
 			    (y  (COMPLEX (- (ACL2-SINE X)) (ACL2-COSINE X))))
-		 (:instance imagpart-*-real (x (rad)) 
+		 (:instance imagpart-*-real (x (rad))
 			    (y  (COMPLEX (- (ACL2-SINE X)) (ACL2-COSINE X))))
 		 (:instance sin**2+cos**2(x x))
 		 )
@@ -675,19 +686,19 @@
 
 (encapsulate
  ()
- 
+
  (local
   (defthm test-close-1
     (implies (acl2-numberp a) (i-close a a))
     ))
- 
+
  (local
   (defthm dis-1
     (equal (- (* a b) (* a c)) (* a (- b c))
 	   )
     )
   )
- 
+
  (local
   (defthm div-test-2
     (implies (and (acl2-numberp a)
@@ -697,8 +708,8 @@
 	     (equal (/ (* a b) b) a)
 	     )
     ))
- 
- (local 
+
+ (local
   (defthm not-eq-test
     (implies (and (acl2-numberp x)
 		  (acl2-numberp y)
@@ -707,7 +718,7 @@
 	     (not (equal (- x y) 0))
 	     )
     ))
- 
+
  (local
   (defthm circle-der-sum-sqrt-is-derivative-2
     (implies (and (standardp x)
@@ -717,8 +728,8 @@
 	     (equal (/ (- (f-len x) (f-len y)) (- x y))
 		    (rad)
 		    ))
-    
-    :hints (("Goal" 
+
+    :hints (("Goal"
 	     :use(
 		  (:instance dis-1(a (rad)) (b x) (c y))
 		  (:instance not-eq-test (x x) (y y))
@@ -732,7 +743,7 @@
 				 INVERSE-OF-* INVERSE-OF-+-AS=0 UNICITY-OF-1)
 	     ))
     ))
- 
+
  (defthm circle-der-sum-sqrt-is-derivative
    (implies (and (standardp x)
 		 (inside-interval-p x (circle-domain))
@@ -741,8 +752,8 @@
 	    (i-close (/ (- (f-len x) (f-len y)) (- x y))
 		     (circle-der-sum-sqrt x)
 		     ))
-   
-   :hints (("Goal" 
+
+   :hints (("Goal"
 	    :use(
 		 (:instance circle-der-sum-sqrt-is-derivative-2(x x) (y y))
 		 (:instance circle-der-sum-sqrt-eq(x x))
@@ -764,7 +775,7 @@
            (equal (int-circle-der-sum-sqrt a b)
                   (- (f-len b)
                      (f-len a))))
-  
+
   :hints (("Goal"
            :use (
                  (:functional-instance ftc-2
@@ -774,7 +785,6 @@
 				       (map-rcdfn-prime map-circle-der-sum-sqrt)
 				       (rcdfn-prime circle-der-sum-sqrt)
 				       (rcdfn f-len)
-				       
 				       (STRICT-INT-RCDFN-PRIME STRICT-INT-circle-der-SUM-SQRT)
 				       )
                  )
@@ -784,7 +794,6 @@
            :use(
                 (:instance circle-der-sum-sqrt-cont(x x) (y x1))
                 )
-           
            :in-theory (disable circle-der-sum-sqrt)
            )
           ("Subgoal 6"
@@ -792,36 +801,36 @@
                 (:instance circle-der-sum-sqrt-is-derivative(x x) (y x1))
                 )
            :in-theory (disable circle-der-sum-sqrt)
-           )       
+           )
           )
   )
 
 (encapsulate
  ()
- 
+
  (local
   (defthm f-len-test-1
     (implies (realp x)
 	     (equal (* 0 x) 0))
     ))
- 
+
  (local
   (defthm f-len-test-2
     (implies (realp x)
 	     (equal (* x 0) 0))
     ))
- 
+
  (local
   (defthm f-len-test-3
     (implies (realp x)
 	     (equal (f-len x) (* (rad) x))
 	     )
     ))
- 
+
  (local
   (defthm f-len-test-4
     (equal (f-len 0) 0)
-    :hints (("Goal" 
+    :hints (("Goal"
 	     :use(
 		  (:instance f-len-test-3 (x 0))
 		  (:instance f-len-test-2 (x (rad)))
@@ -830,7 +839,7 @@
 	     :in-theory (disable f-len)
 	     ))
     ))
- 
+
  (local
   (defthm pi-test1
     (implies (and (realp x)
@@ -839,10 +848,10 @@
 	     (and (<= 4 (* 2 x)) (< (* 2 x) 8))
 	     )
     ))
- 
+
  (local
   (defthm pi-test2
-    (implies (and 
+    (implies (and
 	      (inside-interval-p 4 (circle-domain))
 	      (inside-interval-p 8 (circle-domain))
 	      (realp x)
@@ -850,18 +859,18 @@
 	      (< x 8))
 	     (inside-interval-p x (circle-domain))
 	     )
-    :hints (("Goal" 
+    :hints (("Goal"
 	     :use(
 		  (:instance inside-interval-p-squeeze(a 4) (b 8) (c x) (interval (circle-domain)))
 		  )
 	     :in-theory (enable interval)
 	     ))
     ))
- 
+
  (defthm circle-length
    (equal (int-circle-der-sum-sqrt 0 (* 2 (acl2-pi)))
-	  (* 2 (rad) (acl2-pi)))   
-   :hints (("Goal" 
+	  (* 2 (rad) (acl2-pi)))
+   :hints (("Goal"
 	    :use(
 		 (:instance pi-between-2-4)
 		 (:instance pi-test1 (x (acl2-pi)))
@@ -871,36 +880,5 @@
 		 )
 	    :in-theory (disable int-circle-der-sum-sqrt)
 	    ))
-   
    )
  )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

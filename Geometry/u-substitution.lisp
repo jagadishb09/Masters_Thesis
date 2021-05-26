@@ -1,5 +1,15 @@
+; A Mechanized Proof of the Curve Length of a Rectifiable Curve
+;
+; Copyright (C) 2021 University of Wyoming
+;
+;
+; Main Author: Jagadish Bapanapally (jagadishb285@gmail.com)
+; Contributing Authors:
+;   Ruben Gamboa (ruben@uwyo.edu)
 
-(IN-PACKAGE "ACL2")
+(in-package "ACL2")
+
+; cert_param: (uses-acl2r)
 
 (local (include-book "nonstd/nsa/nsa" :dir :system))
 (include-book "nonstd/integrals/ftc-2" :dir :system)
@@ -22,7 +32,7 @@
  (local (defun fi-prime (x) (declare (ignore x)) 0))
  (local (defun fi-range () (interval 0 1)))
  (local (defun consta() 1))
- 
+
  (defthmd consta-def
    (and (inside-interval-p (consta) (fi-range))
 	(standardp (consta))
@@ -57,7 +67,7 @@
 			(NOT (EQUAL X X1)))
 		   (equal (* 0 (/ (+ x (- x1)))) 0))
 	  ))
- 
+
  (defthm fi-prime-is-derivative
    (implies (and (standardp x)
 		 (inside-interval-p x (f-o-fi-domain))
@@ -105,7 +115,7 @@
  (defthm fi-range-in-domain-of-f-o-fi
    (implies (inside-interval-p x (f-o-fi-domain))
 	    (inside-interval-p (fi x) (fi-range))))
- 
+
  )
 
 (defthm fi-range-real
@@ -138,7 +148,7 @@
 	     :in-theory (enable nsa-theory)
 	     ))
     ))
- 
+
  (local
   (defthm fi-differentiable-lemma1
     (implies (and (standardp x)
@@ -176,7 +186,7 @@
 		   (:instance i-close-reflexive (x (fi-prime x))))
 	     ))
     ))
- 
+
  (defthm fi-differentiable
    (implies (and (standardp x)
 		 (inside-interval-p x (f-o-fi-domain))
@@ -194,7 +204,7 @@
    )
  )
 
-(local 
+(local
  (defthmd i-large-lemma
    (i-small (/(i-large-integer)))
    :hints(("Goal"
@@ -206,7 +216,7 @@
    )
  )
 
-(local 
+(local
  (defthmd i-small-plus-lemma
    (implies (i-close x y)
 	    (i-small (- x y)))
@@ -216,7 +226,7 @@
    )
  )
 
-(local  
+(local
  (defthmd i-close-plus-lemma
    (implies (i-small (- x y))
 	    (i-close (- x y) 0))
@@ -226,7 +236,7 @@
    )
  )
 
-(local 
+(local
  (defthmd i-close-plus-lemma-1
    (implies (and (acl2-numberp x)
 		 (acl2-numberp y)
@@ -239,14 +249,14 @@
    )
  )
 
-(local 
+(local
  (defthmd i-close-plus-lemma-2
    (implies (and (acl2-numberp x)
 		 (acl2-numberp y)
 		 (i-small (- x y))
 		 )
 	    (i-close x y))
-   
+
    :hints (("Goal"
 	    :use (
 		  (:instance i-close-plus-lemma(x x) )
@@ -255,14 +265,14 @@
 	    )))
  )
 
-(local 
+(local
  (defthmd i-small-limited-lemma
    (implies (and (acl2-numberp x) (i-small x))
 	    (i-limited x))
    )
  )
 
-(local 
+(local
  (defthmd close-stdpart-lemma1
    (implies (and (i-close x y)
 		 (i-limited x))
@@ -337,7 +347,7 @@
    )
  )
 
-(local 
+(local
  (defthmd i-close-lemma3
    (implies (and (acl2-numberp a)
 		 (acl2-numberp b)
@@ -350,7 +360,7 @@
 		 )
 	    (i-close  (* a x) (* b y))
 	    )
-   :hints (("Goal" 
+   :hints (("Goal"
 	    :use ((:instance i-close-lemma2)
 		  (:instance i-close-plus-lemma-2
 			     (x (* a x))
@@ -382,7 +392,7 @@
   ((strict-int-f-prime-1 * *) => *)
   ((int-f-prime-1 * *) => *)
   )
- 
+
  (local
   (defun map-f-prime-1 (p)
     (if (consp p)
@@ -506,8 +516,8 @@
 
    (local
     (defthm int-f-prime-1-lemma-1
-      (implies 
-       (standardp x)				
+      (implies
+       (standardp x)
        (standardp (int-f-prime-1 (consta) x))
        )
       :hints (("Goal"
@@ -526,7 +536,7 @@
      )
    )
   )
- 
+
  (defthm f-real
    (realp (f x))
    :hints (("Goal"
@@ -557,7 +567,7 @@
 		  )
 	    ))
    )
- 
+
  (defthm f-differentiable
    (implies (and (standardp x)
 		 (inside-interval-p x (fi-range))
@@ -761,7 +771,7 @@
 (encapsulate
  ()
  (local (include-book "arithmetic-5/top" :dir :system))
- 
+
  (defthm f-prime-definition
    (implies (and (inside-interval-p x (fi-range))
 		 (standardp x))
@@ -907,7 +917,7 @@
    )
  )
 
-(local 
+(local
  (defthm realp-differential-cr-f
    (implies (and (inside-interval-p x (fi-range))
 		 (inside-interval-p (+ x eps) (fi-range))
@@ -936,7 +946,7 @@
    )
  )
 
-(local 
+(local
  (defthm differential-cr-f-limited
    (implies (and (standardp x)
 		 (inside-interval-p x (fi-range))
@@ -950,7 +960,7 @@
 					(cr-fn2-range fi-range)
 					(cr-fn2 fi)
 					(cr-fn2-domain f-o-fi-domain))
-		  
+
 		  ))
 	   ("Subgoal 2"
 	    :use (:instance  f-real)
@@ -979,7 +989,7 @@
 (local (in-theory (disable differential-cr-f-definition)))
 (local (in-theory (disable f-prime-definition)))
 
-(local 
+(local
  (defthm realp-differential-cr-fi
    (implies (and (inside-interval-p x (f-o-fi-domain))
 		 (inside-interval-p (+ x eps) (f-o-fi-domain))
@@ -1009,7 +1019,7 @@
 	   ))
  )
 
-(local 
+(local
  (defthm differential-cr-fi-limited
    (implies (and (standardp x)
 		 (inside-interval-p x (f-o-fi-domain))
@@ -1050,7 +1060,7 @@
 (encapsulate
  (((derivative-cr-f-o-fi *) => *))
 
- (local 
+ (local
   (defun derivative-cr-f-o-fi (x)
     (* (f-prime (fi x))
        (fi-prime x)))
@@ -1063,7 +1073,7 @@
 		      (fi-prime x)))))
  )
 
-(local 
+(local
  (defthm differential-cr-f-o-fi-close
    (implies (and (inside-interval-p x (f-o-fi-domain))
 		 (standardp x)
@@ -1099,7 +1109,7 @@
 	   ))
  )
 
-(local 
+(local
  (defthm differential-cr-f-o-fi-close-1
    (implies (and (standardp x)
 		 (inside-interval-p x (f-o-fi-domain))
@@ -1121,7 +1131,7 @@
    )
  )
 
-(local 
+(local
  (defthm expand-differential-cr-f-o-fi
    (implies (and (inside-interval-p x (f-o-fi-domain))
 		 (inside-interval-p (+ x eps) (f-o-fi-domain)))
@@ -1146,7 +1156,7 @@
 
 (encapsulate
  nil
- 
+
  (local
   (encapsulate
    nil
@@ -1158,7 +1168,7 @@
 	      (equal (* -1 (- a b))
 		     (- b a)
 		     ))
-     
+
      )
 
    (defthm lemma-1-2
@@ -1184,9 +1194,9 @@
 	      (equal (* (/ a b) (/ c d))
 		     (/ (* a c) (* b d))))
      )
-   
+
    (defthm lemma-1
-     (implies (and 
+     (implies (and
 	       (acl2-numberp a)
 	       (acl2-numberp b)
 	       (acl2-numberp c)
@@ -1199,7 +1209,7 @@
 	      :use ((:instance lemma-1-3
 			       (a -1) (b -1) (c (- a b)) (d (- c d)))
 		    (:instance lemma-1-2))
-	      
+
 	      ))
      )
    )
@@ -1207,7 +1217,7 @@
 
  (local
   (defthm lemma
-    (implies (and 
+    (implies (and
 	      (INSIDE-INTERVAL-P X (f-O-fI-DOMAIN))
 	      (INSIDE-INTERVAL-P X1 (f-O-fI-DOMAIN)))
 	     (equal (+ X1 X (- X1)) X)
@@ -1286,7 +1296,7 @@
  nil
  (local
   (defthm lemma
-    (implies (and 
+    (implies (and
 	      (INSIDE-INTERVAL-P X (f-O-fI-DOMAIN))
 	      (INSIDE-INTERVAL-P X1 (f-O-fI-DOMAIN)))
 	     (equal (+ X X1 (- X)) X1)
@@ -1326,7 +1336,7 @@
 	    (i-close (/ (- (f-o-fi x) (f-o-fi x1)) (- x x1))
 		     (derivative-cr-f-o-fi x))
 	    )
-   
+
    :hints (("Goal"
 	    :use(
 		 (:instance expand-differential-cr-f-o-fi-2
@@ -1351,7 +1361,7 @@
    )
  )
 
-(local 
+(local
  (defthm real-derivative-cr-f-o-fi
    (implies (inside-interval-p x (f-o-fi-domain))
 	    (realp (derivative-cr-f-o-fi x)))
@@ -1378,7 +1388,7 @@
     0)
   )
 
-(local 
+(local
  (defthm f-o-fi-prime-real
    (realp (f-o-fi-prime x))
    :hints (("Goal"
@@ -1557,7 +1567,7 @@
   (dotprod (deltas p)
 	   (map-f-o-fi-prime (cdr p))))
 
-(local 
+(local
  (defthm realp-riemann-f-o-fi-prime
    (implies (partitionp p)
 	    (realp (riemann-f-o-fi-prime p)))
@@ -1637,8 +1647,8 @@
 					(rcdfn f-o-fi)
 					(rcdfn-prime f-o-fi-prime)
 					(strict-int-rcdfn-prime strict-int-f-o-fi-prime))))
-	   
-	   
+
+
 	   ("Subgoal 7"
 	    :use ((:instance f-o-fi-prime-is-derivative)))
 	   ("Subgoal 8"
@@ -1649,7 +1659,7 @@
    )
  )
 
-(local 
+(local
  (defthmd ftc2-usub-equal
    (implies (and (inside-interval-p a (f-o-fi-domain))
 		 (inside-interval-p b (f-o-fi-domain)))
@@ -1661,7 +1671,7 @@
 		  (:instance f-o-fi-equal(x a))
 		  (:instance f-o-fi-equal(x b))
 		  )
-	    
+
 	    ))
    )
  )
@@ -1737,7 +1747,7 @@
     (- (strict-int-f-prime b a))))
 
 
-(local 
+(local
  (defthmd ftc-2-usub-1
    (implies (and (inside-interval-p a (fi-range))
 		 (inside-interval-p b (fi-range)))
@@ -1753,7 +1763,7 @@
 				       (rcdfn f)
 				       (rcdfn-prime f-prime)
 				       (strict-int-rcdfn-prime strict-int-f-prime))
-	    
+
 	    :in-theory (disable f-prime-definition)
 	    )
 	   ("Subgoal 7"
@@ -1766,7 +1776,7 @@
    )
  )
 
-(local 
+(local
  (defthmd ftc2-usub-1-equal
    (implies (and (inside-interval-p a (f-o-fi-domain))
 		 (inside-interval-p b (f-o-fi-domain)))
@@ -1796,5 +1806,3 @@
 	   :in-theory (disable int-f-o-fi-prime int-f-prime)
 	   ))
   )
-
-

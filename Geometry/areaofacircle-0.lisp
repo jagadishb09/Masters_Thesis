@@ -1,4 +1,15 @@
+; A Mechanized Proof of the Curve Length of a Rectifiable Curve
+;
+; Copyright (C) 2021 University of Wyoming
+;
+;
+; Main Author: Jagadish Bapanapally (jagadishb285@gmail.com)
+; Contributing Authors:
+;   Ruben Gamboa (ruben@uwyo.edu)
+
 (in-package "ACL2")
+
+; cert_param: (uses-acl2r)
 
 (local (include-book "arithmetic/realp" :dir :system))
 (local (include-book "arithmetic/inequalities" :dir :system))
@@ -6,14 +17,14 @@
 (include-book "nonstd/nsa/inverse-trig" :dir :system)
 (include-book "u-substitution")
 
-(encapsulate 
+(encapsulate
  ((rad() t)
   (consta1 () t)
   )
  (local (defun rad() 1))
  (local (defun fi-dom-variable() 5))
  (local (defun consta1() 1))
- 
+
  (defthm rad-def
    (and (realp (rad))
 	(> (rad) 0)
@@ -140,7 +151,7 @@
 		 (>= x (rad))
 		 (>= y z)
 		 )
-	    (>= (* x y) (* x z))	    
+	    (>= (* x y) (* x z))
 	    )
    )
  )
@@ -299,9 +310,9 @@
 		 (>= x2 0)
 		 (> x1 x2))
 	    (> (* x1 x1) (* x2 x2)))
-   
+
    :hints (("Goal"
-	    
+
 	    :use (
 		  (:instance ineq-lemma1 (x1 x1) (x2 x2))
 		  (:instance ineq-lemma2 (x1 x1) (x2 x2))
@@ -339,10 +350,10 @@
 	    (equal (* (standard-part y1) (standard-part y1))
 		   (standard-part (square y1))
 		   ))
-   
+
    ))
 
-(local  
+(local
  (defthm root-close-lemma-3
    (implies (and (realp y1)
 		 (realp y2)
@@ -353,7 +364,7 @@
 		 (not (i-close y1 y2))
 		 )
 	    (not (= (standard-part (square y1)) (standard-part (square y2)))))
-   
+
    :hints (("Goal"
 	    :use (
 		  (:instance root-close-lemma-2 (y1 y1) (y2 y2))
@@ -365,7 +376,7 @@
    ))
 
 
-(local 
+(local
  (defthm sqr-real-lemma
    (implies (realp x)
 	    (realp (square x)))
@@ -383,8 +394,8 @@
 		 (not (i-close y1 y2))
 		 )
 	    (not (i-close (square y1) (square y2))))
-   
-   :hints (("Goal"         
+
+   :hints (("Goal"
 	    :use (
 		  (:instance root-close-lemma-3 (y1 y1) (y2 y2))
 		  (:instance root-close-lemma (y1 (square y1)) (y2 (square y2)))
@@ -395,13 +406,13 @@
 	    ))
    ))
 
-(local 
+(local
  (defthm sqrt-real-lemma
    (implies (realp x)
 	    (realp (acl2-sqrt x)))
    ))
 
-(local  
+(local
  (defthm sqrt>=0-lemma
    (implies (and (i-limited x)
 		 (realp x))
@@ -410,7 +421,7 @@
 
 (local
  (defthm root-close-f
-   (implies 
+   (implies
     (and (standardp x1)
 	 (realp x1)
 	 (realp x2)
@@ -434,8 +445,8 @@
 		  (:instance root-close-lemma-6 (y1 (acl2-sqrt x1) ) (y2 (acl2-sqrt x2)))
 		  )
 	    ))
-   
-   
+
+
    ))
 
 (local
@@ -519,7 +530,7 @@
 	    :in-theory (enable acl2-cosine))))
 
  (local
-  (defderivative sin-eqn-deriv 
+  (defderivative sin-eqn-deriv
     (/ (- (acl2-exp (* #c(0 1) x))
 	  (acl2-exp (* #c(0 -1) x)))
        #c(0 2))))
@@ -536,9 +547,9 @@
 		     (acl2-cosine x)))
    :hints (("Goal" :use (:instance sin-eqn-deriv)
 	    :in-theory (enable acl2-sine acl2-cosine))))
- 
+
  (local
-  (defderivative cos-eqn-deriv 
+  (defderivative cos-eqn-deriv
     (/ (+ (ACL2-EXP (* #C(0 1) X))
 	  (ACL2-EXP (* #C(0 -1) X)))
        2)))
@@ -727,7 +738,7 @@
 			     (< x (rad)))
 		       (= x (rad))
 		       (= x (-(rad))))
-		   
+
 		   (and  (>= x (- (rad)))
 			 (<= x (rad)))))
    :hints (("Goal"
@@ -835,11 +846,11 @@
 (local
  (defthm lemma-6
    (implies (realp x)
-	    (equal (fix (- x)) (- x)))  
+	    (equal (fix (- x)) (- x)))
    )
  )
 
-(local 
+(local
  (defthm circle-continuous-lemma-4
    (implies (and (realp x)
 		 (realp y)
@@ -904,7 +915,7 @@
 		 (i-small (- x y))
 		 )
 	    (i-close x y))
-   
+
    :hints (("Goal"
    	    :use (
    		  (:instance i-close (x x) (y y))
@@ -914,7 +925,7 @@
    )
  )
 
-(local 
+(local
  (defthm circle-continuous-lemma-5
    (implies (and (realp x)
 		 (realp y)
@@ -951,7 +962,7 @@
  )
 
 
-(local 
+(local
  (defthm circle-continuous-lemma-6
    (implies (and (standardp x)
 		 (inside-interval-p x (circle-x-domain))
@@ -1111,12 +1122,12 @@
 
 (encapsulate
  (((circle-sub-derivative *) => *))
- 
+
  (local
   (defun circle-sub-derivative (x)
     (* (circle (sub-func x)) (sub-func-prime x))
     ))
- 
+
  (defthm derivative-circle-sub-definition
    (implies (inside-interval-p x (fi-domain))
 	    (equal (circle-sub-derivative x)
@@ -1224,7 +1235,7 @@
 		   (:instance consta1-def)
 		   )
 	     )
-	    
+
  	    ("Subgoal 13"
  	     :use (:instance riemann-circle-sub-prime)
  	     :in-theory (enable dotprod)
@@ -1314,7 +1325,7 @@
 
 (encapsulate
  nil
- 
+
  (local
   (defthmd limited-riemann-circle-small-partition
     (implies (and (realp a) (standardp a)
@@ -1340,7 +1351,7 @@
 	    ("Subgoal 1"
  	     :use (:instance  map-circle)
  	     )
-	    
+
 	    )
     )
   )
@@ -1446,7 +1457,7 @@
 	     :use (:instance abs (x x))
 	     :in-theory nil
 	     ))
-    
+
     ))
 
  (defthm circle-sub-prime-equals
@@ -1477,7 +1488,7 @@
 			     )
 		  )
 	    :in-theory nil
-	    
+
 	    ))
    )
  )

@@ -1,4 +1,15 @@
+; A Mechanized Proof of the Curve Length of a Rectifiable Curve
+;
+; Copyright (C) 2021 University of Wyoming
+;
+;
+; Main Author: Jagadish Bapanapally (jagadishb285@gmail.com)
+; Contributing Authors:
+;   Ruben Gamboa (ruben@uwyo.edu)
+
 (in-package "ACL2")
+
+; cert_param: (uses-acl2r)
 
 (include-book "areaofacircle-0")
 (local (include-book "arithmetic/top-with-meta" :dir :system))
@@ -67,7 +78,7 @@
 
 (local (defthm-std acl2-cosine-std
 	 (implies (standardp x)
-		  (standardp (acl2-cosine x)))	 
+		  (standardp (acl2-cosine x)))
 	 ))
 
 (defthmd f-sine-differentiable
@@ -113,7 +124,7 @@
 		 )
 	   :in-theory nil
 	   ))
-  
+
   )
 
 (local
@@ -175,7 +186,7 @@
     )
   )
 
- (local 
+ (local
   (defthm f2-x-differentiable-lemma
     (implies (and (standardp x)
 		  (inside-interval-p x (fi-domain))
@@ -238,7 +249,7 @@
 (encapsulate
 
  ( ((differential-f-sine * *) => *) )
- 
+
  (local (in-theory nil))
  (local
   (defun differential-f-sine (x eps)
@@ -249,7 +260,7 @@
                  (inside-interval-p (+ x eps) (f2-range)))
             (equal (differential-f-sine x eps)
                    (/ (- (f-sine (+ x eps)) (f-sine x)) eps))))
- 
+
  )
 
 (defthmd realp-differential-f-sine
@@ -266,13 +277,13 @@
 				      (cr-fn2 f2-x))
 	   )
 	  ("Subgoal 5"
-	   :use (:instance f2-range-in-domain-of-f-sine) 
+	   :use (:instance f2-range-in-domain-of-f-sine)
 	   )
 	  ("Subgoal 6"
-	   :use (:instance f-sine-differentiable) 
+	   :use (:instance f-sine-differentiable)
 	   )
 	  ("Subgoal 7"
-	   :use (:instance f2-x-differentiable) 
+	   :use (:instance f2-x-differentiable)
 	   )
 	  )
 
@@ -549,7 +560,7 @@
    (implies (and (realp x)
 		 (realp eps)
 		 (< (- x eps) 0))
-	    (< x eps))		 
+	    (< x eps))
    )
  )
 
@@ -695,7 +706,7 @@
 (local
  (defthm lemma-110
    (implies (<= x y)
-	    (<= (* 1/2 x) (* 1/2 y))) 
+	    (<= (* 1/2 x) (* 1/2 y)))
    )
  )
 
@@ -835,7 +846,7 @@
 	  ("Goal"
 	   :use ((:instance differential-f-sine-o-f2-close-1)
 		 )
-	   
+
 	   :in-theory (disable differential-f-sine-o-f2-definition fi-domain f-sine-o-f2-definition COSINE-2X)
 	   )
 	  ("Goal'"
@@ -919,7 +930,7 @@
 	     (equal (* -1 (- a b))
 		    (- b a)
 		    ))
-    
+
     )
   )
 
@@ -953,7 +964,7 @@
 
  (local
   (defthm lemma-1
-    (implies (and 
+    (implies (and
 	      (acl2-numberp a)
 	      (acl2-numberp b)
 	      (acl2-numberp c)
@@ -966,7 +977,7 @@
 	     :use ((:instance lemma-1-3
 			      (a -1) (b -1) (c (- a b)) (d (- c d)))
 		   (:instance lemma-1-2))
-	     
+
 	     ))
     )
   )
@@ -1006,7 +1017,7 @@
 		 (= x y))
 	    (i-close (/ (* 2 x) y) 2)
 	    )
-   
+
    )
  )
 
@@ -1026,7 +1037,7 @@
 		 (not (= x y)))
 	    (not (= (- x y) 0))
 	    )
-   
+
    )
  )
 
