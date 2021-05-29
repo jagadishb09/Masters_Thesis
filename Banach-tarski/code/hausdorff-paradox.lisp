@@ -42,8 +42,8 @@
 
   (local
    (defthm rotation*point-on-s2-1
-     (implies (and (alist2p :fake-name p1)
-                   (alist2p :fake-name p2)
+     (implies (and (array2p :fake-name p1)
+                   (array2p :fake-name p2)
                    (equal (car (dimensions :fake-name p1)) 1)
                    (equal (cadr (dimensions :fake-name p1)) 1)
                    (realp (aref2 :fake-name p1 0 0))
@@ -52,7 +52,7 @@
               (equal (aref2 :fake-name p1 0 0)
                      (aref2 :fake-name p2 0 0)))
      :hints (("Goal"
-              :in-theory (enable m-=)
+              :in-theory (enable m-= dimensions)
               ))))
 
   (defthm rotation*point-on-s2-2
@@ -141,3 +141,28 @@
              :in-theory (e/d () (m-* m-= m-trans rotation*point-on-s2-5 rotation*point-on-s2-4 rotation*point-on-s2-3 rotation*point-on-s2-2))
              )))
   )
+
+(defun s2-def-p (point r)
+  (and (point-in-r3 point)
+       (realp r)
+       (equal (+ (* (aref2 :fake-name point 0 0) (aref2 :fake-name point 0 0))
+                 (* (aref2 :fake-name point 1 0) (aref2 :fake-name point 1 0))
+                 (* (aref2 :fake-name point 2 0) (aref2 :fake-name point 2 0)))
+              (* r r))))
+
+(defun-sk word-exists (point)
+  (exists w
+          (and (reducedwordp w)
+               (point-in-r3 point)
+               w
+               (m-= (m-* (rotation w (acl2-sqrt 2)) point)
+                    point))))
+
+(defun d-p (point r)
+  (and (s2-def-p point r)
+       (word-exists point)))
+
+
+(defun s2-d-p (point r)
+  (and (s2-def-p point r)
+       (not (d-p point r))))
