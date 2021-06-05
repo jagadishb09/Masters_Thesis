@@ -1,4 +1,4 @@
-; A Mechanized Proof of the Curve Length of a Rectifiable Curve
+; Integration by Substitution
 ;
 ; Copyright (C) 2021 University of Wyoming
 ;
