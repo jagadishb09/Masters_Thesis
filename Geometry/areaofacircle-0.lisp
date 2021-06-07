@@ -1516,8 +1516,8 @@
 	    ))
    )
  )
- 
- (defun f-sine (x)
+
+(defun f-sine (x)
   (if (realp x)
       (acl2-sine x)
     0)
@@ -1562,7 +1562,7 @@
 
 (defthmd f2-x--real
   (realp (f2-x x)))
- 
+
 (defthmd f2-range-in-domain-of-f-sine
   (implies (inside-interval-p x (fi-domain))
 	   (inside-interval-p (f2-x x) (f2-range)))
@@ -1627,8 +1627,8 @@
 	   :in-theory nil
 	   ))
   )
-  
-  
+
+
 (local
  (defthm lemma-23
    (implies (and (acl2-numberp x)
@@ -2061,7 +2061,44 @@
 				      )
 	   )))
 
-(skip-proofs
+(encapsulate
+ ()
+
+ (local
+  (defthm differential-f-sine-std-equals-1
+    (implies (and (realp x)
+		  (acl2-numberp eps))
+	     (equal (+ x (- (+ x eps)))
+		    (- eps)))))
+
+ (local
+  (defthm differential-f-sine-std-equals-2
+    (implies (and (acl2-numberp a)
+		  (acl2-numberp b)
+		  (equal (standard-part (- a b)) 0))
+	     (equal (standard-part a) (standard-part b)))))
+
+ (local
+  (defthm differential-f-sine-std-equals-3
+    (equal (* (+ (ACL2-SINE X)
+		 (- (ACL2-SINE (+ X EPS))))
+	      (/ (- EPS)))
+	   (* (+ (ACL2-SINE (+ X EPS))
+		 (- (ACL2-SINE X)))
+	      (/ EPS)))))
+
+ (local
+  (defthm differential-f-sine-std-equals-4
+    (implies (standardp x)
+	     (standardp (acl2-cosine x)))))
+ 
+ (local (in-theory nil))
+
+ (local (include-book "nonstd/nsa/inverse-square" :dir :system))
+ (local (include-book "nonstd/nsa/inverse-trig" :dir :system))
+ (local (include-book "nonstd/integrals/u-substitution" :dir :system))
+ (local (include-book "arithmetic/top-with-meta" :dir :system))
+
  (defthmd differential-f-sine-std-equals
    (implies (and
 	     (standardp x)
@@ -2075,17 +2112,23 @@
 	   :use ((:instance acl2-sine-derivative
 			    (x x)
 			    (y (+ x eps)))
-
 		 (:instance f2-range-real)
 		 (:instance f2-range-real(x (+ x eps)))
 		 (:instance i-close (x x)
 			    (y (+ x eps))
 			    )
 		 (:instance differential-f-sine-definition)
+		 (:instance differential-f-sine-std-equals-1 (x x) (eps eps))
+		 (:instance standard-part-of-uminus (x eps))
+		 (:instance differential-f-sine-std-equals-2
+			    (a (* (+ (ACL2-SINE (+ X EPS)) (- (ACL2-SINE X))) (/ EPS)))
+			    (b (acl2-cosine x)))
+		 (:instance differential-f-sine-std-equals-4 (x x))
+		 (:instance standard-part-of-standardp (x (acl2-cosine x)))
+		 (:instance differential-f-sine-std-equals-3 (x x) (eps eps))
 		 )
-	   :in-theory (enable nsa-theory)
-	   ))
-   ))
+	   :in-theory (enable nsa-theory fix f-sine)
+	   ))))
 
 (defthmd differential-cr-f2-equals
   (implies (and (standardp x)
@@ -2230,7 +2273,11 @@
 (encapsulate
  nil
  (local (in-theory nil))
- (local (include-book "areaofacircle-0"))
+
+ (local (include-book "nonstd/nsa/inverse-square" :dir :system))
+ (local (include-book "nonstd/nsa/inverse-trig" :dir :system))
+ (local (include-book "nonstd/integrals/u-substitution" :dir :system))
+ 
  (defthmd x-in-interval-implies-x+-eps-in-interval-f2-range
    (implies (and (inside-interval-p x (f2-range))
 		 (standardp x)
@@ -2334,7 +2381,11 @@
 (encapsulate
  nil
  (local (in-theory nil))
- (local (include-book "areaofacircle-0"))
+
+ (local (include-book "nonstd/nsa/inverse-square" :dir :system))
+ (local (include-book "nonstd/nsa/inverse-trig" :dir :system))
+ (local (include-book "nonstd/integrals/u-substitution" :dir :system))
+ 
  (defthmd x-in-interval-implies-x+-eps-in-interval-fi-dom
    (implies (and (inside-interval-p x (fi-domain))
 		 (standardp x)
@@ -2374,7 +2425,24 @@
 	   ))
   )
 
-(skip-proofs
+(encapsulate
+ ()
+
+ (local
+  (defthm differential-f-sine-o-f2-close-1-1
+    (equal (* a b) (* b a))))
+
+ (local
+  (defthm differential-f-sine-o-f2-close-1-2
+    (implies (standardp x)
+ 	     (standardp (* 2 x)))))
+ 
+ (local (in-theory nil))
+
+ (local (include-book "nonstd/nsa/inverse-square" :dir :system))
+ (local (include-book "nonstd/nsa/inverse-trig" :dir :system))
+ (local (include-book "nonstd/integrals/u-substitution" :dir :system))
+ 
  (defthmd differential-f-sine-o-f2-close-1
    (implies (and (inside-interval-p x (fi-domain))
 		 (standardp x)
@@ -2383,28 +2451,47 @@
 	    (equal (standard-part (differential-f-sine-o-f2 x eps))
 		   (* 2 (acl2-cosine (* 2 x)))))
    :hints (("Goal"
-	    :use (
+	    :use ((:instance differential-f-sine-o-f2-close-1-1 (a (acl2-cosine (* 2 x))) (b 2))
 		  (:instance differential-f-sine-o-f2-close)
 		  (:instance derivative-cr-f2-equals)
 		  (:instance derivative-f-sine-equals(x (f2-x x)))
 		  (:instance derivative-f-sine-o-f2-definition)
 		  (:instance f2-range-in-domain-of-f-sine)
+		  (:instance inside-interval-is-real (x x) (interval (fi-domain)))
+		  (:instance differential-f-sine-o-f2-close-1-2 (x x))
 		  )
+	    :in-theory (enable f2-x fix)
 	    ))
    ))
 
-(skip-proofs
- (local
-  (defthm lemma-24
-    (implies (and (acl2-numberp x)
-		  (acl2-numberp y)
-		  (= (standard-part x) y))
-	     (i-close x y)
-	     )
-    :hints (("Goal"
-	     :in-theory (enable nsa-theory)
-	     ))
-    )
+(local
+ (encapsulate
+  ()
+
+  ;; (defthm lemma-24-1
+  ;;   (implies (and (acl2-numberp x)
+  ;; 		  (acl2-numberp y)
+  ;; 		  (equal (standard-part x)
+  ;; 			 (standard-part y)))
+  ;; 	     (i-small (- x y))))
+
+  (local (in-theory nil))
+  (local (include-book "nonstd/nsa/inverse-square" :dir :system))
+  (local (include-book "nonstd/nsa/inverse-trig" :dir :system))
+  (local (include-book "nonstd/integrals/u-substitution" :dir :system))
+  (local (include-book "arithmetic/top-with-meta" :dir :system))
+
+  (skip-proofs
+   (defthm lemma-24
+     (implies (and (acl2-numberp x)
+		   (acl2-numberp y)
+		   (= (standard-part x) y))
+	      (i-close x y)
+	      )
+     :hints (("Goal"
+	      :in-theory (enable nsa-theory standard-part)
+	      ))
+     ))
   ))
 
 (defthmd differential-f-sine-o-f2-derivative
