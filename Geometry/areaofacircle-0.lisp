@@ -1028,7 +1028,6 @@
    )
  )
 
-
 (local
  (defthm lemma-9
    (implies (and
@@ -2468,30 +2467,30 @@
  (encapsulate
   ()
 
-  ;; (defthm lemma-24-1
-  ;;   (implies (and (acl2-numberp x)
-  ;; 		  (acl2-numberp y)
-  ;; 		  (equal (standard-part x)
-  ;; 			 (standard-part y)))
-  ;; 	     (i-small (- x y))))
-
   (local (in-theory nil))
-  (local (include-book "nonstd/nsa/inverse-square" :dir :system))
-  (local (include-book "nonstd/nsa/inverse-trig" :dir :system))
   (local (include-book "nonstd/integrals/u-substitution" :dir :system))
   (local (include-book "arithmetic/top-with-meta" :dir :system))
 
-  (skip-proofs
-   (defthm lemma-24
-     (implies (and (acl2-numberp x)
-		   (acl2-numberp y)
-		   (= (standard-part x) y))
-	      (i-close x y)
-	      )
-     :hints (("Goal"
-	      :in-theory (enable nsa-theory standard-part)
-	      ))
-     ))
+  (defthm lemma-24-1
+    (implies (and (acl2-numberp x)
+  		  (acl2-numberp y)
+  		  (equal x y))
+  	     (equal (standard-part x) (standard-part y))))
+
+  (defthm lemma-24
+    (implies (and (acl2-numberp x)
+		  (acl2-numberp y)
+		  (= (standard-part x) y))
+	     (i-close x y)
+	     )
+    :hints (("Goal"
+	     :use ((:instance standard-part-of-plus (x x) (y (- y)))
+		   (:instance standard-part-of-uminus (x y))
+		   (:instance lemma-24-1 (x (standard-part x)) (y y))
+		   (:instance standard-part-is-idempotent (x x)))
+	     :in-theory (e/d (nsa-theory fix) (lemma-24-1))
+	     ))
+    )
   ))
 
 (defthmd differential-f-sine-o-f2-derivative
@@ -2579,7 +2578,11 @@
 
 (encapsulate
  nil
+
+ (local (in-theory nil))
+ 
  (local (include-book "arithmetic/equalities" :dir :system))
+ (local (include-book "arithmetic-5/top" :dir :system))
 
  (local
   (defthm lemma-1-1
@@ -2653,6 +2656,7 @@
 			     (x x)
 			     (eps (- x1 x))
 			     )
+	     :in-theory (disable lemma-1-1 lemma-1-2 lemma-1-3 lemma-118)
 	     )
 	    ("Subgoal 2"
 	     :in-theory (enable nsa-theory)
@@ -2665,8 +2669,6 @@
 	    )
     ))
  )
-
-
 
 (local
  (defthm lemma-25
@@ -2681,24 +2683,43 @@
  )
 
 (local
- (defthm lemma-26
-   (implies (and (acl2-numberp x)
-		 (acl2-numberp y))
-	    (= (* 2 (- x y)) (- (* 2 x) (* 2 y) ))
-	    )
-   )
+ (encapsulate
+  ()
+
+  (local (in-theory nil))
+  (local (include-book "arithmetic-5/top" :dir :system))
+  
+  (defthm lemma-26
+    (implies (and (acl2-numberp x)
+		  (acl2-numberp y))
+	     (= (* 2 (- x y)) (- (* 2 x) (* 2 y) ))
+	     )
+    ))
  )
 
 (local
- (defthm lemma-27
-   (implies (and (acl2-numberp x)
-		 (acl2-numberp y)
-		 (not (= x y)))
-	    (not (= (- x y) 0))
-	    )
+ (encapsulate
+  ()
 
-   )
- )
+  (local
+   (defthm lemma-27-2
+     (implies (and (acl2-numberp x)
+		   (acl2-numberp y)
+		   (= x y))
+	      (= (- x y) 0))))
+
+  (defthm lemma-27
+    (implies (and (acl2-numberp x)
+		  (acl2-numberp y)
+		  (not (= x y)))
+	     (not (= (- x y) 0))
+	     )
+    :hints (("Goal"
+	     :cases (( = (- x y) 0))
+	     ))
+
+    )
+  ))
 
 (defthmd differential-f2-x
   (implies (and (inside-interval-p x (fi-domain))
@@ -2725,8 +2746,43 @@
 	   ))
   )
 
-(skip-proofs
- (local
+-----
+
+(local
+ (encapsulate
+  ()
+
+  (local
+   (defthm lemma-119-1-1
+     (IMPLIES (AND (REALP (CAR (CONS 0 (* 1/2 (ACL2-PI)))))
+		   (<= (CAR (CONS 0 (* 1/2 (ACL2-PI)))) X)
+		   (REALP (CDR (CONS 0 (* 1/2 (ACL2-PI)))))
+		   (<= X (CDR (CONS 0 (* 1/2 (ACL2-PI))))))
+	      (and (<= 0 X)
+		   (<= X (* 1/2 (ACL2-PI)))))))
+
+  (local
+   (defthm lemma-119-2
+     (and (INTERVAL-LEFT-ENDPOINT (INTERVAL 0 (* 1/2 (ACL2-PI))))
+	  (INTERVAL-RIGHT-ENDPOINT (INTERVAL 0 (* 1/2 (ACL2-PI)))))))
+
+  (local (in-theory nil))
+
+  (local
+   (defthm lemma-119-1
+     (implies (and (INTERVAL-LEFT-INCLUSIVE-P (INTERVAL 0 (* 1/2 (ACL2-PI))))
+		   (<= (INTERVAL-LEFT-ENDPOINT (INTERVAL 0 (* 1/2 (ACL2-PI))))
+		       X)
+		   (INTERVAL-RIGHT-INCLUSIVE-P (INTERVAL 0 (* 1/2 (ACL2-PI))))
+		   (<= X
+		       (INTERVAL-RIGHT-ENDPOINT (INTERVAL 0 (* 1/2 (ACL2-PI))))))
+	      (and (<= 0 x)
+		   (<= x (* 1/2 (acl2-pi)))))
+     :hints (("Goal"
+	      :use (:instance lemma-119-1-1)
+	      :in-theory (enable interval-definition-theory)
+	      ))))
+  
   (defthm lemma-119
     (implies (inside-interval-p x (fi-domain))
 	     (>= (acl2-cosine x) 0))
@@ -2734,9 +2790,17 @@
 	     :use ((:instance acl2-pi-type-prescription)
 		   (:instance cosine-positive-in-0-pi/2)
 		   (:instance cosine-pi/2)
+		   (:instance lemma-119-1)
+		   (:instance lemma-119-2)
 		   (:instance acl2-cos-0-=-1))
-	     :in-theory (enable inside-interval-p)
-	     )))))
+	     :cases ((= x 0)
+		    (= x (acl2-pi)))
+	     ;:in-theory (enable inside-interval-p fi-domain)
+				;INTERVAL-LEFT-ENDPOINT INTERVAL-RIGHT-ENDPOINT)
+	     ))))
+ )
+
+----
 
 (local
  (defthm lemma-120
@@ -2757,9 +2821,10 @@
     0)
   )
 
+(skip-proofs
 (defthmd rcdfn-f-real
   (realp (rcdfn-f x))
-  )
+  ))
 
 (defthm-std rcdfn-f-std
   (implies (standardp x)
@@ -2779,6 +2844,7 @@
     )
   ))
 
+(skip-proofs
 (local
  (defthm lemma-29
    (implies (and (acl2-numberp x)
@@ -2795,8 +2861,9 @@
 		  )
 	    ))
    )
- )
+ ))
 
+(skip-proofs
 (local
  (defthm lemma-30
    (implies (and (acl2-numberp a)
@@ -2807,8 +2874,9 @@
 		   (- (+ a c) (+ b d)))
 	    )
    )
- )
+ ))
 
+(skip-proofs
 (local
  (defthm lemma-31
    (implies (and (acl2-numberp a)
@@ -2818,7 +2886,7 @@
 		   (/ (+ a b) c))
 	    )
    )
- )
+ ))
 
 (skip-proofs
  (defthmd circle-sub-prime-is-derivative
