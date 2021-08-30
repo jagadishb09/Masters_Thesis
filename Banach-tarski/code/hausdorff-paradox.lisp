@@ -173,3 +173,8 @@
   :hints (("Goal"
            :use (:instance rotation*point-on-s2 (p1 p) (p2 (m-* rot p)))
            )))
+
+;; (defthm point-on-d=>rot*p-on-d
+;;   (implies (and (reducedwordp w)
+;;                 (d-p (m-* (rotation w (acl2-sqrt 2)) p)))
+;;            (d-p p)))
