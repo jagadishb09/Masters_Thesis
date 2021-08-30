@@ -142,13 +142,12 @@
              )))
   )
 
-(defun s2-def-p (point r)
+(defun s2-def-p (point)
   (and (point-in-r3 point)
-       (realp r)
        (equal (+ (* (aref2 :fake-name point 0 0) (aref2 :fake-name point 0 0))
                  (* (aref2 :fake-name point 1 0) (aref2 :fake-name point 1 0))
                  (* (aref2 :fake-name point 2 0) (aref2 :fake-name point 2 0)))
-              (* r r))))
+              1)))
 
 (defun-sk word-exists (point)
   (exists w
@@ -158,11 +157,19 @@
                (m-= (m-* (rotation w (acl2-sqrt 2)) point)
                     point))))
 
-(defun d-p (point r)
-  (and (s2-def-p point r)
+(defun d-p (point)
+  (and (s2-def-p point)
        (word-exists point)))
 
 
-(defun s2-d-p (point r)
-  (and (s2-def-p point r)
-       (not (d-p point r))))
+(defun s2-d-p (point)
+  (and (s2-def-p point)
+       (not (d-p point))))
+
+(defthm rot*p-on-s2
+  (implies (and (s2-def-p p)
+                (r3-rotationp rot))
+           (s2-def-p (m-* rot p)))
+  :hints (("Goal"
+           :use (:instance rotation*point-on-s2 (p1 p) (p2 (m-* rot p)))
+           )))
