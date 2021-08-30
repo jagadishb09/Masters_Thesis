@@ -34,7 +34,6 @@
 		    (equal (car w) (wb-inv)))
 		(weak-wordp (cdr w))))))
 
-
 (defun wordp(w letter)
   (cond ((atom w) (equal w nil))
 	((equal letter (wa)) (let ((firstw (car w)) (restw (cdr w)))
@@ -80,32 +79,28 @@
 	   (and (not (a-inv-wordp a))
 		(not (b-wordp a))
 		(not (b-inv-wordp a))
-		(not (equal a '()))))
-  )
+		(not (equal a '())))))
 
 (defthmd b-wordp-equivalent
   (implies (b-wordp b)
 	   (and (not (a-inv-wordp b))
 		(not (a-wordp b))
 		(not (b-inv-wordp b))
-		(not (equal b '()))))
-  )
+		(not (equal b '())))))
 
 (defthmd a-inv-wordp-equivalent
   (implies (a-inv-wordp a-inv)
 	   (and (not (a-wordp a-inv))
 		(not (b-wordp a-inv))
 		(not (b-inv-wordp a-inv))
-		(not (equal a-inv '()))))
-  )
+		(not (equal a-inv '())))))
 
 (defthmd b-inv-wordp-equivalent
   (implies (b-inv-wordp b-inv)
 	   (and (not (b-wordp b-inv))
 		(not (a-wordp b-inv))
 		(not (a-inv-wordp b-inv))
-		(not (equal b-inv '()))))
-  )
+		(not (equal b-inv '())))))
 
 (defun word-fix (w)
   (if (atom w)
@@ -132,16 +127,14 @@
 		 w)))))))
 
 (defun compose (x y)
-  (word-fix (append x y))
-  )
+  (word-fix (append x y)))
 
 (defun reducedwordp (x)
   (or (a-wordp x)
       (a-inv-wordp x)
       (b-wordp x)
       (b-inv-wordp x)
-      (equal x '()))
-  )
+      (equal x '())))
 
 (defthmd weak-wordp-equivalent
   (implies (weak-wordp x)
@@ -177,9 +170,7 @@
 
  (defthmd reducedwordp=>weak-wordp
    (IMPLIES (reducedwordp x)
-	    (weak-wordp x)))
- 
- )
+	    (weak-wordp x))))
 
 (encapsulate
  ()
@@ -195,28 +186,23 @@
 
  (defthmd word-fix=a-wordp
    (IMPLIES (a-wordp x)
-	    (equal (word-fix x) x))
-   )
+	    (equal (word-fix x) x)))
 
  (defthmd word-fix=a-inv-wordp
    (IMPLIES (a-inv-wordp x)
-	    (equal (word-fix x) x))
-   )
+	    (equal (word-fix x) x)))
 
  (defthmd word-fix=b-wordp
    (IMPLIES (b-wordp x)
-	    (equal (word-fix x) x))
-   )
+	    (equal (word-fix x) x)))
 
  (defthmd word-fix=b-inv-wordp
    (IMPLIES (b-inv-wordp x)
-	    (equal (word-fix x) x))
-   )
+	    (equal (word-fix x) x)))
 
  (defthmd word-fix=reducedwordp
    (implies (reducedwordp x)
-	    (equal (word-fix x) x))
-   )
+	    (equal (word-fix x) x)))
 
  (defthmd word-fix=reducedwordp-1
    (implies (and (weak-wordp x)
@@ -224,21 +210,18 @@
 	    (reducedwordp x))
    :hints (("Goal"
 	    :use (:instance weak-wordp-equivalent (x x))
-	    ))
-   )
+	    )))
  )
 
 
 (defthmd weak-word-cdr
   (implies (weak-wordp x)
-	   (weak-wordp (cdr x)))
-  )
+	   (weak-wordp (cdr x))))
 
 (defthmd character-listp-word
   (implies (or (reducedwordp x)
 	       (weak-wordp x))
-	   (character-listp x))
-  )
+	   (character-listp x)))
 
 (defthmd reduced-cdr
   (implies (reducedwordp x)
@@ -311,7 +294,7 @@
     (IMPLIES (reducedwordp x)
 	     (weak-wordp x)))
   )
- 
+
  (local
   (defthm word-fix=reducedwordp-assoc
     (implies (reducedwordp x)
@@ -329,7 +312,7 @@
 	     ))
     )
   )
- 
+
  (local
   (defthm weak-word-cdr-assoc
     (implies (weak-wordp x)
@@ -344,7 +327,6 @@
 	     (character-listp x))
     )
   )
- 
 
  (local
   (defthm reduced-cdr-assoc
@@ -392,27 +374,25 @@
 		   (:instance weak-wordp-equivalent (x (append x y)))
 		   )
 	     ))
-    )
-  )
+    ))
 
  (local
   (defthm wordfix-wordfix
     (implies (weak-wordp x)
 	     (equal (word-fix (word-fix x)) (word-fix x)))
-    )
-  )
+    ))
 
  (local
-  (defthm append-nil-assoc                   
-    (implies (character-listp x)             
+  (defthm append-nil-assoc
+    (implies (character-listp x)
 	     (equal (append x nil) x))
-    :rule-classes ((:rewrite 
+    :rule-classes ((:rewrite
 		    :backchain-limit-lst (3)
 		    :match-free :all)))
   )
 
  (local
-  (defthm append-lemma                   
+  (defthm append-lemma
     (implies (and (reducedwordp x)
 		  (reducedwordp y)
 		  (reducedwordp z))
@@ -433,14 +413,14 @@
 		 ))
     )
   )
- 
+
  (local
   (defthm weak-wordp-rev
     (implies (weak-wordp x)
 	     (weak-wordp (rev x)))
     )
   )
- 
+
  (local
   (defthm compose-assoc-lemma
     (implies (and (weak-wordp x)
@@ -482,12 +462,10 @@
 	    (equal (word-fix (append x (word-fix y))) (word-fix (append x y)))
 	    )
    :hints (("Goal"
-	    :use ((:instance compose-assoc-lemma (x x) (y y))
-
-		  )
+	    :use ((:instance compose-assoc-lemma (x x) (y y)))
 	    :in-theory (enable word-fix append)
 	    ))
-   ) 
+   )
 
  (encapsulate
   ()
@@ -513,7 +491,7 @@
 	      )
      )
    )
-  
+
   (defthmd lemma3
     (implies (and (character-listp x)
 		  x)
@@ -535,7 +513,7 @@
 	      (weak-wordp (last x)))
      )
    )
-  
+
   (local
    (defthmd word-fix-rev-lemma1
      (implies (and (weak-wordp x)
@@ -581,8 +559,8 @@
 		    )
 	      :do-not-induct t
 	      :in-theory nil
-	      )	   
-	     )   
+	      )
+	     )
      )
    )
 
@@ -593,7 +571,7 @@
 	       (weak-wordp (last x)))
 	     )
     )
-  
+
   (defthmd word-fix-rev-lemma3-12
     (implies (and (characterp x)
 		  (weak-wordp (list x))
@@ -602,7 +580,7 @@
 	     (equal (word-fix (append (list x) y))
 		    (append (word-fix (append (list x) (list (car y)))) (cdr y))))
     )
-  
+
   (local
    (defthmd lemma8
      (implies (and (weak-wordp x)
@@ -614,7 +592,7 @@
 		  (equal x '(#\d))))
      )
    )
-  
+
   (local
    (defthmd word-fix-rev-lemma3-1
      (implies (and (characterp x)
@@ -633,8 +611,8 @@
 	      :use ((:instance reducedwordp=>weak-wordp-assoc (x y))
 		    (:instance lemma8 (x (list x)))
 		    (:instance lemma8 (x y))
-		    (:instance lemma8 (x (list z))))	       
-	      )	      
+		    (:instance lemma8 (x (list z))))
+	      )
 	     ("Subgoal 1"
 	      :use (
 		    (:instance compose-assoc-lemma1
@@ -679,7 +657,7 @@
 	      ))
      )
    )
-  
+
   (local
    (defthmd word-fix-rev-lemma3-induct
      (implies (and (not (atom x))
@@ -698,7 +676,7 @@
 	      :cases ((not x)
 		      x)
 	      )
-	     ("Subgoal 1"	       
+	     ("Subgoal 1"
 	      :use (
 		    (:instance lemma-13 (x x))
 		    (:instance character-listp-word-assoc (x x))
@@ -714,7 +692,7 @@
 		    (:instance compose-assoc-lemma
 			       (x (list (car x)))
 			       (y (append (word-fix (cdr x)) (list y))))
-		    
+
 		    (:instance weak-wordp-equivalent-assoc (x (cdr x)))
 		    (:instance word-fix-rev-lemma3-1
 			       (x (car x))
@@ -730,7 +708,7 @@
 	      ))
      )
    )
-  
+
   (local
    (defthmd word-fix-rev-lemma3
      (implies (and (weak-wordp x)
@@ -760,7 +738,7 @@
 			       (y (word-fix (cdr x)))
 			       (z y))
 		    )
-	      )	      
+	      )
 	     ("Subgoal *1/9"
 	      :use ((:instance word-fix-rev-lemma3-induct (x x)))
 	      )
@@ -845,13 +823,12 @@
 		   (character-listp y))
 	      (equal (rev (append x y))
 		     (append (rev y) (rev x))))
-     
      )
    )
 
   (local
    (defthmd lemma9
-     (implies (and 
+     (implies (and
 	       (weak-wordp x)
 	       (weak-wordp y)
 	       (<= (len x) 1)
@@ -862,7 +839,7 @@
 
 	      :use ((:instance lemma8 (x x))
 		    (:instance lemma8 (x y)))
-	      
+
 	      :cases (
 		      (and (atom x) (atom y))
 		      (and (equal x '(#\a)) (equal y '(#\a)))
@@ -888,7 +865,7 @@
 		      (and (equal x '(#\d)) (atom y))
 		      (and (equal x '(#\d)) (atom y))
 		      (and (equal x '(#\d)) (atom y))
-		      (and (equal x '(#\d)) (atom y))		      
+		      (and (equal x '(#\d)) (atom y))
 		      )
 	      :in-theory (enable append rev)
 	      )
@@ -956,7 +933,7 @@
 		    (:instance character-listp-word-assoc (x x))
 		    (:instance character-listp-word-assoc (x (word-fix (cdr x))))
 		    (:instance lemma5 (x (word-fix (cdr x))))
-		    (:instance lemma6 (x x))		    
+		    (:instance lemma6 (x x))
 		    )
 	      :in-theory nil
 	      :do-not-induct t
@@ -984,7 +961,7 @@
 		    (:instance lemma5 (x (word-fix (append (last (rev (word-fix (cdr x))))
 							   (list (car x))))))
 		    (:instance word-fix-lemma2 (x x))
-		    (:instance lemma7 
+		    (:instance lemma7
 			       (x (rev (word-fix (append (last (rev (word-fix (cdr x))))
 							 (list (car x))))))
 			       (y (cdr (fix (cdr x)))))
@@ -1007,14 +984,14 @@
 					  (list (car x)))))
 		    (:instance character-listp-word-assoc
 			       (x (word-fix (append (last (rev (word-fix (cdr x))))
-						    (list (car x))))))		    
+						    (list (car x))))))
 		    )
-	      :in-theory (enable append)	      
+	      :in-theory (enable append)
 	      )
-	     )								    
+	     )
      )
    )
-  
+
   (defthmd word-fix-rev-lemma
     (implies (weak-wordp x)
 	     (equal (word-fix (rev x)) (rev (word-fix x))))
@@ -1089,7 +1066,7 @@
 	    ("Subgoal *1/2"
 	     :use (:instance word-fix-lemma1 (x x))
 	     )
-	    )   
+	    )
     )
   )
 
@@ -1106,7 +1083,7 @@
 		  (:instance compose-assoc-lemma1 (x (rev z)) (y (rev y)) (z (rev x)))
 		  (:instance word-fix-rev-lemma (x (append (rev z) (rev y) (rev x)))))
 	    :do-not-induct t
-	    ))  
+	    ))
    )
  )
 
@@ -1124,18 +1101,18 @@
 
 (encapsulate
  ()
- (local 
+ (local
   (defthm weak-word-cdr
     (implies (weak-wordp x)
 	     (weak-wordp (cdr x)))
-    )  
+    )
   )
 
- (local 
+ (local
   (defthm reducedword-cdr
     (implies (reducedwordp x)
 	     (reducedwordp (cdr x)))
-    )  
+    )
   )
 
  (local
@@ -1147,12 +1124,12 @@
 	     :use ((:instance word-fix=reducedwordp-1 (x x))
 		   (:instance reducedword-cdr (x x))
 		   (:instance word-fix=reducedwordp (x (cdr x))))
-	     
+
 	     ))
     )
   )
 
- (local 
+ (local
   (defthm weak-wordp-rev
     (implies (weak-wordp x)
 	     (weak-wordp (rev x)))
@@ -1161,7 +1138,7 @@
 
  (local
   (defthm word-fix-lemma1
-    (implies (and 
+    (implies (and
 	      (reducedwordp x)
 	      (not (equal x '()))
 	      (characterp y)
@@ -1214,7 +1191,7 @@
     :hints (("Goal"
 	     :use (:instance character-listp-word (x x))
 	     :in-theory (enable rev)
-	     
+
 	     ))
     )
   )
@@ -1327,7 +1304,7 @@
 		 (:instance word-fix=reducedwordp-1 (x x))
 		 (:instance word-fix=reducedwordp-1 (x (rev x))))
 	   :in-theory nil
-	   
+
 	   ))
   )
 
@@ -1439,7 +1416,7 @@
 (defthmd reduced-inverse-induct-lemma6
   (implies (and (reducedwordp x)
 		(not (atom x)))
-	   (equal 
+	   (equal
 	    (compose (cdr x) (compose (rev (word-flip (cdr x))) (word-flip (list (car x)))))
 	    (WORD-FIX (CDR (APPEND X (REV (WORD-FLIP X)))))))
   :hints (("Goal"
@@ -1503,7 +1480,7 @@
 	   )
 	  ("Subgoal *1/2"
 	   :use ((:instance reduced-inverse-induct))
-	   )	  
+	   )
 	  )
   )
 

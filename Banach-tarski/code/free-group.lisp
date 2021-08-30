@@ -15,7 +15,7 @@
     ((1 . 2) . 0)
     ((2 . 0) . 0)
     ((2 . 1) . 0)
-    ((2 . 2) . 1) 
+    ((2 . 2) . 1)
     )
   )
 
@@ -45,7 +45,7 @@
     ((1 . 2) . ,(* 2/3 x) )
     ((2 . 0) . 0)
     ((2 . 1) . ,(* -2/3 x) )
-    ((2 . 2) . 1/3) 
+    ((2 . 2) . 1/3)
     )
   )
 
@@ -60,7 +60,7 @@
     ((1 . 2) . 0)
     ((2 . 0) . 0)
     ((2 . 1) . 0)
-    ((2 . 2) . 1)    
+    ((2 . 2) . 1)
     )
   )
 
@@ -85,7 +85,6 @@
     ((0 . 0) . 0)
     ((1 . 0) . 1)
     ((2 . 0) . 0)
-    
     )
   )
 
@@ -102,7 +101,7 @@
 		     (compress21 name l (+ n 1) i j default))))
     :hints (("Goal"
 	     :in-theory (enable compress21 compress211)
-	     ))		 
+	     ))
     )
   )
 
@@ -139,7 +138,7 @@
 	(m-= (m-* (b-inv-rotation x) (id-rotation)) (b-inv-rotation x))
 	)
    :hints (("Goal"
-	    :in-theory (enable 
+	    :in-theory (enable
 			alist2p array2p aset2 aref2 compress2 header
 			dimensions maximum-length default
 			matrixp compress21
@@ -225,8 +224,8 @@
 
  (defthmd rotation-=
    (implies (and (weak-wordp w)
-		 (not (atom w)))	   
-	    (cond 
+		 (not (atom w)))
+	    (cond
 	     ((equal (car w) (wa)) (equal (rotation w x) (m-* (a-rotation x) (rotation (cdr w) x))))
 	     ((equal (car w) (wa-inv)) (equal (rotation w x) (m-* (a-inv-rotation x) (rotation (cdr w) x))))
 	     ((equal (car w) (wb)) (equal (rotation w x) (m-* (b-rotation x) (rotation (cdr w) x))))
@@ -286,7 +285,7 @@
 			     (m1 (b-inv-rotation x)))
 		  (:instance array2p-funs (y name) (x x))
 		  )
-	    )	   
+	    )
 	   )
    )
 
@@ -302,7 +301,7 @@
 			      3))))
     (IMPLIES (AND (WEAK-WORDP W)
 		  (SYMBOLP NAME))
-	     (and 
+	     (and
 	      (EQUAL (CAR (DIMENSIONS NAME (ROTATION W X)))
 		     3)
 	      (EQUAL (CADR (DIMENSIONS NAME (ROTATION W X)))
@@ -433,7 +432,7 @@
 		 (acl2-numberp (aref2 '$arg2 m1 0 0))
 		 (acl2-numberp (aref2 '$arg2 m1 1 0))
 		 (acl2-numberp (aref2 '$arg2 m1 2 0)))
-	    
+
 	    )
    :hints (("Goal"
 	    :in-theory (enable aref2 default header)
@@ -519,10 +518,10 @@
 			       (m1 (M-* (ROTATION (CDR W) X) (POINT-P)))
 			       (name name)
 			       (x x)
-			       )		    
+			       )
 		    )
-	      :do-not-induct t	      
-	      ))  
+	      :do-not-induct t
+	      ))
      )
    )
 
@@ -533,7 +532,7 @@
 	     (and (ACL2-NUMBERP (aref2 name (M-* (ROTATION w X) (POINT-P)) 0 0))
 		  (ACL2-NUMBERP (aref2 name (M-* (ROTATION w X) (POINT-P)) 1 0))
 		  (ACL2-NUMBERP (aref2 name (M-* (ROTATION w X) (POINT-P)) 2 0))))
-    
+
     :hints (("Subgoal *1/5"
 	     :use (:instance acl2-nump-rot-ind)
 	     )
@@ -549,11 +548,10 @@
 	    ("Subgoal *1/1"
 	     :in-theory (enable weak-wordp rotation aref2)
 	     )
-	    
+
 	    )
     )
   )
-
 
  (encapsulate
   ()
@@ -705,7 +703,7 @@
 	      ))
      )
    )
-  
+
   (local
    (defthmd lemma-2
      (implies (and (acl2-numberp b)
@@ -738,7 +736,7 @@
 	      ))
      )
    )
-  
+
   (local
    (defthmd lemma-3
      (implies (and (acl2-numberp b)
@@ -947,7 +945,7 @@
 	      ))
      )
    )
-  
+
   (defthmd lemma-int
     (implies (and (acl2-numberp a)
 		  (acl2-numberp b)
@@ -1014,7 +1012,7 @@
 		 ))
    :hints (("Goal"
 	    :use (:instance sqrt-2-lemmas)
-	    :in-theory (e/d 
+	    :in-theory (e/d
 			(alist2p array2p aset2 aref2 compress2 header
 				 dimensions maximum-length default
 				 matrixp compress21
@@ -1225,11 +1223,11 @@
 		     (* (/ (acl2-sqrt 2)) y)))
      :hints (("Goal"
 	      :use (:instance sqrt-2-lemmas)
-	      
+
 	      ))
      )
    )
-  
+
   (local
    (defthmd wa-inv-sub2-lemma
      (implies (equal (+ (* 1/3 b) (* 2/3 (acl2-sqrt 2) c))
@@ -1242,7 +1240,7 @@
 	      ))
      )
    )
-  
+
   (defthmd n-f-a-inv-r
     (implies (and (weak-wordp w)
 		  (equal x (acl2-sqrt 2)))
@@ -1321,11 +1319,10 @@
 				       2 0)
 				)
 			     )
-	     )	    
+	     )
 	    )
     )
   )
-
 
  (encapsulate
   ()
@@ -1378,7 +1375,7 @@
 	      ))
      )
    )
-  
+
   (defthmd n-f-b-r
     (implies (and (weak-wordp w)
 		  (equal x (acl2-sqrt 2)))
@@ -1459,7 +1456,7 @@
 					      ((2 . 0) . 0)))
 				       0 0))
 			     )
-	     )	    
+	     )
 	    )
     )
   )
@@ -1502,7 +1499,7 @@
 	      ))
      )
    )
-  
+
   (local
    (defthmd wb-inv-sub2-lemma1-2
      (EQUAL (* 3
@@ -1540,7 +1537,7 @@
 	      ))
      )
    )
-  
+
   (defthmd n-f-b-inv-r
     (implies (and (weak-wordp w)
 		  (equal x (acl2-sqrt 2)))
@@ -1655,7 +1652,7 @@
 			   ((1 . 0) . 1)
 			   ((2 . 0) . 0)))
 		    2 0))
-      (EQUAL 
+      (EQUAL
        (AREF2 '$ARG1
 	      (M-* (A-ROTATION (ACL2-SQRT 2))
 		   (ROTATION W (ACL2-SQRT 2))
@@ -1665,7 +1662,7 @@
 		     ((1 . 0) . 1)
 		     ((2 . 0) . 0)))
 	      2 0)
-       (+ 
+       (+
 	(* 2/3 (ACL2-SQRT 2)
 	   (AREF2 '$ARG1
 		  (M-* (ROTATION W (ACL2-SQRT 2))
@@ -1684,7 +1681,7 @@
 			 ((1 . 0) . 1)
 			 ((2 . 0) . 0)))
 		  2 0)))
-       )     
+       )
       )
      )
    )
@@ -1742,7 +1739,7 @@
 			   ((0 . 0) . 0)
 			   ((1 . 0) . 1)
 			   ((2 . 0) . 0)))
-		    2 0))     
+		    2 0))
       (EQUAL (* 3 (/ (ACL2-SQRT 2))
 		(AREF2 '$ARG1
 		       (M-* (ROTATION (CONS #\a W) (ACL2-SQRT 2))
@@ -1853,7 +1850,7 @@
 					1 0))
 			      )
 		   )
-	     )	    
+	     )
 	    )
     )
   )
@@ -1877,7 +1874,7 @@
 	  (force (integerp y))
 	  (force (integerp z))
 	  (force (not (equal z 0))))
-     (equal 
+     (equal
       (mod (- (mod x z) (mod y z)) z)
       (mod (- x y) z)))
     :hints (("Goal" :use (mod--frgrp))))
@@ -1900,7 +1897,7 @@
 	     :in-theory nil
 	     :use (:instance mod-+-exp))
 	    )
-    )  
+    )
   )
 
  (defun n-mod3 (w x)
@@ -1919,7 +1916,7 @@
 	    ))
    )
 
-;;;;;;;;;;;;;;;;;;;;;;;;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;N(a)
 ;;;;;;;;;;;;;;;;;;;;;;;;;
  (encapsulate
@@ -1983,7 +1980,7 @@
 			     (- (* 4 (CADDR (n-f W x))))))
 		   (equal (caddr (n-f (CONS (WA) W) x))
 			  (+ (* 2 (CADR (n-f W x)))
-			     (CADDR (n-f W x)))))	      
+			     (CADDR (n-f W x)))))
 	      )
      :hints (("Goal"
 	      :use ((:instance rotation-values (w w) (x x))
@@ -2033,7 +2030,7 @@
 		    )
 	      :in-theory (disable int-point rotation reducedwordp acl2-sqrt n-f mod)
 	      :do-not-induct t
-	      )	   
+	      )
 	     )
      )
    )
@@ -2046,7 +2043,7 @@
 	      (integerp (mod x y)))
      )
    )
-  
+
   (defthmd n-mod3-a-r
     (implies (and (weak-wordp w)
 		  (equal x (acl2-sqrt 2)))
@@ -2072,12 +2069,12 @@
 			      (x (caddr (n-f w x)))
 			      (z 3))
 		   (:instance n-mod3-=)
-		   
+
 		   )
 	     :in-theory nil
 	     :do-not-induct t
 	     ))
-    
+
     )
   )
 
@@ -2147,7 +2144,7 @@
 			     (+ (* 4 (CADDR (n-f W x))))))
 		   (equal (caddr (n-f (CONS (WA-inv) W) x))
 			  (- (CADDR (n-f W x)) (* 2 (CADR (n-f W x))))))
-	      
+
 	      )
      :hints (("Goal"
 	      :use ((:instance rotation-values (w w) (x x))
@@ -2177,7 +2174,7 @@
 		    )
 	      :in-theory (disable int-point rotation reducedwordp acl2-sqrt n-f mod)
 	      :do-not-induct t
-	      )	   
+	      )
 	     )
      )
    )
@@ -2190,7 +2187,7 @@
 	      (integerp (mod x y)))
      )
    )
-  
+
   (defthmd n-mod3-a-inv-r
     (implies (and (weak-wordp w)
 		  (equal x (acl2-sqrt 2)))
@@ -2215,12 +2212,12 @@
 			      (x (caddr (n-f w x)))
 			      (z 3))
 		   (:instance n-mod3-=)
-		   
+
 		   )
 	     :in-theory nil
 	     :do-not-induct t
 	     ))
-    
+
     )
   )
 
@@ -2284,7 +2281,7 @@
 	      (and (integerp (car (n-f w x)))
 		   (integerp (cadr (n-f w x)))
 		   (integerp (caddr (n-f w x)))
-		   (equal (car (n-f (CONS (Wb) W) x)) (- (CAR (n-f W x)) (* 2 (CADR (n-f W x)))))	  
+		   (equal (car (n-f (CONS (Wb) W) x)) (- (CAR (n-f W x)) (* 2 (CADR (n-f W x)))))
 		   (equal (cadr (n-f (CONS (Wb) W) x))
 			  (+ (CADR (n-f W x))
 			     (+ (* 4 (CAR (n-f W x))))))
@@ -2317,7 +2314,7 @@
 		    )
 	      :in-theory (disable int-point rotation reducedwordp acl2-sqrt n-f mod)
 	      :do-not-induct t
-	      )	   
+	      )
 	     )
      )
    )
@@ -2330,7 +2327,7 @@
 	      (integerp (mod x y)))
      )
    )
-  
+
   (defthmd n-mod3-b-r
     (implies (and (weak-wordp w)
 		  (equal x (acl2-sqrt 2)))
@@ -2354,11 +2351,11 @@
 			      (x (car (n-f w x)))
 			      (z 3))
 		   (:instance n-mod3-=)
-		   
+
 		   )
 	     :in-theory nil
 	     :do-not-induct t
-	     )) 
+	     ))
     )
   )
 
@@ -2430,7 +2427,7 @@
 		   (equal (car (n-f (CONS (Wb-inv) W) x))
 			  (+ (* 2 (CADR (n-f W x)))
 			     (CAR (n-f W x)))))
-	      
+
 	      )
      :hints (("Goal"
 	      :use ((:instance rotation-values (w w) (x x))
@@ -2460,7 +2457,7 @@
 		    )
 	      :in-theory (disable int-point rotation reducedwordp acl2-sqrt n-f mod)
 	      :do-not-induct t
-	      )	   
+	      )
 	     )
      )
    )
@@ -2473,7 +2470,7 @@
 	      (integerp (mod x y)))
      )
    )
-  
+
   (defthmd n-mod3-b-inv-r
     (implies (and (weak-wordp w)
 		  (equal x (acl2-sqrt 2)))
@@ -2497,15 +2494,15 @@
 			      (x (car (n-f w x)))
 			      (z 3))
 		   (:instance n-mod3-=)
-		   
+
 		   )
 	     :in-theory nil
 	     :do-not-induct t
-	     ))   
+	     ))
     )
   )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- 
+
  (defthmd n-mod3-nil
    (equal (n-mod3 nil (acl2-sqrt 2))
 	  '(0 1 0)))
@@ -2537,7 +2534,7 @@
 	    :in-theory (disable n-mod3 weak-wordp acl2-sqrt)
 	    :do-not-induct t
 	    ))
-   
+
    )
 
  (defthmd n-mod3-a-inv-r-wa-inv
@@ -2771,7 +2768,7 @@
  (defthmd n-mod3-3-n-=0
    (implies (and (integerp n)
 		 (> n 0))
-	    (equal (mod (expt 3 n) 3) 0))  
+	    (equal (mod (expt 3 n) 3) 0))
    :hints (("Goal"
 	    :in-theory (disable mod)
 	    )
@@ -2821,7 +2818,7 @@
 		  )
 	    :in-theory (enable array2p dimensions header)
 	    :do-not-induct t
-	    
+
 	    ))
    )
 
@@ -2839,14 +2836,14 @@
 	    :use (
 		  (:instance n-mod3-rotation=id-2 (w w) (x x) (name '$arg1))
 		  (:instance acl2-nump-rot (w w) (name '$arg1) (x x))
-		  (:instance n-mod3-rotation=id-1 (m1 (m-* (rotation w x) (point-p))) (name '$arg1))		 
+		  (:instance n-mod3-rotation=id-1 (m1 (m-* (rotation w x) (point-p))) (name '$arg1))
 		  (:instance sqrt-2-lemmas)
 		  (:instance rotation-props (w w) (name '$arg1))
 		  (:instance n-mod3-3-n-=0 (n (len w)))
-		  (:instance reducedwordp=>weak-wordp (x w))		 
+		  (:instance reducedwordp=>weak-wordp (x w))
 		  )
 	    :do-not-induct t
-	    )	   
+	    )
 	   )
    )
 
@@ -2880,7 +2877,7 @@
 
 (encapsulate
  ()
- 
+
  (local
   (defthmd rot-a-rota-fix-a-ind-1-1
     (implies (and (weak-wordp a)
@@ -2945,7 +2942,7 @@
 		   (:instance rot-a-rota-fix-a-ind-1-1 (a a))
 		   )
 	     :do-not-induct t
-	     :in-theory (disable word-fix append rotation acl2-sqrt weak-wordp reducedwordp)	   
+	     :in-theory (disable word-fix append rotation acl2-sqrt weak-wordp reducedwordp)
 	     )
 	    ("Subgoal 10"
 	     :in-theory (enable weak-wordp)
@@ -3083,7 +3080,7 @@
 
 (defthmd rot-a*rot-b=id
   (implies (and (reducedwordp a)
-		(reducedwordp b)	 
+		(reducedwordp b)
 		(equal x (acl2-sqrt 2))
 		(m-= (rotation a x) (rotation b x)))
 	   (m-= (rotation (compose a (word-inverse b)) x) (id-rotation)))
@@ -3119,7 +3116,7 @@
   (implies (and (reducedwordp a)
 		(reducedwordp b)
 		(not (atom a))
-		(not (atom b))		
+		(not (atom b))
 		(not (equal a b))
 		(equal x (acl2-sqrt 2)))
 	   (not (m-= (rotation a x) (rotation b x))))
@@ -3165,15 +3162,15 @@
 	   )
 	  ("Subgoal 3"
 	   :use ((:instance a!=b=>rot-a!=rot-b-1 (a a) (b b) (x x))
-		 )	   
+		 )
 	   )
 	  ("Subgoal 2"
 	   :use ((:instance rotaion-not=id (w a))
-		 )	   
+		 )
 	   )
 	  ("Subgoal 1"
 	   :use ((:instance rotaion-not=id (w b))
-		 )	   
+		 )
 	   )
 	  )
   )
