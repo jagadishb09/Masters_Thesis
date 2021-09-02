@@ -6,7 +6,7 @@
 (local (include-book "supportive-theorems"))
 
 (defun r3-matrixp (m)
-  (and (array2p :fake-name m)
+  (and (alist2p :fake-name m)
        (equal (r m) (c m))
        (equal (r m) 3)
        (realp (aref2 :fake-name m 0 0))
@@ -22,7 +22,7 @@
   )
 
 (defun r3-m-determinant (m)
-  (declare (xargs :guard (and (array2p :fake-name m)
+  (declare (xargs :guard (and (alist2p :fake-name m)
 			      (equal (r m) (c m))
 			      (equal (r m) 3))
 		  :verify-guards nil))
@@ -43,15 +43,15 @@
  )
 
 (defthm
-  array2p-alist2p-fname
-  (implies (array2p :fake-name L)
+  alist2p-alist2p-fname
+  (implies (alist2p :fake-name L)
 	   (alist2p :fake-name L)))
 
 (local
  (defthm
    aref2-m-*-1
-   (implies (and (array2p :fake-name M1)
-		 (array2p :fake-name M2)
+   (implies (and (alist2p :fake-name M1)
+		 (alist2p :fake-name M2)
 		 (equal (second (dimensions :fake-name M1))
 			(first  (dimensions :fake-name M2)))
 		 (integerp i)
@@ -80,7 +80,7 @@
      :hints (("Goal"
               :use ((:instance right-unity-of-m-1-for-m-* (m1 m1) (name :fake-name))
                     (:instance normalize-dimensions-name (name '$arg) (l m1))
-                    (:instance array2p-alist2p-fname (l m1)))
+                    (:instance alist2p-alist2p-fname (l m1)))
               :in-theory (enable header dimensions default m-*)
               )))))
 
@@ -133,11 +133,11 @@
   )
 
 (local
- (defthm array2p-r3-m-inverse
+ (defthm alist2p-r3-m-inverse
    (implies (r3-matrixp m)
-	    (array2p :fake-name (r3-m-inverse m)))
+	    (alist2p :fake-name (r3-m-inverse m)))
    :hints (("Goal"
-	    :in-theory (enable array2p header dimensions)
+	    :in-theory (enable alist2p header dimensions)
 	    :do-not-induct t
 	    ))
    )
@@ -291,7 +291,7 @@
    :hints (("Goal"
             :use ((:instance r3-m-inverse-realp (m m))
                   (:instance r3-m-inverse-= (m m))
-                  (:instance array2p-r3-m-inverse (m m)))
+                  (:instance alist2p-r3-m-inverse (m m)))
             ))))
 
 (local
@@ -533,17 +533,17 @@
                   (not (= (r3-m-determinant m) 0)))
              (m-= (m-* m (r3-m-inverse m)) (id-rotation)))
     :hints (("Goal"
-             :use ((:instance array2p-alist2p (name :fake-name) (L m))
-                   (:instance array2p-m-*-1
-                              (m1 m)
-                              (m2 (r3-m-inverse m))
-                              (name :fake-name))
+             :use (;(:instance array2p-alist2p (name :fake-name) (L m))
+                   ;(:instance alist2p-m-*-1
+                    ;          (m1 m)
+                     ;         (m2 (r3-m-inverse m))
+                      ;        (name :fake-name))
                    (:instance r3-m-inverse-= (m m))
                    (:instance dimensions-m-* (m1 m)
                               (m2 (r3-m-inverse m))
-                              (name :fake-name))
-                   (:instance array2p-alist2p (name :fake-name)
-                              (L (r3-m-inverse m))))
+                              (name :fake-name)))
+                  ; (:instance array2p-alist2p (name :fake-name)
+                              ;(L (r3-m-inverse m))))
              :in-theory (e/d (m-= dot) (aref2 r3-m-inverse))
              )
             ("Subgoal 9"
@@ -581,17 +581,17 @@
                   (not (= (r3-m-determinant m) 0)))
              (m-= (m-* (r3-m-inverse m) m) (id-rotation)))
     :hints (("Goal"
-             :use ((:instance array2p-alist2p (name :fake-name) (L m))
-                   (:instance array2p-m-*-1
-                              (m2 m)
-                              (m1 (r3-m-inverse m))
-                              (name :fake-name))
+             :use (;(:instance alist2p-alist2p (name :fake-name) (L m))
+                   ;(:instance alist2p-m-*-1
+                    ;          (m2 m)
+                     ;         (m1 (r3-m-inverse m))
+                      ;        (name :fake-name))
                    (:instance r3-m-inverse-= (m m))
                    (:instance dimensions-m-* (m2 m)
                               (m1 (r3-m-inverse m))
-                              (name :fake-name))
-                   (:instance array2p-alist2p (name :fake-name)
-                              (L (r3-m-inverse m))))
+                              (name :fake-name)))
+                  ; (:instance alist2p-alist2p (name :fake-name)
+                   ;           (L (r3-m-inverse m))))
              :in-theory (e/d (m-= dot) (aref2 r3-m-inverse))
              )
             ("Subgoal 9"
@@ -659,7 +659,7 @@
              (m-= m2 (r3-m-inverse m1)))
     :hints (("Goal"
              :use ((:instance lemma1 (m1 (r3-m-inverse m1)) (m2 m2))
-                   (:instance array2p-r3-m-inverse (m m1))
+                   (:instance alist2p-r3-m-inverse (m m1))
                    (:instance right-unity-of-m-1-for-m-* (name :fake-name) (m1 m2))
                    (:instance left-unity-of-m-1-for-m-* (name :fake-name) (m1 (r3-m-inverse m1)))
                    (:instance r3-matrixp-m-inverse (m m1))
@@ -667,7 +667,7 @@
                    (:instance associativity-of-m-*-1 (m1 (r3-m-inverse m1)) (m2 m1) (m3 m2))
                    (:instance associativity-of-m-* (m1 (r3-m-inverse m1)) (m2 m1) (m3 m2))
                    (:instance r3-matrixp-m1*m2-is-r3-matrixp (m1 m1) (m2 m2)))
-             :in-theory (e/d () ( m-= m-* id-rotation aref2 array2p alist2p ASSOCIATIVITY-OF-M-* ASSOCIATIVITY-OF-M-*-1 M1=M2=>A*M1=A*M2 R3-MATRIXP-M-INVERSE R3-MATRIXP-M1*M2-IS-R3-MATRIXP r3-m-determinant r3-m-inverse )))
+             :in-theory (e/d () ( m-= m-* id-rotation aref2 alist2p alist2p ASSOCIATIVITY-OF-M-* ASSOCIATIVITY-OF-M-*-1 M1=M2=>A*M1=A*M2 R3-MATRIXP-M-INVERSE R3-MATRIXP-M1*M2-IS-R3-MATRIXP r3-m-determinant r3-m-inverse )))
             )
     )
   )
@@ -691,7 +691,7 @@
      :hints (("Goal"
               :use ((:instance right-unity-of-m-1-for-m-* (m1 m1) (name :fake-name))
                     (:instance normalize-dimensions-name (name '$arg) (l m1))
-                    (:instance array2p-alist2p-fname (l m1)))
+                    (:instance alist2p-alist2p-fname (l m1)))
               :in-theory (enable header dimensions default m-*)
               ))))
 
@@ -702,7 +702,7 @@
      :hints (("Goal"
               :use ((:instance left-unity-of-m-1-for-m-* (m1 m1) (name :fake-name))
                     (:instance normalize-dimensions-name (name '$arg) (l m1))
-                    (:instance array2p-alist2p-fname (l m1)))
+                    (:instance alist2p-alist2p-fname (l m1)))
               :in-theory (enable header dimensions default m-*)
               ))))
 
@@ -787,8 +787,8 @@
                  (:instance det-lemma (m1 m1) (m2 m2))
                  (:instance m-inverse-m-*-m1-m2 (m1 m1) (m2 m2))
                  (:instance m-trans-m-*=m-*-m-trans (m1 m1) (m2 m2) (name :fake-name))
-                 (:instance array2p-alist2p (L m1) (name :fake-name))
-                 (:instance array2p-alist2p (L m2) (name :fake-name))
+                 ;(:instance alist2p-alist2p (L m1) (name :fake-name))
+                 ;(:instance alist2p-alist2p (L m2) (name :fake-name))
                  )
            :in-theory (e/d (r3-matrixp r3-rotationp)
                            (m-* aref2 m-= m-trans r3-m-inverse r3-m-determinant))
@@ -808,9 +808,10 @@
                   (r3-rotationp (b-inv-rotation x))
                   (r3-rotationp (id-rotation))))
     :hints (("Goal"
-             :use ((:instance array2p-funs (y :fake-name))
+             :use (
+                   ;(:instance array2p-funs (y :fake-name))
                    (:instance sqrt-2-lemmas))
-             :in-theory (e/d (aref2 m-=) (acl2-sqrt))
+             :in-theory (e/d (aref2 m-= alist2p dimensions header) (acl2-sqrt))
              ))
     )
   )

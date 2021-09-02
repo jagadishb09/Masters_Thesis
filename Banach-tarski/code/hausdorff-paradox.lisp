@@ -175,15 +175,75 @@
            )))
 
 (defthm d-p-implies
-  (implies (and (d-p p)
-                (equal (word-exists-witness p) w))
-           (and (s2-def-p p)
-                (reducedwordp w)
-                (not (equal w nil))
-                (m-= (m-* (rotation w (acl2-sqrt 2)) p)
-                     p))))
+  (implies (d-p p)
+           (let ((w (word-exists-witness p)))
+             (and (s2-def-p p)
+                  (reducedwordp w)
+                  (not (equal w nil))
+                  (m-= (m-* (rotation w (acl2-sqrt 2)) p)
+                       p)))))
 
-;; (defthm point-on-d=>rot*p-on-d
-;;   (implies (and (reducedwordp w)
-;;                 (d-p (m-* (rotation w (acl2-sqrt 2)) p)))
-;;            (d-p p)))
+(defthm point-on-d=>rot*p-on-d
+  (implies (and (reducedwordp w)
+                (s2-def-p p)
+                (d-p (m-* (rotation w (acl2-sqrt 2)) p)))
+           (let ((w1 (word-exists-witness (m-* (rotation w (acl2-sqrt 2)) p))))
+             (and (reducedwordp w1)
+                  (not (equal w1 nil))
+                  (m-= (m-* (rotation w1 (acl2-sqrt 2))
+                            (m-* (rotation w (acl2-sqrt 2)) p))
+                       (m-* (rotation w (acl2-sqrt 2)) p)))))
+  :hints (("Goal"
+           :use ((:instance d-p-implies
+                            (p (m-* (rotation w (acl2-sqrt 2)) p))))
+           :in-theory nil
+           )))
+
+(defthm p-in-d-=>rot*p-in-d-lemma-1
+  (implies (and (point-in-r3 p)
+                (m-= (m-* m1 m2 p) (m-* m2 p)))
+           (m-= (m-* m4 m1 m2 p) (m-* m4 m2 p))))
+
+(defthmd p-in-d-=>rot*p-in-d-lemma-2
+  (implies (and (reducedwordp w)
+                (reducedwordp w1))
+           (reducedwordp (compose (word-inverse w) (append w1 w))))
+  :hints (("Goal"
+           :use ((:instance compose-assoc-lemma-export
+                            (x (word-inverse w))
+                            (y (append w1 w)))
+                 (:instance reducedwordp=>weak-wordp (x w))
+                 (:instance reducedwordp=>weak-wordp (x w1))
+                 (:instance reducedwordp=>weak-wordp (x (word-inverse w)))
+                 (:instance reducedwordp-word-inverse (x w))
+                 (:instance closure-prop (x (word-inverse w)) (y (word-fix (append w1 w))))
+                 (:instance closure-prop (x w1) (y w))
+                 (:instance compose (x (word-inverse w)) (y (append w w1)))
+                 (:instance compose (x w1) (y w))))))
+
+(defthmd p-in-d-=>rot*p-in-d-lemma-3
+  (implies (and (reducedwordp w)
+                (reducedwordp w1))
+           (m-= (rotation (compose (word-inverse w) (append w1 w)) (acl2-sqrt 2))
+                (m-* (rotation (word-inverse w) (acl2-sqrt 2))
+                     (rotation w1 (acl2-sqrt 2))
+                     (rotation w (acl2-sqrt 2)))))
+  :hints (("Goal"
+           :use ((:instance compose (x (word-inverse w)) (y (append w1 w)))
+                 (:instance compose (x w1) (y w))
+                 (:instance reducedwordp=>weak-wordp (x (word-inverse w)))
+                 (:instance compose-assoc-lemma-export
+                            (x (word-inverse w))
+                            (y (append w1 w)))
+                 (:instance rot-a*rot-b-= (a (word-inverse w)) (b (word-fix (append w1 w))) (x (acl2-sqrt 2)))
+                 (:instance rot-a*rot-b-= (a w1) (b w) (x (acl2-sqrt 2)))
+                 (:instance closure-prop (x w1) (y w))
+                 (:instance closure-lemma (x w1) (y w))
+                 (:instance compose (x (word-inverse w)) (y (append w w1)))
+                 (:instance compose (x w1) (y w))
+                 ;(:instance reducedwordp=>weak-wordp (x (append w1 w)))
+                 (:instance reducedwordp-word-inverse (x w)))
+           :in-theory nil
+           :do-not-induct t
+
+           )))
