@@ -239,11 +239,78 @@
                  (:instance rot-a*rot-b-= (a w1) (b w) (x (acl2-sqrt 2)))
                  (:instance closure-prop (x w1) (y w))
                  (:instance closure-lemma (x w1) (y w))
-                 (:instance compose (x (word-inverse w)) (y (append w w1)))
                  (:instance compose (x w1) (y w))
-                 ;(:instance reducedwordp=>weak-wordp (x (append w1 w)))
                  (:instance reducedwordp-word-inverse (x w)))
-           :in-theory nil
            :do-not-induct t
-
            )))
+
+(defthmd p-in-d-=>rot*p-in-d-lemma-4-1
+  (implies (m-= m1 (m-* m2 m3 m4))
+           (m-= (m-* m5 m1) (m-* (m-* m5 m2) m3 m4))))
+
+(defthmd p-in-d-=>rot*p-in-d-lemma-4-2
+  (implies (r3-matrixp m1)
+           (m-= (m-* (id-rotation) m1) m1))
+  :hints (("Goal"
+           :use ((:instance left-unity-of-m-1-for-m-* (m1 m1) (name :fake-name))
+                 (:instance normalize-dimensions-name (name '$arg) (l m1))
+                 (:instance array2p-alist2p-fname (l m1)))
+           :in-theory (e/d (header dimensions default m-*) ())
+           )))
+
+(defthmd p-in-d-=>rot*p-in-d-lemma-4-3
+  (implies (m-= m1 (m-* m2 m3))
+           (m-= (m-* m1 m4) (m-* m2 m3 m4))))
+
+(encapsulate
+  ()
+
+  (local (in-theory nil))
+  (local (include-book "supportive-theorems"))
+
+  (defthmd p-in-d-=>rot*p-in-d-lemma-4
+    (implies (and (reducedwordp w)
+                  (reducedwordp w1)
+                  (m-= (rotation (compose (word-inverse w) (append w1 w)) (acl2-sqrt 2))
+                       (m-* (rotation (word-inverse w) (acl2-sqrt 2))
+                            (rotation w1 (acl2-sqrt 2))
+                            (rotation w (acl2-sqrt 2))))
+                  (equal (compose (word-inverse w) (append w1 w)) nil))
+             (m-= (rotation w1 (acl2-sqrt 2)) (id-rotation)))
+    :hints (("Goal"
+             :use ((:instance p-in-d-=>rot*p-in-d-lemma-4-1
+                              (m1 (id-rotation))
+                              (m2 (rotation (word-inverse w) (acl2-sqrt 2)))
+                              (m3 (rotation w1 (acl2-sqrt 2)))
+                              (m4 (rotation w (acl2-sqrt 2)))
+                              (m5 (rotation w (acl2-sqrt 2))))
+                   (:instance rotation*point-on-s2-2 (m1 (rotation w (acl2-sqrt 2))))
+                   (:instance rotation-is-r3-rotationp (x (acl2-sqrt 2)) (w w))
+                   (:instance rotation-is-r3-rotationp (x (acl2-sqrt 2)) (w w1))
+                   (:instance rot-a*rot-b-= (a w) (b (word-inverse w)) (x (acl2-sqrt 2)))
+                   (:instance reduced-inverse (x w))
+                   (:instance p-in-d-=>rot*p-in-d-lemma-4-3
+                              (m1 (rotation w (acl2-sqrt 2)))
+                              (m2 (rotation w1 (acl2-sqrt 2)))
+                              (m3 (rotation w (acl2-sqrt 2)))
+                              (m4 (rotation (word-inverse w) (acl2-sqrt 2))))
+                   (:instance p-in-d-=>rot*p-in-d-lemma-4-2 (m1 (rotation w1 (acl2-sqrt 2))))
+                   (:instance rotation*point-on-s2-2 (m1 (rotation w1 (acl2-sqrt 2))))
+                   (:instance r3-rotationp (m (ROTATION W (ACL2-SQRT 2))))
+                   (:instance r3-rotationp (m (ROTATION W1 (ACL2-SQRT 2))))
+                   (:instance reducedwordp-word-inverse (x w))
+                   (:instance rotation (w nil) (x (acl2-sqrt 2)))
+                   )
+             ;:in-theory nil
+             )
+            ("Subgoal 2"
+             :use (
+                   (:instance r3-matrixp (m (ROTATION W (ACL2-SQRT 2))))
+                   (:instance r3-matrixp (m (ROTATION W1 (ACL2-SQRT 2))))
+                   )
+             :in-theory (e/d () ())
+             )
+            ))
+)
+           ;)))
+           ;(e/d () (rotation id-rotation word-inverse acl2-sqrt r3-matrixp r3-rotationp reducedwordp compose m-= m-* aref2)))))
