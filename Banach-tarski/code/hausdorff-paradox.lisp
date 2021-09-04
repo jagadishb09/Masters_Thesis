@@ -188,9 +188,14 @@
                   (m-= (m-* (rotation w (acl2-sqrt 2)) p)
                        p)))))
 
+(defthmd d-p-implies-1
+  (implies (and (s2-def-p point)
+                (word-exists point))
+           (d-p point)))
+
 (defthm point-on-d=>rot*p-on-d
   (implies (and (reducedwordp w)
-                (s2-def-p p)
+                ;(s2-def-p p)
                 (d-p (m-* (rotation w (acl2-sqrt 2)) p)))
            (let ((w1 (word-exists-witness (m-* (rotation w (acl2-sqrt 2)) p))))
              (and (reducedwordp w1)
@@ -361,12 +366,64 @@
                    )
              )
             ))
-)
+  )
 
-;; --
+(skip-proofs
+ (defthmd p-in-d-=>rot*p-in-d-lemma-5
+   (implies (and (reducedwordp w)
+                 (d-p (m-* (rotation w (acl2-sqrt 2)) point)))
+            (and (s2-def-p (m-* (rotation w (acl2-sqrt 2)) point))
+                 (s2-def-p point))))
+ )
 
-;; (defthmd p-in-d-=>rot*p-in-d-lemma
-;;   (implies (and (point-in-r3 point)
-;;                 (reducedwordp w)
-;;                 (d-p (m-* (rotation w (acl2-sqrt 2)) point)))
-;;            (d-p point)))
+(defthmd p-in-d-=>rot*p-in-d-lemma-6
+  (implies (and (reducedwordp w)
+                w)
+           (and (>= (len w) 0)
+                (not (<= (len w) 0)))))
+
+(skip-proofs
+ (defthmd p-in-d-=>rot*p-in-d-lemma
+   (implies (and (reducedwordp w)
+                 (d-p (m-* (rotation w (acl2-sqrt 2)) point)))
+            (d-p point))
+   :hints (("Goal"
+            :use ((:instance word-exists-suff
+                             (w (compose (word-inverse w)
+                                         (append (word-exists-witness (m-* (rotation w (acl2-sqrt 2)) point)) w)))
+                             (point point))
+                  (:instance p-in-d-=>rot*p-in-d-lemma-2
+                             (w w)
+                             (w1 (word-exists-witness (m-* (rotation w (acl2-sqrt 2)) point))))
+                  (:instance p-in-d-=>rot*p-in-d-lemma-4 (w w)
+                             (w1 (word-exists-witness (m-* (rotation w (acl2-sqrt 2)) point))))
+                  (:instance rotaion-not=id
+                             (w (word-exists-witness (m-* (rotation w (acl2-sqrt 2)) point)))
+                             (x (acl2-sqrt 2)))
+                  (:instance point-on-d=>rot*p-on-d (w w) (p point))
+                  (:instance p-in-d-=>rot*p-in-d-lemma-5 (w w))
+                  (:instance p-in-d-=>rot*p-in-d-lemma-6
+                             (w (word-exists-witness (m-* (rotation w (acl2-sqrt 2)) point))))
+                  (:instance p-in-d-=>rot*p-in-d-lemma-3
+                             (w w)
+                             (w1 (word-exists-witness (m-* (rotation w (acl2-sqrt 2)) point))))
+                  (:instance d-p-implies-1)
+                  (:instance s2-def-p)
+                  )
+            :in-theory nil
+            )))
+ )
+
+(defthmd s2-d-p=>p
+  (implies (and (s2-d-p point)
+                (reducedwordp w))
+           (s2-d-p (m-* (rotation w (acl2-sqrt 2)) point)))
+  :hints (("Goal"
+           :use ((:instance p-in-d-=>rot*p-in-d-lemma (w w) (point point))
+                 (:instance s2-d-p (point point))
+                 (:instance s2-d-p (point (M-* (ROTATION W (ACL2-SQRT 2)) POINT)))
+                 (:instance rot*p-on-s2 (p point) (rot (rotation w (acl2-sqrt 2))))
+                 (:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance s2-def-p-equiv (p point)))
+           :in-theory nil
+           )))
