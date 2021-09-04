@@ -166,6 +166,11 @@
   (and (s2-def-p point)
        (not (d-p point))))
 
+(defthmd s2-def-p-equiv
+  (equal (s2-def-p p)
+         (or (d-p p)
+             (s2-d-p p))))
+
 (defthm rot*p-on-s2
   (implies (and (s2-def-p p)
                 (r3-rotationp rot))
@@ -357,3 +362,11 @@
              )
             ))
 )
+
+;; --
+
+;; (defthmd p-in-d-=>rot*p-in-d-lemma
+;;   (implies (and (point-in-r3 point)
+;;                 (reducedwordp w)
+;;                 (d-p (m-* (rotation w (acl2-sqrt 2)) point)))
+;;            (d-p point)))
