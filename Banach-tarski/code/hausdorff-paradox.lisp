@@ -374,7 +374,17 @@
            (and (>= (len w) 0)
                 (not (<= (len w) 0)))))
 
-(skip-proofs
+(defthmd p-in-d-=>rot*p-in-d-lemma-7
+  (implies (m-= (m-* m1 m2 m3) (m-* m2 m3))
+           (m-= (m-* (m-* m4 m1 m2) m3) (m-* (m-* m4 m2) m3))))
+
+(defthmd p-in-d-=>rot*p-in-d-lemma-8
+  (implies (and (m-= m1 m2)
+                (m-= m3 m4)
+                (m-= (m-* m4 m5) m6)
+                (m-= (m-* m1 m5) (m-* m3 m5)))
+           (m-= (m-* m2 m5) m6)))
+
 (defthmd p-in-d-=>rot*p-in-d-lemma
   (implies (and (reducedwordp w)
                 (s2-def-p point)
@@ -401,9 +411,42 @@
                             (w1 (word-exists-witness (m-* (rotation w (acl2-sqrt 2)) point))))
                  (:instance d-p-implies-1)
                  (:instance s2-def-p)
+                 (:instance p-in-d-=>rot*p-in-d-lemma-7
+                           (m1 (ROTATION (WORD-EXISTS-WITNESS (M-* (ROTATION W (ACL2-SQRT 2)) POINT))
+                                         (ACL2-SQRT 2)))
+                           (m2 (ROTATION W (ACL2-SQRT 2)))
+                           (m3 point)
+                           (m4 (ROTATION (word-inverse W) (ACL2-SQRT 2))))
+                 (:instance p-in-d-=>rot*p-in-d-lemma-8
+                            (m1 (M-*
+                                 (ROTATION (WORD-INVERSE W)
+                                           (ACL2-SQRT 2))
+                                 (ROTATION (WORD-EXISTS-WITNESS (M-* (ROTATION W (ACL2-SQRT 2)) POINT))
+                                           (ACL2-SQRT 2))
+                                 (ROTATION W (ACL2-SQRT 2))))
+                            (m2 (ROTATION
+                                 (COMPOSE
+                                  (WORD-INVERSE W)
+                                  (APPEND (WORD-EXISTS-WITNESS (M-* (ROTATION W (ACL2-SQRT 2)) POINT))
+                                          W))
+                                 (ACL2-SQRT 2)))
+                            (m3 (M-* (ROTATION (WORD-INVERSE W)
+                                               (ACL2-SQRT 2))
+                                     (ROTATION W (ACL2-SQRT 2))))
+                            (m4 (id-rotation))
+                            (m6 point)
+                            (m5 point))
+                 (:instance rot-a*rot-b-= (a (word-inverse w)) (b w) (x (acl2-sqrt 2)))
+                 (:instance reducedwordp-word-inverse (x w))
+                 (:instance reducedwordp=>weak-wordp (x w))
+                 (:instance reducedwordp=>weak-wordp (x (word-inverse w)))
+                 (:instance inv-inv-x=x (x w))
+                 (:instance reduced-inverse (x (word-inverse w)))
+                 (:instance rotation (w nil) (x (acl2-sqrt 2)))
+                 (:instance m-*point-id=point (p1 point))
                  )
            :in-theory nil
-           ))))
+           )))
 
 (defthmd s2-d-p=>p
   (implies (and (s2-d-p point)
