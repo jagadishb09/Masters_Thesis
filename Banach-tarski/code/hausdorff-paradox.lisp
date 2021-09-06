@@ -457,34 +457,91 @@
                (s2-def-p point)
                (m-= (m-* (rotation w (acl2-sqrt 2)) point) o-point))))
 
-(defun-sk choice-set (c-point)
+(defun-sk choice-set-s2-d-p (c-point)
   (exists point
-          (and (s2-def-p point)
+          (and (s2-d-p point)
                (orbit-point-p c-point point))))
 
-(defun-sk diff-s2-def (p)
+(defun-sk diff-s2-d-p (p)
   (exists (c-point w)
-          (and (choice-set c-point)
+          (and (choice-set-s2-d-p c-point)
                (reducedwordp w)
                (m-= (m-* (rotation w (acl2-sqrt 2)) c-point) p))))
 
+(defun-sk diff-s2-d-p-w-nil (p)
+  (exists (c-point w)
+          (and (choice-set-s2-d-p c-point)
+               (equal w nil)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) c-point) p))))
+
+(defun-sk diff-s2-d-p-w-a (p)
+  (exists (c-point w)
+          (and (choice-set-s2-d-p c-point)
+               (a-wordp w)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) c-point) p))))
+
+(defun-sk diff-s2-d-p-w-a-inv (p)
+  (exists (c-point w)
+          (and (choice-set-s2-d-p c-point)
+               (a-inv-wordp w)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) c-point) p))))
+
+(defun-sk diff-s2-d-p-w-b (p)
+  (exists (c-point w)
+          (and (choice-set-s2-d-p c-point)
+               (b-wordp w)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) c-point) p))))
+
+(defun-sk diff-s2-d-p-w-b-inv (p)
+  (exists (c-point w)
+          (and (choice-set-s2-d-p c-point)
+               (b-inv-wordp w)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) c-point) p))))
+
+;; (defun-sk choice-set-s2-d-p (c-point)
+;;   (exists point
+;;           (and (s2-d-p point)
+;;                (orbit-point-p c-point point))))
+
+;; (defun-sk choice-set-d-p (c-point)
+;;   (exists point
+;;           (and (d-p point)
+;;                (orbit-point-p c-point point))))
+
 (skip-proofs
  (defthm s2-def-p=diff-s2-def
-   (implies (s2-def-p point)
-            (diff-s2-def point)))
+   (implies (s2-d-p point)
+            (diff-s2-d-p point)))
  )
 
 (skip-proofs
  (defthm s2-def-p=diff-s2-def-1
-   (implies (diff-s2-def point)
-            (s2-def-p point)))
+   (implies (diff-s2-d-p point)
+            (s2-d-p point)))
  )
 
 (defthm equal-s2-def-p-diff-s2-def
-  (iff (s2-def-p p)
-       (diff-s2-def p))
+  (iff (s2-d-p p)
+       (diff-s2-d-p p))
   :hints (("Goal"
            :use ((:instance s2-def-p=diff-s2-def (point p))
                  (:instance s2-def-p=diff-s2-def-1 (point p)))
            :in-theory nil
+           )))
+
+---
+
+(defthm test500-1
+  (implies (DIFF-S2-D-P-w-nil p)
+           (choice-set-s2-d-p (MV-NTH 0 (DIFF-S2-D-P-W-NIL-WITNESS P)))))
+
+(defthm test500
+  (implies (diff-s2-d-p p)
+           (or (diff-s2-d-p-w-nil p)
+               (diff-s2-d-p-w-a p)
+               (diff-s2-d-p-w-a-inv p)
+               (diff-s2-d-p-w-b p)
+               (diff-s2-d-p-w-b-inv p)))
+  :hints (("Goal"
+           :in-theory (e/d (reducedwordp) (choice-set-s2-d-p rotation acl2-sqrt))
            )))
