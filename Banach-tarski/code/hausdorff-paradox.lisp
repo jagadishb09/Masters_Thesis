@@ -352,21 +352,10 @@
                               (m1 (ROTATION W1 (ACL2-SQRT 2)))
                               (m2 (ROTATION W (ACL2-SQRT 2)))
                               (m3 (ROTATION (word-inverse w) (ACL2-SQRT 2))))
-                   )
-             )
-            ("Subgoal 1"
-             :use (
-                   (:instance p-in-d-=>rot*p-in-d-lemma-4-5
-                              (m1 (ROTATION W1 (ACL2-SQRT 2)))
-                              (m2 (ROTATION W (ACL2-SQRT 2)))
-                              (m3 (ROTATION (word-inverse w) (ACL2-SQRT 2))))
                    (:instance p-in-d-=>rot*p-in-d-lemma-4-6
                               (m1 (ROTATION W1 (ACL2-SQRT 2)))
                               (m2 (m-* (ROTATION W (ACL2-SQRT 2)) (ROTATION (word-inverse w) (ACL2-SQRT 2)))))
-                   )
-             )
-            ))
-  )
+                   )))))
 
 (defthmd p-in-d-=>rot*p-in-d-lemma-6
   (implies (and (reducedwordp w)
@@ -412,11 +401,11 @@
                  (:instance d-p-implies-1)
                  (:instance s2-def-p)
                  (:instance p-in-d-=>rot*p-in-d-lemma-7
-                           (m1 (ROTATION (WORD-EXISTS-WITNESS (M-* (ROTATION W (ACL2-SQRT 2)) POINT))
-                                         (ACL2-SQRT 2)))
-                           (m2 (ROTATION W (ACL2-SQRT 2)))
-                           (m3 point)
-                           (m4 (ROTATION (word-inverse W) (ACL2-SQRT 2))))
+                            (m1 (ROTATION (WORD-EXISTS-WITNESS (M-* (ROTATION W (ACL2-SQRT 2)) POINT))
+                                          (ACL2-SQRT 2)))
+                            (m2 (ROTATION W (ACL2-SQRT 2)))
+                            (m3 point)
+                            (m4 (ROTATION (word-inverse W) (ACL2-SQRT 2))))
                  (:instance p-in-d-=>rot*p-in-d-lemma-8
                             (m1 (M-*
                                  (ROTATION (WORD-INVERSE W)
@@ -461,3 +450,42 @@
                  (:instance s2-def-p-equiv (p point)))
            :in-theory nil
            )))
+
+(defun-sk orbit-point-p (o-point point)
+  (exists w
+          (and (reducedwordp w)
+               (s2-def-p point)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) point) o-point))))
+
+(defun-sk choice-set (c-point)
+  (exists point
+          (and (s2-def-p point)
+               (orbit-point-p c-point point))))
+
+(defun-sk diff-s2-def (p)
+  (exists (c-point w)
+          (and (choice-set c-point)
+               (reducedwordp w)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) c-point) p))))
+
+;; (skip-proofs
+;;  (defthm s2-def-p=diff-s2-def
+;;    (implies (s2-def-p point)
+;;             (diff-s2-def point)))
+;;  )
+
+;; (skip-proofs
+;;  (defthm s2-def-p=diff-s2-def-1
+;;    (implies (diff-s2-def point)
+;;             (s2-def-p point)))
+;;  )
+
+;; (defthm equal-s2-def-p-diff-s2-def
+;;   (equal (equal (s2-def-p p)
+;;                 (diff-s2-def p))
+;;          t)
+;;   :hints (("Goal"
+;;            :use ((:instance s2-def-p=diff-s2-def (point p))
+;;                  (:instance s2-def-p=diff-s2-def-1 (point p)))
+;;            ;:in-theory nil
+;;            )))
