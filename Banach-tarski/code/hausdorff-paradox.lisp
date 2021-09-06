@@ -468,24 +468,23 @@
                (reducedwordp w)
                (m-= (m-* (rotation w (acl2-sqrt 2)) c-point) p))))
 
-;; (skip-proofs
-;;  (defthm s2-def-p=diff-s2-def
-;;    (implies (s2-def-p point)
-;;             (diff-s2-def point)))
-;;  )
+(skip-proofs
+ (defthm s2-def-p=diff-s2-def
+   (implies (s2-def-p point)
+            (diff-s2-def point)))
+ )
 
-;; (skip-proofs
-;;  (defthm s2-def-p=diff-s2-def-1
-;;    (implies (diff-s2-def point)
-;;             (s2-def-p point)))
-;;  )
+(skip-proofs
+ (defthm s2-def-p=diff-s2-def-1
+   (implies (diff-s2-def point)
+            (s2-def-p point)))
+ )
 
-;; (defthm equal-s2-def-p-diff-s2-def
-;;   (equal (equal (s2-def-p p)
-;;                 (diff-s2-def p))
-;;          t)
-;;   :hints (("Goal"
-;;            :use ((:instance s2-def-p=diff-s2-def (point p))
-;;                  (:instance s2-def-p=diff-s2-def-1 (point p)))
-;;            ;:in-theory nil
-;;            )))
+(defthm equal-s2-def-p-diff-s2-def
+  (iff (s2-def-p p)
+       (diff-s2-def p))
+  :hints (("Goal"
+           :use ((:instance s2-def-p=diff-s2-def (point p))
+                 (:instance s2-def-p=diff-s2-def-1 (point p)))
+           :in-theory nil
+           )))
