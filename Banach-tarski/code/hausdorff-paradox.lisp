@@ -597,7 +597,6 @@
            :use ((:instance DIFF-S2-D-P-suff (c-point (MV-NTH 0 (DIFF-S2-D-P-w-a-inv-WITNESS P)))
                             (w (MV-NTH 1 (DIFF-S2-D-P-w-a-inv-WITNESS P)))))
            )
-
           ("Subgoal 2"
            :use ((:instance DIFF-S2-D-P-suff (c-point (MV-NTH 0 (DIFF-S2-D-P-w-b-WITNESS P)))
                             (w (MV-NTH 1 (DIFF-S2-D-P-w-b-WITNESS P)))))
@@ -609,15 +608,32 @@
 
 (defthmd diff-s2-d-p-equiv
   (iff (diff-s2-d-p p)
-           (or (diff-s2-d-p-w-nil p)
-               (diff-s2-d-p-w-a p)
-               (diff-s2-d-p-w-a-inv p)
-               (diff-s2-d-p-w-b p)
-               (diff-s2-d-p-w-b-inv p)))
+       (or (diff-s2-d-p-w-nil p)
+           (diff-s2-d-p-w-a p)
+           (diff-s2-d-p-w-a-inv p)
+           (diff-s2-d-p-w-b p)
+           (diff-s2-d-p-w-b-inv p)))
   :hints (("Goal"
            :use ((:instance diff-s2-d-p-equiv-lemma1 (p p))
                  (:instance diff-s2-d-p-equiv-lemma2 (p p)))
            )))
+
+---
+
+(defthmd disjoint-1-lemma1
+  (IMPLIES (AND (CHOICE-SET-S2-D-P C-POINT)
+                (a-wordp w)
+                (not (M-= (M-* (ROTATION W (ACL2-SQRT 2)) C-POINT)
+                          P)))
+           (not (DIFF-S2-D-P-W-A P)))
+  :hints (("Goal"
+           :use (:instance DIFF-S2-D-P-W-A-SUFF (c-point c-point) (w w))
+           :in-theory nil
+           )))
+
+(defthmd disjoint-1
+  (implies (diff-s2-d-p-w-nil p)
+           (not (diff-s2-d-p-w-a p))))
 
 (skip-proofs
  (defthmd s2-def-p=diff-s2-def
