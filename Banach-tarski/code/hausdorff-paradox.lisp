@@ -152,7 +152,7 @@
 (defun-sk word-exists (point)
   (exists w
           (and (reducedwordp w)
-               (point-in-r3 point)
+               ;(point-in-r3 point)
                w
                (m-= (m-* (rotation w (acl2-sqrt 2)) point)
                     point))))
@@ -195,7 +195,6 @@
 
 (defthm point-on-d=>rot*p-on-d
   (implies (and (reducedwordp w)
-;(s2-def-p p)
                 (d-p (m-* (rotation w (acl2-sqrt 2)) p)))
            (let ((w1 (word-exists-witness (m-* (rotation w (acl2-sqrt 2)) p))))
              (and (reducedwordp w1)
@@ -451,10 +450,11 @@
            :in-theory nil
            )))
 
+;; This is an orbit of point 'point'
 (defun-sk orbit-point-p (o-point point)
   (exists w
           (and (reducedwordp w)
-               (s2-def-p point)
+               ;(s2-def-p point)
                (m-= (m-* (rotation w (acl2-sqrt 2)) point) o-point))))
 
 (defun-sk choice-set-s2-d-p (c-point)
