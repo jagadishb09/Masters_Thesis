@@ -491,66 +491,65 @@
           (and (reducedwordp w)
                (m-= (m-* (rotation w (acl2-sqrt 2)) point) o-point))))
 
-(defun orbit-point-p (c-point p)
-  (and (s2-d-p p)
-       (orbit-point-p-q c-point p)))
-
 (defchoose choice-set-s2-d-p (c-point) (p)
-  (orbit-point-p c-point p))
+  (orbit-point-p-q c-point p))
 
 (defun-sk diff-s2-d-p-q (p)
-  (exists w
+  (exists (p1 w)
           (and (reducedwordp w)
-               (m-= (m-* (rotation w (acl2-sqrt 2)) (choice-set-s2-d-p p)) p))))
+               (s2-def-p p1)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) (choice-set-s2-d-p p1)) p))))
 
 (defun diff-s2-d-p (p)
   (and (point-in-r3 p)
        (diff-s2-d-p-q p)))
 
-(defthmd diff-s2-d-p-equiv
-  (implies (and (point-in-r3 p)
-                (diff-s2-d-p-q p))
-           (diff-s2-d-p p)))
+;; ---
 
-(defun diff-s2-d-p-w-nil (p)
-  (and (point-in-r3 p)
-       (m-= (m-* (rotation nil (acl2-sqrt 2)) (choice-set-s2-d-p p)) p)))
+;; (defthmd diff-s2-d-p-equiv
+;;   (implies (and (point-in-r3 p)
+;;                 (diff-s2-d-p-q p))
+;;            (diff-s2-d-p p)))
 
-(defun-sk diff-s2-d-p-w-a-q (p)
-  (exists w
-          (and (a-wordp w)
-               (m-= (m-* (rotation w (acl2-sqrt 2)) (choice-set-s2-d-p p)) p))))
+;; (defun diff-s2-d-p-w-nil (p)
+;;   (and (point-in-r3 p)
+;;        (m-= (m-* (rotation nil (acl2-sqrt 2)) (choice-set-s2-d-p p)) p)))
 
-(defun diff-s2-d-p-w-a (p)
-  (and (point-in-r3 p)
-       (diff-s2-d-p-w-a-q p)))
+;; (defun-sk diff-s2-d-p-w-a-q (p)
+;;   (exists w
+;;           (and (a-wordp w)
+;;                (m-= (m-* (rotation w (acl2-sqrt 2)) (choice-set-s2-d-p p)) p))))
 
-(defun-sk diff-s2-d-p-w-a-inv-q (p)
-  (exists w
-          (and (a-inv-wordp w)
-               (m-= (m-* (rotation w (acl2-sqrt 2)) (choice-set-s2-d-p p)) p))))
+;; (defun diff-s2-d-p-w-a (p)
+;;   (and (point-in-r3 p)
+;;        (diff-s2-d-p-w-a-q p)))
 
-(defun diff-s2-d-p-w-a-inv (p)
-  (and (point-in-r3 p)
-       (diff-s2-d-p-w-a-inv-q p)))
+;; (defun-sk diff-s2-d-p-w-a-inv-q (p)
+;;   (exists w
+;;           (and (a-inv-wordp w)
+;;                (m-= (m-* (rotation w (acl2-sqrt 2)) (choice-set-s2-d-p p)) p))))
 
-(defun-sk diff-s2-d-p-w-b-q (p)
-  (exists w
-          (and (b-wordp w)
-               (m-= (m-* (rotation w (acl2-sqrt 2)) (choice-set-s2-d-p p)) p))))
+;; (defun diff-s2-d-p-w-a-inv (p)
+;;   (and (point-in-r3 p)
+;;        (diff-s2-d-p-w-a-inv-q p)))
 
-(defun diff-s2-d-p-w-b (p)
-  (and (point-in-r3 p)
-       (diff-s2-d-p-w-b-q p)))
+;; (defun-sk diff-s2-d-p-w-b-q (p)
+;;   (exists w
+;;           (and (b-wordp w)
+;;                (m-= (m-* (rotation w (acl2-sqrt 2)) (choice-set-s2-d-p p)) p))))
 
-(defun-sk diff-s2-d-p-w-b-inv-q (p)
-  (exists w
-          (and (b-inv-wordp w)
-               (m-= (m-* (rotation w (acl2-sqrt 2)) (choice-set-s2-d-p p)) p))))
+;; (defun diff-s2-d-p-w-b (p)
+;;   (and (point-in-r3 p)
+;;        (diff-s2-d-p-w-b-q p)))
 
-(defun diff-s2-d-p-w-b-inv (p)
-  (and (point-in-r3 p)
-       (diff-s2-d-p-w-b-inv-q p)))
+;; (defun-sk diff-s2-d-p-w-b-inv-q (p)
+;;   (exists w
+;;           (and (b-inv-wordp w)
+;;                (m-= (m-* (rotation w (acl2-sqrt 2)) (choice-set-s2-d-p p)) p))))
+
+;; (defun diff-s2-d-p-w-b-inv (p)
+;;   (and (point-in-r3 p)
+;;        (diff-s2-d-p-w-b-inv-q p)))
 
 ;; (defthmd diff-s2-d-p-equiv-1
 ;;   (implies (orbit-point-p o-point point)
