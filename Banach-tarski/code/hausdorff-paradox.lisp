@@ -497,7 +497,7 @@
 (defun-sk diff-s2-d-p-q (p)
   (exists (p1 w)
           (and (reducedwordp w)
-               (s2-def-p p1)
+               (s2-d-p p1)
                (m-= (m-* (rotation w (acl2-sqrt 2)) (choice-set-s2-d-p p1)) p))))
 
 (defun diff-s2-d-p (p)

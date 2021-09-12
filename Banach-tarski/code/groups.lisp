@@ -1623,3 +1623,189 @@
 	   :use (:instance reduced-inverse-lemma)
 	   ))
   )
+
+(defun-sk a-inv*w-a-p (w)
+  (exists word-a
+          (and (a-wordp word-a)
+               (equal (compose (list (wa-inv)) word-a) w))))
+
+(defun not-wa-inv-p (w)
+  (or (equal w nil)
+      (a-wordp w)
+      (b-wordp w)
+      (b-inv-wordp w)))
+
+(defthmd a-inv*w-a-p-equiv-1
+  (implies (a-inv*w-a-p w)
+           (and (a-wordp (a-inv*w-a-p-witness w))
+                (equal (compose (list (wa-inv)) (a-inv*w-a-p-witness w)) w)))
+  :hints (("Goal"
+           :in-theory (disable a-wordp compose)
+           )))
+
+(defthmd a-inv*w-a-p-equiv-2
+  (implies (a-wordp w1)
+           (not-wa-inv-p (compose (list (wa-inv)) w1)))
+  :hints (("Goal"
+           :use ((:instance word-fix-rev-lemma3-12 (x (wa-inv))
+                            (y w1)))
+           :cases ((equal (car (cdr y)) nil)
+                   (equal (car (cdr y)) (wa))
+                   (equal (car (cdr y)) (wb))
+                   (equal (car (cdr y)) (wb-inv)))
+           )))
+
+(defthmd a-inv*w-a-p-equiv-3
+  (implies (a-inv*w-a-p w)
+           (not-wa-inv-p w))
+  :hints (("Goal"
+           :use ((:instance a-inv*w-a-p-equiv-1 (w w))
+                 (:instance a-inv*w-a-p-equiv-2 (w1 (a-inv*w-a-p-witness w))))
+           )))
+
+(defthmd a-inv*w-a-p-equiv-4
+  (implies (not-wa-inv-p w)
+           (a-inv*w-a-p w))
+  :hints (("Goal"
+           :cases ((equal w nil)
+                   (a-wordp w)
+                   (b-wordp w)
+                   (b-inv-wordp w))
+           :in-theory nil)
+          ("Subgoal 5"
+           :use (:instance not-wa-inv-p (w w))
+           )
+          ("Subgoal 4"
+           :use (:instance A-INV*W-A-P-SUFF (word-a (list (wa))) (w w))
+           :in-theory (enable a-wordp))
+          ("Subgoal 3"
+           :use ((:instance A-INV*W-A-P-SUFF (word-a (append (list (wa)) w)) (w w))
+                 (:instance word-fix-rev-lemma3-12 (x (wa-inv)) (y (append (list (wa)) w))))
+           :in-theory (enable a-wordp)
+           )
+          ("Subgoal 2"
+           :use ((:instance A-INV*W-A-P-SUFF (word-a (append (list (wa)) w)) (w w))
+                 (:instance word-fix-rev-lemma3-12 (x (wa-inv)) (y (APPEND (LIST (WA)) W))))
+           :in-theory (enable compose append)
+           )
+          ("Subgoal 1"
+           :use ((:instance A-INV*W-A-P-SUFF (word-a (append (list (wa)) w)) (w w))
+                 (:instance word-fix-rev-lemma3-12 (x (wa-inv)) (y (APPEND (LIST (WA)) W))))
+           :in-theory (enable compose append)
+           )
+
+          ))
+
+(defthmd a-inv*w-a-p-equiv
+  (iff (a-inv*w-a-p w)
+       (not-wa-inv-p w))
+  :hints (("Goal"
+           :use ((:instance a-inv*w-a-p-equiv-3 (w w))
+                 (:instance a-inv*w-a-p-equiv-4 (w w)))
+           )))
+
+(defun-sk b-inv*w-b-p (w)
+  (exists word-b
+          (and (b-wordp word-b)
+               (equal (compose (list (wb-inv)) word-b) w))))
+
+(defun not-wb-inv-p (w)
+  (or (equal w nil)
+      (a-wordp w)
+      (b-wordp w)
+      (a-inv-wordp w)))
+
+(defthmd b-inv*w-b-p-equiv-1
+  (implies (b-inv*w-b-p w)
+           (and (b-wordp (b-inv*w-b-p-witness w))
+                (equal (compose (list (wb-inv)) (b-inv*w-b-p-witness w)) w)))
+  :hints (("Goal"
+           :in-theory (disable b-wordp compose)
+           )))
+
+(defthmd b-inv*w-b-p-equiv-2
+  (implies (b-wordp w1)
+           (not-wb-inv-p (compose (list (wb-inv)) w1)))
+  :hints (("Goal"
+           :use ((:instance word-fix-rev-lemma3-12 (x (wb-inv))
+                            (y w1)))
+           :cases ((equal (car (cdr y)) nil)
+                   (equal (car (cdr y)) (wa))
+                   (equal (car (cdr y)) (wb))
+                   (equal (car (cdr y)) (wa-inv)))
+           )))
+
+(defthmd b-inv*w-b-p-equiv-3
+  (implies (b-inv*w-b-p w)
+           (not-wb-inv-p w))
+  :hints (("Goal"
+           :use ((:instance b-inv*w-b-p-equiv-1 (w w))
+                 (:instance b-inv*w-b-p-equiv-2 (w1 (b-inv*w-b-p-witness w))))
+           )))
+
+(defthmd b-inv*w-b-p-equiv-4
+  (implies (not-wb-inv-p w)
+           (b-inv*w-b-p w))
+  :hints (("Goal"
+           :cases ((equal w nil)
+                   (a-wordp w)
+                   (b-wordp w)
+                   (a-inv-wordp w))
+           :in-theory nil)
+          ("Subgoal 5"
+           :use (:instance not-wb-inv-p (w w))
+           )
+          ("Subgoal 4"
+           :use (:instance b-INV*W-b-P-SUFF (word-b (list (wb))) (w w))
+           :in-theory (enable b-wordp))
+          ("Subgoal 3"
+           :use ((:instance b-INV*W-b-P-SUFF (word-b (append (list (wb)) w)) (w w))
+                 (:instance word-fix-rev-lemma3-12 (x (wb-inv)) (y (append (list (wb)) w))))
+           :in-theory (enable b-wordp)
+           )
+          ("Subgoal 2"
+           :use ((:instance b-INV*W-b-P-SUFF (word-b (append (list (wb)) w)) (w w))
+                 (:instance word-fix-rev-lemma3-12 (x (wb-inv)) (y (APPEND (LIST (Wb)) W))))
+           :in-theory (enable compose append)
+           )
+          ("Subgoal 1"
+           :use ((:instance b-INV*W-b-P-SUFF (word-b (append (list (wb)) w)) (w w))
+                 (:instance word-fix-rev-lemma3-12 (x (wb-inv)) (y (APPEND (LIST (Wb)) W))))
+           :in-theory (enable compose append)
+           )))
+
+(defthmd b-inv*w-b-p-equiv
+  (iff (b-inv*w-b-p w)
+       (not-wb-inv-p w))
+  :hints (("Goal"
+           :use ((:instance b-inv*w-b-p-equiv-3 (w w))
+                 (:instance b-inv*w-b-p-equiv-4 (w w)))
+           )))
+
+(defthmd reducedword-equiv-1
+  (iff (reducedwordp w)
+       (or (not-wb-inv-p w)
+           (b-inv-wordp w))))
+
+(defthmd reducedword-equiv-2
+  (iff (reducedwordp w)
+       (or (b-inv*w-b-p w)
+           (b-inv-wordp w)))
+  :hints (("Goal"
+           :use ((:instance reducedword-equiv-1)
+                 (:instance b-inv*w-b-p-equiv))
+           )))
+
+(defthmd reducedword-equiv-3
+  (iff (reducedwordp w)
+       (or (not-wa-inv-p w)
+           (a-inv-wordp w))))
+
+(defthmd reducedword-equiv-4
+  (iff (reducedwordp w)
+       (or (a-inv*w-a-p w)
+           (a-inv-wordp w)))
+  :hints (("Goal"
+           :use ((:instance reducedword-equiv-3)
+                 (:instance a-inv*w-a-p-equiv))
+           )))
