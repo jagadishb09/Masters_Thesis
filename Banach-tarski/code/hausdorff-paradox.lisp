@@ -491,20 +491,112 @@
           (and (reducedwordp w)
                (m-= (m-* (rotation w (acl2-sqrt 2)) point) o-point))))
 
+(defthmd orbit-point-p-q-equiv
+  (implies (orbit-point-p-q o-p p)
+           (and (reducedwordp (ORBIT-POINT-P-Q-WITNESS O-P P))
+                (m-= (m-* (rotation (ORBIT-POINT-P-Q-WITNESS O-P P)(acl2-sqrt 2)) p)
+                     o-p))))
+
 (defchoose choice-set-s2-d-p (c-point) (p)
-  (orbit-point-p-q c-point p))
+  (orbit-point-p-q c-point p)
+  :strengthen t)
+
+(defthmd choice-set-s2-d-p-rewrite
+  (implies (orbit-point-p-q o-p p)
+           (orbit-point-p-q (choice-set-s2-d-p p) p))
+  :hints (("Goal"
+           :use (:instance choice-set-s2-d-p (c-point o-p))
+           )))
+
+(defun-sk diff-s2-d-p-q-1 (cp1 p)
+  (exists w
+          (and (reducedwordp w)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) cp1) p))))
 
 (defun-sk diff-s2-d-p-q (p)
-  (exists (p1 w)
-          (and (reducedwordp w)
-               (s2-d-p p1)
-               (m-= (m-* (rotation w (acl2-sqrt 2)) (choice-set-s2-d-p p1)) p))))
+  (exists p1
+          (and (s2-d-p p1)
+               (diff-s2-d-p-q-1 (choice-set-s2-d-p p1) p))))
 
 (defun diff-s2-d-p (p)
   (and (point-in-r3 p)
        (diff-s2-d-p-q p)))
 
+(defthmd s2-d-p-equiv-1-lemma1
+  (implies (s2-d-p p)
+           (orbit-point-p-q p p))
+  :hints (("Goal"
+           :use ((:instance m-*point-id=point (p1 p))
+                 (:instance orbit-point-p-q-suff (w nil) (point p) (o-point p)))
+           )))
+
+(defthmd s2-d-p-equiv-1-lemma2
+  (implies (m-= (m-* m1 m2) m3)
+           (m-= (m-* m4 m3)
+                (m-* (m-* m4 m1) m2))))
+
+(defthmd s2-d-p-equiv-1-lemma3
+  (implies (and (m-= (m-* invx cp) (m-* (m-* invx x) p))
+                (m-= (m-* invx x) id)
+                (m-= (m-* id p) p))
+           (m-= (m-* invx cp) p)))
+
+(defthmd s2-d-p-equiv-1
+  (implies (s2-d-p p)
+           (diff-s2-d-p p))
+  :hints (("Goal"
+           :use ((:instance diff-s2-d-p-q-suff (p1 p))
+                 (:instance s2-d-p-equiv-1-lemma1 (p p))
+                 (:instance orbit-point-p-q-equiv (o-p (choice-set-s2-d-p p)) (p p))
+                 (:instance DIFF-S2-D-P-Q-1-suff
+                            (w (word-inverse (ORBIT-POINT-P-Q-WITNESS (choice-set-s2-d-p p) P)))
+                            (cp1 (choice-set-s2-d-p p)) (p p))
+                 (:instance choice-set-s2-d-p-rewrite (o-p p) (p p))
+                 (:instance reducedwordp-word-inverse
+                            (x (ORBIT-POINT-P-Q-WITNESS (CHOICE-SET-S2-D-P P) P)))
+                 (:instance s2-d-p-equiv-1-lemma2
+                            (m1 (ROTATION (ORBIT-POINT-P-Q-WITNESS (CHOICE-SET-S2-D-P P) P)
+                                          (ACL2-SQRT 2)))
+                            (m2 p)
+                            (m3 (CHOICE-SET-S2-D-P P))
+                            (m4 (ROTATION (WORD-INVERSE (ORBIT-POINT-P-Q-WITNESS (CHOICE-SET-S2-D-P P) p))
+                                          (ACL2-SQRT 2))))
+                 (:instance m-*rot-rot-inv=id
+                            (p (WORD-INVERSE (ORBIT-POINT-P-Q-WITNESS (CHOICE-SET-S2-D-P P) p)))
+                            (x (acl2-sqrt 2)))
+                 (:instance inv-inv-x=x (x (ORBIT-POINT-P-Q-WITNESS (CHOICE-SET-S2-D-P P) p)))
+                 (:instance reducedwordp=>weak-wordp
+                            (x (ORBIT-POINT-P-Q-WITNESS (CHOICE-SET-S2-D-P P) p)))
+                 (:instance m-*point-id=point (p1 p))
+                 (:instance s2-d-p (point p))
+                 (:instance s2-def-p (point p))
+                 (:instance s2-d-p-equiv-1-lemma3
+                            (invx (ROTATION (WORD-INVERSE (ORBIT-POINT-P-Q-WITNESS (CHOICE-SET-S2-D-P P) p))
+                                            (ACL2-SQRT 2)))
+                            (x (ROTATION (ORBIT-POINT-P-Q-WITNESS (CHOICE-SET-S2-D-P P) P)
+                                         (ACL2-SQRT 2)))
+                            (p p)
+                            (id (id-rotation))
+                            (cp (CHOICE-SET-S2-D-P P)))
+                 (:instance diff-s2-d-p (p p))
+                 )
+           :in-theory nil
+           )))
+
 ;; ---
+
+(defthmd testcase
+  (implies (and (ORBIT-POINT-P-Q (CHOICE-SET-S2-D-P P2)
+                                 P1)
+                (ORBIT-POINT-P-Q (CHOICE-SET-S2-D-P P1)
+                                 P2))
+           (equal (choice-set-s2-d-p p1)
+                  (choice-set-s2-d-p p2)))
+  :hints (("Goal"
+           :use ((:instance choice-set-s2-d-p (c-point (choice-set-s2-d-p p1)) (p p1))
+                 (:instance choice-set-s2-d-p (c-point (choice-set-s2-d-p p2)) (p p2)))
+           :in-theory nil
+           )))
 
 ;; (defthmd diff-s2-d-p-equiv
 ;;   (implies (and (point-in-r3 p)
