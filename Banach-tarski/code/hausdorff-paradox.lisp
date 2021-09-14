@@ -513,10 +513,20 @@
           (and (reducedwordp w)
                (m-= (m-* (rotation w (acl2-sqrt 2)) cp1) p))))
 
+(defthmd diff-s2-d-p-q-1-equiv
+  (implies (diff-s2-d-p-q-1 cp1 p)
+           (and (reducedwordp (diff-s2-d-p-q-1-witness cp1 p))
+                (m-= (m-* (rotation (diff-s2-d-p-q-1-witness cp1 p) (acl2-sqrt 2)) cp1) p))))
+
 (defun-sk diff-s2-d-p-q (p)
   (exists p1
           (and (s2-d-p p1)
                (diff-s2-d-p-q-1 (choice-set-s2-d-p p1) p))))
+
+(defthmd diff-s2-d-p-q-equiv
+  (implies (diff-s2-d-p-q p)
+           (and (s2-d-p (diff-s2-d-p-q-witness p))
+                (diff-s2-d-p-q-1 (choice-set-s2-d-p (diff-s2-d-p-q-witness p)) p))))
 
 (defun diff-s2-d-p (p)
   (and (point-in-r3 p)
@@ -582,6 +592,10 @@
                  )
            :in-theory nil
            )))
+
+;; (defthmd s2-d-p-equiv-2
+;;   (implies (diff-s2-d-p p)
+;;            (s2-d-p p)))
 
 ;; ---
 
