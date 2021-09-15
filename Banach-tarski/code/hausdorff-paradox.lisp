@@ -974,6 +974,18 @@
            )
           ))
 
+(defthmd diff-s2-d-p-=
+  (iff (diff-s2-d-p p)
+       (or (diff-n-s2-d-p p)
+           (diff-a-s2-d-p p)
+           (diff-a-inv-s2-d-p p)
+           (diff-b-s2-d-p p)
+           (diff-b-inv-s2-d-p p)))
+  :hints (("Goal"
+           :use ((:instance diff-s2-d-p-=-1)
+                 (:instance diff-s2-d-p-=-2))
+           )))
+
 ;; ---
 
 ;; (defthmd testcase
