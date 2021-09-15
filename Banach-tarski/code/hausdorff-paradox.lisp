@@ -713,6 +713,136 @@
                  (:instance s2-d-p-equiv-1))
            )))
 
+(defun-sk diff-n-s2-d-p-q-1 (cp1 p)
+  (exists w
+          (and (reducedwordp w)
+               (equal w nil)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) cp1) p))))
+
+(defthmd diff-n-s2-d-p-q-1-equiv
+  (implies (diff-n-s2-d-p-q-1 cp1 p)
+           (and (reducedwordp (diff-n-s2-d-p-q-1-witness cp1 p))
+                (equal (diff-n-s2-d-p-q-1-witness cp1 p) nil)
+                (m-= (m-* (rotation (diff-n-s2-d-p-q-1-witness cp1 p) (acl2-sqrt 2)) cp1) p))))
+
+(defun-sk diff-n-s2-d-p-q (p)
+  (exists p1
+          (and (s2-d-p p1)
+               (diff-n-s2-d-p-q-1 (choice-set-s2-d-p p1) p))))
+
+(defthmd diff-n-s2-d-p-q-equiv
+  (implies (diff-n-s2-d-p-q p)
+           (and (s2-d-p (diff-n-s2-d-p-q-witness p))
+                (diff-n-s2-d-p-q-1 (choice-set-s2-d-p (diff-n-s2-d-p-q-witness p)) p))))
+
+(defun diff-n-s2-d-p (p)
+  (and (point-in-r3 p)
+       (diff-n-s2-d-p-q p)))
+
+(defun-sk diff-a-s2-d-p-q-1 (cp1 p)
+  (exists w
+          (and (a-wordp w)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) cp1) p))))
+
+(defthmd diff-a-s2-d-p-q-1-equiv
+  (implies (diff-a-s2-d-p-q-1 cp1 p)
+           (and (a-wordp (diff-a-s2-d-p-q-1-witness cp1 p))
+                (m-= (m-* (rotation (diff-a-s2-d-p-q-1-witness cp1 p) (acl2-sqrt 2)) cp1) p))))
+
+(defun-sk diff-a-s2-d-p-q (p)
+  (exists p1
+          (and (s2-d-p p1)
+               (diff-a-s2-d-p-q-1 (choice-set-s2-d-p p1) p))))
+
+(defthmd diff-a-s2-d-p-q-equiv
+  (implies (diff-a-s2-d-p-q p)
+           (and (s2-d-p (diff-a-s2-d-p-q-witness p))
+                (diff-a-s2-d-p-q-1 (choice-set-s2-d-p (diff-a-s2-d-p-q-witness p)) p))))
+
+(defun diff-a-s2-d-p (p)
+  (and (point-in-r3 p)
+       (diff-a-s2-d-p-q p)))
+
+(defun-sk diff-b-s2-d-p-q-1 (cp1 p)
+  (exists w
+          (and (b-wordp w)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) cp1) p))))
+
+(defthmd diff-b-s2-d-p-q-1-equiv
+  (implies (diff-b-s2-d-p-q-1 cp1 p)
+           (and (b-wordp (diff-b-s2-d-p-q-1-witness cp1 p))
+                (m-= (m-* (rotation (diff-b-s2-d-p-q-1-witness cp1 p) (acl2-sqrt 2)) cp1) p))))
+
+(defun-sk diff-b-s2-d-p-q (p)
+  (exists p1
+          (and (s2-d-p p1)
+               (diff-b-s2-d-p-q-1 (choice-set-s2-d-p p1) p))))
+
+(defthmd diff-b-s2-d-p-q-equiv
+  (implies (diff-b-s2-d-p-q p)
+           (and (s2-d-p (diff-b-s2-d-p-q-witness p))
+                (diff-b-s2-d-p-q-1 (choice-set-s2-d-p (diff-b-s2-d-p-q-witness p)) p))))
+
+(defun diff-b-s2-d-p (p)
+  (and (point-in-r3 p)
+       (diff-b-s2-d-p-q p)))
+
+(defun-sk diff-a-inv-s2-d-p-q-1 (cp1 p)
+  (exists w
+          (and (a-inv-wordp w)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) cp1) p))))
+
+(defthmd diff-a-inv-s2-d-p-q-1-equiv
+  (implies (diff-a-inv-s2-d-p-q-1 cp1 p)
+           (and (a-inv-wordp (diff-a-inv-s2-d-p-q-1-witness cp1 p))
+                (m-= (m-* (rotation (diff-a-inv-s2-d-p-q-1-witness cp1 p) (acl2-sqrt 2)) cp1) p))))
+
+(defun-sk diff-a-inv-s2-d-p-q (p)
+  (exists p1
+          (and (s2-d-p p1)
+               (diff-a-inv-s2-d-p-q-1 (choice-set-s2-d-p p1) p))))
+
+(defthmd diff-a-inv-s2-d-p-q-equiv
+  (implies (diff-a-inv-s2-d-p-q p)
+           (and (s2-d-p (diff-a-inv-s2-d-p-q-witness p))
+                (diff-a-inv-s2-d-p-q-1 (choice-set-s2-d-p (diff-a-inv-s2-d-p-q-witness p)) p))))
+
+(defun diff-a-inv-s2-d-p (p)
+  (and (point-in-r3 p)
+       (diff-a-inv-s2-d-p-q p)))
+
+(defun-sk diff-b-inv-s2-d-p-q-1 (cp1 p)
+  (exists w
+          (and (b-inv-wordp w)
+               (m-= (m-* (rotation w (acl2-sqrt 2)) cp1) p))))
+
+(defthmd diff-b-inv-s2-d-p-q-1-equiv
+  (implies (diff-b-inv-s2-d-p-q-1 cp1 p)
+           (and (b-inv-wordp (diff-b-inv-s2-d-p-q-1-witness cp1 p))
+                (m-= (m-* (rotation (diff-b-inv-s2-d-p-q-1-witness cp1 p) (acl2-sqrt 2)) cp1) p))))
+
+(defun-sk diff-b-inv-s2-d-p-q (p)
+  (exists p1
+          (and (s2-d-p p1)
+               (diff-b-inv-s2-d-p-q-1 (choice-set-s2-d-p p1) p))))
+
+(defthmd diff-b-inv-s2-d-p-q-equiv
+  (implies (diff-b-inv-s2-d-p-q p)
+           (and (s2-d-p (diff-b-inv-s2-d-p-q-witness p))
+                (diff-b-inv-s2-d-p-q-1 (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p)) p))))
+
+(defun diff-b-inv-s2-d-p (p)
+  (and (point-in-r3 p)
+       (diff-b-inv-s2-d-p-q p)))
+
+;; (defthmd diff-s2-d-p-=
+;;   (implies (diff-s2-d-p p)
+;;            (or (diff-n-s2-d-p p)
+;;                (diff-a-s2-d-p p)
+;;                (diff-a-inv-s2-d-p p)
+;;                (diff-b-s2-d-p p)
+;;                (diff-b-inv-s2-d-p p))))
+
 ;; ---
 
 ;; (defthmd testcase
