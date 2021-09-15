@@ -986,6 +986,10 @@
                  (:instance diff-s2-d-p-=-2))
            )))
 
+;; (defthmd disjoint-lemmas1
+;;   (implies (diff-a-s2-d-p p)
+;;            (not (diff-b-s2-d-p p))))
+
 ;; ---
 
 ;; (defthmd testcase
