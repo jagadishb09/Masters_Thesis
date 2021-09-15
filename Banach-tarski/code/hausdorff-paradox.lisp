@@ -835,7 +835,7 @@
   (and (point-in-r3 p)
        (diff-b-inv-s2-d-p-q p)))
 
-(defthmd diff-s2-d-p-=
+(defthmd diff-s2-d-p-=-1
   (implies (diff-s2-d-p p)
            (or (diff-n-s2-d-p p)
                (diff-a-s2-d-p p)
@@ -884,6 +884,95 @@
                  )
            :in-theory nil
            )))
+
+(defthmd diff-s2-d-p-=-2
+  (implies (or (diff-n-s2-d-p p)
+               (diff-a-s2-d-p p)
+               (diff-a-inv-s2-d-p p)
+               (diff-b-s2-d-p p)
+               (diff-b-inv-s2-d-p p))
+           (diff-s2-d-p p))
+  :hints (("Goal"
+           :cases ((diff-n-s2-d-p p)
+                   (diff-a-s2-d-p p)
+                   (diff-b-s2-d-p p)
+                   (diff-a-inv-s2-d-p p)
+                   (diff-b-inv-s2-d-p p))
+           :in-theory nil
+           )
+          ("Subgoal 5"
+           :use ((:instance diff-n-s2-d-p (p p))
+                 (:instance diff-n-s2-d-p-q-1 (cp1 (choice-set-s2-d-p (diff-n-s2-d-p-q-witness p))) (p p))
+                 (:instance diff-n-s2-d-p-q (p p))
+                 (:instance diff-s2-d-p (p p))
+                 (:instance diff-s2-d-p-q-suff (p1 (diff-n-s2-d-p-q-witness p)))
+                 (:instance diff-s2-d-p-q-1-suff (w (diff-n-s2-d-p-q-1-witness
+                                                     (choice-set-s2-d-p (diff-n-s2-d-p-q-witness p)) p))
+                            (cp1 (choice-set-s2-d-p (diff-n-s2-d-p-q-witness p)))
+                            (p p))
+                 )
+           )
+          ("Subgoal 4"
+           :use ((:instance diff-a-s2-d-p (p p))
+                 (:instance diff-a-s2-d-p-q-1 (cp1 (choice-set-s2-d-p (diff-a-s2-d-p-q-witness p))) (p p))
+                 (:instance diff-a-s2-d-p-q-1-equiv (cp1 (choice-set-s2-d-p (diff-a-s2-d-p-q-witness p))) (p p))
+                 (:instance diff-a-s2-d-p-q (p p))
+                 (:instance diff-a-s2-d-p-q-equiv (p p))
+                 (:instance diff-s2-d-p (p p))
+                 (:instance diff-s2-d-p-q-suff (p1 (diff-a-s2-d-p-q-witness p)))
+                 (:instance diff-s2-d-p-q-1-suff (w (diff-a-s2-d-p-q-1-witness
+                                                     (choice-set-s2-d-p (diff-a-s2-d-p-q-witness p)) p))
+                            (cp1 (choice-set-s2-d-p (diff-a-s2-d-p-q-witness p)))
+                            (p p))
+                 (:instance reducedwordp (x (DIFF-A-S2-D-P-Q-1-WITNESS (CHOICE-SET-S2-D-P (DIFF-A-S2-D-P-Q-WITNESS P)) P)))
+                 )
+           )
+          ("Subgoal 3"
+           :use ((:instance diff-b-s2-d-p (p p))
+                 (:instance diff-b-s2-d-p-q-1 (cp1 (choice-set-s2-d-p (diff-b-s2-d-p-q-witness p))) (p p))
+                 (:instance diff-a-s2-d-p-q-1-equiv (cp1 (choice-set-s2-d-p (diff-b-s2-d-p-q-witness p))) (p p))
+                 (:instance diff-b-s2-d-p-q (p p))
+                 (:instance diff-b-s2-d-p-q-equiv (p p))
+                 (:instance diff-s2-d-p (p p))
+                 (:instance diff-s2-d-p-q-suff (p1 (diff-b-s2-d-p-q-witness p)))
+                 (:instance diff-s2-d-p-q-1-suff (w (diff-b-s2-d-p-q-1-witness
+                                                     (choice-set-s2-d-p (diff-b-s2-d-p-q-witness p)) p))
+                            (cp1 (choice-set-s2-d-p (diff-b-s2-d-p-q-witness p)))
+                            (p p))
+                 (:instance reducedwordp (x (DIFF-b-S2-D-P-Q-1-WITNESS (CHOICE-SET-S2-D-P (DIFF-b-S2-D-P-Q-WITNESS P)) P)))
+                 )
+           )
+          ("Subgoal 2"
+           :use ((:instance diff-a-inv-s2-d-p (p p))
+                 (:instance diff-a-inv-s2-d-p-q-1 (cp1 (choice-set-s2-d-p (diff-a-inv-s2-d-p-q-witness p))) (p p))
+                 (:instance diff-a-inv-s2-d-p-q-1-equiv (cp1 (choice-set-s2-d-p (diff-a-inv-s2-d-p-q-witness p))) (p p))
+                 (:instance diff-a-inv-s2-d-p-q (p p))
+                 (:instance diff-a-inv-s2-d-p-q-equiv (p p))
+                 (:instance diff-s2-d-p (p p))
+                 (:instance diff-s2-d-p-q-suff (p1 (diff-a-inv-s2-d-p-q-witness p)))
+                 (:instance diff-s2-d-p-q-1-suff (w (diff-a-inv-s2-d-p-q-1-witness
+                                                     (choice-set-s2-d-p (diff-a-inv-s2-d-p-q-witness p)) p))
+                            (cp1 (choice-set-s2-d-p (diff-a-inv-s2-d-p-q-witness p)))
+                            (p p))
+                 (:instance reducedwordp (x (DIFF-A-inv-S2-D-P-Q-1-WITNESS (CHOICE-SET-S2-D-P (DIFF-A-inv-S2-D-P-Q-WITNESS P)) P)))
+                 )
+           )
+          ("Subgoal 1"
+           :use ((:instance diff-b-inv-s2-d-p (p p))
+                 (:instance diff-b-inv-s2-d-p-q-1 (cp1 (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p))) (p p))
+                 (:instance diff-b-inv-s2-d-p-q-1-equiv (cp1 (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p))) (p p))
+                 (:instance diff-b-inv-s2-d-p-q (p p))
+                 (:instance diff-b-inv-s2-d-p-q-equiv (p p))
+                 (:instance diff-s2-d-p (p p))
+                 (:instance diff-s2-d-p-q-suff (p1 (diff-b-inv-s2-d-p-q-witness p)))
+                 (:instance diff-s2-d-p-q-1-suff (w (diff-b-inv-s2-d-p-q-1-witness
+                                                     (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p)) p))
+                            (cp1 (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p)))
+                            (p p))
+                 (:instance reducedwordp (x (DIFF-b-inv-S2-D-P-Q-1-WITNESS (CHOICE-SET-S2-D-P (DIFF-b-inv-S2-D-P-Q-WITNESS P)) P)))
+                 )
+           )
+          ))
 
 ;; ---
 
