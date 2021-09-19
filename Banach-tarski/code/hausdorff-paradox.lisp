@@ -1441,10 +1441,109 @@
            :in-theory nil
            )))
 
-(skip-proofs
- (defthmd diff-a-inv-wa-s2-d-p-equiv-2
-   (implies (a-inv-diff-a-s2-d-p p)
-            (diff-a-inv-wa-s2-d-p p))))
+;; (skip-proofs
+;;  (defthmd diff-a-inv-wa-s2-d-p-equiv-2-1
+;;    (implies (and (m-= (m-* (rotation (list (wa-inv)) (acl2-sqrt 2))
+;;                            (a-inv-diff-a-s2-d-p-1-witness p))
+;;                       p)
+;;                  (m-=
+;;                   (m-*
+;;                    (rotation
+;;                     (diff-a-s2-d-p-q-1-witness
+;;                      (choice-set-s2-d-p
+;;                       (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p)))
+;;                      (a-inv-diff-a-s2-d-p-1-witness p))
+;;                     (acl2-sqrt 2))
+;;                    (choice-set-s2-d-p
+;;                     (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p))))
+;;                   (a-inv-diff-a-s2-d-p-1-witness p)))
+;;             (m-=
+;;              (m-*
+;;               (rotation
+;;                (compose
+;;                 (list (wa-inv))
+;;                 (diff-a-s2-d-p-q-1-witness
+;;                  (choice-set-s2-d-p
+;;                   (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p)))
+;;                  (a-inv-diff-a-s2-d-p-1-witness p)))
+;;                (acl2-sqrt 2))
+;;               (choice-set-s2-d-p
+;;                (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p))))
+;;              p))))
+
+(defthmd diff-a-inv-wa-s2-d-p-equiv-2-1
+  (reducedwordp (list (wa-inv))))
+
+(defthmd diff-a-inv-wa-s2-d-p-equiv-2-2-1
+  (implies (and (m-= (m-* x y) p)
+                (m-= (m-* d c) y)
+                (m-= (m-* x d) co))
+           (m-= (m-* co c) p)))
+
+(defthmd diff-a-inv-wa-s2-d-p-equiv-2-2
+  (implies (and (reducedwordp wa-inv)
+                (a-wordp diff)
+                (m-= (m-* (rotation wa-inv (acl2-sqrt 2)) a-inv-wit) p)
+                (m-= (m-* (rotation diff (acl2-sqrt 2)) cp) a-inv-wit))
+           (m-= (m-* (rotation (compose wa-inv diff) (acl2-sqrt 2)) cp) p))
+  :hints (("goal"
+           :use ((:instance rot-a*rot-b-= (a wa-inv) (b diff) (x (acl2-sqrt 2)))
+                 (:instance s2-d-p-equiv-2-lemma2 (w diff))
+                 (:instance diff-a-inv-wa-s2-d-p-equiv-2-2-1 (x (rotation wa-inv (acl2-sqrt 2)))
+                            (p p) (y a-inv-wit)
+                            (co (rotation (compose wa-inv diff) (acl2-sqrt 2)))
+                            (d (rotation diff (acl2-sqrt 2)))
+                            (c cp)))
+           :in-theory nil
+           :do-not-induct t
+           )))
+
+(defthmd diff-a-inv-wa-s2-d-p-equiv-2
+  (implies (a-inv-diff-a-s2-d-p p)
+           (diff-a-inv-wa-s2-d-p p))
+  :hints (("goal"
+           :use ((:instance a-inv-diff-a-s2-d-p (p p))
+                 (:instance a-inv-diff-a-s2-d-p-1-equiv (p p))
+                 (:instance diff-a-s2-d-p (p (a-inv-diff-a-s2-d-p-1-witness p)))
+                 (:instance diff-a-s2-d-p-q-equiv (p (a-inv-diff-a-s2-d-p-1-witness p)))
+                 (:instance diff-a-s2-d-p-q-1-equiv
+                            (cp1 (choice-set-s2-d-p (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p))))
+                            (p (a-inv-diff-a-s2-d-p-1-witness p)))
+                 (:instance diff-a-inv-wa-s2-d-p (p p))
+                 (:instance diff-a-inv-wa-s2-d-p-q-suff
+                            (p1 (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p)))
+                            (p p))
+                 (:instance diff-a-inv-wa-s2-d-p-q-1-suff
+                            (w (compose (list (wa-inv)) (diff-a-s2-d-p-q-1-witness
+                                                         (choice-set-s2-d-p
+                                                          (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p)))
+                                                         (a-inv-diff-a-s2-d-p-1-witness p))))
+                            (cp1 (choice-set-s2-d-p
+                                  (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p))))
+                            (p p))
+                 (:instance a-inv*w-a-p-suff
+                            (word-a (diff-a-s2-d-p-q-1-witness
+                                     (choice-set-s2-d-p
+                                      (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p)))
+                                     (a-inv-diff-a-s2-d-p-1-witness p)))
+                            (w (compose (list (wa-inv)) (diff-a-s2-d-p-q-1-witness
+                                                         (choice-set-s2-d-p
+                                                          (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p)))
+                                                         (a-inv-diff-a-s2-d-p-1-witness p)))))
+                 (:instance diff-a-inv-wa-s2-d-p-equiv-2-1)
+                 (:instance diff-a-inv-wa-s2-d-p-equiv-2-2
+                            (wa-inv (list (wa-inv)))
+                            (diff (diff-a-s2-d-p-q-1-witness
+                                   (choice-set-s2-d-p
+                                    (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p)))
+                                   (a-inv-diff-a-s2-d-p-1-witness p)))
+                            (a-inv-wit (a-inv-diff-a-s2-d-p-1-witness p))
+                            (cp (choice-set-s2-d-p
+                                 (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p))))
+                            (p p))
+                 )
+           :in-theory nil
+           )))
 
 (defthmd diff-a-inv-wa-s2-d-p-equiv
   (iff (diff-a-inv-wa-s2-d-p p)
@@ -1560,10 +1659,79 @@
            :in-theory nil
            )))
 
-(skip-proofs
- (defthmd diff-b-inv-wb-s2-d-p-equiv-2
-   (implies (b-inv-diff-b-s2-d-p p)
-            (diff-b-inv-wb-s2-d-p p))))
+(defthmd diff-b-inv-wb-s2-d-p-equiv-2-1
+  (reducedwordp (list (wb-inv))))
+
+(defthmd diff-b-inv-wb-s2-d-p-equiv-2-2-1
+  (implies (and (m-= (m-* x y) p)
+                (m-= (m-* d c) y)
+                (m-= (m-* x d) co))
+           (m-= (m-* co c) p)))
+
+(defthmd diff-b-inv-wb-s2-d-p-equiv-2-2
+  (implies (and (reducedwordp wb-inv)
+                (b-wordp diff)
+                (m-= (m-* (rotation wb-inv (acl2-sqrt 2)) b-inv-wit) p)
+                (m-= (m-* (rotation diff (acl2-sqrt 2)) cp) b-inv-wit))
+           (m-= (m-* (rotation (compose wb-inv diff) (acl2-sqrt 2)) cp) p))
+  :hints (("goal"
+           :use ((:instance rot-a*rot-b-= (a wb-inv) (b diff) (x (acl2-sqrt 2)))
+                 (:instance s2-d-p-equiv-2-lemma2 (w diff))
+                 (:instance diff-b-inv-wb-s2-d-p-equiv-2-2-1 (x (rotation wb-inv (acl2-sqrt 2)))
+                            (p p) (y b-inv-wit)
+                            (co (rotation (compose wb-inv diff) (acl2-sqrt 2)))
+                            (d (rotation diff (acl2-sqrt 2)))
+                            (c cp)))
+           :in-theory nil
+           :do-not-induct t
+           )))
+
+(defthmd diff-b-inv-wb-s2-d-p-equiv-2
+  (implies (b-inv-diff-b-s2-d-p p)
+           (diff-b-inv-wb-s2-d-p p))
+  :hints (("goal"
+           :use ((:instance b-inv-diff-b-s2-d-p (p p))
+                 (:instance b-inv-diff-b-s2-d-p-1-equiv (p p))
+                 (:instance diff-b-s2-d-p (p (b-inv-diff-b-s2-d-p-1-witness p)))
+                 (:instance diff-b-s2-d-p-q-equiv (p (b-inv-diff-b-s2-d-p-1-witness p)))
+                 (:instance diff-b-s2-d-p-q-1-equiv
+                            (cp1 (choice-set-s2-d-p (diff-b-s2-d-p-q-witness (b-inv-diff-b-s2-d-p-1-witness p))))
+                            (p (b-inv-diff-b-s2-d-p-1-witness p)))
+                 (:instance diff-b-inv-wb-s2-d-p (p p))
+                 (:instance diff-b-inv-wb-s2-d-p-q-suff
+                            (p1 (diff-b-s2-d-p-q-witness (b-inv-diff-b-s2-d-p-1-witness p)))
+                            (p p))
+                 (:instance diff-b-inv-wb-s2-d-p-q-1-suff
+                            (w (compose (list (wb-inv)) (diff-b-s2-d-p-q-1-witness
+                                                         (choice-set-s2-d-p
+                                                          (diff-b-s2-d-p-q-witness (b-inv-diff-b-s2-d-p-1-witness p)))
+                                                         (b-inv-diff-b-s2-d-p-1-witness p))))
+                            (cp1 (choice-set-s2-d-p
+                                  (diff-b-s2-d-p-q-witness (b-inv-diff-b-s2-d-p-1-witness p))))
+                            (p p))
+                 (:instance b-inv*w-b-p-suff
+                            (word-b (diff-b-s2-d-p-q-1-witness
+                                     (choice-set-s2-d-p
+                                      (diff-b-s2-d-p-q-witness (b-inv-diff-b-s2-d-p-1-witness p)))
+                                     (b-inv-diff-b-s2-d-p-1-witness p)))
+                            (w (compose (list (wb-inv)) (diff-b-s2-d-p-q-1-witness
+                                                         (choice-set-s2-d-p
+                                                          (diff-b-s2-d-p-q-witness (b-inv-diff-b-s2-d-p-1-witness p)))
+                                                         (b-inv-diff-b-s2-d-p-1-witness p)))))
+                 (:instance diff-b-inv-wb-s2-d-p-equiv-2-1)
+                 (:instance diff-b-inv-wb-s2-d-p-equiv-2-2
+                            (wb-inv (list (wb-inv)))
+                            (diff (diff-b-s2-d-p-q-1-witness
+                                   (choice-set-s2-d-p
+                                    (diff-b-s2-d-p-q-witness (b-inv-diff-b-s2-d-p-1-witness p)))
+                                   (b-inv-diff-b-s2-d-p-1-witness p)))
+                            (b-inv-wit (b-inv-diff-b-s2-d-p-1-witness p))
+                            (cp (choice-set-s2-d-p
+                                 (diff-b-s2-d-p-q-witness (b-inv-diff-b-s2-d-p-1-witness p))))
+                            (p p))
+                 )
+           :in-theory nil
+           )))
 
 (defthmd diff-b-inv-wb-s2-d-p-equiv
   (iff (diff-b-inv-wb-s2-d-p p)
