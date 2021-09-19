@@ -1441,36 +1441,6 @@
            :in-theory nil
            )))
 
-;; (skip-proofs
-;;  (defthmd diff-a-inv-wa-s2-d-p-equiv-2-1
-;;    (implies (and (m-= (m-* (rotation (list (wa-inv)) (acl2-sqrt 2))
-;;                            (a-inv-diff-a-s2-d-p-1-witness p))
-;;                       p)
-;;                  (m-=
-;;                   (m-*
-;;                    (rotation
-;;                     (diff-a-s2-d-p-q-1-witness
-;;                      (choice-set-s2-d-p
-;;                       (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p)))
-;;                      (a-inv-diff-a-s2-d-p-1-witness p))
-;;                     (acl2-sqrt 2))
-;;                    (choice-set-s2-d-p
-;;                     (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p))))
-;;                   (a-inv-diff-a-s2-d-p-1-witness p)))
-;;             (m-=
-;;              (m-*
-;;               (rotation
-;;                (compose
-;;                 (list (wa-inv))
-;;                 (diff-a-s2-d-p-q-1-witness
-;;                  (choice-set-s2-d-p
-;;                   (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p)))
-;;                  (a-inv-diff-a-s2-d-p-1-witness p)))
-;;                (acl2-sqrt 2))
-;;               (choice-set-s2-d-p
-;;                (diff-a-s2-d-p-q-witness (a-inv-diff-a-s2-d-p-1-witness p))))
-;;              p))))
-
 (defthmd diff-a-inv-wa-s2-d-p-equiv-2-1
   (reducedwordp (list (wa-inv))))
 
