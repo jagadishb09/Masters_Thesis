@@ -180,7 +180,7 @@
            :use (:instance disjoint-lemmas-1)
            )))
 
-(defthmd dijoint-1
+(defthmd disjoint-1
   (implies (diff-a-s2-d-p p)
            (not (diff-b-s2-d-p p)))
   :hints (("goal"
@@ -313,7 +313,7 @@
            :in-theory nil
            )))
 
-(defthmd dijoint-2
+(defthmd disjoint-2
   (implies (diff-a-s2-d-p p)
            (not (diff-a-inv-s2-d-p p)))
   :hints (("goal"
@@ -446,7 +446,7 @@
            :in-theory nil
            )))
 
-(defthmd dijoint-3
+(defthmd disjoint-3
   (implies (diff-a-s2-d-p p)
            (not (diff-b-inv-s2-d-p p)))
   :hints (("goal"
@@ -579,7 +579,7 @@
            :in-theory nil
            )))
 
-(defthmd dijoint-4
+(defthmd disjoint-4
   (implies (diff-a-s2-d-p p)
            (not (diff-n-s2-d-p p)))
   :hints (("goal"
@@ -731,7 +731,7 @@
            :in-theory nil
            )))
 
-(defthmd dijoint-5
+(defthmd disjoint-5
   (implies (diff-b-s2-d-p p)
            (not (diff-a-inv-s2-d-p p)))
   :hints (("goal"
@@ -864,7 +864,7 @@
            :in-theory nil
            )))
 
-(defthmd dijoint-6
+(defthmd disjoint-6
   (implies (diff-b-s2-d-p p)
            (not (diff-b-inv-s2-d-p p)))
   :hints (("goal"
@@ -997,7 +997,7 @@
            :in-theory nil
            )))
 
-(defthmd dijoint-7
+(defthmd disjoint-7
   (implies (diff-b-s2-d-p p)
            (not (diff-n-s2-d-p p)))
   :hints (("goal"
@@ -1148,7 +1148,7 @@
            :in-theory nil
            )))
 
-(defthmd dijoint-8
+(defthmd disjoint-8
   (implies (diff-a-inv-s2-d-p p)
            (not (diff-b-inv-s2-d-p p)))
   :hints (("goal"
@@ -1281,7 +1281,7 @@
            :in-theory nil
            )))
 
-(defthmd dijoint-9
+(defthmd disjoint-9
   (implies (diff-a-inv-s2-d-p p)
            (not (diff-n-s2-d-p p)))
   :hints (("goal"
@@ -1433,7 +1433,7 @@
            )))
 
 
-(defthmd dijoint-10
+(defthmd disjoint-10
   (implies (diff-b-inv-s2-d-p p)
            (not (diff-n-s2-d-p p)))
   :hints (("goal"
@@ -1614,19 +1614,9 @@
 
 (defthmd disjoint-lemmas-12
   (implies (a-inv*w-a-p x)
-           (reducedwordp x))
-  :hints (("Goal"
-           :in-theory (e/d (a-inv*w-a-p) (reducedwordp))
-           )))
+           (reducedwordp x)))
 
-  :hints (("Goal"
-           :use ((:instance a-inv*w-a-p-equiv (w x))
-                 (:instance s2-d-p-equiv-2-lemma2 (w w)))
-           )))
-
---
-
-(defthmd dijoint-11
+(defthmd disjoint-11-1
   (implies (diff-a-inv-wa-s2-d-p p)
            (not (diff-a-inv-s2-d-p p)))
   :hints (("goal"
@@ -1674,7 +1664,7 @@
                  (:instance s2-d-p-equiv-2-lemma2 (w (diff-a-inv-s2-d-p-q-1-witness
                                                       (choice-set-s2-d-p (diff-a-inv-s2-d-p-q-witness p))
                                                       p)))
-                 (:instance disjoint-lemmas-12 (w (diff-a-inv-wa-s2-d-p-q-1-witness
+                 (:instance disjoint-lemmas-12 (x (diff-a-inv-wa-s2-d-p-q-1-witness
                                                    (choice-set-s2-d-p (diff-a-inv-wa-s2-d-p-q-witness p))
                                                    p)))
                  (:instance choice-set-s2-d-p-rewrite
@@ -1756,4 +1746,179 @@
 
                  )
            :in-theory nil
+           )))
+
+(defthmd disjoint-11
+  (implies (a-inv-diff-a-s2-d-p p)
+           (not (diff-a-inv-s2-d-p p)))
+  :hints (("Goal"
+           :use ((:instance disjoint-11-1)
+                 (:instance diff-a-inv-wa-s2-d-p-equiv))
+           )))
+
+(defthmd disjoint-lemmas-13
+  (implies (and (b-inv*w-b-p x)
+                (b-inv-wordp y))
+           (not (equal (compose (word-inverse y) x) nil)))
+  :hints (("Goal"
+           :use ((:instance assoc-prop (x y) (y (word-inverse y)) (z x))
+                 (:instance reducedwordp-word-inverse (x y))
+                 (:instance reduced-inverse (x y))
+                 (:instance s2-d-p-equiv-2-lemma2 (w y))
+                 (:instance s2-d-p-equiv-2-lemma2 (w x))
+                 (:instance a-wordp-equivalent (a x))
+                 (:instance disjoint-lemmas-4-2)
+                 (:instance disjoint-lemmas-4-3)
+                 (:instance disjoint-lemmas-4-1 (x (compose (word-inverse y) x)) (y nil))
+                 (:instance b-inv*w-b-p-equiv (w x))
+                 (:instance disjoint-lemmas-4 (x x) (y y))
+                 (:instance not-wb-inv-p (w x))
+                 (:instance disjoint-lemmas-9 (x x) (y y))
+                 (:instance disjoint-lemmas-10 (x x) (y y))
+                 (:instance disjoint-lemmas-7 (x x)))
+           :in-theory nil
+           )))
+
+(defthmd disjoint-lemmas-14
+  (implies (b-inv*w-b-p x)
+           (reducedwordp x)))
+
+(defthmd disjoint-12-1
+  (implies (diff-b-inv-wb-s2-d-p p)
+           (not (diff-b-inv-s2-d-p p)))
+  :hints (("goal"
+           :use (
+                 (:instance disjoint-lemmas-13 (y (diff-b-inv-s2-d-p-q-1-witness
+                                                   (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p))
+                                                   p))
+                            (x (diff-b-inv-wb-s2-d-p-q-1-witness
+                                (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                                p)))
+                 (:instance diff-b-inv-wb-s2-d-p (p p))
+                 (:instance diff-b-inv-wb-s2-d-p-q-equiv (p p))
+                 (:instance diff-b-inv-wb-s2-d-p-q-1-equiv (cp1 (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p)))
+                            (p p))
+                 (:instance diff-b-inv-s2-d-p (p p))
+                 (:instance diff-b-inv-s2-d-p-q-equiv (p p))
+                 (:instance diff-b-inv-s2-d-p-q-1-equiv (cp1 (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p)))
+                            (p p))
+                 (:instance disjoint-lemmas-2
+                            (wx (orbit-point-p-q-witness (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                                                         (diff-b-inv-wb-s2-d-p-q-witness p)))
+                            (wy (orbit-point-p-q-witness (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p))
+                                                         (diff-b-inv-s2-d-p-q-witness p)))
+                            (wa (diff-b-inv-wb-s2-d-p-q-1-witness (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                                                                  p))
+                            (wb (diff-b-inv-s2-d-p-q-1-witness (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p))
+                                                               p))
+                            (p1 (diff-b-inv-wb-s2-d-p-q-witness p))
+                            (cp1 (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p)))
+                            (p2 (diff-b-inv-s2-d-p-q-witness p))
+                            (cp2 (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p)))
+                            (p p))
+                 (:instance choice-set-s2-d-p-rewrite
+                            (o-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                            (p (diff-b-inv-wb-s2-d-p-q-witness p)))
+                 (:instance s2-d-p (point (diff-b-inv-wb-s2-d-p-q-witness p)))
+                 (:instance s2-def-p (point (diff-b-inv-wb-s2-d-p-q-witness p)))
+                 (:instance rotation (w nil) (x (acl2-sqrt 2)))
+                 (:instance m-*point-id=point (p1 (diff-b-inv-wb-s2-d-p-q-witness p)))
+                 (:instance orbit-point-p-q-suff (point (diff-b-inv-wb-s2-d-p-q-witness p)) (o-point (diff-b-inv-wb-s2-d-p-q-witness p)) (w nil))
+                 (:instance s2-d-p-equiv-2-lemma2 (w nil))
+                 (:instance orbit-point-p-q-equiv
+                            (o-p (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p)))
+                            (p (diff-b-inv-wb-s2-d-p-q-witness p)))
+                 (:instance s2-d-p-equiv-2-lemma2 (w (diff-b-inv-s2-d-p-q-1-witness
+                                                      (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p))
+                                                      p)))
+                 (:instance disjoint-lemmas-14 (x (diff-b-inv-wb-s2-d-p-q-1-witness
+                                                   (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                                                   p)))
+                 (:instance choice-set-s2-d-p-rewrite
+                            (o-p (diff-b-inv-s2-d-p-q-witness p))
+                            (p (diff-b-inv-s2-d-p-q-witness p)))
+                 (:instance s2-d-p (point (diff-b-inv-s2-d-p-q-witness p)))
+                 (:instance s2-def-p (point (diff-b-inv-s2-d-p-q-witness p)))
+                 (:instance rotation (w nil) (x (acl2-sqrt 2)))
+                 (:instance m-*point-id=point (p1 (diff-b-inv-s2-d-p-q-witness p)))
+                 (:instance orbit-point-p-q-suff (point (diff-b-inv-s2-d-p-q-witness p)) (o-point (diff-b-inv-s2-d-p-q-witness p)) (w nil))
+                 (:instance s2-d-p-equiv-2-lemma2 (w nil))
+                 (:instance orbit-point-p-q-equiv
+                            (o-p (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p)))
+                            (p (diff-b-inv-s2-d-p-q-witness p)))
+                 (:instance disjoint-lemmas-3 (p1 (diff-b-inv-wb-s2-d-p-q-witness p))
+                            (p2 (diff-b-inv-s2-d-p-q-witness p)))
+                 (:instance s2-d-p=>p (w (diff-b-inv-wb-s2-d-p-q-1-witness
+                                          (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                                          p))
+                            (point (diff-b-inv-wb-s2-d-p-q-witness p)))
+                 (:instance s2-def-p-p=>p1 (p (m-*
+                                               (rotation
+                                                (orbit-point-p-q-witness (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                                                                         (diff-b-inv-wb-s2-d-p-q-witness p))
+                                                (acl2-sqrt 2))
+                                               (diff-b-inv-wb-s2-d-p-q-witness p)))
+                            (p1 (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))))
+                 (:instance s2-d-p=>p (w (orbit-point-p-q-witness (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                                                                  (diff-b-inv-wb-s2-d-p-q-witness p)))
+                            (point (diff-b-inv-wb-s2-d-p-q-witness p)))
+                 (:instance s2-d-p (point (m-*
+                                           (rotation
+                                            (orbit-point-p-q-witness (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                                                                     (diff-b-inv-wb-s2-d-p-q-witness p))
+                                            (acl2-sqrt 2))
+                                           (diff-b-inv-wb-s2-d-p-q-witness p))))
+                 (:instance s2-def-p (point (m-*
+                                             (rotation
+                                              (orbit-point-p-q-witness (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                                                                       (diff-b-inv-wb-s2-d-p-q-witness p))
+                                              (acl2-sqrt 2))
+                                             (diff-b-inv-wb-s2-d-p-q-witness p))))
+                 (:instance d-p-p=>d-p-p1-1 (p (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p)))
+                            (p1 (m-*
+                                 (rotation
+                                  (orbit-point-p-q-witness (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                                                           (diff-b-inv-wb-s2-d-p-q-witness p))
+                                  (acl2-sqrt 2))
+                                 (diff-b-inv-wb-s2-d-p-q-witness p))))
+                 (:instance s2-def-p-equiv (p (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))))
+                 (:instance word-exists-suff
+                            (w (compose (word-inverse (diff-b-inv-s2-d-p-q-1-witness
+                                                       (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p))
+                                                       p))
+                                        (diff-b-inv-wb-s2-d-p-q-1-witness
+                                         (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                                         p)))
+                            (point (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))))
+                 (:instance closure-prop (x (word-inverse (diff-b-inv-s2-d-p-q-1-witness
+                                                           (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p))
+                                                           p)))
+                            (y (diff-b-inv-wb-s2-d-p-q-1-witness
+                                (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                                p)))
+                 (:instance reducedwordp-word-inverse
+                            (x (diff-b-inv-s2-d-p-q-1-witness
+                                (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p))
+                                p)))
+                 (:instance disjoint-lemmas-6
+                            (y (diff-b-inv-s2-d-p-q-1-witness
+                                (choice-set-s2-d-p (diff-b-inv-s2-d-p-q-witness p))
+                                p))
+                            (x (diff-b-inv-wb-s2-d-p-q-1-witness
+                                (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))
+                                p))
+                            (p (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p)))
+                            (q (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))))
+                 (:instance disjoint-lemmas-5 (p (choice-set-s2-d-p (diff-b-inv-wb-s2-d-p-q-witness p))))
+
+                 )
+           :in-theory nil
+           )))
+
+(defthmd disjoint-12
+  (implies (b-inv-diff-b-s2-d-p p)
+           (not (diff-b-inv-s2-d-p p)))
+  :hints (("Goal"
+           :use ((:instance disjoint-12-1)
+                 (:instance diff-b-inv-wb-s2-d-p-equiv))
            )))
