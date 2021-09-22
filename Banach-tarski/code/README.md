@@ -10,7 +10,7 @@ We can divide the proof into three steps:
 
 #### Step2: Prove the Banach-Tarski Theorem for the surface of the sphere
 
-#### Step3: Prove the Banach-Tarski theorem for a sloid ball cenetered at the origin
+#### Step3: Prove the Banach-Tarski theorem for a solid ball cenetered at the origin
 
 ##### Progress:
 
@@ -19,4 +19,4 @@ Hausdorff Paradox statement: There is a countable set D that is a subset of S^2 
 
 Proved the equivalences between different partitions of S^2-D. Check hausdorff-paradox.lisp for the proof.
 
-To Do: Prove that the set D is countable.
+To Do: Prove set D is countable.
