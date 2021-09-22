@@ -1,18 +1,18 @@
-#A Formal Proof of the Banach-Tarski theorem:
+# A Formal Proof of the Banach-Tarski theorem:
 
-##Main reference:  Weston, T.. “THE BANACH-TARSKI PARADOX.” (2003).
+## Main reference:  Weston, T.. “THE BANACH-TARSKI PARADOX.” (2003).
 
-##Goal: To formally prove the Banach-Tarski theorem in ACL2(r)
+## Goal: To formally prove the Banach-Tarski theorem in ACL2(r)
 
 We can divide the proof into three steps:
 
-####Step1: Prove the Hausdorff paradox
+#### Step1: Prove the Hausdorff paradox
 
-####Step2: Prove the Banach-Tarski Theorem for the surface of the sphere
+#### Step2: Prove the Banach-Tarski Theorem for the surface of the sphere
 
-####Step3: Prove the Banach-Tarski theorem for a sloid ball cenetered at the origin
+#### Step3: Prove the Banach-Tarski theorem for a sloid ball cenetered at the origin
 
-#####Progress:
+##### Progress:
 
 Step1:
 Hausdorff Paradox statement: There is a countable set $D \subseteq S^2$ such that $S^2-D$ can be divided into 5 pieces which can then be rotated to form 2 copies of $S^2-D$.
