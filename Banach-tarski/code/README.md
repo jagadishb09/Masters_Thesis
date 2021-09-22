@@ -2,7 +2,7 @@
 
 ## Main reference:  Weston, T.. “THE BANACH-TARSKI PARADOX.” (2003).
 
-## Goal: To formally prove the Banach-Tarski theorem in ACL2(r)
+## Goal: Prove the Banach-Tarski theorem in ACL2(r)
 
 We can divide the proof into three steps:
 
@@ -15,8 +15,8 @@ We can divide the proof into three steps:
 ##### Progress:
 
 Step1:
-Hausdorff Paradox statement: There is a countable set $D \subseteq S^2$ such that $S^2-D$ can be divided into 5 pieces which can then be rotated to form 2 copies of $S^2-D$.
+Hausdorff Paradox statement: There is a countable set D that is a subset of S^2 such that S^2-D can be divided into 5 pieces which can then be rotated to form 2 copies of S^2-D.
 
-Proved the equivalences between different partitions of $S^2-D$. Check hausdorff-paradox.lisp for the proof.
+Proved the equivalences between different partitions of S^2-D. Check hausdorff-paradox.lisp for the proof.
 
-To Do: Prove set $D$ is countable.
+To Do: Prove that the set D is countable.
