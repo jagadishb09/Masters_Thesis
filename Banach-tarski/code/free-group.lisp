@@ -1,7 +1,7 @@
-
-; The Banach-Tarski theorem
+; Banach-Tarski theorem
 ;
 ; Copyright (C) 2021 University of Wyoming
+;
 ; License: A 3-clause BSD license.  See the LICENSE file distributed with ACL2.
 ;
 ; Main Authors: Jagadish Bapanapally (jagadishb285@gmail.com)
