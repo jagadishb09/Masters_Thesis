@@ -134,6 +134,44 @@
                                   rotation*point-on-s2-3 rotation*point-on-s2-4 rotation*point-on-s2-5 rotation*point-on-s2-6)
               ))))
 
+  (local
+   (defthm rotation*point-on-s2-8
+     (implies (and (point-in-r3 p1)
+                   (r3-rotationp rot))
+              (point-in-r3 (m-* rot p1)))))
+
+  (local
+   (defthmd rotation*point-on-s2-9-1
+     (implies (and (point-in-r3 p1)
+                   (r3-rotationp rot))
+              (array2p :fake-name (m-* (m-trans (m-* rot p1)) rot p1)))
+     :hints (("goal"
+              :use ((:instance rotation*point-on-s2-4)
+                    (:instance rotation*point-on-s2-7)
+                    (:instance rotation*point-on-s2-6))
+              :in-theory (disable rotation*point-on-s2-1 rotation*point-on-s2-2 rotation*point-on-s2-3 rotation*point-on-s2-4 rotation*point-on-s2-5 rotation*point-on-s2-6 rotation*point-on-s2-7 rotation*point-on-s2-8)
+              ))))
+
+  (local
+   (defthmd rotation*point-on-s2-9
+     (implies (and (point-in-r3 p1)
+                   (r3-rotationp rot))
+              (and (array2p :fake-name (m-* (m-trans (m-* rot p1)) rot p1))
+                   (equal (cadr (dimensions :fake-name (m-* (m-trans (m-* rot p1)) rot p1)))
+                          1)
+                   (realp (aref2 :fake-name
+                                 (m-* (m-trans (m-* rot p1)) rot p1)
+                                 0 0))
+                   (equal (car (dimensions :fake-name (m-* (m-trans (m-* rot p1)) rot p1)))
+                          1)
+                   (array2p :fake-name (m-* (m-trans p1) p1))
+                   (realp (aref2 :fake-name (m-* (m-trans p1) p1)
+                                 0 0))))
+     :hints (("goal"
+              :use ((:instance rotation*point-on-s2-9-1))
+              :in-theory (disable rotation*point-on-s2-1 rotation*point-on-s2-2 rotation*point-on-s2-3 rotation*point-on-s2-4 rotation*point-on-s2-5 rotation*point-on-s2-6 rotation*point-on-s2-7 rotation*point-on-s2-8)
+              ))))
+
   (defthm rotation*point-on-s2
     (implies (and (point-in-r3 p1)
                   (r3-rotationp rot)
@@ -149,8 +187,10 @@
                    (:instance m-*point1^t-point1 (x (m-* rot p1)))
                    (:instance rotation*point-on-s2-1 (p1 (m-* (m-trans (m-* rot p1)) (m-* rot p1)))
                               (p2 (m-* (m-trans p1) p1)))
+                   (:instance rotation*point-on-s2-8)
+                   (:instance rotation*point-on-s2-9)
                    (:instance m-*point1^t-point1 (x p1)))
-             :in-theory (e/d () (m-* m-= m-trans rotation*point-on-s2-5 rotation*point-on-s2-4 rotation*point-on-s2-3 rotation*point-on-s2-2))
+             :in-theory nil
              )))
   )
 

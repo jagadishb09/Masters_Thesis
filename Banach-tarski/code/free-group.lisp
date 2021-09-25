@@ -1507,7 +1507,7 @@
               (* 2 (acl2-sqrt 2) a))
        :hints (("goal"
                 :use ((:instance sqrt-2-lemmas))
-                :in-theory (disable acl2-sqrt iter-sqrt)
+                :in-theory (disable acl2-sqrt)
                 :do-not-induct t
                 ))
        )
@@ -1530,7 +1530,7 @@
                 :use ((:instance sqrt-2-lemmas)
                       (:instance wb-inv-sub2-lemma1-1 (a a))
                       (:instance wb-inv-sub2-lemma1-2 (b b) (a a) (x (acl2-sqrt 2))))
-                :in-theory (disable acl2-sqrt iter-sqrt)
+                :in-theory (disable acl2-sqrt)
                 :do-not-induct t
                 ))
        )
@@ -1545,7 +1545,7 @@
        :hints (("goal"
                 :use (
                       (:instance wb-inv-sub2-lemma1))
-                :in-theory (disable acl2-sqrt iter-sqrt)
+                :in-theory (disable acl2-sqrt)
                 :do-not-induct t
                 ))
        )

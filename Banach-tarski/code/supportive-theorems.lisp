@@ -1,4 +1,17 @@
-(IN-PACKAGE "ACL2")
+; Banach-Tarski theorem
+;
+; Copyright (C) 2021 University of Wyoming
+;
+; License: A 3-clause BSD license.  See the LICENSE file distributed with ACL2.
+;
+; Main Authors: Jagadish Bapanapally (jagadishb285@gmail.com)
+;
+; Contributing Authors:
+;   Ruben Gamboa (ruben@uwyo.edu)
+
+(in-package "ACL2")
+
+; cert_param: (uses-acl2r)
 
 (include-book "workshops/2003/cowles-gamboa-van-baalen_matrix/support/matalg" :dir :system)
 
