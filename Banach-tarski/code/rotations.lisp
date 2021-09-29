@@ -1,5 +1,8 @@
 ; Banach-Tarski theorem
 ;
+; Proof that every element of the free group is a rotation in R^3.
+;
+;
 ; Copyright (C) 2021 University of Wyoming
 ;
 ; License: A 3-clause BSD license.  See the LICENSE file distributed with ACL2.
@@ -8,9 +11,6 @@
 ;
 ; Contributing Authors:
 ;   Ruben Gamboa (ruben@uwyo.edu)
-;   Eric McCarthy (mccarthy@kestrel.edu)
-;   Alessandro Coglio (coglio@kestrel.edu)
-;   Eric Smith (eric.smith@kestrel.edu
 
 (in-package "ACL2")
 
@@ -161,6 +161,9 @@
   ()
 
   (local (include-book "arithmetic-5/top" :dir :system))
+
+  ;; Thanks to Eric McCarthy (mccarthy@kestrel.edu), Alessandro Coglio (coglio@kestrel.edu),
+  ;; and Eric Smith (eric.smith@kestrel.edu) for assisting me in proving the below lemma.
 
   (defthm r3-m-inverse-=
     (implies (r3-matrixp m)

@@ -1,5 +1,8 @@
 ; Banach-Tarski theorem
 ;
+; A free group of reduced words of rank 2.
+;
+;
 ; Copyright (C) 2021 University of Wyoming
 ;
 ; License: A 3-clause BSD license.  See the LICENSE file distributed with ACL2.

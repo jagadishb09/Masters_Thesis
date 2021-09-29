@@ -59,8 +59,8 @@ distribution for more information.
 
  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ACL2 Version 8.4(r)+ (a development snapshot based on ACL2 Version 8.4(r)) +
- +   built September 24, 2021  22:50:39.                                +
- +   (Git commit hash: 7dc3671eb8aaac25293dd0fb5107742142f0f0a1)        +
+ +   built September 25, 2021  18:34:44.                                +
+ +   (Git commit hash: 896ce04d4c25f3eebc9f2967841d6c3eaa0f266f)        +
  + Copyright (C) 2021, Regents of the University of Texas.              +
  + ACL2 comes with ABSOLUTELY NO WARRANTY.  This is free software and   +
  + you are welcome to redistribute it under certain conditions.  For    +
@@ -195,13 +195,13 @@ CONJOIN and CONJOIN2.
 Summary
 Form:  ( INCLUDE-BOOK "free-group" ...)
 Rules: NIL
-Time:  0.60 seconds (prove: 0.00, print: 0.00, other: 0.60)
+Time:  0.64 seconds (prove: 0.00, print: 0.00, other: 0.64)
 "/Users/jagadishbapanapally/Documents/acl2/books/nonstd/nsa/banach-tarski/free-group.lisp"
 
 Summary
 Form:  ( INCLUDE-BOOK "supportive-theorems" ...)
 Rules: NIL
-Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
 "/Users/jagadishbapanapally/Documents/acl2/books/nonstd/nsa/banach-tarski/supportive-theorems.lisp"
 
 Summary
@@ -256,8 +256,8 @@ Rules: ((:DEFINITION NOT)
         (:TYPE-PRESCRIPTION ALIST2P)
         (:TYPE-PRESCRIPTION ARRAY2P))
 Hint-events: ((:USE AREF2-M-*))
-Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
-Prover steps counted:  5290
+Time:  0.05 seconds (prove: 0.05, print: 0.00, other: 0.00)
+Prover steps counted:  5300
 AREF2-M-*-1
 Goal'
 Goal''
@@ -501,21 +501,21 @@ Rules: ((:DEFINITION DIMENSIONS)
 Hint-events: ((:USE ARRAY2P-ALIST2P-FNAME)
               (:USE NORMALIZE-DIMENSIONS-NAME)
               (:USE RIGHT-UNITY-OF-M-1-FOR-M-*))
-Time:  0.06 seconds (prove: 0.06, print: 0.00, other: 0.00)
+Time:  0.07 seconds (prove: 0.07, print: 0.00, other: 0.00)
 Prover steps counted:  15025
 LEMMA1
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  0.06 seconds (prove: 0.06, print: 0.00, other: 0.00)
+Time:  0.07 seconds (prove: 0.07, print: 0.00, other: 0.00)
 Prover steps counted:  15025
 :EMPTY-ENCAPSULATE
 
 Summary
 Form:  ( INCLUDE-BOOK "arithmetic-5/top" ...)
 Rules: NIL
-Time:  0.34 seconds (prove: 0.00, print: 0.00, other: 0.34)
+Time:  0.33 seconds (prove: 0.00, print: 0.00, other: 0.33)
 "/Users/jagadishbapanapally/Documents/acl2/books/arithmetic-5/top.lisp"
 Goal'
 
@@ -549,21 +549,21 @@ Rules: ((:DEFINITION DOT)
         (:REWRITE NORMALIZE-AREF2-NAME)
         (:REWRITE NORMALIZE-DIMENSIONS-NAME)
         (:TYPE-PRESCRIPTION ARRAY2P))
-Time:  14.69 seconds (prove: 14.68, print: 0.00, other: 0.00)
+Time:  11.70 seconds (prove: 11.70, print: 0.00, other: 0.00)
 Prover steps counted:  28571
 (:DEFTHMD DET-LEMMA)
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  15.03 seconds (prove: 14.68, print: 0.00, other: 0.34)
+Time:  12.04 seconds (prove: 11.70, print: 0.00, other: 0.34)
 Prover steps counted:  28571
 T
 
 Summary
 Form:  ( DEFUN R3-M-INVERSE ...)
 Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
-Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
+Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
 R3-M-INVERSE
 Goal'
 
@@ -604,14 +604,14 @@ Rules: ((:DEFINITION ALISTP)
         (:REWRITE DISTRIBUTIVITY)
         (:REWRITE NORMALIZE-AREF2-NAME)
         (:TYPE-PRESCRIPTION ARRAY2P))
-Time:  0.10 seconds (prove: 0.10, print: 0.00, other: 0.00)
+Time:  0.09 seconds (prove: 0.09, print: 0.00, other: 0.00)
 Prover steps counted:  20110
 ARRAY2P-R3-M-INVERSE
 
 Summary
 Form:  ( INCLUDE-BOOK "arithmetic-5/top" ...)
 Rules: NIL
-Time:  0.30 seconds (prove: 0.00, print: 0.00, other: 0.30)
+Time:  0.25 seconds (prove: 0.00, print: 0.00, other: 0.25)
 "/Users/jagadishbapanapally/Documents/acl2/books/arithmetic-5/top.lisp"
 Goal'
 
@@ -638,14 +638,14 @@ Rules: ((:DEFINITION AREF2)
         (:REWRITE CAR-CONS)
         (:REWRITE CDR-CONS)
         (:REWRITE NORMALIZE-AREF2-NAME))
-Time:  0.24 seconds (prove: 0.24, print: 0.00, other: 0.00)
+Time:  0.22 seconds (prove: 0.22, print: 0.00, other: 0.00)
 Prover steps counted:  23201
 R3-M-INVERSE-=
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  0.55 seconds (prove: 0.24, print: 0.00, other: 0.31)
+Time:  0.47 seconds (prove: 0.22, print: 0.00, other: 0.25)
 Prover steps counted:  23201
 T
 Goal'
@@ -667,7 +667,7 @@ Rules: ((:DEFINITION NOT)
         (:TYPE-PRESCRIPTION R3-M-DETERMINANT))
 Hint-events: ((:USE R3-M-INVERSE-=)
               (:USE REALP-R3-M-DETERMINANT))
-Time:  0.14 seconds (prove: 0.12, print: 0.02, other: 0.00)
+Time:  0.10 seconds (prove: 0.10, print: 0.00, other: 0.00)
 Prover steps counted:  17021
 R3-M-INVERSE-REALP
 Goal'
@@ -693,7 +693,7 @@ Rules: ((:DEFINITION NOT)
 Hint-events: ((:USE ARRAY2P-R3-M-INVERSE)
               (:USE R3-M-INVERSE-=)
               (:USE R3-M-INVERSE-REALP))
-Time:  0.54 seconds (prove: 0.54, print: 0.00, other: 0.00)
+Time:  0.53 seconds (prove: 0.53, print: 0.00, other: 0.00)
 Prover steps counted:  54607
 R3-MATRIXP-M-INVERSE
 Subgoal 3
@@ -766,14 +766,14 @@ Rules: ((:DEFINITION DOT)
         (:REWRITE NORMALIZE-DIMENSIONS-NAME)
         (:TYPE-PRESCRIPTION ARRAY2P)
         (:TYPE-PRESCRIPTION R3-MATRIXP))
-Time:  0.05 seconds (prove: 0.05, print: 0.00, other: 0.00)
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
 Prover steps counted:  3994
 R3-MATRIXP-M1*M2-IS-R3-MATRIXP
 
 Summary
 Form:  ( INCLUDE-BOOK "arithmetic-3/top" ...)
 Rules: NIL
-Time:  0.37 seconds (prove: 0.00, print: 0.00, other: 0.36)
+Time:  0.17 seconds (prove: 0.00, print: 0.00, other: 0.17)
 "/Users/jagadishbapanapally/Documents/acl2/books/arithmetic-3/top.lisp"
 Goal'
 
@@ -811,7 +811,7 @@ Rules: ((:DEFINITION =)
         (:REWRITE NORMALIZE-ADDENDS)
         (:REWRITE PREFER-POSITIVE-ADDENDS-EQUAL))
 Hint-events: ((:USE LEMMA-100-1))
-Time:  0.08 seconds (prove: 0.08, print: 0.00, other: 0.00)
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
 Prover steps counted:  4894
 LEMMA-1
 Goal'
@@ -1060,8 +1060,8 @@ Hint-events: ((:USE ARRAY2P-ALIST2P)
               (:USE ARRAY2P-M-*-1)
               (:USE DIMENSIONS-M-*)
               (:USE R3-M-INVERSE-=))
-Time:  23.77 seconds (prove: 23.73, print: 0.04, other: 0.00)
-Prover steps counted:  1471113
+Time:  18.52 seconds (prove: 18.51, print: 0.01, other: 0.00)
+Prover steps counted:  1471977
 M-*-M-M-INVERSE
 Goal'
 Goal''
@@ -1309,15 +1309,15 @@ Hint-events: ((:USE ARRAY2P-ALIST2P)
               (:USE ARRAY2P-M-*-1)
               (:USE DIMENSIONS-M-*)
               (:USE R3-M-INVERSE-=))
-Time:  21.30 seconds (prove: 21.29, print: 0.01, other: 0.00)
-Prover steps counted:  1466722
+Time:  19.22 seconds (prove: 19.20, print: 0.01, other: 0.00)
+Prover steps counted:  1467586
 M-*-M-INVERSE-M
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  45.52 seconds (prove: 45.10, print: 0.05, other: 0.38)
-Prover steps counted:  2942798
+Time:  37.95 seconds (prove: 37.75, print: 0.02, other: 0.18)
+Prover steps counted:  2944526
 T
 
 Summary
@@ -1527,7 +1527,7 @@ Rules: ((:DEFINITION DOT)
         (:REWRITE UNICITY-OF-1)
         (:TYPE-PRESCRIPTION ARRAY2P)
         (:TYPE-PRESCRIPTION M-=))
-Time:  0.65 seconds (prove: 0.65, print: 0.00, other: 0.00)
+Time:  0.62 seconds (prove: 0.61, print: 0.00, other: 0.00)
 Prover steps counted:  97051
 LEMMA1
 Goal'
@@ -1944,14 +1944,14 @@ Hint-events: ((:USE ARRAY2P-R3-M-INVERSE)
               (:USE R3-MATRIXP-M-INVERSE)
               (:USE R3-MATRIXP-M1*M2-IS-R3-MATRIXP)
               (:USE RIGHT-UNITY-OF-M-1-FOR-M-*))
-Time:  1.74 seconds (prove: 1.74, print: 0.00, other: 0.00)
+Time:  1.34 seconds (prove: 1.34, print: 0.00, other: 0.00)
 Prover steps counted:  127956
 (:DEFTHMD M1*M2=I)
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  2.39 seconds (prove: 2.38, print: 0.00, other: 0.00)
+Time:  1.96 seconds (prove: 1.95, print: 0.00, other: 0.00)
 Prover steps counted:  225007
 T
 
@@ -2600,7 +2600,7 @@ Rules: ((:CONGRUENCE M-=-IMPLIES-EQUAL-M-*-1)
         (:DEFINITION SYNP)
         (:FAKE-RUNE-FOR-TYPE-SET NIL)
         (:REWRITE NORMALIZE-DIMENSIONS-NAME))
-Time:  0.17 seconds (prove: 0.17, print: 0.00, other: 0.00)
+Time:  0.16 seconds (prove: 0.16, print: 0.00, other: 0.00)
 Prover steps counted:  4188
 LEMMA5
 Goal'
@@ -3711,7 +3711,7 @@ Hint-events: ((:USE ASSOCIATIVITY-OF-M-*-3)
               (:USE LEMMA6)
               (:USE M-*-M-M-INVERSE)
               (:USE R3-MATRIXP-M-INVERSE))
-Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Prover steps counted:  1572
 LEMMA7
 
@@ -3745,7 +3745,7 @@ M-INVERSE-M-*-M1-M2
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  0.61 seconds (prove: 0.38, print: 0.00, other: 0.23)
+Time:  0.58 seconds (prove: 0.36, print: 0.00, other: 0.22)
 Prover steps counted:  39486
 T
 
@@ -3782,14 +3782,14 @@ Hint-events: ((:USE ARRAY2P-ALIST2P)
               (:USE M-INVERSE-M-*-M1-M2)
               (:USE M-TRANS-M-*=M-*-M-TRANS)
               (:USE R3-MATRIXP-M1*M2-IS-R3-MATRIXP))
-Time:  0.59 seconds (prove: 0.59, print: 0.00, other: 0.00)
+Time:  0.56 seconds (prove: 0.56, print: 0.00, other: 0.00)
 Prover steps counted:  8800
 ROT*ROT-IS-ROT
 
 Summary
 Form:  ( INCLUDE-BOOK "arithmetic-5/top" ...)
 Rules: NIL
-Time:  0.27 seconds (prove: 0.00, print: 0.00, other: 0.27)
+Time:  0.22 seconds (prove: 0.00, print: 0.00, other: 0.22)
 "/Users/jagadishbapanapally/Documents/acl2/books/arithmetic-5/top.lisp"
 Goal'
 
@@ -4985,14 +4985,14 @@ Rules: ((:DEFINITION A-INV-ROTATION)
         (:TYPE-PRESCRIPTION R3-ROTATIONP))
 Hint-events: ((:USE ARRAY2P-FUNS)
               (:USE SQRT-2-LEMMAS))
-Time:  819.41 seconds (prove: 819.41, print: 0.00, other: 0.00)
+Time:  698.72 seconds (prove: 698.72, print: 0.00, other: 0.00)
 Prover steps counted:  12201413
 BASE-ROTATIONS
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  819.68 seconds (prove: 819.41, print: 0.00, other: 0.28)
+Time:  698.94 seconds (prove: 698.72, print: 0.00, other: 0.22)
 Prover steps counted:  12201413
 T
 Goal'
@@ -23973,14 +23973,14 @@ Rules: ((:DEFINITION A-INV-ROTATION)
         (:TYPE-PRESCRIPTION R3-ROTATIONP))
 Hint-events: ((:USE BASE-ROTATIONS)
               (:USE ROT*ROT-IS-ROT))
-Time:  269.81 seconds (prove: 269.81, print: 0.00, other: 0.00)
+Time:  237.31 seconds (prove: 237.31, print: 0.00, other: 0.00)
 Prover steps counted:  55449768
 (:DEFTHMD ROTATION-IS-R3-ROTATIONP-BASECASE)
 
 Summary
 Form:  ( INCLUDE-BOOK "arithmetic-5/top" ...)
 Rules: NIL
-Time:  0.33 seconds (prove: 0.00, print: 0.00, other: 0.33)
+Time:  0.23 seconds (prove: 0.00, print: 0.00, other: 0.23)
 "/Users/jagadishbapanapally/Documents/acl2/books/arithmetic-5/top.lisp"
 
 
@@ -117836,50 +117836,50 @@ Hint-events: ((:USE CHARACTER-LISTP-WORD)
               (:USE ROT*ROT-IS-ROT)
               (:USE ROTATION-=)
               (:USE ROTATION-IS-R3-ROTATIONP-BASECASE))
-Time:  1.05 seconds (prove: 1.04, print: 0.01, other: 0.00)
+Time:  0.60 seconds (prove: 0.59, print: 0.00, other: 0.00)
 Prover steps counted:  77419
 (:DEFTHMD ROTATION-IS-R3-ROTATIONP)
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  1.39 seconds (prove: 1.04, print: 0.01, other: 0.33)
+Time:  0.83 seconds (prove: 0.59, print: 0.00, other: 0.23)
 Prover steps counted:  77419
 T
 
 Summary
 Form:  ( INCLUDE-BOOK "rotations" ...)
 Rules: NIL
-Time:  0.05 seconds (prove: 0.00, print: 0.00, other: 0.05)
+Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
 
 
 
 Summary
 Form:  (CERTIFY-BOOK "rotations" ...)
 Rules: NIL
-Time:  1157.44 seconds (prove: 1154.67, print: 0.08, other: 2.70)
-Prover steps counted:  71129381
+Time:  992.44 seconds (prove: 990.14, print: 0.02, other: 2.28)
+Prover steps counted:  71131119
 ; (EV-REC *RETURN-LAST-ARG3* ...) took 
-; 1157.44 seconds realtime, 1144.51 seconds runtime
-; (77,814,211,600 bytes allocated).
+; 992.44 seconds realtime, 990.61 seconds runtime
+; (77,813,819,888 bytes allocated).
 
 Sorted by *memoize-summary-order-list* = (TOTAL-TIME NUMBER-OF-CALLS).
 (CERTIFY-BOOK-FN
  Calls                                                                        1
- Time of all outermost calls                                            1.11e+3
- Time per call                                                          1.11e+3
+ Time of all outermost calls                                             944.73
+ Time per call                                                           944.73
  Heap bytes allocated                                           7.78e+10; 50.1%
  Heap bytes allocated per call                                         7.78e+10
  Pons calls                                                     8.22e+4; 100.0%
- To PROVE                                     6.80e+3 calls took 1.11e+3; 99.8%
- To self/unprofiled functions                                    2.60e+0;  0.2%
- From other functions                        1.00e+0 calls took 1.11e+3; 100.0%)
+ To PROVE                                     6.80e+3 calls took 9.43e+2; 99.8%
+ To self/unprofiled functions                                    2.16e+0;  0.2%
+ From other functions                        1.00e+0 calls took 9.45e+2; 100.0%)
 (PROVE
  Calls                                                                  6.80e+3
- Time of all outermost calls                                            1.11e+3
- Time per call                                                             0.16
+ Time of all outermost calls                                             942.56
+ Time per call                                                             0.14
  Heap bytes allocated                                           7.74e+10; 49.9%
  Heap bytes allocated per call                                          1.14e+7
- From CERTIFY-BOOK-FN                        6.80e+3 calls took 1.11e+3; 100.0%)
+ From CERTIFY-BOOK-FN                        6.80e+3 calls took 9.43e+2; 100.0%)
 Exit code from ACL2 is 43
--rw-r--r--  1 jagadishbapanapally  staff  46603 Sep 25 00:33 rotations.cert
+-rw-r--r--  1 jagadishbapanapally  staff  46603 Sep 29 16:14 rotations.cert

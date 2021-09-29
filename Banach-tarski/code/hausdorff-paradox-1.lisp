@@ -1,5 +1,10 @@
 ; Banach-Tarski theorem
 ;
+; Proof of Hausdorff paradox.
+; Book contains the proof of equivalence between different partitions of S^2-D.
+; See hausdorff-paradox-2.lisp for the proof that the set D is countable.
+;
+;
 ; Copyright (C) 2021 University of Wyoming
 ;
 ; License: A 3-clause BSD license.  See the LICENSE file distributed with ACL2.

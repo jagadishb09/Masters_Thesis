@@ -1,5 +1,10 @@
 ; Banach-Tarski theorem
 ;
+; A free group of 3-d matrices of rank 2.
+; See rotations.lisp for the proof that every element of this free group is
+; a rotation.
+;
+;
 ; Copyright (C) 2021 University of Wyoming
 ;
 ; License: A 3-clause BSD license.  See the LICENSE file distributed with ACL2.

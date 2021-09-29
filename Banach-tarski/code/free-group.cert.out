@@ -57,8 +57,8 @@ distribution for more information.
 
  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ACL2 Version 8.4(r)+ (a development snapshot based on ACL2 Version 8.4(r)) +
- +   built September 24, 2021  22:50:39.                                +
- +   (Git commit hash: 7dc3671eb8aaac25293dd0fb5107742142f0f0a1)        +
+ +   built September 25, 2021  18:34:44.                                +
+ +   (Git commit hash: 896ce04d4c25f3eebc9f2967841d6c3eaa0f266f)        +
  + Copyright (C) 2021, Regents of the University of Texas.              +
  + ACL2 comes with ABSOLUTELY NO WARRANTY.  This is free software and   +
  + you are welcome to redistribute it under certain conditions.  For    +
@@ -98,7 +98,7 @@ ACL2(r) !>>
 Summary
 Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
 Rules: NIL
-Time:  0.08 seconds (prove: 0.00, print: 0.00, other: 0.08)
+Time:  0.06 seconds (prove: 0.00, print: 0.00, other: 0.06)
  "/Users/jagadishbapanapally/Documents/acl2/books/cowles/portcullis.lisp"
 ACL2(r) !>>Bye.
  :EOF
@@ -135,7 +135,7 @@ ACL2(r) !>>
 Summary
 Form:  ( INCLUDE-BOOK "centaur/fty/portcullis" ...)
 Rules: NIL
-Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
  "/Users/jagadishbapanapally/Documents/acl2/books/centaur/fty/portcullis.lisp"
 ACL2(r) !>>
 The event ( INCLUDE-BOOK "cowles/portcullis" ...) is redundant.  See
@@ -150,7 +150,7 @@ ACL2(r) !>>
 Summary
 Form:  ( INCLUDE-BOOK "data-structures/portcullis" ...)
 Rules: NIL
-Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
+Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
  "/Users/jagadishbapanapally/Documents/acl2/books/data-structures/portcullis.lisp"
 ACL2(r) !>>Bye.
  :EOF
@@ -211,7 +211,7 @@ Summary
 Form:  ( INCLUDE-BOOK 
 "workshops/2003/cowles-gamboa-van-baalen_matrix/support/matalg" ...)
 Rules: NIL
-Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
+Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
 "/Users/jagadishbapanapally/Documents/acl2/books/workshops/2003/cowles-gamboa-van-baalen_matrix/support/matalg.lisp"
 
 Summary
@@ -226,7 +226,7 @@ CONJOIN and CONJOIN2.
 Summary
 Form:  ( INCLUDE-BOOK "groups" ...)
 Rules: NIL
-Time:  0.85 seconds (prove: 0.00, print: 0.00, other: 0.85)
+Time:  0.68 seconds (prove: 0.00, print: 0.00, other: 0.68)
 "/Users/jagadishbapanapally/Documents/acl2/books/nonstd/nsa/banach-tarski/groups.lisp"
 
 Summary
@@ -268,7 +268,7 @@ POINT-P
 Summary
 Form:  ( INCLUDE-BOOK "arithmetic-5/top" ...)
 Rules: NIL
-Time:  0.42 seconds (prove: 0.00, print: 0.00, other: 0.42)
+Time:  0.30 seconds (prove: 0.00, print: 0.00, other: 0.30)
 "/Users/jagadishbapanapally/Documents/acl2/books/arithmetic-5/top.lisp"
 Subgoal 25
 Subgoal 24
@@ -337,7 +337,7 @@ Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
         (:REWRITE REMOVE-WEAK-INEQUALITIES)
         (:REWRITE ZP-OPEN)
         (:TYPE-PRESCRIPTION ASSOC2))
-Time:  1.13 seconds (prove: 1.13, print: 0.00, other: 0.00)
+Time:  0.82 seconds (prove: 0.82, print: 0.00, other: 0.00)
 Prover steps counted:  104892
 COMPRESS21-LEMMA
 
@@ -1184,7 +1184,7 @@ Rules: ((:DEFINITION A-INV-ROTATION)
         (:TYPE-PRESCRIPTION DOT)
         (:TYPE-PRESCRIPTION M-BINARY-*-ROW-1)
         (:TYPE-PRESCRIPTION TRUE-LISTP-APPEND))
-Time:  34.00 seconds (prove: 33.86, print: 0.14, other: 0.00)
+Time:  29.51 seconds (prove: 29.49, print: 0.02, other: 0.00)
 Prover steps counted:  14078908
 (:DEFTHMD FUNS-LEMMAS-1)
 Goal'
@@ -1257,7 +1257,7 @@ Rules: ((:EXECUTABLE-COUNTERPART CONS)
         (:REWRITE ARRAY2P-ALIST2P)
         (:REWRITE DIMENSIONS-M-*)
         (:TYPE-PRESCRIPTION ARRAY2P))
-Time:  0.03 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  1468
 (:DEFTHMD DIMENSIONS-ARRAY2P-M-*-1)
 
@@ -1287,7 +1287,7 @@ Rules: ((:DEFINITION A-INV-ROTATION)
         (:EXECUTABLE-COUNTERPART WB-INV)
         (:FAKE-RUNE-FOR-TYPE-SET NIL)
         (:REWRITE DEFAULT-TIMES-2))
-Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  4033
 (:DEFTHMD ROTATION-=)
 Goal'
@@ -1309,7 +1309,7 @@ Hint-events: ((:USE ARRAY2P-FUNS)
               (:USE ARRAY2P-M-*)
               (:USE ROTATION-=)
               (:USE WEAK-WORD-CDR))
-Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Prover steps counted:  2541
 (:DEFTHMD ROTATION-PROPS-IND-CASE-0)
 Goal'
@@ -1338,7 +1338,7 @@ Hint-events: ((:USE ARRAY2P-FUNS)
               (:USE DIMENSIONS-ARRAY2P-M-*)
               (:USE ROTATION-=)
               (:USE WEAK-WORD-CDR))
-Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
 Prover steps counted:  4829
 (:DEFTHMD ROTATION-PROPS-IND-CASE-1)
 Subgoal 3
@@ -1385,7 +1385,7 @@ Rules: ((:DEFINITION ATOM)
         (:TYPE-PRESCRIPTION ARRAY2P))
 Hint-events: ((:USE ROTATION-PROPS-IND-CASE-0)
               (:USE ROTATION-PROPS-IND-CASE-1))
-Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  3714
 (:DEFTHMD ROTATION-PROPS)
 Goal'
@@ -1414,14 +1414,14 @@ Rules: ((:DEFINITION A-INV-ROTATION)
 Hint-events: ((:USE ARRAY2P-FUNS)
               (:USE DIMENSIONS-ARRAY2P-M-*-1)
               (:USE ROTATION-PROPS))
-Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  3273
 (:DEFTHMD M-*-ROTATION-POINT-DIM)
 
 Summary
 Form:  ( DEFUN INT-POINT ...)
 Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
-Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 INT-POINT
 
 Summary
@@ -1432,7 +1432,7 @@ Rules: ((:DEFINITION AREF2)
         (:EXECUTABLE-COUNTERPART EQUAL)
         (:FAKE-RUNE-FOR-TYPE-SET NIL)
         (:TYPE-PRESCRIPTION ASSOC2))
-Time:  0.06 seconds (prove: 0.06, print: 0.00, other: 0.00)
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
 Prover steps counted:  10374
 (:DEFTHMD ROTATION-VALUES-IND-CASE-LEMMA1-1)
 Goal'
@@ -1614,7 +1614,7 @@ Rules: ((:DEFINITION A-INV-ROTATION)
 Hint-events: ((:USE ARRAY2P-ALIST2P)
               (:USE ARRAY2P-FUNS)
               (:USE ROTATION-VALUES-IND-CASE-LEMMA1-1))
-Time:  37.63 seconds (prove: 37.61, print: 0.02, other: 0.00)
+Time:  24.86 seconds (prove: 24.85, print: 0.01, other: 0.00)
 Prover steps counted:  622097
 (:DEFTHMD ROTATION-VALUES-IND-CASE-LEMMA1)
 Goal'
@@ -1665,7 +1665,7 @@ Hint-events: ((:USE ASSOCIATIVITY-OF-M-*)
               (:USE M-*-ROTATION-POINT-DIM)
               (:USE ROTATION-=)
               (:USE ROTATION-VALUES-IND-CASE-LEMMA1))
-Time:  0.33 seconds (prove: 0.32, print: 0.00, other: 0.00)
+Time:  0.29 seconds (prove: 0.29, print: 0.00, other: 0.00)
 Prover steps counted:  53793
 (:DEFTHMD ACL2-NUMP-ROT-IND)
 Goal'
@@ -1714,7 +1714,7 @@ Prover steps counted:  4384
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  0.35 seconds (prove: 0.34, print: 0.00, other: 0.00)
+Time:  0.31 seconds (prove: 0.30, print: 0.00, other: 0.00)
 Prover steps counted:  58177
 T
 
@@ -1935,7 +1935,7 @@ Rules: ((:DEFINITION NOT)
 Hint-events: ((:USE SQRT-*)
               (:USE SQRT-2-LEMMAS)
               (:USE SQRT-4))
-Time:  0.02 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
 Prover steps counted:  451
 (:DEFTHMD LEMMA-1-5)
 Goal'
@@ -1948,7 +1948,7 @@ Hint-events: ((:USE LEMMA-1-2)
               (:USE LEMMA-1-3)
               (:USE LEMMA-1-4)
               (:USE LEMMA-1-5))
-Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Prover steps counted:  848
 (:DEFTHMD LEMMA-1)
 Goal'
@@ -1988,7 +1988,7 @@ Rules: ((:DEFINITION NOT)
         (:TYPE-PRESCRIPTION
              EXPT-TYPE-PRESCRIPTION-NONNEGATIVE-BASE-REAL-CASE)
         (:TYPE-PRESCRIPTION EXPT-TYPE-PRESCRIPTION-POSITIVE-BASE-REAL-CASE))
-Time:  0.06 seconds (prove: 0.06, print: 0.00, other: 0.00)
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
 Prover steps counted:  750
 (:DEFTHMD LEMMA-2-1)
 Goal'
@@ -2000,7 +2000,7 @@ Rules: ((:DEFINITION NOT)
         (:FAKE-RUNE-FOR-TYPE-SET NIL)
         (:REWRITE |(* (* x y) z)|))
 Hint-events: ((:USE LEMMA-2-1))
-Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  481
 (:DEFTHMD LEMMA-2)
 Goal'
@@ -2111,7 +2111,7 @@ Rules: ((:DEFINITION NOT)
         (:TYPE-PRESCRIPTION
              EXPT-TYPE-PRESCRIPTION-NONNEGATIVE-BASE-REAL-CASE)
         (:TYPE-PRESCRIPTION EXPT-TYPE-PRESCRIPTION-POSITIVE-BASE-REAL-CASE))
-Time:  0.05 seconds (prove: 0.05, print: 0.00, other: 0.00)
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
 Prover steps counted:  764
 (:DEFTHMD LEMMA-4-1)
 Goal'
@@ -2123,7 +2123,7 @@ Rules: ((:DEFINITION NOT)
         (:FAKE-RUNE-FOR-TYPE-SET NIL)
         (:REWRITE |(* (* x y) z)|))
 Hint-events: ((:USE LEMMA-4-1))
-Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  491
 (:DEFTHMD LEMMA-4)
 Goal'
@@ -2165,7 +2165,7 @@ Rules: ((:DEFINITION NOT)
         (:TYPE-PRESCRIPTION
              EXPT-TYPE-PRESCRIPTION-NONNEGATIVE-BASE-REAL-CASE)
         (:TYPE-PRESCRIPTION EXPT-TYPE-PRESCRIPTION-POSITIVE-BASE-REAL-CASE))
-Time:  0.05 seconds (prove: 0.05, print: 0.00, other: 0.00)
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
 Prover steps counted:  764
 (:DEFTHMD LEMMA-5-1)
 Goal'
@@ -2374,7 +2374,7 @@ Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  0.49 seconds (prove: 0.45, print: 0.00, other: 0.04)
+Time:  0.42 seconds (prove: 0.39, print: 0.00, other: 0.04)
 Prover steps counted:  14533
 T
 Goal'
@@ -2420,7 +2420,7 @@ Rules: ((:DEFINITION NOT)
         (:TYPE-PRESCRIPTION
              EXPT-TYPE-PRESCRIPTION-NONNEGATIVE-BASE-REAL-CASE))
 Hint-events: ((:USE SQRT-*))
-Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
 Prover steps counted:  2558
 (:DEFTHMD SQRT-2-LEMMAS)
 Goal'
@@ -2614,7 +2614,7 @@ Rules: ((:DEFINITION A-INV-ROTATION)
         (:TYPE-PRESCRIPTION M-BINARY-*-ROW-1)
         (:TYPE-PRESCRIPTION TRUE-LISTP-APPEND))
 Hint-events: ((:USE SQRT-2-LEMMAS))
-Time:  16.58 seconds (prove: 16.58, print: 0.00, other: 0.00)
+Time:  12.29 seconds (prove: 12.29, print: 0.00, other: 0.00)
 Prover steps counted:  4745194
 (:DEFTHMD FUNS-LEMMAS-2)
 Subgoal 4
@@ -2671,7 +2671,7 @@ Hint-events: ((:USE ACL2-NUMP-ROT)
               (:USE SQRT-2-LEMMAS)
               (:USE WEAK-WORD-CDR)
               (:USE WORD-LEN-LEMMA))
-Time:  0.33 seconds (prove: 0.33, print: 0.00, other: 0.00)
+Time:  0.26 seconds (prove: 0.26, print: 0.00, other: 0.00)
 Prover steps counted:  29671
 ROTATION-VALUES-IND-CASE
 Goal'
@@ -2726,21 +2726,21 @@ Rules: ((:DEFINITION ACL2-SQRT)
         (:INDUCTION WEAK-WORDP)
         (:REWRITE |(* 0 x)|))
 Hint-events: ((:USE ROTATION-VALUES-IND-CASE))
-Time:  0.13 seconds (prove: 0.13, print: 0.00, other: 0.00)
+Time:  0.10 seconds (prove: 0.10, print: 0.00, other: 0.00)
 Prover steps counted:  9627
 (:DEFTHMD ROTATION-VALUES)
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  0.46 seconds (prove: 0.46, print: 0.00, other: 0.00)
+Time:  0.36 seconds (prove: 0.36, print: 0.00, other: 0.00)
 Prover steps counted:  39298
 T
 
 Summary
 Form:  ( DEFUN N-F ...)
 Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
-Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
 N-F
 Goal'
 
@@ -2768,7 +2768,7 @@ Rules: ((:DEFINITION A-INV-ROTATION)
         (:REWRITE CAR-CONS)
         (:REWRITE CDR-CONS)
         (:REWRITE DEFAULT-TIMES-2))
-Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Prover steps counted:  964
 (:DEFTHMD N-F-A-INV-R-LEMMA)
 
@@ -2836,7 +2836,7 @@ Rules: ((:DEFINITION ACL2-SQRT)
         (:TYPE-PRESCRIPTION ACL2-SQRT)
         (:TYPE-PRESCRIPTION SQRT-ITER-TYPE-PRESCRIPTION))
 Hint-events: ((:USE SQRT-2-LEMMAS))
-Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
 Prover steps counted:  2879
 (:DEFTHMD WA-INV-SUB4-LEMMA)
 Goal'
@@ -2897,7 +2897,7 @@ Rules: ((:DEFINITION NOT)
         (:TYPE-PRESCRIPTION
              EXPT-TYPE-PRESCRIPTION-NONNEGATIVE-BASE-REAL-CASE))
 Hint-events: ((:USE SQRT-2-LEMMAS))
-Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Time:  0.03 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  2389
 (:DEFTHMD WA-INV-SUB2-LEMMA)
 Goal'
@@ -3527,14 +3527,14 @@ Hint-events: ((:USE ACL2-NUMP-ROT)
               (:USE SQRT-2-LEMMAS)
               (:USE WA-INV-SUB2-LEMMA)
               (:USE WA-INV-SUB4-LEMMA))
-Time:  107.13 seconds (prove: 107.07, print: 0.06, other: 0.00)
+Time:  91.29 seconds (prove: 91.27, print: 0.02, other: 0.00)
 Prover steps counted:  1966714
 (:DEFTHMD N-F-A-INV-R)
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  107.23 seconds (prove: 107.16, print: 0.06, other: 0.01)
+Time:  91.37 seconds (prove: 91.33, print: 0.02, other: 0.01)
 Prover steps counted:  1973259
 T
 Goal'
@@ -3564,7 +3564,7 @@ Rules: ((:DEFINITION B-ROTATION)
         (:REWRITE CAR-CONS)
         (:REWRITE CDR-CONS)
         (:REWRITE DEFAULT-TIMES-2))
-Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Prover steps counted:  946
 (:DEFTHMD N-F-B-R-LEMMA)
 
@@ -3579,7 +3579,7 @@ Rules: ((:DEFINITION SYNP)
         (:REWRITE |(+ y x)|)
         (:REWRITE BUBBLE-DOWN-*-MATCH-1)
         (:REWRITE NORMALIZE-FACTORS-GATHER-EXPONENTS))
-Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Prover steps counted:  141
 (:DEFTHMD EXPT-LEMMA)
 Goal'
@@ -3626,7 +3626,7 @@ Rules: ((:DEFINITION NOT)
         (:REWRITE Y->-SQRT)
         (:TYPE-PRESCRIPTION ACL2-SQRT))
 Hint-events: ((:USE SQRT-2-LEMMAS))
-Time:  0.04 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
 Prover steps counted:  1654
 (:DEFTHMD WB-SUB6-LEMMA)
 Goal'
@@ -3687,7 +3687,7 @@ Rules: ((:DEFINITION NOT)
         (:TYPE-PRESCRIPTION
              EXPT-TYPE-PRESCRIPTION-NONNEGATIVE-BASE-REAL-CASE))
 Hint-events: ((:USE SQRT-2-LEMMAS))
-Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
 Prover steps counted:  2389
 (:DEFTHMD WB-SUB2-LEMMA)
 Goal'
@@ -4328,14 +4328,14 @@ Hint-events: ((:USE ACL2-NUMP-ROT)
               (:USE SQRT-2-LEMMAS)
               (:USE WB-SUB2-LEMMA)
               (:USE WB-SUB6-LEMMA))
-Time:  105.50 seconds (prove: 105.41, print: 0.09, other: 0.00)
+Time:  92.53 seconds (prove: 92.50, print: 0.02, other: 0.00)
 Prover steps counted:  2000635
 (:DEFTHMD N-F-B-R)
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  105.60 seconds (prove: 105.50, print: 0.09, other: 0.02)
+Time:  92.60 seconds (prove: 92.57, print: 0.02, other: 0.01)
 Prover steps counted:  2005937
 T
 Goal'
@@ -4446,7 +4446,7 @@ Rules: ((:DEFINITION SYNP)
         (:REWRITE DEFAULT-PLUS-1)
         (:REWRITE DEFAULT-TIMES-1)
         (:REWRITE DEFAULT-TIMES-2))
-Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Prover steps counted:  489
 (:DEFTHMD WB-INV-SUB2-LEMMA1-2)
 Goal'
@@ -5143,14 +5143,14 @@ Hint-events: ((:USE ACL2-NUMP-ROT)
               (:USE ROTATION-VALUES-IND-CASE-LEMMA1)
               (:USE SQRT-2-LEMMAS)
               (:USE WB-INV-SUB2-LEMMA))
-Time:  91.39 seconds (prove: 91.33, print: 0.06, other: 0.00)
+Time:  91.24 seconds (prove: 91.22, print: 0.02, other: 0.00)
 Prover steps counted:  1968663
 (:DEFTHMD N-F-B-INV-R)
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  91.46 seconds (prove: 91.39, print: 0.06, other: 0.01)
+Time:  91.30 seconds (prove: 91.27, print: 0.02, other: 0.01)
 Prover steps counted:  1973431
 T
 Goal'
@@ -5265,7 +5265,7 @@ Rules: ((:DEFINITION A-ROTATION)
         (:REWRITE Y-=-SQRT)
         (:TYPE-PRESCRIPTION ACL2-SQRT))
 Hint-events: ((:USE SUB4-LEMMA0) (:USE SUB4-LEMMA1))
-Time:  0.38 seconds (prove: 0.38, print: 0.00, other: 0.00)
+Time:  0.40 seconds (prove: 0.40, print: 0.00, other: 0.00)
 Prover steps counted:  55326
 (:DEFTHMD SUB4-LEMMA2)
 Goal'
@@ -5328,7 +5328,7 @@ Rules: ((:DEFINITION NOT)
         (:TYPE-PRESCRIPTION
              EXPT-TYPE-PRESCRIPTION-NONNEGATIVE-BASE-REAL-CASE))
 Hint-events: ((:USE SQRT-2-LEMMAS))
-Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
 Prover steps counted:  2210
 (:DEFTHMD SUB2-LEMMA)
 Goal'
@@ -6057,14 +6057,14 @@ Hint-events: ((:USE ACL2-NUMP-ROT)
               (:USE SUB4-LEMMA0)
               (:USE SUB4-LEMMA1)
               (:USE SUB4-LEMMA2))
-Time:  112.27 seconds (prove: 112.22, print: 0.04, other: 0.00)
+Time:  112.03 seconds (prove: 111.99, print: 0.04, other: 0.00)
 Prover steps counted:  2701616
 (:DEFTHMD N-F-A-R)
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  112.70 seconds (prove: 112.64, print: 0.04, other: 0.01)
+Time:  112.49 seconds (prove: 112.43, print: 0.04, other: 0.02)
 Prover steps counted:  2761137
 T
 
@@ -6072,7 +6072,7 @@ Summary
 Form:  ( INCLUDE-BOOK 
 "workshops/1999/embedded/Exercises/Exercise1-2/Exercise1.2" ...)
 Rules: NIL
-Time:  0.15 seconds (prove: 0.00, print: 0.00, other: 0.15)
+Time:  0.14 seconds (prove: 0.00, print: 0.00, other: 0.14)
 "/Users/jagadishbapanapally/Documents/acl2/books/workshops/1999/embedded/Exercises/Exercise1-2/Exercise1.2.lisp"
 Goal'
 
@@ -6275,7 +6275,7 @@ Rules: ((:DEFINITION NOT)
 Hint-events: ((:USE N-MOD3-A-R-LEMMA1-1)
               (:USE N-MOD3-A-R-LEMMA1-3)
               (:USE N-MOD3-A-R-LEMMA1-4))
-Time:  5.64 seconds (prove: 5.64, print: 0.00, other: 0.00)
+Time:  5.55 seconds (prove: 5.55, print: 0.00, other: 0.00)
 Prover steps counted:  161817
 (:DEFTHMD N-MOD3-A-R-LEMMA1-5)
 Goal'
@@ -6342,7 +6342,7 @@ Rules: ((:DEFINITION N-F)
 Hint-events: ((:USE N-F)
               (:USE N-F-A-R)
               (:USE ROTATION-VALUES))
-Time:  0.10 seconds (prove: 0.10, print: 0.00, other: 0.00)
+Time:  0.09 seconds (prove: 0.09, print: 0.00, other: 0.00)
 Prover steps counted:  24433
 (:DEFTHMD N-MOD3-A-R-LEMMA1-6)
 Goal'
@@ -6518,7 +6518,7 @@ Hint-events: ((:USE N-MOD3)
               (:USE N-MOD3-A-R-LEMMA1-1)
               (:USE N-MOD3-A-R-LEMMA1-5)
               (:USE N-MOD3-A-R-LEMMA1-6))
-Time:  17.12 seconds (prove: 17.12, print: 0.00, other: 0.00)
+Time:  17.05 seconds (prove: 17.04, print: 0.00, other: 0.00)
 Prover steps counted:  446524
 (:DEFTHMD N-MOD3-A-R-LEMMA1)
 
@@ -6549,7 +6549,7 @@ Prover steps counted:  1248
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  22.91 seconds (prove: 22.89, print: 0.00, other: 0.02)
+Time:  22.73 seconds (prove: 22.71, print: 0.01, other: 0.02)
 Prover steps counted:  635566
 T
 
@@ -6642,7 +6642,7 @@ Rules: ((:DEFINITION NOT)
 Hint-events: ((:USE N-MOD3-A-R-LEMMA1-1)
               (:USE N-MOD3-A-R-LEMMA1-3)
               (:USE N-MOD3-A-R-LEMMA1-4))
-Time:  1.26 seconds (prove: 1.26, print: 0.00, other: 0.00)
+Time:  1.34 seconds (prove: 1.34, print: 0.00, other: 0.00)
 Prover steps counted:  30272
 (:DEFTHMD N-MOD3-A-R-LEMMA1-5)
 Goal'
@@ -6822,7 +6822,7 @@ Hint-events: ((:USE N-MOD3)
               (:USE N-MOD3-A-R-LEMMA1-1)
               (:USE N-MOD3-A-R-LEMMA1-5)
               (:USE N-MOD3-A-R-LEMMA1-6))
-Time:  6.10 seconds (prove: 6.10, print: 0.00, other: 0.00)
+Time:  6.04 seconds (prove: 6.04, print: 0.00, other: 0.00)
 Prover steps counted:  181121
 (:DEFTHMD N-MOD3-A-R-LEMMA1)
 
@@ -6851,7 +6851,7 @@ Prover steps counted:  1208
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  7.50 seconds (prove: 7.48, print: 0.00, other: 0.01)
+Time:  7.51 seconds (prove: 7.50, print: 0.00, other: 0.01)
 Prover steps counted:  237917
 T
 
@@ -6944,7 +6944,7 @@ Rules: ((:DEFINITION NOT)
 Hint-events: ((:USE N-MOD3-B-R-LEMMA1-1)
               (:USE N-MOD3-B-R-LEMMA1-3)
               (:USE N-MOD3-B-R-LEMMA1-4))
-Time:  1.36 seconds (prove: 1.36, print: 0.00, other: 0.00)
+Time:  1.35 seconds (prove: 1.35, print: 0.00, other: 0.00)
 Prover steps counted:  30272
 (:DEFTHMD N-MOD3-B-R-LEMMA1-5)
 Goal'
@@ -7057,7 +7057,7 @@ Rules: ((:DEFINITION HIDE)
 Hint-events: ((:USE N-F)
               (:USE N-F-B-R)
               (:USE ROTATION-VALUES))
-Time:  0.29 seconds (prove: 0.29, print: 0.00, other: 0.00)
+Time:  0.27 seconds (prove: 0.27, print: 0.00, other: 0.00)
 Prover steps counted:  81482
 (:DEFTHMD N-MOD3-B-R-LEMMA1-6)
 Goal'
@@ -7250,7 +7250,7 @@ Hint-events: ((:USE N-MOD3)
               (:USE N-MOD3-B-R-LEMMA1-1)
               (:USE N-MOD3-B-R-LEMMA1-5)
               (:USE N-MOD3-B-R-LEMMA1-6))
-Time:  19.20 seconds (prove: 19.20, print: 0.01, other: 0.00)
+Time:  19.17 seconds (prove: 19.16, print: 0.01, other: 0.00)
 Prover steps counted:  394571
 (:DEFTHMD N-MOD3-B-R-LEMMA1)
 
@@ -7279,7 +7279,7 @@ Prover steps counted:  1118
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  20.90 seconds (prove: 20.87, print: 0.01, other: 0.01)
+Time:  20.83 seconds (prove: 20.81, print: 0.01, other: 0.01)
 Prover steps counted:  508325
 T
 
@@ -7419,7 +7419,7 @@ Rules: ((:DEFINITION NOT)
 Hint-events: ((:USE N-MOD3-B-INV-R-LEMMA1-1)
               (:USE N-MOD3-B-INV-R-LEMMA1-3)
               (:USE N-MOD3-B-INV-R-LEMMA1-4))
-Time:  5.59 seconds (prove: 5.59, print: 0.00, other: 0.00)
+Time:  5.56 seconds (prove: 5.55, print: 0.00, other: 0.00)
 Prover steps counted:  161817
 (:DEFTHMD N-MOD3-B-INV-R-LEMMA1-5)
 Goal'
@@ -7530,7 +7530,7 @@ Rules: ((:DEFINITION HIDE)
 Hint-events: ((:USE N-F)
               (:USE N-F-B-INV-R)
               (:USE ROTATION-VALUES))
-Time:  0.32 seconds (prove: 0.31, print: 0.00, other: 0.00)
+Time:  0.28 seconds (prove: 0.28, print: 0.00, other: 0.00)
 Prover steps counted:  81606
 (:DEFTHMD N-MOD3-B-INV-R-LEMMA1-6)
 Goal'
@@ -7694,7 +7694,7 @@ Hint-events: ((:USE N-MOD3)
               (:USE N-MOD3-B-INV-R-LEMMA1-1)
               (:USE N-MOD3-B-INV-R-LEMMA1-5)
               (:USE N-MOD3-B-INV-R-LEMMA1-6))
-Time:  17.33 seconds (prove: 17.32, print: 0.01, other: 0.00)
+Time:  17.25 seconds (prove: 17.25, print: 0.00, other: 0.00)
 Prover steps counted:  437685
 (:DEFTHMD N-MOD3-B-INV-R-LEMMA1)
 
@@ -7725,7 +7725,7 @@ Prover steps counted:  1170
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  23.27 seconds (prove: 23.25, print: 0.01, other: 0.01)
+Time:  23.13 seconds (prove: 23.11, print: 0.00, other: 0.01)
 Prover steps counted:  683162
 T
 
@@ -7902,7 +7902,7 @@ Hint-events: ((:USE CHARACTER-LISTP-WORD)
               (:USE N-MOD3-A-R)
               (:USE WEAK-CONS-CAR-CDR)
               (:USE WEAK-WORD-CDR))
-Time:  0.43 seconds (prove: 0.43, print: 0.00, other: 0.00)
+Time:  0.44 seconds (prove: 0.44, print: 0.00, other: 0.00)
 Prover steps counted:  32700
 (:DEFTHMD N-MOD3-A-R-WA)
 Goal'
@@ -7963,7 +7963,7 @@ Hint-events: ((:USE CHARACTER-LISTP-WORD)
               (:USE N-MOD3-A-INV-R)
               (:USE WEAK-CONS-CAR-CDR)
               (:USE WEAK-WORD-CDR))
-Time:  0.15 seconds (prove: 0.15, print: 0.00, other: 0.00)
+Time:  0.16 seconds (prove: 0.16, print: 0.00, other: 0.00)
 Prover steps counted:  14235
 (:DEFTHMD N-MOD3-A-INV-R-WA-INV)
 Goal'
@@ -8024,7 +8024,7 @@ Hint-events: ((:USE CHARACTER-LISTP-WORD)
               (:USE N-MOD3-B-R)
               (:USE WEAK-CONS-CAR-CDR)
               (:USE WEAK-WORD-CDR))
-Time:  0.15 seconds (prove: 0.15, print: 0.00, other: 0.00)
+Time:  0.15 seconds (prove: 0.14, print: 0.00, other: 0.00)
 Prover steps counted:  13847
 (:DEFTHMD N-MOD3-B-R-WB)
 Goal'
@@ -8099,7 +8099,7 @@ Hint-events: ((:USE CHARACTER-LISTP-WORD)
               (:USE N-MOD3-B-INV-R)
               (:USE WEAK-CONS-CAR-CDR)
               (:USE WEAK-WORD-CDR))
-Time:  0.41 seconds (prove: 0.41, print: 0.00, other: 0.00)
+Time:  0.43 seconds (prove: 0.43, print: 0.00, other: 0.00)
 Prover steps counted:  32278
 (:DEFTHMD N-MOD3-B-INV-R-WB-INV)
 
@@ -8297,7 +8297,7 @@ Hint-events: ((:USE N-MOD3-A-INV-R-WA-INV)
               (:USE REDUCEDWORD-CDR)
               (:USE REDUCEDWORDP=>WEAK-WORDP)
               (:USE SQRT-2-LEMMAS))
-Time:  9.32 seconds (prove: 9.32, print: 0.00, other: 0.00)
+Time:  9.60 seconds (prove: 9.59, print: 0.01, other: 0.00)
 Prover steps counted:  815472
 (:DEFTHMD N-MOD3-RED-LEMMA-FINAL)
 Goal'
@@ -8312,7 +8312,7 @@ Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  593.75 seconds (prove: 592.45, print: 0.44, other: 0.86)
+Time:  542.17 seconds (prove: 541.29, print: 0.17, other: 0.71)
 Prover steps counted:  31402858
 T
 
@@ -8428,7 +8428,7 @@ Hint-events: ((:USE 3*INT-MOD-=0)
               (:USE EXPT-3-N-LEMMA)
               (:USE INTEP-EXPT-N)
               (:USE N-MOD3-3-N-=0-1))
-Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  2659
 (:DEFTHMD N-MOD3-3-N-=0)
 Goal'
@@ -8498,7 +8498,7 @@ Rules: ((:CONGRUENCE M-=-IMPLIES-EQUAL-ALIST2P-2)
         (:TYPE-PRESCRIPTION BOUNDED-INTEGER-ALISTP2)
         (:TYPE-PRESCRIPTION KEYWORD-VALUE-LISTP))
 Hint-events: ((:USE ARRAY2P-ALIST2P))
-Time:  0.43 seconds (prove: 0.43, print: 0.00, other: 0.00)
+Time:  0.44 seconds (prove: 0.44, print: 0.00, other: 0.00)
 Prover steps counted:  117785
 (:DEFTHMD N-MOD3-ROTATION=ID-1)
 Goal'
@@ -9189,7 +9189,7 @@ Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  0.52 seconds (prove: 0.50, print: 0.00, other: 0.02)
+Time:  0.53 seconds (prove: 0.50, print: 0.00, other: 0.02)
 Prover steps counted:  137682
 T
 Subgoal 24
@@ -9378,7 +9378,7 @@ Rules: ((:CONGRUENCE M-=-IMPLIES-EQUAL-M-*-2)
         (:TYPE-PRESCRIPTION WORDP))
 Hint-events: ((:USE FUNS-LEMMAS-1)
               (:USE FUNS-LEMMAS-2))
-Time:  0.26 seconds (prove: 0.26, print: 0.00, other: 0.00)
+Time:  0.25 seconds (prove: 0.25, print: 0.00, other: 0.00)
 Prover steps counted:  62156
 (:DEFTHMD ROT-A-ROTA-FIX-A-IND-1-1)
 Goal'
@@ -14486,7 +14486,7 @@ Hint-events: ((:USE LEMMA3)
               (:USE ROTATION)
               (:USE WEAK-WORD-CDR)
               (:USE WEAK-WORDP-EQUIVALENT))
-Time:  15.79 seconds (prove: 15.71, print: 0.08, other: 0.00)
+Time:  16.35 seconds (prove: 16.20, print: 0.15, other: 0.00)
 Prover steps counted:  7685818
 (:DEFTHMD ROT-A-ROTA-FIX-A-IND)
 Goal'
@@ -14532,7 +14532,7 @@ Prover steps counted:  1858
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  19.54 seconds (prove: 19.44, print: 0.09, other: 0.01)
+Time:  20.08 seconds (prove: 19.92, print: 0.16, other: 0.00)
 Prover steps counted:  8789975
 T
 Goal'
@@ -14673,7 +14673,7 @@ Hint-events: ((:USE ASSOC-PROP)
               (:USE ROT-A*ROT-B=ID)
               (:USE ROTAION-NOT=ID)
               (:USE WORD-FIX=REDUCEDWORDP))
-Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Prover steps counted:  1748
 (:DEFTHMD A!=B=>ROT-A!=ROT-B-1)
 Subgoal 4
@@ -14731,29 +14731,29 @@ Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
 Summary
 Form:  (CERTIFY-BOOK "free-group" ...)
 Rules: NIL
-Time:  615.07 seconds (prove: 612.60, print: 0.53, other: 1.94)
+Time:  563.86 seconds (prove: 561.92, print: 0.33, other: 1.61)
 Prover steps counted:  40448669
 ; (EV-REC *RETURN-LAST-ARG3* ...) took 
-; 615.07 seconds realtime, 607.65 seconds runtime
-; (142,172,550,608 bytes allocated).
+; 563.85 seconds realtime, 562.03 seconds runtime
+; (142,172,529,840 bytes allocated).
 
 Sorted by *memoize-summary-order-list* = (TOTAL-TIME NUMBER-OF-CALLS).
 (CERTIFY-BOOK-FN
  Calls                                                                        1
- Time of all outermost calls                                             596.98
- Time per call                                                           596.98
+ Time of all outermost calls                                             536.74
+ Time per call                                                           536.74
  Heap bytes allocated                                           1.42e+11; 50.1%
  Heap bytes allocated per call                                         1.42e+11
  Pons calls                                                     2.40e+4; 100.0%
- To PROVE                                     3.14e+3 calls took 5.95e+2; 99.7%
- To self/unprofiled functions                                    1.89e+0;  0.3%
- From other functions                        1.00e+0 calls took 5.97e+2; 100.0%)
+ To PROVE                                     3.14e+3 calls took 5.35e+2; 99.7%
+ To self/unprofiled functions                                    1.53e+0;  0.3%
+ From other functions                        1.00e+0 calls took 5.37e+2; 100.0%)
 (PROVE
  Calls                                                                  3.14e+3
- Time of all outermost calls                                             595.09
- Time per call                                                             0.19
+ Time of all outermost calls                                             535.20
+ Time per call                                                             0.17
  Heap bytes allocated                                           1.42e+11; 49.9%
  Heap bytes allocated per call                                          4.52e+7
- From CERTIFY-BOOK-FN                        3.14e+3 calls took 5.95e+2; 100.0%)
+ From CERTIFY-BOOK-FN                        3.14e+3 calls took 5.35e+2; 100.0%)
 Exit code from ACL2 is 43
--rw-r--r--  1 jagadishbapanapally  staff  60415 Sep 24 23:29 free-group.cert
+-rw-r--r--  1 jagadishbapanapally  staff  60415 Sep 29 15:58 free-group.cert

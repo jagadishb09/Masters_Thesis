@@ -52,8 +52,8 @@ distribution for more information.
 
  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ACL2 Version 8.4(r)+ (a development snapshot based on ACL2 Version 8.4(r)) +
- +   built September 24, 2021  22:50:39.                                +
- +   (Git commit hash: 7dc3671eb8aaac25293dd0fb5107742142f0f0a1)        +
+ +   built September 25, 2021  18:34:44.                                +
+ +   (Git commit hash: 896ce04d4c25f3eebc9f2967841d6c3eaa0f266f)        +
  + Copyright (C) 2021, Regents of the University of Texas.              +
  + ACL2 comes with ABSOLUTELY NO WARRANTY.  This is free software and   +
  + you are welcome to redistribute it under certain conditions.  For    +
@@ -93,7 +93,7 @@ ACL2(r) !>>
 Summary
 Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
 Rules: NIL
-Time:  0.06 seconds (prove: 0.00, print: 0.00, other: 0.06)
+Time:  0.09 seconds (prove: 0.00, print: 0.00, other: 0.09)
  "/Users/jagadishbapanapally/Documents/acl2/books/cowles/portcullis.lisp"
 ACL2(r) !>>Bye.
  :EOF
@@ -103,7 +103,7 @@ Summary
 Form:  ( INCLUDE-BOOK 
 "workshops/2003/cowles-gamboa-van-baalen_matrix/support/matalg" ...)
 Rules: NIL
-Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
+Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
 "/Users/jagadishbapanapally/Documents/acl2/books/workshops/2003/cowles-gamboa-van-baalen_matrix/support/matalg.lisp"
 
 Summary
@@ -170,7 +170,7 @@ Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
         (:INDUCTION COMPRESS11)
         (:REWRITE COMMUTATIVITY-OF-+)
         (:REWRITE ZP-OPEN))
-Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
 Prover steps counted:  1783
 NORMALIZE-COMPRESS11-NAME
 Goal'
@@ -193,7 +193,7 @@ Rules: ((:DEFINITION ARRAY-ORDER)
         (:REWRITE NORMALIZE-DIMENSIONS-NAME)
         (:REWRITE NORMALIZE-HEADER-NAME)
         (:TYPE-PRESCRIPTION COMPRESS11))
-Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
 Prover steps counted:  2094
 NORMALIZE-COMPRESS1-NAME
 Goal'
@@ -216,7 +216,7 @@ Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
         (:INDUCTION COMPRESS211)
         (:REWRITE ZP-OPEN)
         (:TYPE-PRESCRIPTION ASSOC2))
-Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
 Prover steps counted:  2216
 NORMALIZE-COMPRESS211-NAME
 Goal'
@@ -241,7 +241,7 @@ Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
         (:REWRITE NORMALIZE-COMPRESS211-NAME)
         (:REWRITE UNICITY-OF-0)
         (:REWRITE ZP-OPEN))
-Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
 Prover steps counted:  2746
 NORMALIZE-COMPRESS21-NAME
 Goal'
@@ -281,7 +281,7 @@ Rules: ((:DEFINITION ARRAY2P)
         (:EXECUTABLE-COUNTERPART SYNP)
         (:FAKE-RUNE-FOR-TYPE-SET NIL))
 Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
-Prover steps counted:  626
+Prover steps counted:  623
 NORMALIZE-ARRAY2P-NAME
 Goal'
 
@@ -291,7 +291,7 @@ Rules: ((:DEFINITION ALIST2P)
         (:EXECUTABLE-COUNTERPART SYNP)
         (:FAKE-RUNE-FOR-TYPE-SET NIL))
 Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
-Prover steps counted:  489
+Prover steps counted:  492
 NORMALIZE-ALIST2P-NAME
 
 
@@ -299,28 +299,28 @@ NORMALIZE-ALIST2P-NAME
 Summary
 Form:  (CERTIFY-BOOK "supportive-theorems" ...)
 Rules: NIL
-Time:  0.07 seconds (prove: 0.03, print: 0.00, other: 0.04)
+Time:  0.11 seconds (prove: 0.05, print: 0.00, other: 0.06)
 Prover steps counted:  10979
 ; (EV-REC *RETURN-LAST-ARG3* ...) took 
-; 0.07 seconds realtime, 0.07 seconds runtime
-; (19,184,848 bytes allocated).
+; 0.11 seconds realtime, 0.10 seconds runtime
+; (19,176,592 bytes allocated).
 
 Sorted by *memoize-summary-order-list* = (TOTAL-TIME NUMBER-OF-CALLS).
 (CERTIFY-BOOK-FN
  Calls                                                                        1
- Time of all outermost calls                                               0.06
- Time per call                                                             0.06
- Heap bytes allocated                                            1.92e+7; 75.4%
+ Time of all outermost calls                                               0.11
+ Time per call                                                             0.11
+ Heap bytes allocated                                            1.92e+7; 75.3%
  Heap bytes allocated per call                                          1.92e+7
- To self/unprofiled functions                                    3.81e-2; 58.7%
- To PROVE                                     1.44e+2 calls took 2.68e-2; 41.3%
- From other functions                        1.00e+0 calls took 6.49e-2; 100.0%)
+ To self/unprofiled functions                                    5.92e-2; 54.8%
+ To PROVE                                     1.44e+2 calls took 4.89e-2; 45.2%
+ From other functions                        1.00e+0 calls took 1.08e-1; 100.0%)
 (PROVE
  Calls                                                                      144
- Time of all outermost calls                                               0.03
- Time per call                                                          1.86e-4
- Heap bytes allocated                                            6.27e+6; 24.6%
- Heap bytes allocated per call                                          4.35e+4
- From CERTIFY-BOOK-FN                        1.44e+2 calls took 2.68e-2; 100.0%)
+ Time of all outermost calls                                               0.05
+ Time per call                                                          3.39e-4
+ Heap bytes allocated                                            6.29e+6; 24.7%
+ Heap bytes allocated per call                                          4.37e+4
+ From CERTIFY-BOOK-FN                        1.44e+2 calls took 4.89e-2; 100.0%)
 Exit code from ACL2 is 43
--rw-r--r--  1 jagadishbapanapally  staff  6246 Sep 25 00:14 supportive-theorems.cert
+-rw-r--r--  1 jagadishbapanapally  staff  6246 Sep 29 15:35 supportive-theorems.cert

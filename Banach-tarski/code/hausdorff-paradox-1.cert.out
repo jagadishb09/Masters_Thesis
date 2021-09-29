@@ -34,13 +34,13 @@ Temp lisp file:
 #!ACL2 (set-ld-error-action (quote :continue) state)
 
 ; certify-book command flags: ? t
-#!ACL2 (er-progn (time$ (certify-book "hausdorff-paradox" ? t  ))
+#!ACL2 (er-progn (time$ (certify-book "hausdorff-paradox-1" ? t  ))
                                  (value (prog2$ #+hons (memsum)
                                                  #-hons nil
                                                  (exit 43))))
 --- End temp lisp file ---
 
-TARGET: nonstd/nsa/banach-tarski/hausdorff-paradox
+TARGET: nonstd/nsa/banach-tarski/hausdorff-paradox-1
 STEP: certify
 Start of output:
 
@@ -54,8 +54,8 @@ distribution for more information.
 
  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ACL2 Version 8.4(r)+ (a development snapshot based on ACL2 Version 8.4(r)) +
- +   built September 24, 2021  22:50:39.                                +
- +   (Git commit hash: 7dc3671eb8aaac25293dd0fb5107742142f0f0a1)        +
+ +   built September 25, 2021  18:34:44.                                +
+ +   (Git commit hash: 896ce04d4c25f3eebc9f2967841d6c3eaa0f266f)        +
  + Copyright (C) 2021, Regents of the University of Texas.              +
  + ACL2 comes with ABSOLUTELY NO WARRANTY.  This is free software and   +
  + you are welcome to redistribute it under certain conditions.  For    +
@@ -95,7 +95,7 @@ ACL2(r) !>>
 Summary
 Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
 Rules: NIL
-Time:  0.07 seconds (prove: 0.00, print: 0.00, other: 0.07)
+Time:  0.06 seconds (prove: 0.00, print: 0.00, other: 0.06)
  "/Users/jagadishbapanapally/Documents/acl2/books/cowles/portcullis.lisp"
 ACL2(r) !>>
 Summary
@@ -150,7 +150,7 @@ CONJOIN and CONJOIN2.
 Summary
 Form:  ( INCLUDE-BOOK "rotations" ...)
 Rules: NIL
-Time:  0.67 seconds (prove: 0.00, print: 0.00, other: 0.67)
+Time:  0.60 seconds (prove: 0.00, print: 0.00, other: 0.59)
 "/Users/jagadishbapanapally/Documents/acl2/books/nonstd/nsa/banach-tarski/rotations.lisp"
 
 Summary
@@ -193,7 +193,7 @@ M-*POINT1^T-POINT1
 Summary
 Form:  ( INCLUDE-BOOK "arithmetic-5/top" ...)
 Rules: NIL
-Time:  0.35 seconds (prove: 0.00, print: 0.00, other: 0.34)
+Time:  0.30 seconds (prove: 0.00, print: 0.00, other: 0.30)
 "/Users/jagadishbapanapally/Documents/acl2/books/arithmetic-5/top.lisp"
 Goal'
 
@@ -3154,14 +3154,14 @@ Rules: ((:DEFINITION ALIST2P)
         (:TYPE-PRESCRIPTION DOT)
         (:TYPE-PRESCRIPTION M-BINARY-*-ROW-1))
 Hint-events: ((:USE POINT-IN-R3))
-Time:  2.28 seconds (prove: 2.28, print: 0.00, other: 0.00)
+Time:  1.76 seconds (prove: 1.75, print: 0.00, other: 0.00)
 Prover steps counted:  296241
 M-*POINT-ID=POINT
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  2.63 seconds (prove: 2.28, print: 0.00, other: 0.35)
+Time:  2.06 seconds (prove: 1.75, print: 0.00, other: 0.30)
 Prover steps counted:  296241
 T
 Goal'
@@ -3185,7 +3185,7 @@ Rules: ((:DEFINITION DIMENSIONS)
         (:REWRITE NORMALIZE-COMPRESS2-NAME)
         (:REWRITE NORMALIZE-DIMENSIONS-NAME)
         (:TYPE-PRESCRIPTION ARRAY2P))
-Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
 Prover steps counted:  2937
 ROTATION*POINT-ON-S2-1
 Goal'
@@ -3430,7 +3430,7 @@ Rules: ((:DEFINITION DIMENSIONS)
 Hint-events: ((:USE ARRAY2P-ALIST2P-FNAME)
               (:USE NORMALIZE-DIMENSIONS-NAME)
               (:USE RIGHT-UNITY-OF-M-1-FOR-M-*))
-Time:  0.08 seconds (prove: 0.08, print: 0.00, other: 0.00)
+Time:  0.07 seconds (prove: 0.07, print: 0.00, other: 0.00)
 Prover steps counted:  15337
 ROTATION*POINT-ON-S2-2
 
@@ -3472,7 +3472,7 @@ Rules: ((:CONGRUENCE M-=-IMPLIES-EQUAL-M-*-1)
         (:REWRITE UNICITY-OF-1)
         (:TYPE-PRESCRIPTION ARRAY2P))
 Hint-events: ((:USE M-TRANS-M-*=M-*-M-TRANS))
-Time:  0.35 seconds (prove: 0.35, print: 0.00, other: 0.00)
+Time:  0.31 seconds (prove: 0.31, print: 0.00, other: 0.00)
 Prover steps counted:  15680
 ROTATION*POINT-ON-S2-4
 
@@ -9258,7 +9258,7 @@ Hint-events: ((:USE ARRAY2P-ALIST2P-FNAME)
               (:USE ROTATION*POINT-ON-S2-4)
               (:USE ROTATION*POINT-ON-S2-5)
               (:USE ROTATION*POINT-ON-S2-6))
-Time:  5.52 seconds (prove: 5.52, print: 0.00, other: 0.00)
+Time:  4.96 seconds (prove: 4.96, print: 0.00, other: 0.00)
 Prover steps counted:  203745
 ROTATION*POINT-ON-S2-7
 Goal'
@@ -9295,7 +9295,7 @@ Rules: ((:DEFINITION DOT)
         (:REWRITE UNICITY-OF-1)
         (:TYPE-PRESCRIPTION ARRAY2P)
         (:TYPE-PRESCRIPTION POINT-IN-R3))
-Time:  0.09 seconds (prove: 0.09, print: 0.00, other: 0.00)
+Time:  0.08 seconds (prove: 0.08, print: 0.00, other: 0.00)
 Prover steps counted:  6007
 ROTATION*POINT-ON-S2-8
 Goal'
@@ -9334,7 +9334,7 @@ Rules: ((:DEFINITION FIX)
 Hint-events: ((:USE ROTATION*POINT-ON-S2-4)
               (:USE ROTATION*POINT-ON-S2-6)
               (:USE ROTATION*POINT-ON-S2-7))
-Time:  0.67 seconds (prove: 0.67, print: 0.00, other: 0.00)
+Time:  0.62 seconds (prove: 0.62, print: 0.00, other: 0.00)
 Prover steps counted:  21574
 (:DEFTHMD ROTATION*POINT-ON-S2-9-1)
 Goal'
@@ -9379,7 +9379,7 @@ Rules: ((:DEFINITION DOT)
         (:TYPE-PRESCRIPTION ARRAY2P)
         (:TYPE-PRESCRIPTION NONNEGATIVE-PRODUCT))
 Hint-events: ((:USE ROTATION*POINT-ON-S2-9-1))
-Time:  0.54 seconds (prove: 0.54, print: 0.00, other: 0.00)
+Time:  0.49 seconds (prove: 0.49, print: 0.00, other: 0.00)
 Prover steps counted:  16551
 (:DEFTHMD ROTATION*POINT-ON-S2-9)
 Goal'
@@ -9400,7 +9400,7 @@ ROTATION*POINT-ON-S2
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  7.37 seconds (prove: 7.35, print: 0.00, other: 0.02)
+Time:  6.62 seconds (prove: 6.61, print: 0.00, other: 0.01)
 Prover steps counted:  285908
 T
 
@@ -9413,7 +9413,7 @@ S2-DEF-P
 Summary
 Form:  (DEFUN-SK WORD-EXISTS ...)
 Rules: NIL
-Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.01)
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
 Prover steps counted:  316
 WORD-EXISTS
 
@@ -9500,7 +9500,7 @@ Rules: ((:DEFINITION DOT)
         (:TYPE-PRESCRIPTION M-=)
         (:TYPE-PRESCRIPTION S2-DEF-P))
 Hint-events: ((:USE ROTATION*POINT-ON-S2))
-Time:  123.64 seconds (prove: 123.63, print: 0.00, other: 0.00)
+Time:  114.59 seconds (prove: 114.59, print: 0.00, other: 0.00)
 Prover steps counted:  7171574
 ROT*P-ON-S2
 Goal'
@@ -9530,7 +9530,7 @@ Rules: ((:DEFINITION A-INV-WORDP)
         (:TYPE-PRESCRIPTION REDUCEDWORDP)
         (:TYPE-PRESCRIPTION S2-DEF-P)
         (:TYPE-PRESCRIPTION WORDP))
-Time:  1.06 seconds (prove: 1.06, print: 0.00, other: 0.00)
+Time:  0.84 seconds (prove: 0.84, print: 0.00, other: 0.00)
 Prover steps counted:  112225
 D-P-IMPLIES
 Goal'
@@ -9558,7 +9558,7 @@ Rules: ((:DEFINITION A-INV-WORDP)
         (:TYPE-PRESCRIPTION ARRAY2P)
         (:TYPE-PRESCRIPTION D-P)
         (:TYPE-PRESCRIPTION WORDP))
-Time:  0.99 seconds (prove: 0.99, print: 0.00, other: 0.00)
+Time:  0.91 seconds (prove: 0.91, print: 0.00, other: 0.00)
 Prover steps counted:  112187
 (:DEFTHMD D-P-IMPLIES-1)
 Goal'
@@ -13056,7 +13056,7 @@ Hint-events: ((:USE CLOSURE-LEMMA)
               (:USE REDUCEDWORDP-WORD-INVERSE)
               (:USE REDUCEDWORDP=>WEAK-WORDP)
               (:USE ROT-A*ROT-B-=))
-Time:  22.50 seconds (prove: 22.29, print: 0.21, other: 0.00)
+Time:  19.85 seconds (prove: 19.65, print: 0.20, other: 0.00)
 Prover steps counted:  8600716
 (:DEFTHMD P-IN-D-=>ROT*P-IN-D-LEMMA-3)
 Goal'
@@ -17888,7 +17888,7 @@ Rules: ((:DEFINITION DIMENSIONS)
 Hint-events: ((:USE ARRAY2P-ALIST2P-FNAME)
               (:USE LEFT-UNITY-OF-M-1-FOR-M-*)
               (:USE NORMALIZE-DIMENSIONS-NAME))
-Time:  0.09 seconds (prove: 0.09, print: 0.00, other: 0.00)
+Time:  0.07 seconds (prove: 0.07, print: 0.00, other: 0.00)
 Prover steps counted:  14853
 (:DEFTHMD P-IN-D-=>ROT*P-IN-D-LEMMA-4-2)
 
@@ -27663,8 +27663,8 @@ Rules: ((:CONGRUENCE M-=-IMPLIES-EQUAL-M-*-1)
         (:TYPE-PRESCRIPTION DOT)
         (:TYPE-PRESCRIPTION M-=))
 Hint-events: ((:USE P-IN-D-=>ROT*P-IN-D-LEMMA-4-2))
-Time:  1.84 seconds (prove: 1.84, print: 0.00, other: 0.00)
-Prover steps counted:  127539
+Time:  1.56 seconds (prove: 1.55, print: 0.00, other: 0.00)
+Prover steps counted:  127587
 (:DEFTHMD P-IN-D-=>ROT*P-IN-D-LEMMA-4-4)
 
 Summary
@@ -27794,7 +27794,7 @@ Prover steps counted:  6754
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  0.06 seconds (prove: 0.05, print: 0.00, other: 0.00)
+Time:  0.05 seconds (prove: 0.05, print: 0.00, other: 0.00)
 Prover steps counted:  6754
 T
 Goal'
@@ -27905,7 +27905,7 @@ Rules: ((:DEFINITION FIX)
         (:REWRITE NORMALIZE-DIMENSIONS-NAME)
         (:TYPE-PRESCRIPTION ARRAY2P)
         (:TYPE-PRESCRIPTION S2-DEF-P))
-Time:  38.03 seconds (prove: 38.02, print: 0.00, other: 0.00)
+Time:  35.39 seconds (prove: 35.38, print: 0.00, other: 0.00)
 Prover steps counted:  3096547
 (:DEFTHMD S2-DEF-P-P=>P1)
 
@@ -27948,7 +27948,7 @@ Rules: ((:CONGRUENCE M-=-IMPLIES-EQUAL-M-*-2)
 Hint-events: ((:USE D-P)
               (:USE D-P-P=>D-P-P1-LEMMA)
               (:USE WORD-EXISTS-SUFF))
-Time:  22.27 seconds (prove: 22.27, print: 0.00, other: 0.00)
+Time:  20.91 seconds (prove: 20.91, print: 0.00, other: 0.00)
 Prover steps counted:  1787569
 (:DEFTHMD D-P-P=>D-P-P1)
 Goal'
@@ -27981,14 +27981,14 @@ Rules: ((:CONGRUENCE M-=-IMPLIES-EQUAL-M-*-2)
         (:TYPE-PRESCRIPTION M-=)
         (:TYPE-PRESCRIPTION WORDP))
 Hint-events: ((:USE D-P-P=>D-P-P1))
-Time:  22.55 seconds (prove: 22.55, print: 0.00, other: 0.00)
+Time:  20.68 seconds (prove: 20.68, print: 0.00, other: 0.00)
 Prover steps counted:  1773082
 (:DEFTHMD D-P-P=>D-P-P1-1)
 
 Summary
 Form:  (DEFUN-SK ORBIT-POINT-P-Q ...)
 Rules: NIL
-Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
 Prover steps counted:  291
 ORBIT-POINT-P-Q
 
@@ -28022,7 +28022,7 @@ Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Summary
 Form:  (DEFUN-SK DIFF-S2-D-P-Q-1 ...)
 Rules: NIL
-Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
 Prover steps counted:  291
 DIFF-S2-D-P-Q-1
 
@@ -28041,7 +28041,7 @@ Prover steps counted:  394
 Summary
 Form:  (DEFUN-SK DIFF-S2-D-P-Q ...)
 Rules: NIL
-Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.01)
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
 Prover steps counted:  209
 DIFF-S2-D-P-Q
 
@@ -28066,7 +28066,7 @@ Rules: ((:DEFINITION ACL2-SQRT)
         (:TYPE-PRESCRIPTION M-=)
         (:TYPE-PRESCRIPTION REDUCEDWORDP)
         (:TYPE-PRESCRIPTION S2-D-P))
-Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.01, print: 0.00, other: 0.00)
 Prover steps counted:  4734
 (:DEFTHMD DIFF-S2-D-P-Q-EQUIV)
 
@@ -32688,7 +32688,7 @@ Rules: ((:DEFINITION A-INV-WORDP)
         (:TYPE-PRESCRIPTION WORDP))
 Hint-events: ((:USE M-*POINT-ID=POINT)
               (:USE ORBIT-POINT-P-Q-SUFF))
-Time:  0.98 seconds (prove: 0.98, print: 0.00, other: 0.00)
+Time:  0.88 seconds (prove: 0.88, print: 0.00, other: 0.00)
 Prover steps counted:  119175
 (:DEFTHMD S2-D-P-EQUIV-1-LEMMA1)
 Goal'
@@ -32879,7 +32879,7 @@ Rules: ((:DEFINITION A-INV-WORDP)
         (:TYPE-PRESCRIPTION ARRAY2P)
         (:TYPE-PRESCRIPTION DIFF-N-S2-D-P-Q-1)
         (:TYPE-PRESCRIPTION S2-D-P))
-Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
 Prover steps counted:  9628
 (:DEFTHMD DIFF-N-S2-D-P-Q-EQUIV)
 
@@ -32944,7 +32944,7 @@ Rules: ((:DEFINITION A-INV-WORDP)
         (:TYPE-PRESCRIPTION M-=)
         (:TYPE-PRESCRIPTION S2-D-P)
         (:TYPE-PRESCRIPTION WORDP))
-Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  10230
 (:DEFTHMD DIFF-A-S2-D-P-Q-EQUIV)
 
@@ -33009,7 +33009,7 @@ Rules: ((:DEFINITION A-INV-WORDP)
         (:TYPE-PRESCRIPTION M-=)
         (:TYPE-PRESCRIPTION S2-D-P)
         (:TYPE-PRESCRIPTION WORDP))
-Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  10398
 (:DEFTHMD DIFF-B-S2-D-P-Q-EQUIV)
 
@@ -33074,7 +33074,7 @@ Rules: ((:DEFINITION A-WORDP)
         (:TYPE-PRESCRIPTION M-=)
         (:TYPE-PRESCRIPTION S2-D-P)
         (:TYPE-PRESCRIPTION WORDP))
-Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  10328
 (:DEFTHMD DIFF-A-INV-S2-D-P-Q-EQUIV)
 
@@ -33139,7 +33139,7 @@ Rules: ((:DEFINITION A-INV-WORDP)
         (:TYPE-PRESCRIPTION M-=)
         (:TYPE-PRESCRIPTION S2-D-P)
         (:TYPE-PRESCRIPTION WORDP))
-Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  10474
 (:DEFTHMD DIFF-B-INV-S2-D-P-Q-EQUIV)
 
@@ -33180,7 +33180,7 @@ Hint-events: ((:USE DIFF-A-INV-S2-D-P)
               (:USE DIFF-S2-D-P-Q-1-EQUIV)
               (:USE DIFF-S2-D-P-Q-EQUIV)
               (:USE REDUCEDWORDP))
-Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
 Prover steps counted:  2749
 (:DEFTHMD DIFF-S2-D-P-=-1)
 Subgoal 5
@@ -33303,7 +33303,7 @@ Rules: ((:DEFINITION A-INV-WORDP)
         (:TYPE-PRESCRIPTION DIFF-A-INV-WA-S2-D-P-Q-1)
         (:TYPE-PRESCRIPTION M-=)
         (:TYPE-PRESCRIPTION S2-D-P))
-Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  10678
 (:DEFTHMD DIFF-A-INV-WA-S2-D-P-Q-EQUIV)
 
@@ -33405,7 +33405,7 @@ Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Summary
 Form:  (DEFUN-SK DIFF-B-INV-WB-S2-D-P-Q-1 ...)
 Rules: NIL
-Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.01)
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
 Prover steps counted:  291
 DIFF-B-INV-WB-S2-D-P-Q-1
 
@@ -33424,7 +33424,7 @@ Prover steps counted:  394
 Summary
 Form:  (DEFUN-SK DIFF-B-INV-WB-S2-D-P-Q ...)
 Rules: NIL
-Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
 Prover steps counted:  209
 DIFF-B-INV-WB-S2-D-P-Q
 
@@ -33457,7 +33457,7 @@ Rules: ((:DEFINITION A-INV-WORDP)
         (:TYPE-PRESCRIPTION DIFF-B-INV-WB-S2-D-P-Q-1)
         (:TYPE-PRESCRIPTION M-=)
         (:TYPE-PRESCRIPTION S2-D-P))
-Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
 Prover steps counted:  10678
 (:DEFTHMD DIFF-B-INV-WB-S2-D-P-Q-EQUIV)
 
@@ -33557,7 +33557,7 @@ Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Summary
 Form:  (DEFUN-SK A-INV-DIFF-A-S2-D-P-1 ...)
 Rules: NIL
-Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
 Prover steps counted:  299
 A-INV-DIFF-A-S2-D-P-1
 Goal'
@@ -33586,7 +33586,7 @@ Rules: ((:DEFINITION A-INV-DIFF-A-S2-D-P-1)
         (:TYPE-PRESCRIPTION ARRAY2P)
         (:TYPE-PRESCRIPTION DIFF-A-S2-D-P)
         (:TYPE-PRESCRIPTION WORDP))
-Time:  0.08 seconds (prove: 0.08, print: 0.00, other: 0.00)
+Time:  0.06 seconds (prove: 0.06, print: 0.00, other: 0.00)
 Prover steps counted:  14604
 (:DEFTHMD A-INV-DIFF-A-S2-D-P-1-EQUIV)
 
@@ -33622,7 +33622,7 @@ Rules: ((:DEFINITION ACL2-SQRT)
         (:TYPE-PRESCRIPTION ARRAY2P)
         (:TYPE-PRESCRIPTION DIFF-B-S2-D-P)
         (:TYPE-PRESCRIPTION WORDP))
-Time:  0.07 seconds (prove: 0.07, print: 0.00, other: 0.00)
+Time:  0.06 seconds (prove: 0.06, print: 0.00, other: 0.00)
 Prover steps counted:  14636
 (:DEFTHMD B-INV-DIFF-B-S2-D-P-1-EQUIV)
 
@@ -34054,7 +34054,7 @@ Rules: ((:DEFINITION A-INV-WORDP)
         (:TYPE-PRESCRIPTION ARRAY2P)
         (:TYPE-PRESCRIPTION D-P)
         (:TYPE-PRESCRIPTION WORDP))
-Time:  0.90 seconds (prove: 0.90, print: 0.00, other: 0.00)
+Time:  0.85 seconds (prove: 0.85, print: 0.00, other: 0.00)
 Prover steps counted:  112187
 (:DEFTHMD DISJOINT-LEMMAS-5)
 Goal'
@@ -34189,7 +34189,7 @@ Rules: ((:DEFINITION A-INV-ROTATION)
         (:TYPE-PRESCRIPTION REV)
         (:TYPE-PRESCRIPTION WORD-FIX))
 Hint-events: ((:USE DISJOINT-LEMMAS-1))
-Time:  1.80 seconds (prove: 1.80, print: 0.00, other: 0.00)
+Time:  1.68 seconds (prove: 1.68, print: 0.00, other: 0.00)
 Prover steps counted:  157424
 (:DEFTHMD DISJOINT-LEMMAS-6)
 Goal'
@@ -34252,7 +34252,7 @@ Hint-events: ((:USE CHOICE-SET-S2-D-P-REWRITE)
               (:USE S2-DEF-P-EQUIV)
               (:USE S2-DEF-P-P=>P1)
               (:USE WORD-EXISTS-SUFF))
-Time:  0.20 seconds (prove: 0.20, print: 0.00, other: 0.00)
+Time:  0.19 seconds (prove: 0.18, print: 0.00, other: 0.00)
 Prover steps counted:  29676
 (:DEFTHMD DISJOINT-1)
 Goal'
@@ -34323,7 +34323,7 @@ Hint-events: ((:USE CHOICE-SET-S2-D-P-REWRITE)
               (:USE S2-DEF-P-EQUIV)
               (:USE S2-DEF-P-P=>P1)
               (:USE WORD-EXISTS-SUFF))
-Time:  0.24 seconds (prove: 0.24, print: 0.00, other: 0.00)
+Time:  0.22 seconds (prove: 0.22, print: 0.00, other: 0.00)
 Prover steps counted:  36285
 (:DEFTHMD DISJOINT-2)
 Goal'
@@ -34386,7 +34386,7 @@ Hint-events: ((:USE CHOICE-SET-S2-D-P-REWRITE)
               (:USE S2-DEF-P-EQUIV)
               (:USE S2-DEF-P-P=>P1)
               (:USE WORD-EXISTS-SUFF))
-Time:  0.20 seconds (prove: 0.20, print: 0.00, other: 0.00)
+Time:  0.18 seconds (prove: 0.18, print: 0.00, other: 0.00)
 Prover steps counted:  29704
 (:DEFTHMD DISJOINT-3)
 Goal'
@@ -34437,7 +34437,7 @@ Hint-events: ((:USE CHOICE-SET-S2-D-P-REWRITE)
               (:USE S2-DEF-P-EQUIV)
               (:USE S2-DEF-P-P=>P1)
               (:USE WORD-EXISTS-SUFF))
-Time:  0.17 seconds (prove: 0.17, print: 0.00, other: 0.00)
+Time:  0.16 seconds (prove: 0.16, print: 0.00, other: 0.00)
 Prover steps counted:  20447
 (:DEFTHMD DISJOINT-4)
 Goal'
@@ -34528,7 +34528,7 @@ Hint-events: ((:USE CHOICE-SET-S2-D-P-REWRITE)
               (:USE S2-DEF-P-EQUIV)
               (:USE S2-DEF-P-P=>P1)
               (:USE WORD-EXISTS-SUFF))
-Time:  0.24 seconds (prove: 0.24, print: 0.00, other: 0.00)
+Time:  0.22 seconds (prove: 0.22, print: 0.00, other: 0.00)
 Prover steps counted:  36266
 (:DEFTHMD DISJOINT-5)
 Goal'
@@ -34599,7 +34599,7 @@ Hint-events: ((:USE CHOICE-SET-S2-D-P-REWRITE)
               (:USE S2-DEF-P-EQUIV)
               (:USE S2-DEF-P-P=>P1)
               (:USE WORD-EXISTS-SUFF))
-Time:  0.24 seconds (prove: 0.24, print: 0.00, other: 0.00)
+Time:  0.22 seconds (prove: 0.22, print: 0.00, other: 0.00)
 Prover steps counted:  36287
 (:DEFTHMD DISJOINT-6)
 Goal'
@@ -34650,7 +34650,7 @@ Hint-events: ((:USE CHOICE-SET-S2-D-P-REWRITE)
               (:USE S2-DEF-P-EQUIV)
               (:USE S2-DEF-P-P=>P1)
               (:USE WORD-EXISTS-SUFF))
-Time:  0.17 seconds (prove: 0.17, print: 0.00, other: 0.00)
+Time:  0.16 seconds (prove: 0.16, print: 0.00, other: 0.00)
 Prover steps counted:  20442
 (:DEFTHMD DISJOINT-7)
 Goal'
@@ -34732,7 +34732,7 @@ Hint-events: ((:USE CHOICE-SET-S2-D-P-REWRITE)
               (:USE S2-DEF-P-EQUIV)
               (:USE S2-DEF-P-P=>P1)
               (:USE WORD-EXISTS-SUFF))
-Time:  0.20 seconds (prove: 0.20, print: 0.00, other: 0.00)
+Time:  0.19 seconds (prove: 0.18, print: 0.00, other: 0.00)
 Prover steps counted:  29694
 (:DEFTHMD DISJOINT-8)
 Goal'
@@ -34783,7 +34783,7 @@ Hint-events: ((:USE CHOICE-SET-S2-D-P-REWRITE)
               (:USE S2-DEF-P-EQUIV)
               (:USE S2-DEF-P-P=>P1)
               (:USE WORD-EXISTS-SUFF))
-Time:  0.18 seconds (prove: 0.17, print: 0.00, other: 0.00)
+Time:  0.16 seconds (prove: 0.16, print: 0.00, other: 0.00)
 Prover steps counted:  20437
 (:DEFTHMD DISJOINT-9)
 Goal'
@@ -34853,7 +34853,7 @@ Hint-events: ((:USE CHOICE-SET-S2-D-P-REWRITE)
               (:USE S2-DEF-P-EQUIV)
               (:USE S2-DEF-P-P=>P1)
               (:USE WORD-EXISTS-SUFF))
-Time:  0.18 seconds (prove: 0.18, print: 0.00, other: 0.00)
+Time:  0.16 seconds (prove: 0.16, print: 0.00, other: 0.00)
 Prover steps counted:  20465
 (:DEFTHMD DISJOINT-10)
 Goal'
@@ -34973,7 +34973,7 @@ Hint-events: ((:USE CHOICE-SET-S2-D-P-REWRITE)
               (:USE S2-DEF-P-EQUIV)
               (:USE S2-DEF-P-P=>P1)
               (:USE WORD-EXISTS-SUFF))
-Time:  0.23 seconds (prove: 0.22, print: 0.00, other: 0.00)
+Time:  0.22 seconds (prove: 0.22, print: 0.00, other: 0.00)
 Prover steps counted:  35054
 (:DEFTHMD DISJOINT-11-1)
 Goal'
@@ -35080,7 +35080,7 @@ Hint-events: ((:USE CHOICE-SET-S2-D-P-REWRITE)
               (:USE S2-DEF-P-EQUIV)
               (:USE S2-DEF-P-P=>P1)
               (:USE WORD-EXISTS-SUFF))
-Time:  0.25 seconds (prove: 0.25, print: 0.00, other: 0.00)
+Time:  0.23 seconds (prove: 0.23, print: 0.00, other: 0.00)
 Prover steps counted:  35075
 (:DEFTHMD DISJOINT-12-1)
 Goal'
@@ -35133,38 +35133,38 @@ Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 (:DEFTHMD S2-D-P-EQUIVALENCE-3)
 
 Summary
-Form:  ( INCLUDE-BOOK "hausdorff-paradox" ...)
+Form:  ( INCLUDE-BOOK "hausdorff-paradox-1" ...)
 Rules: NIL
-Time:  0.12 seconds (prove: 0.00, print: 0.00, other: 0.12)
+Time:  0.09 seconds (prove: 0.00, print: 0.00, other: 0.09)
 
 
 
 Summary
-Form:  (CERTIFY-BOOK "hausdorff-paradox" ...)
+Form:  (CERTIFY-BOOK "hausdorff-paradox-1" ...)
 Rules: NIL
-Time:  251.16 seconds (prove: 249.22, print: 0.23, other: 1.70)
-Prover steps counted:  24302307
+Time:  230.92 seconds (prove: 229.25, print: 0.21, other: 1.45)
+Prover steps counted:  24302355
 ; (EV-REC *RETURN-LAST-ARG3* ...) took 
-; 251.16 seconds realtime, 250.43 seconds runtime
-; (16,176,010,816 bytes allocated).
+; 230.92 seconds realtime, 230.47 seconds runtime
+; (16,176,051,104 bytes allocated).
 
 Sorted by *memoize-summary-order-list* = (TOTAL-TIME NUMBER-OF-CALLS).
 (CERTIFY-BOOK-FN
  Calls                                                                        1
- Time of all outermost calls                                             247.13
- Time per call                                                           247.13
+ Time of all outermost calls                                             219.82
+ Time per call                                                           219.82
  Heap bytes allocated                                           1.62e+10; 50.6%
  Heap bytes allocated per call                                         1.62e+10
  Pons calls                                                     1.92e+4; 100.0%
- To PROVE                                     2.85e+3 calls took 2.45e+2; 99.3%
- To self/unprofiled functions                                    1.68e+0;  0.7%
- From other functions                        1.00e+0 calls took 2.47e+2; 100.0%)
+ To PROVE                                     2.85e+3 calls took 2.18e+2; 99.4%
+ To self/unprofiled functions                                    1.38e+0;  0.6%
+ From other functions                        1.00e+0 calls took 2.20e+2; 100.0%)
 (PROVE
  Calls                                                                  2.85e+3
- Time of all outermost calls                                             245.45
- Time per call                                                             0.09
+ Time of all outermost calls                                             218.44
+ Time per call                                                             0.08
  Heap bytes allocated                                           1.58e+10; 49.4%
  Heap bytes allocated per call                                          5.55e+6
- From CERTIFY-BOOK-FN                        2.85e+3 calls took 2.45e+2; 100.0%)
+ From CERTIFY-BOOK-FN                        2.85e+3 calls took 2.18e+2; 100.0%)
 Exit code from ACL2 is 43
--rw-r--r--  1 jagadishbapanapally  staff  71012 Sep 25 09:24 hausdorff-paradox.cert
+-rw-r--r--  1 jagadishbapanapally  staff  71018 Sep 29 16:18 hausdorff-paradox-1.cert
