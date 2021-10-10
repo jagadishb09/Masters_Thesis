@@ -100,7 +100,7 @@ ACL2(r) !>>
 Summary
 Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
 Rules: NIL
-Time:  0.06 seconds (prove: 0.00, print: 0.00, other: 0.06)
+Time:  0.10 seconds (prove: 0.00, print: 0.00, other: 0.10)
  "/Users/jagadishbapanapally/Documents/acl2/books/cowles/portcullis.lisp"
 ACL2(r) !>>
 Summary
@@ -112,13 +112,13 @@ ACL2(r) !>>
 Summary
 Form:  ( INCLUDE-BOOK "centaur/fty/portcullis" ...)
 Rules: NIL
-Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
  "/Users/jagadishbapanapally/Documents/acl2/books/centaur/fty/portcullis.lisp"
 ACL2(r) !>>
 Summary
 Form:  ( INCLUDE-BOOK "data-structures/portcullis" ...)
 Rules: NIL
-Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
+Time:  0.05 seconds (prove: 0.00, print: 0.00, other: 0.05)
  "/Users/jagadishbapanapally/Documents/acl2/books/data-structures/portcullis.lisp"
 ACL2(r) !>>Bye.
  :EOF
@@ -195,13 +195,13 @@ CONJOIN and CONJOIN2.
 Summary
 Form:  ( INCLUDE-BOOK "free-group" ...)
 Rules: NIL
-Time:  0.64 seconds (prove: 0.00, print: 0.00, other: 0.64)
+Time:  0.69 seconds (prove: 0.00, print: 0.00, other: 0.69)
 "/Users/jagadishbapanapally/Documents/acl2/books/nonstd/nsa/banach-tarski/free-group.lisp"
 
 Summary
 Form:  ( INCLUDE-BOOK "supportive-theorems" ...)
 Rules: NIL
-Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 "/Users/jagadishbapanapally/Documents/acl2/books/nonstd/nsa/banach-tarski/supportive-theorems.lisp"
 
 Summary
@@ -256,7 +256,7 @@ Rules: ((:DEFINITION NOT)
         (:TYPE-PRESCRIPTION ALIST2P)
         (:TYPE-PRESCRIPTION ARRAY2P))
 Hint-events: ((:USE AREF2-M-*))
-Time:  0.05 seconds (prove: 0.05, print: 0.00, other: 0.00)
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
 Prover steps counted:  5300
 AREF2-M-*-1
 Goal'
@@ -501,21 +501,21 @@ Rules: ((:DEFINITION DIMENSIONS)
 Hint-events: ((:USE ARRAY2P-ALIST2P-FNAME)
               (:USE NORMALIZE-DIMENSIONS-NAME)
               (:USE RIGHT-UNITY-OF-M-1-FOR-M-*))
-Time:  0.07 seconds (prove: 0.07, print: 0.00, other: 0.00)
+Time:  0.06 seconds (prove: 0.06, print: 0.00, other: 0.00)
 Prover steps counted:  15025
 LEMMA1
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  0.07 seconds (prove: 0.07, print: 0.00, other: 0.00)
+Time:  0.06 seconds (prove: 0.06, print: 0.00, other: 0.00)
 Prover steps counted:  15025
 :EMPTY-ENCAPSULATE
 
 Summary
 Form:  ( INCLUDE-BOOK "arithmetic-5/top" ...)
 Rules: NIL
-Time:  0.33 seconds (prove: 0.00, print: 0.00, other: 0.33)
+Time:  0.30 seconds (prove: 0.00, print: 0.00, other: 0.30)
 "/Users/jagadishbapanapally/Documents/acl2/books/arithmetic-5/top.lisp"
 Goal'
 
@@ -549,14 +549,14 @@ Rules: ((:DEFINITION DOT)
         (:REWRITE NORMALIZE-AREF2-NAME)
         (:REWRITE NORMALIZE-DIMENSIONS-NAME)
         (:TYPE-PRESCRIPTION ARRAY2P))
-Time:  11.70 seconds (prove: 11.70, print: 0.00, other: 0.00)
+Time:  11.03 seconds (prove: 11.03, print: 0.00, other: 0.00)
 Prover steps counted:  28571
 (:DEFTHMD DET-LEMMA)
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  12.04 seconds (prove: 11.70, print: 0.00, other: 0.34)
+Time:  11.34 seconds (prove: 11.03, print: 0.00, other: 0.31)
 Prover steps counted:  28571
 T
 
@@ -604,14 +604,14 @@ Rules: ((:DEFINITION ALISTP)
         (:REWRITE DISTRIBUTIVITY)
         (:REWRITE NORMALIZE-AREF2-NAME)
         (:TYPE-PRESCRIPTION ARRAY2P))
-Time:  0.09 seconds (prove: 0.09, print: 0.00, other: 0.00)
+Time:  0.08 seconds (prove: 0.08, print: 0.00, other: 0.00)
 Prover steps counted:  20110
 ARRAY2P-R3-M-INVERSE
 
 Summary
 Form:  ( INCLUDE-BOOK "arithmetic-5/top" ...)
 Rules: NIL
-Time:  0.25 seconds (prove: 0.00, print: 0.00, other: 0.25)
+Time:  0.22 seconds (prove: 0.00, print: 0.00, other: 0.22)
 "/Users/jagadishbapanapally/Documents/acl2/books/arithmetic-5/top.lisp"
 Goal'
 
@@ -638,14 +638,14 @@ Rules: ((:DEFINITION AREF2)
         (:REWRITE CAR-CONS)
         (:REWRITE CDR-CONS)
         (:REWRITE NORMALIZE-AREF2-NAME))
-Time:  0.22 seconds (prove: 0.22, print: 0.00, other: 0.00)
+Time:  0.20 seconds (prove: 0.19, print: 0.00, other: 0.00)
 Prover steps counted:  23201
 R3-M-INVERSE-=
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  0.47 seconds (prove: 0.22, print: 0.00, other: 0.25)
+Time:  0.42 seconds (prove: 0.19, print: 0.00, other: 0.23)
 Prover steps counted:  23201
 T
 Goal'
@@ -667,7 +667,7 @@ Rules: ((:DEFINITION NOT)
         (:TYPE-PRESCRIPTION R3-M-DETERMINANT))
 Hint-events: ((:USE R3-M-INVERSE-=)
               (:USE REALP-R3-M-DETERMINANT))
-Time:  0.10 seconds (prove: 0.10, print: 0.00, other: 0.00)
+Time:  0.09 seconds (prove: 0.09, print: 0.00, other: 0.00)
 Prover steps counted:  17021
 R3-M-INVERSE-REALP
 Goal'
@@ -693,7 +693,7 @@ Rules: ((:DEFINITION NOT)
 Hint-events: ((:USE ARRAY2P-R3-M-INVERSE)
               (:USE R3-M-INVERSE-=)
               (:USE R3-M-INVERSE-REALP))
-Time:  0.53 seconds (prove: 0.53, print: 0.00, other: 0.00)
+Time:  0.46 seconds (prove: 0.46, print: 0.00, other: 0.00)
 Prover steps counted:  54607
 R3-MATRIXP-M-INVERSE
 Subgoal 3
@@ -766,14 +766,14 @@ Rules: ((:DEFINITION DOT)
         (:REWRITE NORMALIZE-DIMENSIONS-NAME)
         (:TYPE-PRESCRIPTION ARRAY2P)
         (:TYPE-PRESCRIPTION R3-MATRIXP))
-Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
 Prover steps counted:  3994
 R3-MATRIXP-M1*M2-IS-R3-MATRIXP
 
 Summary
 Form:  ( INCLUDE-BOOK "arithmetic-3/top" ...)
 Rules: NIL
-Time:  0.17 seconds (prove: 0.00, print: 0.00, other: 0.17)
+Time:  0.10 seconds (prove: 0.00, print: 0.00, other: 0.10)
 "/Users/jagadishbapanapally/Documents/acl2/books/arithmetic-3/top.lisp"
 Goal'
 
@@ -1060,7 +1060,7 @@ Hint-events: ((:USE ARRAY2P-ALIST2P)
               (:USE ARRAY2P-M-*-1)
               (:USE DIMENSIONS-M-*)
               (:USE R3-M-INVERSE-=))
-Time:  18.52 seconds (prove: 18.51, print: 0.01, other: 0.00)
+Time:  18.35 seconds (prove: 18.34, print: 0.01, other: 0.00)
 Prover steps counted:  1471977
 M-*-M-M-INVERSE
 Goal'
@@ -1309,14 +1309,14 @@ Hint-events: ((:USE ARRAY2P-ALIST2P)
               (:USE ARRAY2P-M-*-1)
               (:USE DIMENSIONS-M-*)
               (:USE R3-M-INVERSE-=))
-Time:  19.22 seconds (prove: 19.20, print: 0.01, other: 0.00)
+Time:  18.98 seconds (prove: 18.97, print: 0.01, other: 0.00)
 Prover steps counted:  1467586
 M-*-M-INVERSE-M
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  37.95 seconds (prove: 37.75, print: 0.02, other: 0.18)
+Time:  37.48 seconds (prove: 37.35, print: 0.02, other: 0.12)
 Prover steps counted:  2944526
 T
 
@@ -1527,7 +1527,7 @@ Rules: ((:DEFINITION DOT)
         (:REWRITE UNICITY-OF-1)
         (:TYPE-PRESCRIPTION ARRAY2P)
         (:TYPE-PRESCRIPTION M-=))
-Time:  0.62 seconds (prove: 0.61, print: 0.00, other: 0.00)
+Time:  0.62 seconds (prove: 0.62, print: 0.00, other: 0.00)
 Prover steps counted:  97051
 LEMMA1
 Goal'
@@ -1944,14 +1944,14 @@ Hint-events: ((:USE ARRAY2P-R3-M-INVERSE)
               (:USE R3-MATRIXP-M-INVERSE)
               (:USE R3-MATRIXP-M1*M2-IS-R3-MATRIXP)
               (:USE RIGHT-UNITY-OF-M-1-FOR-M-*))
-Time:  1.34 seconds (prove: 1.34, print: 0.00, other: 0.00)
+Time:  1.32 seconds (prove: 1.31, print: 0.00, other: 0.00)
 Prover steps counted:  127956
 (:DEFTHMD M1*M2=I)
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  1.96 seconds (prove: 1.95, print: 0.00, other: 0.00)
+Time:  1.93 seconds (prove: 1.93, print: 0.00, other: 0.00)
 Prover steps counted:  225007
 T
 
@@ -3711,7 +3711,7 @@ Hint-events: ((:USE ASSOCIATIVITY-OF-M-*-3)
               (:USE LEMMA6)
               (:USE M-*-M-M-INVERSE)
               (:USE R3-MATRIXP-M-INVERSE))
-Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
 Prover steps counted:  1572
 LEMMA7
 
@@ -3724,7 +3724,7 @@ Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
 Summary
 Form:  ( INCLUDE-BOOK "arithmetic-5/top" ...)
 Rules: NIL
-Time:  0.22 seconds (prove: 0.00, print: 0.00, other: 0.22)
+Time:  0.21 seconds (prove: 0.00, print: 0.00, other: 0.21)
 "/Users/jagadishbapanapally/Documents/acl2/books/arithmetic-5/top.lisp"
 Goal'
 Goal''
@@ -3782,7 +3782,7 @@ Hint-events: ((:USE ARRAY2P-ALIST2P)
               (:USE M-INVERSE-M-*-M1-M2)
               (:USE M-TRANS-M-*=M-*-M-TRANS)
               (:USE R3-MATRIXP-M1*M2-IS-R3-MATRIXP))
-Time:  0.56 seconds (prove: 0.56, print: 0.00, other: 0.00)
+Time:  0.55 seconds (prove: 0.55, print: 0.00, other: 0.00)
 Prover steps counted:  8800
 ROT*ROT-IS-ROT
 
@@ -4985,14 +4985,14 @@ Rules: ((:DEFINITION A-INV-ROTATION)
         (:TYPE-PRESCRIPTION R3-ROTATIONP))
 Hint-events: ((:USE ARRAY2P-FUNS)
               (:USE SQRT-2-LEMMAS))
-Time:  698.72 seconds (prove: 698.72, print: 0.00, other: 0.00)
+Time:  685.80 seconds (prove: 685.80, print: 0.00, other: 0.00)
 Prover steps counted:  12201413
 BASE-ROTATIONS
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  698.94 seconds (prove: 698.72, print: 0.00, other: 0.22)
+Time:  686.03 seconds (prove: 685.80, print: 0.00, other: 0.23)
 Prover steps counted:  12201413
 T
 Goal'
@@ -23973,1132 +23973,17 @@ Rules: ((:DEFINITION A-INV-ROTATION)
         (:TYPE-PRESCRIPTION R3-ROTATIONP))
 Hint-events: ((:USE BASE-ROTATIONS)
               (:USE ROT*ROT-IS-ROT))
-Time:  237.31 seconds (prove: 237.31, print: 0.00, other: 0.00)
+Time:  226.10 seconds (prove: 226.10, print: 0.00, other: 0.00)
 Prover steps counted:  55449768
 (:DEFTHMD ROTATION-IS-R3-ROTATIONP-BASECASE)
 
 Summary
 Form:  ( INCLUDE-BOOK "arithmetic-5/top" ...)
 Rules: NIL
-Time:  0.23 seconds (prove: 0.00, print: 0.00, other: 0.23)
+Time:  0.24 seconds (prove: 0.00, print: 0.00, other: 0.24)
 "/Users/jagadishbapanapally/Documents/acl2/books/arithmetic-5/top.lisp"
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-
-
-**********************************************************
-Slow Array Access!  A call of AREF2 on an array named
-FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
-**********************************************************
-
-Subgoal 56
-Subgoal 56.2
-Subgoal 56.2'
-Subgoal 56.2''
+Subgoal 14
+Subgoal 13
 Subgoal *1/6
 Subgoal *1/6'
 Subgoal *1/5
@@ -117791,7 +116676,7 @@ FAKE-NAME is being executed slowly.  See :DOC slow-array-warning.
 
 
 Summary
-Form:  ( DEFTHM ROTATION-IS-R3-ROTATIONP ...)
+Form:  ( DEFTHM ROTATION-IS-R3-ROTATIONP-1 ...)
 Rules: ((:COMPOUND-RECOGNIZER TRUE-LISTP-WHEN-CHARACTER-LISTP)
         (:CONGRUENCE M-=-IMPLIES-EQUAL-M-*-1)
         (:DEFINITION A-INV-ROTATION)
@@ -117807,7 +116692,6 @@ Rules: ((:COMPOUND-RECOGNIZER TRUE-LISTP-WHEN-CHARACTER-LISTP)
         (:DEFINITION REDUCEDWORDP)
         (:DEFINITION ROTATION)
         (:DEFINITION WEAK-WORDP)
-        (:DEFINITION WORDP)
         (:EXECUTABLE-COUNTERPART ATOM)
         (:EXECUTABLE-COUNTERPART CAR)
         (:EXECUTABLE-COUNTERPART CDR)
@@ -117824,6 +116708,7 @@ Rules: ((:COMPOUND-RECOGNIZER TRUE-LISTP-WHEN-CHARACTER-LISTP)
         (:EXECUTABLE-COUNTERPART WB-INV)
         (:FAKE-RUNE-FOR-TYPE-SET NIL)
         (:INDUCTION ROTATION)
+        (:INDUCTION WEAK-WORDP)
         (:REWRITE CHARACTER-LISTP-WHEN-NOT-CONSP)
         (:REWRITE CONSP-UNDER-IFF-WHEN-TRUE-LISTP)
         (:REWRITE DEFAULT-CAR)
@@ -117836,16 +116721,25 @@ Hint-events: ((:USE CHARACTER-LISTP-WORD)
               (:USE ROT*ROT-IS-ROT)
               (:USE ROTATION-=)
               (:USE ROTATION-IS-R3-ROTATIONP-BASECASE))
-Time:  0.60 seconds (prove: 0.59, print: 0.00, other: 0.00)
-Prover steps counted:  77419
-(:DEFTHMD ROTATION-IS-R3-ROTATIONP)
+Time:  0.30 seconds (prove: 0.30, print: 0.00, other: 0.00)
+Prover steps counted:  40608
+(:DEFTHMD ROTATION-IS-R3-ROTATIONP-1)
 
 Summary
 Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
 Rules: NIL
-Time:  0.83 seconds (prove: 0.59, print: 0.00, other: 0.23)
-Prover steps counted:  77419
+Time:  0.54 seconds (prove: 0.30, print: 0.00, other: 0.24)
+Prover steps counted:  40608
 T
+Goal'
+
+Summary
+Form:  ( DEFTHM ROTATION-IS-R3-ROTATIONP ...)
+Rules: ((:TYPE-PRESCRIPTION R3-ROTATIONP))
+Hint-events: ((:USE REDUCEDWORDP=>WEAK-WORDP)
+              (:USE ROTATION-IS-R3-ROTATIONP-1))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFTHMD ROTATION-IS-R3-ROTATIONP)
 
 Summary
 Form:  ( INCLUDE-BOOK "rotations" ...)
@@ -117857,29 +116751,29 @@ Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
 Summary
 Form:  (CERTIFY-BOOK "rotations" ...)
 Rules: NIL
-Time:  992.44 seconds (prove: 990.14, print: 0.02, other: 2.28)
-Prover steps counted:  71131119
+Time:  966.71 seconds (prove: 964.50, print: 0.02, other: 2.20)
+Prover steps counted:  71094308
 ; (EV-REC *RETURN-LAST-ARG3* ...) took 
-; 992.44 seconds realtime, 990.61 seconds runtime
-; (77,813,819,888 bytes allocated).
+; 966.71 seconds realtime, 965.54 seconds runtime
+; (77,739,206,816 bytes allocated).
 
 Sorted by *memoize-summary-order-list* = (TOTAL-TIME NUMBER-OF-CALLS).
 (CERTIFY-BOOK-FN
  Calls                                                                        1
- Time of all outermost calls                                             944.73
- Time per call                                                           944.73
- Heap bytes allocated                                           7.78e+10; 50.1%
- Heap bytes allocated per call                                         7.78e+10
+ Time of all outermost calls                                             943.46
+ Time per call                                                           943.46
+ Heap bytes allocated                                           7.77e+10; 50.1%
+ Heap bytes allocated per call                                         7.77e+10
  Pons calls                                                     8.22e+4; 100.0%
- To PROVE                                     6.80e+3 calls took 9.43e+2; 99.8%
- To self/unprofiled functions                                    2.16e+0;  0.2%
- From other functions                        1.00e+0 calls took 9.45e+2; 100.0%)
+ To PROVE                                     6.80e+3 calls took 9.41e+2; 99.8%
+ To self/unprofiled functions                                    2.14e+0;  0.2%
+ From other functions                        1.00e+0 calls took 9.43e+2; 100.0%)
 (PROVE
  Calls                                                                  6.80e+3
- Time of all outermost calls                                             942.56
+ Time of all outermost calls                                             941.32
  Time per call                                                             0.14
- Heap bytes allocated                                           7.74e+10; 49.9%
+ Heap bytes allocated                                           7.73e+10; 49.9%
  Heap bytes allocated per call                                          1.14e+7
- From CERTIFY-BOOK-FN                        6.80e+3 calls took 9.43e+2; 100.0%)
+ From CERTIFY-BOOK-FN                        6.80e+3 calls took 9.41e+2; 100.0%)
 Exit code from ACL2 is 43
--rw-r--r--  1 jagadishbapanapally  staff  46603 Sep 29 16:14 rotations.cert
+-rw-r--r--  1 jagadishbapanapally  staff  46764 Oct  9 22:36 rotations.cert

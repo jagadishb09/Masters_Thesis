@@ -865,8 +865,8 @@
 
   (local (include-book "arithmetic-5/top" :dir :system))
 
-  (defthmd rotation-is-r3-rotationp
-    (implies (and (reducedwordp w)
+  (defthmd rotation-is-r3-rotationp-1
+    (implies (and (weak-wordp w)
                   (equal x (acl2-sqrt 2)))
              (r3-rotationp (rotation w x)))
     :hints (("goal"
@@ -930,3 +930,13 @@
             )
     )
   )
+
+(defthmd rotation-is-r3-rotationp
+  (implies (and (reducedwordp w)
+                (equal x (acl2-sqrt 2)))
+           (r3-rotationp (rotation w x)))
+  :hints (("goal"
+           :use ((:instance rotation-is-r3-rotationp-1 (w w) (x x))
+                 (:instance reducedwordp=>weak-wordp (x w)))
+           :in-theory nil
+           )))
