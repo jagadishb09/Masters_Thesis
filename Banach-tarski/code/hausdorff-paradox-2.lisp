@@ -44,11 +44,11 @@
      (implies (weak-wordp w)
               (equal (len (poles w)) 2))))
 
-  (skip-proofs
-   (defthmd poles-returns-two-points
-     (implies (weak-wordp w)
-              (and (point-in-r3 (first (poles w)))
-                   (point-in-r3 (second (poles w)))))))
+  ;; (skip-proofs
+  ;;  (defthmd poles-returns-two-points
+  ;;    (implies (weak-wordp w)
+  ;;             (and (point-in-r3 (first (poles w)))
+  ;;                  (point-in-r3 (second (poles w)))))))
 
   (skip-proofs
    (defthmd poles-lie-on-s2
@@ -128,7 +128,7 @@
 
 (defun generate-words-main (n)
   (if (> n 4)
-      (subseq (generate-words-func (generate-words-len-1 4) (- n 4)) 0 (- n 1))
+      (generate-words-func (generate-words-len-1 4) (- n 4))
     (generate-words-len-1 n)))
 
 (defun first-poles (list-r-words len)
@@ -162,7 +162,83 @@
         (nth (/ (- idx 1) 2) (enumerate-x-of-poles-upto-length (+ idx 1))))
     0))
 
---
+----
+
+(defun-sk test-1000-func (w)
+  (exists n
+          (equal (nth (- n 1) (generate-words-main n))
+                 w)))
+
+---
+
+(defthmd test-1000
+  (implies (and (reducedwordp w)
+                w)
+           (test-1000-func w)))
+
+(skip-proofs
+ (defthmd generate-words-func-lemma1-*1/2
+   (IMPLIES
+    (AND
+     (NOT (ZP (+ -1 H)))
+     (IMPLIES (AND (POSP (+ -1 H))
+                   (NATP N)
+                   (< N (+ -1 H)))
+              (REDUCEDWORDP (NTH N
+                                 (GENERATE-WORDS-FUNC '((#\a) (#\b) (#\c) (#\d))
+                                                      (+ -1 H))))))
+    (IMPLIES (AND (POSP H) (NATP N) (< N H))
+             (REDUCEDWORDP (NTH N
+                                (GENERATE-WORDS-FUNC '((#\a) (#\b) (#\c) (#\d))
+                                                     H)))))))
+
+(defthmd generate-words-func-lemma1-*1/2.3
+  (IMPLIES (AND (NOT (ZP (+ -1 H)))
+                (NOT (POSP (+ -1 H)))
+                (POSP H)
+                (NATP N)
+                (< N H))
+           (REDUCEDWORDP (NTH N
+                              (GENERATE-WORDS-FUNC '((#\a) (#\b) (#\c) (#\d))
+                                                   H)))))
+
+
+
+---
+
+;; Subgoal *1/2.2
+;; (IMPLIES
+;;      (AND (NOT (ZP (+ -1 H)))
+;;           (REDUCEDWORDP (NTH N
+;;                              (GENERATE-WORDS-FUNC '((#\a) (#\b) (#\c) (#\d))
+;;                                                   (+ -1 H))))
+;;           (POSP H)
+;;           (NATP N)
+;;           (< N H))
+;;      (REDUCEDWORDP (NTH N
+;;                         (GENERATE-WORDS-FUNC '((#\a) (#\b) (#\c) (#\d))
+;;                                              H))))
+
+(defthmd generate-words-func-lemma1-*1/2.1-1
+  (implies (and (posp h)
+                (natp n)
+                (<= (+ -1 h) n)
+                (< n h))
+           (equal (- h 1) n)))
+
+(defthmd generate-words-func-lemma1-*1/2.1
+  (IMPLIES (AND (NOT (ZP (+ -1 H)))
+                (<= (+ -1 H) N)
+                (POSP H)
+                (NATP N)
+                (< N H))
+           (REDUCEDWORDP (NTH N
+                              (GENERATE-WORDS-FUNC '((#\a) (#\b) (#\c) (#\d))
+                                                   H))))
+  :hints (("Goal"
+           :use ((:instance generate-words-func-lemma1-*1/2.1-1))
+           :in-theory nil
+           )))
 
 (defthmd generate-words-func-lemma1
   (implies (and (posp h)
@@ -172,9 +248,28 @@
   :hints (
           ("Goal"
            :induct (GENERATE-WORDS-FUNC '((#\a) (#\b) (#\c) (#\d)) h)
-           ;:in-theory nil
            )
           ("Subgoal *1/2"
+           ;:use ((:instance generate-words-func-lemma1-*1/2))
+           :in-theory nil
+           )
+          ("Subgoal *1/1"
+           ;:in-theory nil
+           )
+
+          ))
+
+(defthmd generate-words-func-lemma1
+  (implies (and (posp h)
+                (natp n)
+                (< n (len (GENERATE-WORDS-FUNC '((#\a) (#\b) (#\c) (#\d)) h))))
+           (reducedwordp (nth n (GENERATE-WORDS-FUNC '((#\a) (#\b) (#\c) (#\d)) h))))
+  :hints (
+          ("Goal"
+           :induct (GENERATE-WORDS-FUNC '((#\a) (#\b) (#\c) (#\d)) h)
+           )
+          ("Subgoal *1/2"
+           ;:use ((:instance generate-words-func-lemma1-*1/2))
            :in-theory nil
            )
           ("Subgoal *1/1"
