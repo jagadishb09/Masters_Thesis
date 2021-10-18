@@ -44,12 +44,6 @@
      (implies (weak-wordp w)
               (equal (len (poles w)) 2))))
 
-  ;; (skip-proofs
-  ;;  (defthmd poles-returns-two-points
-  ;;    (implies (weak-wordp w)
-  ;;             (and (point-in-r3 (first (poles w)))
-  ;;                  (point-in-r3 (second (poles w)))))))
-
   (skip-proofs
    (defthmd poles-lie-on-s2
      (implies (weak-wordp w)
@@ -93,42 +87,26 @@
         ((equal n 4) '((#\d)))))
 
 (defun generate-words-len-1 (n)
-  (if (zp (- n 1))
-      (append '() (generate-word-len-1 n))
-    (append (generate-words-len-1 (- n 1)) (generate-word-len-1 n))))
+  (if (zp n)
+      '(())
+    (append (generate-words-len-1 (- n 1)) (generate-word-len-1 (- n 1)))))
 
 (defun generate-words (list-of-words index)
-  (cond ((equal (car (last (nth index list-of-words))) (wa))
-         (append list-of-words
-                 (list (append (nth index list-of-words) (list (wa))))
-                 (list (append (nth index list-of-words) (list (wb))))
-                 (list (append (nth index list-of-words) (list (wb-inv))))))
-        ((equal (car (last (nth index list-of-words))) (wa-inv))
-         (append list-of-words
-                 (list (append (nth index list-of-words) (list (wa-inv))))
-                 (list (append (nth index list-of-words) (list (wb))))
-                 (list (append (nth index list-of-words) (list (wb-inv))))))
-        ((equal (car (last (nth index list-of-words))) (wb))
-         (append list-of-words
-                 (list (append (nth index list-of-words) (list (wa))))
-                 (list (append (nth index list-of-words) (list (wa-inv))))
-                 (list (append (nth index list-of-words) (list (wb))))))
-        ((equal (car (last (nth index list-of-words))) (wb-inv))
-         (append list-of-words
-                 (list (append (nth index list-of-words) (list (wa))))
-                 (list (append (nth index list-of-words) (list (wa-inv))))
-                 (list (append (nth index list-of-words) (list (wb-inv))))))
-        )
+  (append list-of-words
+          (list (append (nth index list-of-words) (list (wa))))
+          (list (append (nth index list-of-words) (list (wa-inv))))
+          (list (append (nth index list-of-words) (list (wb))))
+          (list (append (nth index list-of-words) (list (wb-inv)))))
   )
 
 (defun generate-words-func (list index)
   (if (zp (- index 1))
-      (generate-words list 0)
-    (generate-words (generate-words-func list (- index 1)) (- index 1))))
+      (generate-words list 1)
+    (generate-words (generate-words-func list (- index 1)) index)))
 
 (defun generate-words-main (n)
-  (if (> n 4)
-      (generate-words-func (generate-words-len-1 4) (- n 4))
+  (if (> n 5)
+      (generate-words-func (generate-words-len-1 5) (- n 5))
     (generate-words-len-1 n)))
 
 (defun first-poles (list-r-words len)
@@ -163,6 +141,119 @@
     0))
 
 ----
+
+(defthmd generate-words-func-t-listp
+  (implies (posp h)
+           (true-listp (GENERATE-WORDS-FUNC '(nil (#\a) (#\b) (#\c) (#\d)) h))))
+
+(defthmd nth->len-listp
+  (implies (and (true-listp g-words)
+                (natp n)
+                (>= n (len g-words)))
+           (equal (nth n g-words) nil)))
+
+(skip-proofs
+ (defthmd generate-words-func-lemma2-1
+   (IMPLIES (AND (NOT (ZP (+ -1 H)))
+                 (IMPLIES (AND (TRUE-LISTP LST)
+                               (POSP (+ (+ -1 H) 1))
+                               (POSP (+ -1 H)))
+                          (< (+ (+ -1 H) 1)
+                             (LEN (GENERATE-WORDS-FUNC LST (+ -1 H))))))
+            (IMPLIES (AND (TRUE-LISTP LST)
+                          (POSP (+ H 1))
+                          (POSP H))
+                     (< (+ H 1)
+                        (LEN (GENERATE-WORDS-FUNC LST H)))))))
+
+(defthmd generate-words-func-lemma2
+  (implies (and (true-listp lst)
+                (posp (+ h 1))
+                (posp h))
+           (< (+ h 1) (len (GENERATE-WORDS-FUNC lst h))))
+  :hints (("Goal"
+           :induct (GENERATE-WORDS-FUNC lst h)
+           )
+          ("Subgoal *1/2"
+           :in-theory nil
+           :use (:instance generate-words-func-lemma2-1)
+           )
+          ))
+
+
+
+(skip-proofs
+ (defthmd generate-words-func-lemma1-*1/2
+   (IMPLIES
+    (AND
+     (NOT (ZP (+ -1 H)))
+     (IMPLIES
+      (AND (POSP (+ -1 H))
+           (NATP N)
+           (< N
+              (LEN (GENERATE-WORDS-FUNC '(NIL (#\a) (#\b) (#\c) (#\d))
+                                        (+ -1 H)))))
+      (WEAK-WORDP (NTH N
+                       (GENERATE-WORDS-FUNC '(NIL (#\a) (#\b) (#\c) (#\d))
+                                            (+ -1 H))))))
+    (IMPLIES
+     (AND (POSP H)
+          (NATP N)
+          (< N
+             (LEN (GENERATE-WORDS-FUNC '(NIL (#\a) (#\b) (#\c) (#\d))
+                                       H))))
+     (WEAK-WORDP (NTH N
+                      (GENERATE-WORDS-FUNC '(NIL (#\a) (#\b) (#\c) (#\d))
+                                           H)))))
+   ))
+
+
+
+----
+
+(defthmd generate-words-func-lemma1
+  (implies (and (posp h)
+                (natp n)
+                (< n (len (GENERATE-WORDS-FUNC '(nil (#\a) (#\b) (#\c) (#\d)) h))))
+           (weak-wordp (nth n (GENERATE-WORDS-FUNC '(nil (#\a) (#\b) (#\c) (#\d)) h))))
+
+
+  :hints (
+          ("Goal"
+           :induct (GENERATE-WORDS-FUNC '(nil (#\a) (#\b) (#\c) (#\d)) h)
+           )
+          ("Subgoal *1/2"
+           ;:use ((:instance generate-words-func-lemma1-*1/2))
+           :in-theory nil
+           )
+          ("Subgoal *1/1"
+           ;:in-theory nil
+           )
+
+          ))
+
+(defthmd generate-words-main-lemma1
+  (implies (and (posp h)
+                (> h 5)
+                (natp n)
+                (< n h))
+
+                (weak-wordp (nth n (GENERATE-WOrds-main h)))))
+
+
+  :hints (
+          ("Goal"
+           :induct (GENERATE-WORDS-FUNC '(nil (#\a) (#\b) (#\c) (#\d)) h)
+           )
+          ("Subgoal *1/2"
+           :use ((:instance generate-words-func-lemma1-*1/2))
+           :in-theory nil
+           )
+          ("Subgoal *1/1"
+           ;:in-theory nil
+           )
+
+          ))
 
 (defun-sk test-1000-func (w)
   (exists n
