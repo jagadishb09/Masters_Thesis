@@ -128,8 +128,39 @@
 
 (defun generate-words-main (n)
   (if (> n 4)
-      (generate-words-func (generate-words-len-1 4) (- n 4))
+      (subseq (generate-words-func (generate-words-len-1 4) (- n 4)) 0 (- n 1))
     (generate-words-len-1 n)))
+
+(defun first-poles (list-r-words len)
+  (if (zp len)
+      nil
+    (append (first-poles list-r-words (- len 1)) (list (nth 0 (poles (nth (- len 1) list-r-words)))))))
+
+(defun second-poles (list-r-words len)
+  (if (zp len)
+      nil
+    (append (second-poles list-r-words (- len 1)) (list (nth 1 (poles (nth (- len 1) list-r-words)))))))
+
+(defun generate-poles (list-r-words)
+  (append (first-poles list-r-words (len list-r-words)) (second-poles list-r-words (len list-r-words))))
+
+(defun generate-x (poles-list len)
+  (if (zp len)
+      nil
+    (append (generate-x poles-list (- len 1)) (list (aref2 :fake-name (nth (- len 1) poles-list) 0 0)))))
+
+(defun generate-x-coordinates (poles-list)
+  (generate-x poles-list (len poles-list)))
+
+(defun enumerate-x-of-poles-upto-length (idx)
+  (generate-x-coordinates (generate-poles (generate-words-main (/ idx 2)))))
+
+(defun x-coordinate-sequence (idx)
+  (if (posp idx)
+      (if (evenp idx)
+          (nth (1- idx) (enumerate-x-of-poles-upto-length idx))
+        (nth (/ (- idx 1) 2) (enumerate-x-of-poles-upto-length (+ idx 1))))
+    0))
 
 --
 
@@ -138,7 +169,12 @@
                 (natp n)
                 (< n h))
            (reducedwordp (nth n (GENERATE-WORDS-FUNC '((#\a) (#\b) (#\c) (#\d)) h))))
-  :hints (("Subgoal *1/2"
+  :hints (
+          ("Goal"
+           :induct (GENERATE-WORDS-FUNC '((#\a) (#\b) (#\c) (#\d)) h)
+           ;:in-theory nil
+           )
+          ("Subgoal *1/2"
            :in-theory nil
            )
           ("Subgoal *1/1"
