@@ -1,5 +1,5 @@
 
-(in-package "acl2")
+(in-package "ACL2")
 
 (include-book "hausdorff-paradox-1")
 
@@ -253,55 +253,34 @@
            :in-theory (disable generate-words-main)
            )))
 
------
+(defun-sk exists-weak-word-1 (w n)
+  (exists m
+          (and (natp m)
+               (<= m n)
+               (equal (nth m (generate-words-main n))
+                      w))))
 
 (defun-sk exists-weak-word (w)
   (exists n
           (and (natp n)
-               (equal (nth n (generate-words-main (+ n 1)))
-                      w))))
+               (exists-weak-word-1 w n))))
 
-(defun generate-word-len-1 (n)
-  (cond ((equal n 1) '((#\a)))
-        ((equal n 2) '((#\b)))
-        ((equal n 3) '((#\c)))
-        ((equal n 4) '((#\d)))))
+----
 
-(defun generate-words-len-1 (n)
-  (if (zp n)
-      '(())
-    (append (generate-words-len-1 (- n 1)) (generate-word-len-1 (- n 1)))))
-
-(defun generate-words (list-of-words index)
-  (append list-of-words
-          (list (append (nth index list-of-words) (list (wa))))
-          (list (append (nth index list-of-words) (list (wa-inv))))
-          (list (append (nth index list-of-words) (list (wb))))
-          (list (append (nth index list-of-words) (list (wb-inv)))))
-  )
-
-(defun generate-words-func (list index)
-  (if (zp (- index 1))
-      (generate-words list 1)
-    (generate-words (generate-words-func list (- index 1)) index)))
-
-(defun generate-words-main (n)
-  (if (> n 5)
-      (generate-words-func (generate-words-len-1 5) (- n 5))
-    (generate-words-len-1 n)))
-
-(defthmd generate-words-func-equiv
-  (implies (and (> h 1)
-                (posp h))
-           (equal (generate-words-func lst h)
-                  (append (generate-words-func lst (- h 1))
-                          (list (append (nth h (generate-words-func lst (- h 1))) (list (wa))))
-                          (list (append (nth h (generate-words-func lst (- h 1))) (list (wa-inv))))
-                          (list (append (nth h (generate-words-func lst (- h 1))) (list (wb))))
-                          (list (append (nth h (generate-words-func lst (- h 1))) (list (wb-inv)))))))
-  :hints (("goal"
+(defthmd any-weak-word-exists
+  (implies (weak-wordp w)
+           (exists-weak-word w))
+  :hints (("Subgoal *1/2"
+           ;:in-theory nil
+           )
+          ("Subgoal *1/1"
+           :use ((:instance EXISTS-WEAK-WORD-SUFF (n 1) (w nil))
+                 (:instance EXISTS-WEAK-WORD-1-SUFF (m 0) (w nil) (n 1)))
+           ;:in-theory nil
            :do-not-induct t
-           )))
+           )
+          ))
+
 
 ---
 
