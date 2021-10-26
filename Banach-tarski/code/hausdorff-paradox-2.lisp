@@ -149,7 +149,7 @@
   (and (consp wp)
        (weak-words-reco wp)))
 
-(defthm generate-words-func-equiv
+(defthmd generate-words-func-equiv
   (implies (and (> h 1)
                 (posp h))
            (equal (generate-words-func lst h)
@@ -276,13 +276,22 @@
            (equal (nth 1 (generate-words-func lst x))
                   (cadr lst))))
 
-(defthmd generate-words-func-lemma2-10-*1/2.3
-  (implies (and (NOT (ZP (+ -1 X)))
-                (natp x)
-                (posp m)
+(defthmd generate-words-func-lemma2-10-1/2.3
+  (IMPLIES (AND (NOT (ZP (+ -1 X)))
                 (<= (+ -1 X) M)
-                (< m x))
-           (equal (- x 1) m)))
+                (TRUE-LISTP LST)
+                (< 1 (LEN LST))
+                (< M X)
+                (< N (LEN (GENERATE-WORDS-FUNC LST M)))
+                (NATP X)
+                (POSP M)
+                (NATP N))
+           (EQUAL (NTH N (GENERATE-WORDS-FUNC LST M))
+                  (NTH N (GENERATE-WORDS-FUNC LST X))))
+  :hints (("Goal"
+           :cases ((equal m (- x 1)))
+           :use ((:instance generate-words-func-lemma2-5 (n n) (m (- x 1))))
+           )))
 
 (defthmd generate-words-func-lemma2-10-1
   (implies (and (integerp m)
@@ -290,71 +299,682 @@
            (equal (+ -1 M (- M) X)
                   (- x 1))))
 
-(defthmd generate-words-func-lemma2-10-*1/2.1-1
-  (implies (and (INTEGERP M)
-                (< 0 M)
-                (TRUE-LISTP LST)
-                (< 0 (+ -1 X))
-                (INTEGERP X)
-                (< m x))
-           (equal (NTH M (GENERATE-WORDS-FUNC LST (+ -1 X)))
-                  (NTH M (GENERATE-WORDS-FUNC LST x))))
-  :hints (("Goal"
-           :in-theory (disable GENERATE-WORDS-FUNC generate-words-func-equiv)
-           :use ((:instance generate-words-func-lemma2-5 (n m) (m (- x 1)) (lst lst))
-                 (:instance generate-words-func-lemma1-1 (h m) (lst lst))
-                 (:instance generate-words-func-lemma2-10-1)
-                 (:instance generate-words-func-lemma2-7 (lst lst) (x (- (- x m) 1)) (m m)))
-           :do-not-induct t
-           )))
-
-(defthmd generate-words-func-lemma2-10-*1/2.1
-  (IMPLIES (AND (< 0 (+ -1 X))
-                (EQUAL (NTH M (GENERATE-WORDS-FUNC LST M))
-                       (NTH M (GENERATE-WORDS-FUNC LST (+ -1 X))))
+(defthmd generate-words-func-lemma2-10-1/2.2
+  (IMPLIES (AND (NOT (ZP (+ -1 X)))
+                (EQUAL (NTH N (GENERATE-WORDS-FUNC LST M))
+                       (NTH N (GENERATE-WORDS-FUNC LST (+ -1 X))))
                 (TRUE-LISTP LST)
                 (< 1 (LEN LST))
                 (< M X)
-                (INTEGERP X)
-                (<= 0 X)
-                (INTEGERP M)
-                (< 0 M))
-           (EQUAL (NTH M (GENERATE-WORDS-FUNC LST M))
-                  (NTH M (GENERATE-WORDS-FUNC LST X))))
+                (< N (LEN (GENERATE-WORDS-FUNC LST M)))
+                (NATP X)
+                (POSP M)
+                (NATP N))
+           (EQUAL (NTH N (GENERATE-WORDS-FUNC LST M))
+                  (NTH N (GENERATE-WORDS-FUNC LST X))))
   :hints (("Goal"
-           :in-theory (disable GENERATE-WORDS-FUNC generate-words-func-equiv)
-           :use ((:instance generate-words-func-lemma2-5 (n m) (m (- x 1)) (lst lst))
-                 (:instance generate-words-func-lemma2-10-*1/2.1-1))
+           :use ((:instance generate-words-func-lemma2-5 (m (- x 1)) (n n) (lst lst))
+                 (:instance generate-words-func-lemma2-10-1)
+                 (:instance generate-words-func-lemma2-7 (lst lst) (m m) (x (- (- x m) 1))))
            :do-not-induct t
            )))
 
-(defthm generate-words-func-lemma2-10
+(defthmd generate-words-func-lemma2-10-1/2.1-1
+  (implies (and (NATP X)
+                (NOT (NATP (+ -1 X)))
+                (integerp m)
+                (< m x))
+           (not (posp m))))
+
+(defthmd generate-words-func-lemma2-10-1/2.1-2
+  (implies (POSP M)
+           (integerp m)))
+
+(defthmd generate-words-func-lemma2-10
   (implies (and (true-listp lst)
                 (< 1 (len lst))
                 (> x m)
+                (< n (len (generate-words-func lst m)))
                 (natp x)
-                (posp m))
-           (equal (nth m (generate-words-func lst m))
-                  (nth m (generate-words-func lst x))))
+                (posp m)
+                (natp n))
+           (equal (nth n (generate-words-func lst m))
+                  (nth n (generate-words-func lst x))))
   :hints (("Goal"
            :induct (generate-words-func lst x)
            )
           ("Subgoal *1/2"
-           :in-theory (disable GENERATE-WORDS-FUNC generate-words-func-equiv)
+           :in-theory nil
+           :do-not-induct t
            )
           ("Subgoal *1/2.3"
-            :use ((:instance generate-words-func-lemma2-10-*1/2.3)
-                  (:instance generate-words-func-lemma2-5 (n (- x 1)) (m (- x 1)) (lst lst))
-                  (:instance generate-words-func-lemma1-1 (lst lst) (h (- x 1))))
-            )
+           :use ((:instance generate-words-func-lemma2-10-1/2.3))
+           )
           ("Subgoal *1/2.2"
-           :use ((:instance generate-words-func-lemma2-10-*1/2.3)
-                 (:instance generate-words-func-lemma1-1 (lst lst) (h (- x 1))))
-           :in-theory (enable GENERATE-WORDS-FUNC generate-words-func-equiv)
+           :use ((:instance generate-words-func-lemma2-10-1/2.2))
            )
           ("Subgoal *1/2.1"
-           :use ((:instance generate-words-func-lemma2-5 (n m) (m (- x 1)) (lst lst))
-                 (:instance generate-words-func-lemma2-10-*1/2.1))
+           :use ((:instance generate-words-func-lemma2-10-1/2.1-1)
+                 (:instance generate-words-func-lemma2-10-1/2.1-2))
+           )))
+
+(defthmd generate-words-main-lemma7-2
+  (IMPLIES (posp n)
+           (< (+ n 5)
+              (LEN (GENERATE-WORDS-FUNC '(NIL (#\a) (#\b) (#\c) (#\d)) n))))
+  :hints (("Goal"
+           :induct (GENERATE-WORDS-FUNC '(NIL (#\a) (#\b) (#\c) (#\d)) n)
+           )))
+
+(defthmd generate-words-main-lemma7-1
+  (implies (and (natp m)
+                (> m 5))
+           (< m (len (generate-words-main m))))
+  :hints (("Goal"
+           :use ((:instance generate-words-func-lemma1-1 (lst '(NIL (#\a) (#\b) (#\c) (#\d)))
+                            (h (- n 5)))
+                 (:instance generate-words-main-lemma7-2 (n (- m 5))))
+
+           )))
+
+(defthmd generate-words-main-lemma7
+  (implies (and (true-listp lst)
+                (natp x)
+                (> m 5)
+                (> x m)
+                (natp m))
+           (equal (nth m (generate-words-main m))
+                  (nth m (generate-words-main x))))
+  :hints (("Goal"
+           :use ((:instance generate-words-func-lemma2-10 (lst '(nil (#\a) (#\b) (#\c) (#\d)))
+                            (m (- m 5))
+                            (n m)
+                            (x (- x 5)))
+                 (:instance generate-words-main-lemma7-1))
+           :do-not-induct t
+           )))
+
+;; (defthmd generate-words-main-lemma8-1
+;;   (IMPLIES (posp n)
+;;            (< (+ n 5)
+;;               (LEN (GENERATE-WORDS-FUNC '(NIL (#\a) (#\b) (#\c) (#\d)) n))))
+;;   :hints (("Goal"
+;;            :induct (GENERATE-WORDS-FUNC '(NIL (#\a) (#\b) (#\c) (#\d)) n)
+;;            )))
+
+;; (defthmd generate-words-main-lemma8
+;;   (implies (and (natp n)
+;;                 (> n 5))
+;;            (< n (len (generate-words-main n))))
+;;   :hints (("Goal"
+;;            :use ((:instance generate-words-func-lemma1-1 (lst '(NIL (#\a) (#\b) (#\c) (#\d)))
+;;                             (h (- n 5)))
+;;                  (:instance generate-words-main-lemma8-1 (n (- n 5))))
+
+;;            )))
+
+;; (defthmd generate-words-func-lemma2-10-*1/2.3
+;;   (implies (and (NOT (ZP (+ -1 X)))
+;;                 (natp x)
+;;                 (posp m)
+;;                 (<= (+ -1 X) M)
+;;                 (< m x))
+;;            (equal (- x 1) m)))
+
+;; (defthmd generate-words-func-lemma2-10-1
+;;   (implies (and (integerp m)
+;;                 (integerp x))
+;;            (equal (+ -1 M (- M) X)
+;;                   (- x 1))))
+
+;; (defthmd generate-words-func-lemma2-10-*1/2.1-1
+;;   (implies (and (INTEGERP M)
+;;                 (< 0 M)
+;;                 (TRUE-LISTP LST)
+;;                 (< 0 (+ -1 X))
+;;                 (INTEGERP X)
+;;                 (< m x))
+;;            (equal (NTH M (GENERATE-WORDS-FUNC LST (+ -1 X)))
+;;                   (NTH M (GENERATE-WORDS-FUNC LST x))))
+;;   :hints (("Goal"
+;;            :in-theory (disable GENERATE-WORDS-FUNC generate-words-func-equiv)
+;;            :use ((:instance generate-words-func-lemma2-5 (n m) (m (- x 1)) (lst lst))
+;;                  (:instance generate-words-func-lemma1-1 (h m) (lst lst))
+;;                  (:instance generate-words-func-lemma2-10-1)
+;;                  (:instance generate-words-func-lemma2-7 (lst lst) (x (- (- x m) 1)) (m m)))
+;;            :do-not-induct t
+;;            )))
+
+;; (defthmd generate-words-func-lemma2-10-*1/2.1
+;;   (IMPLIES (AND (< 0 (+ -1 X))
+;;                 (EQUAL (NTH M (GENERATE-WORDS-FUNC LST M))
+;;                        (NTH M (GENERATE-WORDS-FUNC LST (+ -1 X))))
+;;                 (TRUE-LISTP LST)
+;;                 (< 1 (LEN LST))
+;;                 (< M X)
+;;                 (INTEGERP X)
+;;                 (<= 0 X)
+;;                 (INTEGERP M)
+;;                 (< 0 M))
+;;            (EQUAL (NTH M (GENERATE-WORDS-FUNC LST M))
+;;                   (NTH M (GENERATE-WORDS-FUNC LST X))))
+;;   :hints (("Goal"
+;;            :in-theory (disable GENERATE-WORDS-FUNC generate-words-func-equiv)
+;;            :use ((:instance generate-words-func-lemma2-5 (n m) (m (- x 1)) (lst lst))
+;;                  (:instance generate-words-func-lemma2-10-*1/2.1-1))
+;;            :do-not-induct t
+;;            )))
+
+;; (defthmd generate-words-func-lemma2-10
+;;   (implies (and (true-listp lst)
+;;                 (< 1 (len lst))
+;;                 (> x m)
+;;                 (natp x)
+;;                 (posp m))
+;;            (equal (nth m (generate-words-func lst m))
+;;                   (nth m (generate-words-func lst x))))
+;;   :hints (("Goal"
+;;            :induct (generate-words-func lst x)
+;;            )
+;;           ("Subgoal *1/2"
+;;            :in-theory (disable GENERATE-WORDS-FUNC generate-words-func-equiv)
+;;            )
+;;           ("Subgoal *1/2.3"
+;;             :use ((:instance generate-words-func-lemma2-10-*1/2.3)
+;;                   (:instance generate-words-func-lemma2-5 (n (- x 1)) (m (- x 1)) (lst lst))
+;;                   (:instance generate-words-func-lemma1-1 (lst lst) (h (- x 1))))
+;;             )
+;;           ("Subgoal *1/2.2"
+;;            :use ((:instance generate-words-func-lemma2-10-*1/2.3)
+;;                  (:instance generate-words-func-lemma1-1 (lst lst) (h (- x 1))))
+;;            :in-theory (enable GENERATE-WORDS-FUNC generate-words-func-equiv)
+;;            )
+;;           ("Subgoal *1/2.1"
+;;            :use ((:instance generate-words-func-lemma2-5 (n m) (m (- x 1)) (lst lst))
+;;                  (:instance generate-words-func-lemma2-10-*1/2.1))
+;;            :do-not-induct t
+;;            )
+;;           ))
+
+;; (defthmd generate-words-main-lemma7
+;;   (implies (and (true-listp lst)
+;;                 (natp x)
+;;                 (> m 5)
+;;                 (> x m)
+;;                 (natp m))
+;;            (equal (nth m (generate-words-main m))
+;;                   (nth m (generate-words-main x))))
+;;   :hints (("Goal"
+;;            :use ((:instance generate-words-func-lemma2-10 (lst '(nil (#\a) (#\b) (#\c) (#\d)))
+;;                             (m (- m 5))
+;;                             (x (- x 5))))
+;;            :do-not-induct t
+;;            )))
+
+;; ---
+
+(defthmd generate-words-main-lemma1-1
+  (implies (and (true-listp lst)
+                (equal lst '(nil (#\a) (#\b) (#\c) (#\d)))
+                (posp m))
+           (equal (nth 5 (generate-words-func lst 1))
+                  (nth 5 (generate-words-func lst m)))))
+
+(defthmd generate-words-main-lemma1
+  (implies (and (equal eit 5)
+                (natp x)
+                (> x 5))
+           (equal (nth eit (generate-words-main x))
+                       '(#\a #\a)))
+  :hints (("Goal"
+           :use ((:instance generate-words-main-lemma1-1 (lst '(nil (#\a) (#\b) (#\c) (#\d)))
+                            (m (- x 5))))
+           :do-not-induct t
+           )))
+(defthmd generate-words-main-lemma2-1
+  (IMPLIES (posp m)
+           (EQUAL (CAR (GENERATE-WORDS-FUNC '(nil (#\a) (#\b) (#\c) (#\d)) m))
+                  nil)))
+
+(defthmd generate-words-main-lemma2
+  (implies (and (posp x)
+                (equal eit 0)
+                (> x eit))
+           (equal (nth eit (generate-words-main x))
+                  nil))
+  :hints (("Goal"
+           :cases ((= x 1)
+                   (= x 2)
+                   (= x 3)
+                   (= x 4)
+                   (= x 5)
+                   (> x 5))
+           )
+          ("Subgoal 1"
+           :use ((:instance generate-words-main-lemma2-1 (m (- x 5))))
+           )))
+
+(defthmd generate-words-main-lemma3-1
+  (IMPLIES (posp m)
+           (EQUAL (nth 1 (GENERATE-WORDS-FUNC '(nil (#\a) (#\b) (#\c) (#\d)) m))
+                  '(#\a))))
+
+(defthmd generate-words-main-lemma3
+  (implies (and (posp x)
+                (equal eit 1)
+                (> x eit))
+           (equal (nth eit (generate-words-main x))
+                  '(#\a)))
+  :hints (("Goal"
+           :cases ((= x 2)
+                   (= x 3)
+                   (= x 4)
+                   (= x 5)
+                   (> x 5))
+           )
+          ("Subgoal 1"
+           :use ((:instance generate-words-main-lemma3-1 (m (- x 5))))
+           )))
+
+(defthmd generate-words-main-lemma4-1
+  (IMPLIES (posp m)
+           (EQUAL (nth 2 (GENERATE-WORDS-FUNC '(nil (#\a) (#\b) (#\c) (#\d)) m))
+                  '(#\b))))
+
+(defthmd generate-words-main-lemma4
+  (implies (and (posp x)
+                (equal eit 2)
+                (> x eit))
+           (equal (nth eit (generate-words-main x))
+                  '(#\b)))
+  :hints (("Goal"
+           :cases ((= x 3)
+                   (= x 4)
+                   (= x 5)
+                   (> x 5))
+           )
+          ("Subgoal 1"
+           :use ((:instance generate-words-main-lemma4-1 (m (- x 5))))
+           )))
+
+(defthmd generate-words-main-lemma5-1
+  (IMPLIES (posp m)
+           (EQUAL (nth 3 (GENERATE-WORDS-FUNC '(nil (#\a) (#\b) (#\c) (#\d)) m))
+                  '(#\c))))
+
+(defthmd generate-words-main-lemma5
+  (implies (and (posp x)
+                (equal eit 3)
+                (> x eit))
+           (equal (nth eit (generate-words-main x))
+                  '(#\c)))
+  :hints (("Goal"
+           :cases ((= x 4)
+                   (= x 5)
+                   (> x 5))
+           )
+          ("Subgoal 1"
+           :use ((:instance generate-words-main-lemma5-1 (m (- x 5))))
+           )))
+
+(defthmd generate-words-main-lemma6-1
+  (IMPLIES (posp m)
+           (EQUAL (nth 4 (GENERATE-WORDS-FUNC '(nil (#\a) (#\b) (#\c) (#\d)) m))
+                  '(#\d))))
+
+(defthmd generate-words-main-lemma6
+  (implies (and (posp x)
+                (equal eit 4)
+                (> x eit))
+           (equal (nth eit (generate-words-main x))
+                  '(#\d)))
+  :hints (("Goal"
+           :cases ((= x 5)
+                   (> x 5))
+           )
+          ("Subgoal 1"
+           :use ((:instance generate-words-main-lemma6-1 (m (- x 5))))
+           )))
+
+(defun-sk exists-weak-word-1 (w n)
+  (exists m
+          (and (natp m)
+               (< m n)
+               (equal (nth m (generate-words-main n))
+                      w))))
+
+(defun-sk exists-weak-word (w)
+  (exists n
+          (and (posp n)
+               (exists-weak-word-1 w n))))
+
+(defthmd exists-weak-word-implies
+  (implies (exists-weak-word w)
+           (and (posp (exists-weak-word-witness w))
+                (natp (exists-weak-word-1-witness w (exists-weak-word-witness w)))
+                (< (exists-weak-word-1-witness w (exists-weak-word-witness w)) (exists-weak-word-witness w))
+                (equal (nth (exists-weak-word-1-witness w (exists-weak-word-witness w))
+                            (generate-words-main (exists-weak-word-witness w)))
+                       w))))
+
+(defthmd any-weak-word-exist-sub-1/2.4-7
+  (IMPLIES (AND (WEAK-WORDP (CDR W))
+                (NOT (ATOM W))
+                (EQUAL (CAR W) (WA))
+                (EXISTS-WEAK-WORD (CDR W))
+                (WEAK-WORDP W)
+                (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 0))
+           (exists-weak-word w))
+
+  :hints (("Goal"
+           :use ((:instance exists-weak-word-implies (w (cdr w)))
+                 (:instance generate-words-main-lemma2
+                            (eit (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))))
+                            (x (exists-weak-word-witness (cdr w))))
+                 (:instance EXISTS-WEAK-WORD-SUFF (n 2) (w '(#\a)))
+                 (:instance EXISTS-WEAK-WORD-1-SUFF (m 1) (w '(#\a)) (n 2)))
+           :do-not-induct t
+           )))
+
+(defthmd any-weak-word-exist-sub-1/2.4-6
+  (IMPLIES (AND (WEAK-WORDP (CDR W))
+                (NOT (ATOM W))
+                (EQUAL (CAR W) (WA))
+                (EXISTS-WEAK-WORD (CDR W))
+                (WEAK-WORDP W)
+                (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 1))
+           (exists-weak-word w))
+
+  :hints (("Goal"
+           :use ((:instance exists-weak-word-implies (w (cdr w)))
+                 (:instance generate-words-main-lemma3
+                            (eit (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))))
+                            (x (exists-weak-word-witness (cdr w))))
+                 (:instance EXISTS-WEAK-WORD-SUFF (n 6) (w '(#\a #\a)))
+                 (:instance EXISTS-WEAK-WORD-1-SUFF (m 5) (w '(#\a #\a)) (n 6)))
+           :do-not-induct t
+           )))
+
+(defthmd any-weak-word-exist-sub-1/2.4-5
+  (IMPLIES (AND (WEAK-WORDP (CDR W))
+                (NOT (ATOM W))
+                (EQUAL (CAR W) (WA))
+                (EXISTS-WEAK-WORD (CDR W))
+                (WEAK-WORDP W)
+                (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 2))
+           (exists-weak-word w))
+
+  :hints (("Goal"
+           :use ((:instance exists-weak-word-implies (w (cdr w)))
+                 (:instance generate-words-main-lemma4
+                            (eit (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))))
+                            (x (exists-weak-word-witness (cdr w))))
+                 (:instance EXISTS-WEAK-WORD-SUFF (n 10) (w '(#\a #\b)))
+                 (:instance EXISTS-WEAK-WORD-1-SUFF (m 9) (w '(#\a #\b)) (n 10)))
+           :do-not-induct t
+           )))
+
+(defthmd any-weak-word-exist-sub-1/2.4-4
+  (IMPLIES (AND (WEAK-WORDP (CDR W))
+                (NOT (ATOM W))
+                (EQUAL (CAR W) (WA))
+                (EXISTS-WEAK-WORD (CDR W))
+                (WEAK-WORDP W)
+                (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 3))
+           (exists-weak-word w))
+
+  :hints (("Goal"
+           :use ((:instance exists-weak-word-implies (w (cdr w)))
+                 (:instance generate-words-main-lemma5
+                            (eit (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))))
+                            (x (exists-weak-word-witness (cdr w))))
+                 (:instance EXISTS-WEAK-WORD-SUFF (n 14) (w '(#\a #\c)))
+                 (:instance EXISTS-WEAK-WORD-1-SUFF (m 13) (w '(#\a #\c)) (n 14)))
+           :do-not-induct t
+           )))
+
+(defthmd any-weak-word-exist-sub-1/2.4-3
+  (IMPLIES (AND (WEAK-WORDP (CDR W))
+                (NOT (ATOM W))
+                (EQUAL (CAR W) (WA))
+                (EXISTS-WEAK-WORD (CDR W))
+                (WEAK-WORDP W)
+                (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))
+           (exists-weak-word w))
+
+  :hints (("Goal"
+           :use ((:instance exists-weak-word-implies (w (cdr w)))
+                 (:instance generate-words-main-lemma6
+                            (eit (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))))
+                            (x (exists-weak-word-witness (cdr w))))
+                 (:instance EXISTS-WEAK-WORD-SUFF (n 18) (w '(#\a #\d)))
+                 (:instance EXISTS-WEAK-WORD-1-SUFF (m 17) (w '(#\a #\d)) (n 18)))
+           :do-not-induct t
+           )))
+
+(defthmd any-weak-word-exist-sub-1/2.4-2
+  (IMPLIES (AND (WEAK-WORDP (CDR W))
+                (NOT (ATOM W))
+                (EQUAL (CAR W) (WA))
+                (EXISTS-WEAK-WORD (CDR W))
+                (WEAK-WORDP W)
+                (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 5))
+           (exists-weak-word w))
+
+  :hints (("Goal"
+           :use ((:instance exists-weak-word-implies (w (cdr w)))
+                 (:instance generate-words-main-lemma1
+                            (eit (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))))
+                            (x (exists-weak-word-witness (cdr w))))
+                 (:instance EXISTS-WEAK-WORD-SUFF (n 22) (w '(#\a #\a #\a)))
+                 (:instance EXISTS-WEAK-WORD-1-SUFF (m 21) (w '(#\a #\a #\a)) (n 22)))
+           :do-not-induct t
+           )))
+
+(defthmd exists-weak-word-lemma1
+  (implies (and (natp n)
+                (> n 5))
+           (equal (generate-words-main (+ n 1))
+                  (append (generate-words-main n)
+                          (list (append (list (wa)) (nth (- n 4) (generate-words-main n))))
+                          (list (append (list (wa-inv)) (nth (- n 4) (generate-words-main n))))
+                          (list (append (list (wb)) (nth (- n 4) (generate-words-main n))))
+                          (list (append (list (wb-inv)) (nth (- n 4)
+                                                             (generate-words-main n))))))))
+
+---
+
+(defthmd any-weak-word-exist-sub-1/2.4-1
+  (IMPLIES (AND (WEAK-WORDP (CDR W))
+                (NOT (ATOM W))
+                (EQUAL (CAR W) (WA))
+                (EXISTS-WEAK-WORD (CDR W))
+                (WEAK-WORDP W)
+                (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 5))
+           (exists-weak-word w))
+
+-----
+
+(defthmd any-weak-word-exist-sub-1/2.4
+  (IMPLIES (AND (WEAK-WORDP (CDR W))
+                (NOT (ATOM W))
+                (EQUAL (CAR W) (WA))
+                (EXISTS-WEAK-WORD (CDR W))
+                (WEAK-WORDP W))
+           (EXISTS-WEAK-WORD W))
+  :hints (("Goal"
+           :cases ((= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 0)
+                   (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 1)
+                   (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 2)
+                   (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 3)
+                   (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4)
+                   (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 5)
+                   (> (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 5))
+           :use ((:instance exists-weak-word-implies (w (cdr w))))
+           :do-not-induct t
+           ;:in-theory nil
+           )
+          ("Subgoal 7"
+           :use ((:instance any-weak-word-exist-sub-1/2.4-7))
+           :in-theory nil
+           )
+          ("Subgoal 6"
+           :use ((:instance any-weak-word-exist-sub-1/2.4-6))
+           :in-theory nil
+           )
+          ("Subgoal 5"
+           :use ((:instance any-weak-word-exist-sub-1/2.4-5))
+           :in-theory nil
+           )
+          ("Subgoal 4"
+           :use ((:instance any-weak-word-exist-sub-1/2.4-4))
+           :in-theory nil
+           )
+          ("Subgoal 3"
+           :use ((:instance any-weak-word-exist-sub-1/2.4-3))
+           :in-theory nil
+           )
+          ("Subgoal 2"
+           :use ((:instance any-weak-word-exist-sub-1/2.4-2))
+           :in-theory nil
+           )
+          ("Subgoal 1"
+           :in-theory nil
+           )
+          ))
+
+
+(defthmd any-weak-word-exists
+  (implies (weak-wordp w)
+           (exists-weak-word w))
+  :hints (
+          ("Subgoal *1/2"
+           :use ((:instance weak-word-cdr (x w)))
+           ;;       (:instance exists-weak-word-lemma1
+           ;;                  (n (+ (exists-weak-word-1-witness (cdr w)
+           ;;                                                    (exists-weak-word-witness (cdr w)))
+           ;;                        4)))
+           ;;       (:instance exists-weak-word-implies (w (cdr w))))
+           :in-theory nil
+           )
+          ("Subgoal *1/2.4"
+           :cases ((= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 0)
+                   (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 1)
+                   (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 2)
+                   (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 3)
+                   (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4)
+                   (= (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 5)
+                   (> (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 5))
+           :use ((:instance exists-weak-word-implies (w (cdr w))))
+           :in-theory nil
+           )
+          ("Subgoal *1/2.3"
+           :in-theory nil
+           )
+          ("Subgoal *1/2.2"
+           :in-theory nil
+           )
+          ("Subgoal *1/2.1"
+           :in-theory nil
+           )
+
+          ("Subgoal *1/1"
+           :use ((:instance EXISTS-WEAK-WORD-SUFF (n 1) (w nil))
+                 (:instance EXISTS-WEAK-WORD-1-SUFF (m 0) (w nil) (n 1)))
+           :do-not-induct t
+           )
+          ))
+
+----
+
+(defthmd generate-words-main-lemma2-11-1
+  (implies (and (natp x)
+                (equal m 1)
+                (>= x m))
+           (equal (nth m (generate-words-main m))
+                  (nth m (generate-words-main x))))
+  :hints (("Goal"
+           :cases ((= x 1)
+                   (= x 2)
+                   (= x 3)
+                   (= x 4)
+                   (= x 5)
+                   (> x 5))
+           :do-not-induct t
+           )))
+
+(defthmd generate-words-main-lemma2-11
+  (implies (and (natp x)
+                (posp m)
+                (> x m))
+           (equal (nth m (generate-words-main m))
+                  (nth m (generate-words-main x))))
+  :hints (("Goal"
+           :cases ((= m 1)
+                   (= m 2)
+                   (= m 3)
+                   (= m 4)
+                   (= m 5)
+                   (> m 5))
+           ;:in-theory nil
+           )))
+
+(defthmd exists-weak-word-lemma1
+  (implies (and (natp n)
+                (> n 5))
+           (equal (generate-words-main (+ n 1))
+                  (append (generate-words-main n)
+                          (list (append (list (wa)) (nth (- n 4) (generate-words-main n))))
+                          (list (append (list (wa-inv)) (nth (- n 4) (generate-words-main n))))
+                          (list (append (list (wb)) (nth (- n 4) (generate-words-main n))))
+                          (list (append (list (wb-inv)) (nth (- n 4)
+                                                             (generate-words-main n))))))))
+
+(defun-sk exists-weak-word-1 (w n)
+  (exists m
+          (and (natp m)
+               (< m n)
+               (equal (nth m (generate-words-main n))
+                      w))))
+
+(defun-sk exists-weak-word (w)
+  (exists n
+          (and (natp n)
+               (exists-weak-word-1 w n))))
+
+(IMPLIES (AND (NOT (ATOM W))
+              (OR (EQUAL (CAR W) (WA))
+                  (EQUAL (CAR W) (WA-INV))
+                  (EQUAL (CAR W) (WB))
+                  (EQUAL (CAR W) (WB-INV)))
+              (IMPLIES (WEAK-WORDP (CDR W))
+                       (EXISTS-WEAK-WORD (CDR W))))
+         (IMPLIES (WEAK-WORDP W)
+                  (EXISTS-WEAK-WORD W)))
+
+(defthmd exists-weak-word-implies
+  (implies (exists-weak-word w)
+           (and (natp (exists-weak-word-witness w))
+                (natp (exists-weak-word-1-witness w (exists-weak-word-witness w)))
+                (< (exists-weak-word-1-witness w (exists-weak-word-witness w)) (exists-weak-word-witness w))
+                (equal (nth (exists-weak-word-1-witness w (exists-weak-word-witness w))
+                            (generate-words-main (exists-weak-word-witness w)))
+                       w))))
+
+(defthmd any-weak-word-exists
+  (implies (weak-wordp w)
+           (exists-weak-word w))
+  :hints (("Subgoal *1/2"
+           :use ((:instance weak-word-cdr (x w))
+                 (:instance exists-weak-word-lemma1
+                            (n (+ (exists-weak-word-1-witness (cdr w)
+                                                              (exists-weak-word-witness (cdr w)))
+                                  4)))
+                 (:instance exists-weak-word-implies (w (cdr w))))
+           )
+          ("Subgoal *1/1"
+           :use ((:instance EXISTS-WEAK-WORD-SUFF (n 1) (w nil))
+                 (:instance EXISTS-WEAK-WORD-1-SUFF (m 0) (w nil) (n 1)))
            :do-not-induct t
            )
           ))
