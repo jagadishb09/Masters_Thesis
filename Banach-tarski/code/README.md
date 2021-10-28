@@ -4,19 +4,21 @@
 
 ## Goal: Prove the Banach-Tarski theorem in ACL2(r)
 
-We can divide the proof into three steps:
+Proof is divided into four stages:
 
-#### Step1: Prove the Hausdorff paradox
+#### Stage1: Prove the Hausdorff paradox
 
-#### Step2: Prove the Banach-Tarski Theorem for the surface of the sphere
+#### Stage2: Prove the Banach-Tarski Theorem for the surface of the sphere
 
-#### Step3: Prove the Banach-Tarski theorem for a solid ball cenetered at the origin
+#### Stage3: Prove the Banach-Tarski theorem for a solid ball except for the orgin
+
+#### Stage4: Prove the Banach-Tarski theorem for the entire ball
 
 ##### Progress:
 
-Step1:
+Stage1:
 Hausdorff Paradox statement: There is a countable set D that is a subset of S^2 such that S^2-D can be divided into 5 pieces which can then be rotated to form 2 copies of S^2-D.
 
-Proved the equivalences between different partitions of S^2-D. Check hausdorff-paradox.lisp for the proof.
+Proved the equivalence between different partitions of S^2-D. hausdorff-paradox.lisp contains the proof.
 
 To Do: Prove set D is countable.
