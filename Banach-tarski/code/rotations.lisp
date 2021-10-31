@@ -712,6 +712,14 @@
               :in-theory (enable header dimensions default m-*)
               ))))
 
+  (defthmd m*id=m
+    (implies (r3-matrixp m1)
+             (m-= (m-* m1 (id-rotation)) m1))
+    :hints (("Goal"
+             :use ((:instance lemma1))
+             :in-theory nil
+             )))
+
   (local
    (defthm lemma2
      (implies (r3-matrixp m1)
@@ -722,6 +730,14 @@
                     (:instance array2p-alist2p-fname (l m1)))
               :in-theory (enable header dimensions default m-*)
               ))))
+
+  (defthmd id*m=m
+    (implies (r3-matrixp m1)
+             (m-= (m-* (id-rotation) m1) m1))
+    :hints (("Goal"
+             :use ((:instance lemma2))
+             :in-theory nil
+             )))
 
   (local
    (defthm lemma4

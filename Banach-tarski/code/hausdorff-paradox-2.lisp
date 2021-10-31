@@ -35,136 +35,136 @@
 ;;         (< (a) (b))))
 ;;  )
 
-(defthmd word-ww-lemma1
-  (implies (and (weak-wordp a)
-                a
-                (natp n)
-                (< n (len a))
-                (< (+ n 1) (len a))
-                (equal (nth n a) (wa))
-                (equal (nth (+ n 1) a) (wa-inv)))
-           (not (reducedwordp a))))
+;; (defthmd word-ww-lemma1
+;;   (implies (and (weak-wordp a)
+;;                 a
+;;                 (natp n)
+;;                 (< n (len a))
+;;                 (< (+ n 1) (len a))
+;;                 (equal (nth n a) (wa))
+;;                 (equal (nth (+ n 1) a) (wa-inv)))
+;;            (not (reducedwordp a))))
 
-(defthmd word-ww-lemma2
-  (implies (and (reducedwordp a)
-                a
-                (natp n)
-                (< n (len a))
-                (< (+ n 1) (len a))
-                (equal (nth n a) (wa)))
-           (not (equal (nth (+ n 1) a) (wa-inv)))))
-
-
-           (not (reducedwordp a))))
+;; (defthmd word-ww-lemma2
+;;   (implies (and (reducedwordp a)
+;;                 a
+;;                 (natp n)
+;;                 (< n (len a))
+;;                 (< (+ n 1) (len a))
+;;                 (equal (nth n a) (wa)))
+;;            (not (equal (nth (+ n 1) a) (wa-inv)))))
 
 
-                       a))))
-
----
-
-(defthmd word-ww-sub1/2-1
-  (implies (and (weak-wordp a)
-                (not (reducedwordp a))
-                (weak-wordp b))
-           (not (reducedwordp (append a b)))))
-
-(defthmd word-ww-sub1/2-2
-  (implies (and (weak-wordp a)
-                (not (reducedwordp a))
-                (weak-wordp b)
-                (equal (len b) 1))
-           (not (reducedwordp (append b a))))
-  :hints (("Goal"
-           :use ((:instance reduced-cdr (x (append b a))))
-           )))
-
-(IMPLIES (AND (NOT (ATOM A))
-              (OR (EQUAL (CAR A) (WA))
-                  (EQUAL (CAR A) (WA-INV))
-                  (EQUAL (CAR A) (WB))
-                  (EQUAL (CAR A) (WB-INV)))
-              (WORD-FIX (APPEND (CDR A) (CDR A)))
-              (WEAK-WORDP A)
-              (NOT (WORD-FIX (APPEND A A))))
-         (NOT (CONSP A)))
-
-(defthmd test500
-  (implies (and (weak-wordp a)
-                (not (compose a a)))
-           (not (append a nil))))
-
----
-
-(defthmd word-ww-sub1/2
-  (IMPLIES (AND (NOT (ATOM A))
-                (OR (EQUAL (CAR A) (WA))
-                    (EQUAL (CAR A) (WA-INV))
-                    (EQUAL (CAR A) (WB))
-                    (EQUAL (CAR A) (WB-INV)))
-                (IMPLIES (AND (WEAK-WORDP (CDR A))
-                              (CDR A)
-                               (EQUAL (CDR A) (WORD-INVERSE (CDR A))))
-                         (NOT (REDUCEDWORDP (CDR A)))))
-           (IMPLIES (AND (WEAK-WORDP A)
-                         A (EQUAL A (WORD-INVERSE A)))
-                    (NOT (REDUCEDWORDP A))))
-  :hints (("Goal"
-           :do-not-induct t
-           :use ((:instance word-ww-sub1/2-1 (a (cdr a)) (b (last a)))
-                 (:instance word-ww-sub1/2-2 (a (append (cdr a) (last a))) (b (list (car a))))
-                 (:instance weak-word-cdr (x a)))
-           )))
-
-(defthmd word-ww
-  (implies (and (weak-wordp a)
-                a
-                (equal a (word-inverse a)))
-           (not (reducedwordp a)))
-  :hints (("Subgoal *1/2"
-           :use ((:instance word-ww-sub1/2))
-           )))
-(skip-proofs
- (defthmd word-ww-sub1/11
-   (IMPLIES (AND (NOT (ATOM APAA))
-                 (WORD-FIX (CDR APAA))
-                 (NOT (EQUAL (CADR (CONS (CAR APAA) (WORD-FIX (CDR APAA))))
-                             (WA)))
-                 (NOT (EQUAL (CADR (CONS (CAR APAA) (WORD-FIX (CDR APAA))))
-                             (WA-INV)))
-                 (NOT (EQUAL (CADR (CONS (CAR APAA) (WORD-FIX (CDR APAA))))
-                             (WB)))
-                 (NOT (EQUAL (CADR (CONS (CAR APAA) (WORD-FIX (CDR APAA))))
-                             (WB-INV)))
-                 (IMPLIES (AND (REDUCEDWORDP A)
-                               (EQUAL (APPEND A A) (CDR APAA))
-                               A)
-                          (WORD-FIX (CDR APAA))))
-            (IMPLIES (AND (REDUCEDWORDP A)
-                          (EQUAL (APPEND A A) APAA)
-                          A)
-                     (WORD-FIX APAA)))))
-
-(defthmd word-ww
-  (implies (and (reducedwordp a)
-                a)
-           (not (equal (word-inverse a) a))))
+;;            (not (reducedwordp a))))
 
 
-  :hints (("Subgoal *1/11"
-           :use (:instance word-ww-sub1/11)
+;;                        a))))
 
-           )))
+;; ---
 
----
+;; (defthmd word-ww-sub1/2-1
+;;   (implies (and (weak-wordp a)
+;;                 (not (reducedwordp a))
+;;                 (weak-wordp b))
+;;            (not (reducedwordp (append a b)))))
 
-(defun f-poles (r)
+;; (defthmd word-ww-sub1/2-2
+;;   (implies (and (weak-wordp a)
+;;                 (not (reducedwordp a))
+;;                 (weak-wordp b)
+;;                 (equal (len b) 1))
+;;            (not (reducedwordp (append b a))))
+;;   :hints (("Goal"
+;;            :use ((:instance reduced-cdr (x (append b a))))
+;;            )))
 
-  )
+;; (IMPLIES (AND (NOT (ATOM A))
+;;               (OR (EQUAL (CAR A) (WA))
+;;                   (EQUAL (CAR A) (WA-INV))
+;;                   (EQUAL (CAR A) (WB))
+;;                   (EQUAL (CAR A) (WB-INV)))
+;;               (WORD-FIX (APPEND (CDR A) (CDR A)))
+;;               (WEAK-WORDP A)
+;;               (NOT (WORD-FIX (APPEND A A))))
+;;          (NOT (CONSP A)))
 
-(defun poles (w)
-  (if (r3-rotationp (rotation w))
-      (f-poles (rotation w))
-    nil))
+;; (defthmd test500
+;;   (implies (and (weak-wordp a)
+;;                 (not (compose a a)))
+;;            (not (append a nil))))
+
+;; ---
+
+;; (defthmd word-ww-sub1/2
+;;   (IMPLIES (AND (NOT (ATOM A))
+;;                 (OR (EQUAL (CAR A) (WA))
+;;                     (EQUAL (CAR A) (WA-INV))
+;;                     (EQUAL (CAR A) (WB))
+;;                     (EQUAL (CAR A) (WB-INV)))
+;;                 (IMPLIES (AND (WEAK-WORDP (CDR A))
+;;                               (CDR A)
+;;                                (EQUAL (CDR A) (WORD-INVERSE (CDR A))))
+;;                          (NOT (REDUCEDWORDP (CDR A)))))
+;;            (IMPLIES (AND (WEAK-WORDP A)
+;;                          A (EQUAL A (WORD-INVERSE A)))
+;;                     (NOT (REDUCEDWORDP A))))
+;;   :hints (("Goal"
+;;            :do-not-induct t
+;;            :use ((:instance word-ww-sub1/2-1 (a (cdr a)) (b (last a)))
+;;                  (:instance word-ww-sub1/2-2 (a (append (cdr a) (last a))) (b (list (car a))))
+;;                  (:instance weak-word-cdr (x a)))
+;;            )))
+
+;; (defthmd word-ww
+;;   (implies (and (weak-wordp a)
+;;                 a
+;;                 (equal a (word-inverse a)))
+;;            (not (reducedwordp a)))
+;;   :hints (("Subgoal *1/2"
+;;            :use ((:instance word-ww-sub1/2))
+;;            )))
+;; (skip-proofs
+;;  (defthmd word-ww-sub1/11
+;;    (IMPLIES (AND (NOT (ATOM APAA))
+;;                  (WORD-FIX (CDR APAA))
+;;                  (NOT (EQUAL (CADR (CONS (CAR APAA) (WORD-FIX (CDR APAA))))
+;;                              (WA)))
+;;                  (NOT (EQUAL (CADR (CONS (CAR APAA) (WORD-FIX (CDR APAA))))
+;;                              (WA-INV)))
+;;                  (NOT (EQUAL (CADR (CONS (CAR APAA) (WORD-FIX (CDR APAA))))
+;;                              (WB)))
+;;                  (NOT (EQUAL (CADR (CONS (CAR APAA) (WORD-FIX (CDR APAA))))
+;;                              (WB-INV)))
+;;                  (IMPLIES (AND (REDUCEDWORDP A)
+;;                                (EQUAL (APPEND A A) (CDR APAA))
+;;                                A)
+;;                           (WORD-FIX (CDR APAA))))
+;;             (IMPLIES (AND (REDUCEDWORDP A)
+;;                           (EQUAL (APPEND A A) APAA)
+;;                           A)
+;;                      (WORD-FIX APAA)))))
+
+;; (defthmd word-ww
+;;   (implies (and (reducedwordp a)
+;;                 a)
+;;            (not (equal (word-inverse a) a))))
+
+
+;;   :hints (("Subgoal *1/11"
+;;            :use (:instance word-ww-sub1/11)
+
+;;            )))
+
+;; ---
+
+;; (defun f-poles (r)
+
+;;   )
+
+;; (defun poles (w)
+;;   (if (r3-rotationp (rotation w))
+;;       (f-poles (rotation w))
+;;     nil))
 
 (encapsulate
   ((poles (w) t))
