@@ -1556,37 +1556,33 @@
 
   (local (include-book "arithmetic-5/top" :dir :system))
 
-  (local
-   (defthmd rev-word-inv-lemma3
-     (implies (weak-wordp x)
-              (equal (nth n x)
-                     (if (< (nfix n) (len x))
-                         (cond ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wb)) (wb-inv))
-                               ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wa)) (wa-inv))
-                               ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wb-inv)) (wb))
-                               ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wa-inv)) (wa))
-                               ((equal x '()) nil))
-                       nil
-                       )
-                     )
-              )
-     :hints (("goal"
-              :use ((:instance rev-word-inv-lemma1)
-                    (:instance rev-word-inv-lemma2)
-                    (:instance len-lemma-1))
-              :in-theory (enable nth rev)
-              :do-not-induct t
-              ))
-     )
-   )
+  (defthmd rev-word-inv-lemma3
+    (implies (weak-wordp x)
+             (equal (nth n x)
+                    (if (< (nfix n) (len x))
+                        (cond ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wb)) (wb-inv))
+                              ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wa)) (wa-inv))
+                              ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wb-inv)) (wb))
+                              ((equal (nth (- (len x) (+ 1 (nfix n))) (word-inverse x)) (wa-inv)) (wa))
+                              ((equal x '()) nil))
+                      nil
+                      )
+                    )
+             )
+    :hints (("goal"
+             :use ((:instance rev-word-inv-lemma1)
+                   (:instance rev-word-inv-lemma2)
+                   (:instance len-lemma-1))
+             :in-theory (enable nth rev)
+             :do-not-induct t
+             ))
+    )
 
-  (local
-   (defthmd len-x=len-inv-x
-     (implies (weak-wordp x)
-              (equal (len x) (len (word-inverse x)))
-              )
-     )
-   )
+  (defthmd len-x=len-inv-x
+    (implies (weak-wordp x)
+             (equal (len x) (len (word-inverse x)))
+             )
+    )
 
   (defthmd inv-inv-x=x-1
     (implies (and (weak-wordp x)
@@ -1630,6 +1626,129 @@
              )
             )
     )
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd compose-aa-not-nil-1-2
+    (implies (and (oddp x)
+                  (integerp x))
+             (integerp (/ (- x 1) 2))))
+
+  (defthmd compose-aa-not-nil-2-2
+    (implies (and (evenp x)
+                  (integerp x))
+             (and (integerp (/ x 2)))))
+  )
+
+(defthmd compose-aa-not-nil-1-1
+  (implies (and (equal a b)
+                (natp n))
+           (equal (nth n a)
+                  (nth n b))))
+
+(defthmd compose-aa-not-nil-1-3
+  (implies (and (weak-wordp a)
+                a
+                (natp n)
+                (< n (len a)))
+           (or (equal (nth n a) (wa))
+               (equal (nth n a) (wa-inv))
+               (equal (nth n a) (wb))
+               (equal (nth n a) (wb-inv)))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd compose-aa-not-nil-1
+    (implies (and (weak-wordp a)
+                  a
+                  (oddp (len a)))
+             (not (equal (word-inverse a)
+                         a)))
+    :hints (("goal"
+             :do-not-induct t
+             :use ((:instance rev-word-inv-lemma3 (x a)
+                              (n (/ (- (len a) 1) 2)))
+                   (:instance compose-aa-not-nil-1-1
+                              (b a)
+                              (a (word-inverse a))
+                              (n (/ (- (len a) 1) 2)))
+                   (:instance compose-aa-not-nil-1-2 (x (len a)))
+                   (:instance compose-aa-not-nil-1-3 (a a) (n (/ (- (len a) 1) 2))))
+             :in-theory (disable word-inverse)
+
+             )))
+  )
+
+(defthmd compose-aa-not-nil-2-3
+  (implies (and (reducedwordp a)
+                a
+                (natp n)
+                (< n (len a))
+                (< (+ n 1) (len a))
+                (equal (nth n a) (wb-inv)))
+           (not (equal (nth (+ n 1) a) (wb)))))
+
+(defthmd compose-aa-not-nil-2-4
+  (implies (and (reducedwordp a)
+                a
+                (natp n)
+                (< n (len a))
+                (< (+ n 1) (len a))
+                (equal (nth n a) (wb)))
+           (not (equal (nth (+ n 1) a) (wb-inv)))))
+
+(defthmd compose-aa-not-nil-2-5
+  (implies (and (reducedwordp a)
+                a
+                (natp n)
+                (< n (len a))
+                (< (+ n 1) (len a))
+                (equal (nth n a) (wa-inv)))
+           (not (equal (nth (+ n 1) a) (wa)))))
+
+(defthmd compose-aa-not-nil-2-6
+  (implies (and (reducedwordp a)
+                a
+                (natp n)
+                (< n (len a))
+                (< (+ n 1) (len a))
+                (equal (nth n a) (wa)))
+           (not (equal (nth (+ n 1) a) (wa-inv)))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd compose-aa-not-nil-2
+    (implies (and (weak-wordp a)
+                  a
+                  (evenp (len a))
+                  (equal a (word-inverse a)))
+             (not (reducedwordp a)))
+    :hints (("goal"
+             :do-not-induct t
+             :use ((:instance rev-word-inv-lemma3 (x a)
+                              (n (- (/ (len a) 2) 1)))
+                   (:instance compose-aa-not-nil-1-1
+                              (b a)
+                              (a (word-inverse a))
+                              (n (- (/ (len a) 2) 1)))
+                   (:instance compose-aa-not-nil-2-2 (x (len a)))
+                   (:instance compose-aa-not-nil-1-3 (a a) (n (- (/ (len a) 2) 1)))
+                   (:instance compose-aa-not-nil-2-3 (n (+ -1 (* 1/2 (len a)))) (a a))
+                   (:instance compose-aa-not-nil-2-5 (n (+ -1 (* 1/2 (len a)))) (a a))
+                   (:instance compose-aa-not-nil-2-6 (n (+ -1 (* 1/2 (len a)))) (a a))
+                   (:instance compose-aa-not-nil-2-4 (n (+ -1 (* 1/2 (len a)))) (a a)))
+             :in-theory (disable word-inverse reducedwordp)
+             )))
   )
 
 (defthmd reduced-inverse
