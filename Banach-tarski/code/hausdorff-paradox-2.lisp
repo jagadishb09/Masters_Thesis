@@ -3,17 +3,6 @@
 
 (include-book "hausdorff-paradox-1")
 
-;; ---
-
-;; (defun f-poles (r)
-
-;;   )
-
-;; (defun poles (w)
-;;   (if (r3-rotationp (rotation w))
-;;       (f-poles (rotation w))
-;;     nil))
-
 (defun m11-a (m)
   (declare (xargs :guard (r3-matrixp m)
                   :verify-guards nil))
@@ -133,50 +122,632 @@
            :in-theory (e/d () (r3-m-inverse rotation word-inverse reducedwordp acl2-sqrt))
            )))
 
-(encapsulate
-  ((poles (w) t))
-  (local (defun poles (w) (declare (ignore w)) '(1 2)))
+(defthmd reduced-rotation-prop-2-1
+  (implies (and (r3-matrixp m1)
+                (r3-matrixp m2)
+                (m-= m1 m2))
+           (equal (aref2 :fake-name m1 0 0)
+                  (aref2 :fake-name m2 0 0)))
+  :hints (("Goal"
+           :in-theory (e/d (m-=) ())
+           )))
 
-  (skip-proofs
-   (defthmd two-poles-for-each-rotation
-     (implies (weak-wordp w)
-              (equal (len (poles w)) 2))))
+(defthmd reduced-rotation-prop-2
+  (implies (and (m-= (r3-m-inverse m) (m-trans m))
+                (r3-matrixp m)
+                (equal (r3-m-determinant m) 1))
+           (and (equal (m11-a m) (- (* (m22-e m) (m33-i m)) (* (m32-h m) (m23-f m))))
+                (equal (m21-d m) (- (* (m13-c m) (m32-h m)) (* (m12-b m) (m33-i m))))
+                (equal (m31-g m) (- (* (m12-b m) (m23-f m)) (* (m22-e m) (m13-c m))))
+                (equal (m12-b m) (- (* (m31-g m) (m23-f m)) (* (m21-d m) (m33-i m))))
+                (equal (m22-e m) (- (* (m11-a m) (m33-i m)) (* (m13-c m) (m31-g m))))
+                (equal (m32-h m) (- (* (m13-c m) (m21-d m)) (* (m11-a m) (m23-f m))))
+                (equal (m13-c m) (- (* (m21-d m) (m32-h m)) (* (m31-g m) (m22-e m))))
+                (equal (m23-f m) (- (* (m12-b m) (m31-g m)) (* (m11-a m) (m32-h m))))
+                (equal (m33-i m) (- (* (m11-a m) (m22-e m)) (* (m12-b m) (m21-d m))))
+                ))
+  :hints (("Goal"
+           :use ((:instance r3-m-inverse-= (m m)))
+           :in-theory (e/d (m-=) (r3-m-inverse))
+           )))
 
-  (skip-proofs
-   (defthmd poles-lie-on-s2
-     (implies (weak-wordp w)
-              (and (s2-def-p (first (poles w)))
-                   (s2-def-p (second (poles w)))))))
+(defun square (x)
+  (realfix (* x x)))
 
-  (skip-proofs
-   (defthmd f-returns-poles-1
-     (implies (weak-wordp w)
-              (and (m-= (m-* (rotation w (acl2-sqrt 2)) (first (poles w))) (first (poles w)))
-                   (m-= (m-* (rotation w (acl2-sqrt 2)) (second (poles w))) (second (poles w)))))))
+(defun f-poles-1 (m)
+  `((:header :dimensions (3 1)
+             :maximum-length 15)
+    ((0 . 0) . ,(/ (- (m32-h m) (m23-f m) ) (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                                          (square (- (m13-c m) (m31-g m) ))
+                                                          (square (- (m21-d m) (m12-b m) ))))) )
+    ((1 . 0) . ,(/ (- (m13-c m) (m31-g m) ) (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                                          (square (- (m13-c m) (m31-g m) ))
+                                                          (square (- (m21-d m) (m12-b m) ))))) )
+    ((2 . 0) . ,(/ (- (m21-d m) (m12-b m) ) (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                                          (square (- (m13-c m) (m31-g m) ))
+                                                          (square (- (m21-d m) (m12-b m) ))))) )
+    )
+  )
 
-  (skip-proofs
-   (defthmd two-poles-for-all-rotations
-     (implies (and (weak-wordp w)
-                   (point-in-r3 p)
-                   (m-= (m-* (rotation w (acl2-sqrt 2)) p) p))
-              (or (m-= (first (poles w)) p)
-                  (m-= (second (poles w)) p))))))
+(defun f-poles-2 (m)
+  `((:header :dimensions (3 1)
+             :maximum-length 15)
+    ((0 . 0) . ,(/ (- (m23-f m) (m32-h m) ) (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                                          (square (- (m13-c m) (m31-g m) ))
+                                                          (square (- (m21-d m) (m12-b m) ))))) )
+    ((1 . 0) . ,(/ (- (m31-g m) (m13-c m) ) (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                                          (square (- (m13-c m) (m31-g m) ))
+                                                          (square (- (m21-d m) (m12-b m) ))))) )
+    ((2 . 0) . ,(/ (- (m12-b m) (m21-d m) ) (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                                          (square (- (m13-c m) (m31-g m) ))
+                                                          (square (- (m21-d m) (m12-b m) ))))) )
+    )
+  )
 
-(defthmd f-returns-poles
+(defun f-poles (m)
+  (list (f-poles-1 m) (f-poles-2 m)))
+
+(defthmd f-poles-prop-1
+  (implies (r3-matrixp m)
+           (and (array2p :fake-name (first (f-poles m)))
+                (equal (car (dimensions :fake-name (first (f-poles m)))) 3)
+                (equal (cadr (dimensions :fake-name (first (f-poles m)))) 1)
+                (array2p :fake-name (second (f-poles m)))
+                (equal (car (dimensions :fake-name (second (f-poles m)))) 3)
+                (equal (cadr (dimensions :fake-name (second (f-poles m)))) 1)))
+  :hints (("Goal"
+           :in-theory (e/d (array2p header dimensions) (acl2-sqrt square))
+           )))
+
+(defthmd f-poles-prop-2
+  (implies (r3-matrixp m)
+           (and (equal (aref2 :fake-name (first (f-poles m)) 0 0)
+                       (/ (- (m32-h m) (m23-f m) ) (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                                                 (square (- (m13-c m) (m31-g m) ))
+                                                                 (square (- (m21-d m) (m12-b m) ))))) )
+                (equal (aref2 :fake-name (first (f-poles m)) 1 0)
+                       (/ (- (m13-c m) (m31-g m) ) (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                                                 (square (- (m13-c m) (m31-g m) ))
+                                                                 (square (- (m21-d m) (m12-b m) ))))) )
+                (equal (aref2 :fake-name (first (f-poles m)) 2 0)
+                       (/ (- (m21-d m) (m12-b m) ) (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                                                 (square (- (m13-c m) (m31-g m) ))
+                                                                 (square (- (m21-d m) (m12-b m) ))))) )
+                (equal (aref2 :fake-name (second (f-poles m)) 0 0)
+                       (/ (- (m23-f m) (m32-h m) ) (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                                                 (square (- (m13-c m) (m31-g m) ))
+                                                                 (square (- (m21-d m) (m12-b m) ))))) )
+                (equal (aref2 :fake-name (second (f-poles m)) 1 0)
+                       (/ (- (m31-g m) (m13-c m) ) (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                                                 (square (- (m13-c m) (m31-g m) ))
+                                                                 (square (- (m21-d m) (m12-b m) ))))) )
+                (equal (aref2 :fake-name (second (f-poles m)) 2 0)
+                       (/ (- (m12-b m) (m21-d m) ) (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                                                 (square (- (m13-c m) (m31-g m) ))
+                                                                 (square (- (m21-d m) (m12-b m) ))))) )
+                ))
+  :hints (("Goal"
+           :in-theory (e/d (aref2) (square))
+           )))
+
+(defthmd f-poles-prop-3-1
+  (implies (r3-matrixp m)
+           (realp (+ (square (- (m32-h m) (m23-f m) ))
+                     (square (- (m13-c m) (m31-g m) ))
+                     (square (- (m21-d m) (m12-b m) ))))))
+
+(defthmd f-poles-prop-3
+  (implies (r3-matrixp m)
+           (and (point-in-r3 (first (f-poles m)))
+                (point-in-r3 (second (f-poles m)))))
+  :hints (("Goal"
+           :use ((:instance f-poles-prop-1)
+                 (:instance f-poles-prop-3-1)
+                 (:instance f-poles-prop-2))
+           :in-theory (e/d () (aref2 f-poles square))
+           )))
+
+(defun poles (w)
+  (if (weak-wordp w)
+      (f-poles (rotation w (acl2-sqrt 2)))
+    nil))
+
+(defthmd two-poles-for-each-rotation
+  (implies (weak-wordp w)
+           (equal (len (poles w)) 2)))
+
+(defthmd poles-lie-on-s2-3
+  (implies (and (realp x)
+                (realp y)
+                (realp z)
+                (equal (+ (square x) (square y) (square z))
+                       0))
+           (and (equal (* x x) 0)
+                (equal (* y y) 0)
+                (equal (* z z) 0))))
+
+(defthmd poles-lie-on-s2-6
+  (implies (and (realp x)
+                (realp y)
+                (realp z))
+           (>= (+ (square x) (square y) (square z))
+               0)))
+
+
+(defthmd poles-lie-on-s2-7
+  (implies (and (realp x)
+                (realp y)
+                (equal (* (- x y) (- x y)) 0))
+           (equal (- x y) 0)))
+
+(defthmd poles-lie-on-s2-8
+  (implies (and (realp a)
+                (realp b)
+                (realp c)
+                (realp d)
+                (realp e)
+                (realp f)
+                (or (not (equal a b))
+                    (not (equal c d))
+                    (not (equal e f))))
+           (> (+ (square (- a b)) (square (- c d)) (square (- e f)))
+              0))
+  :hints (("Goal"
+           :use ((:instance poles-lie-on-s2-3 (x (- a b)) (y (- c d)) (z (- e f)))
+                 (:instance poles-lie-on-s2-6 (x (- a b)) (y (- c d)) (z (- e f))))
+           )
+          ("Subgoal 3"
+           :use (
+                 (:instance poles-lie-on-s2-7 (x a) (y b)))
+           :in-theory (enable realp integerp zp)
+           )
+          ("Subgoal 2"
+           :use (
+                 (:instance poles-lie-on-s2-7 (x e) (y f)))
+           :in-theory (enable realp integerp zp)
+           )
+          ("Subgoal 1"
+           :use (
+                 (:instance poles-lie-on-s2-7 (x c) (y d)))
+           :in-theory (enable realp integerp zp)
+           )
+          ))
+
+(defthmd poles-lie-on-s2-1
   (implies (and (reducedwordp w)
                 w)
-           (and (d-p (first (poles w)))
-                (d-p (second (poles w)))))
-  :hints (("goal"
-           :use ((:instance f-returns-poles-1 (w w))
-                 (:instance word-exists-suff (w w) (point (first (poles w))))
-                 (:instance word-exists-suff (w w) (point (second (poles w))))
-                 (:instance poles-lie-on-s2 (w w))
-                 (:instance d-p (point (first (poles w))))
-                 (:instance d-p (point (second (poles w))))
-                 (:instance reducedwordp=>weak-wordp (x w)))
+           (> (+ (square (- (m32-h (rotation w (acl2-sqrt 2))) (m23-f (rotation w (acl2-sqrt 2))) ))
+                 (square (- (m13-c (rotation w (acl2-sqrt 2))) (m31-g (rotation w (acl2-sqrt 2))) ))
+                 (square (- (m21-d (rotation w (acl2-sqrt 2))) (m12-b (rotation w (acl2-sqrt 2))) )))
+              0))
+  :hints (("Goal"
+           :use ((:instance reduced-rotation-prop-1 (w w) (x (acl2-sqrt 2)))
+                 (:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance poles-lie-on-s2-8
+                            (a (m32-h (rotation w (acl2-sqrt 2))))
+                            (b (m23-f (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m31-g (rotation w (acl2-sqrt 2))))
+                            (e (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m12-b (rotation w (acl2-sqrt 2)))))
+                 )
+           :in-theory (disable acl2-sqrt rotation reducedwordp r3-m-determinant r3-m-inverse m-trans aref2)
+           :do-not-induct t
+
+           ))
+  )
+
+(defthmd poles-lie-on-s2-2
+  (implies (and (realp x)
+                (> x 0))
+           (> (acl2-sqrt x) 0)))
+
+(defthmd poles-lie-on-s2-4
+  (implies (and (realp x)
+                (> x 0))
+           (equal (square (acl2-sqrt x))
+                  x)))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+  (defthmd poles-lie-on-s2-9
+    (implies (and (realp a)
+                  (realp b))
+             (equal (* (/ a b) (/ a b))
+                    (/ (square a) (square b)))))
+
+  (defthmd poles-lie-on-s2-10
+    (implies (and (realp a)
+                  (realp b)
+                  (realp c)
+                  (realp d))
+             (equal (+ (/ a d) (/ b d) (/ c d))
+                    (/ (+ a b c) d))))
+
+  )
+
+(defthmd poles-lie-on-s2-5
+  (implies (and (realp a)
+                (realp b)
+                (realp c)
+                (realp d)
+                (realp e)
+                (realp f)
+                (> (+ (square (- a b)) (square (- c d)) (square (- e f))) 0)
+                (equal x (/ (- a b) (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
+                (equal y (/ (- c d) (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
+                (equal z (/ (- e f) (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
+                )
+           (equal (+ (* x x) (* y y) (* z z))
+                  1))
+  :hints (("Goal"
+           :use ((:instance poles-lie-on-s2-9 (a (- a b))
+                            (b (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
+                 (:instance poles-lie-on-s2-9 (a (- c d))
+                            (b (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
+                 (:instance poles-lie-on-s2-9 (a (- e f))
+                            (b (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
+                 (:instance poles-lie-on-s2-10
+                            (a (square (- a b)))
+                            (b (square (- c d)))
+                            (c (square (- e f)))
+                            (d (+ (square (- a b)) (square (- c d)) (square (- e f)))))
+                 )
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+  (defthmd poles-lie-on-s2-11-1
+    (implies (and (realp x)
+                  (realp y))
+             (equal (square (- x y))
+                    (square (- y x)))))
+  )
+
+(defthmd poles-lie-on-s2-11
+  (implies (and (realp a)
+                (realp b)
+                (realp c)
+                (realp d)
+                (realp e)
+                (realp f)
+                (> (+ (square (- a b)) (square (- c d)) (square (- e f))) 0)
+                (equal x (/ (- b a) (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
+                (equal y (/ (- d c) (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
+                (equal z (/ (- f e) (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
+                )
+           (equal (+ (* x x) (* y y) (* z z))
+                  1))
+  :hints (("Goal"
+           :use ((:instance poles-lie-on-s2-9 (a (- b a))
+                            (b (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
+                 (:instance poles-lie-on-s2-9 (a (- d c))
+                            (b (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
+                 (:instance poles-lie-on-s2-9 (a (- f e))
+                            (b (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
+                 (:instance poles-lie-on-s2-10
+                            (a (square (- a b)))
+                            (b (square (- c d)))
+                            (c (square (- e f)))
+                            (d (+ (square (- a b)) (square (- c d)) (square (- e f)))))
+                 (:instance poles-lie-on-s2-11-1 (x b) (y a))
+                 (:instance poles-lie-on-s2-11-1 (x d) (y c))
+                 (:instance poles-lie-on-s2-11-1 (x f) (y e))
+                 )
+           )))
+
+(defthmd poles-lie-on-s2-first
+  (implies (and (reducedwordp w)
+                w)
+           (s2-def-p (first (poles w))))
+  :hints (("Goal"
+           :use ((:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance poles-lie-on-s2-1 (w w))
+                 (:instance poles-lie-on-s2-5
+                            (a (m32-h (rotation w (acl2-sqrt 2))))
+                            (b (m23-f (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m31-g (rotation w (acl2-sqrt 2))))
+                            (e (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m12-b (rotation w (acl2-sqrt 2))))
+                            (x (/ (- (m32-h (rotation w (acl2-sqrt 2))) (m23-f (rotation w (acl2-sqrt 2))))
+                                  (acl2-sqrt (+ (square (- (m32-h (rotation w (acl2-sqrt 2))) (m23-f (rotation w (acl2-sqrt 2)))))
+                                                (square (- (m13-c (rotation w (acl2-sqrt 2))) (m31-g (rotation w (acl2-sqrt 2)))))
+                                                (square (- (m21-d (rotation w (acl2-sqrt 2))) (m12-b (rotation w (acl2-sqrt 2)))))))))
+                            (y (/ (- (m13-c (rotation w (acl2-sqrt 2))) (m31-g (rotation w (acl2-sqrt 2))))
+                                  (acl2-sqrt (+ (square (- (m32-h (rotation w (acl2-sqrt 2))) (m23-f (rotation w (acl2-sqrt 2)))))
+                                                (square (- (m13-c (rotation w (acl2-sqrt 2))) (m31-g (rotation w (acl2-sqrt 2)))))
+                                                (square (- (m21-d (rotation w (acl2-sqrt 2))) (m12-b (rotation w (acl2-sqrt 2)))))))))
+                            (z (/ (- (m21-d (rotation w (acl2-sqrt 2))) (m12-b (rotation w (acl2-sqrt 2))))
+                                  (acl2-sqrt (+ (square (- (m32-h (rotation w (acl2-sqrt 2))) (m23-f (rotation w (acl2-sqrt 2)))))
+                                                (square (- (m13-c (rotation w (acl2-sqrt 2))) (m31-g (rotation w (acl2-sqrt 2)))))
+                                                (square (- (m21-d (rotation w (acl2-sqrt 2))) (m12-b (rotation w (acl2-sqrt 2))))))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 (:instance m32-h (m (rotation w (acl2-sqrt 2))))
+                 (:instance m23-f (m (rotation w (acl2-sqrt 2))))
+                 (:instance m13-c (m (rotation w (acl2-sqrt 2))))
+                 (:instance m31-g (m (rotation w (acl2-sqrt 2))))
+                 (:instance m21-d (m (rotation w (acl2-sqrt 2))))
+                 (:instance m12-b (m (rotation w (acl2-sqrt 2))))
+                 (:instance r3-matrixp (m (rotation w (acl2-sqrt 2))))
+                 (:instance s2-def-p (point (car (poles w))))
+                 (:instance poles (w w))
+                 (:instance reducedwordp=>weak-wordp (x w))
+                 )
            :in-theory nil
            )))
+
+(defthmd poles-lie-on-s2-second
+  (implies (and (reducedwordp w)
+                w)
+           (s2-def-p (second (poles w))))
+  :hints (("Goal"
+           :use ((:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance poles-lie-on-s2-1 (w w))
+                 (:instance poles-lie-on-s2-11
+                            (a (m32-h (rotation w (acl2-sqrt 2))))
+                            (b (m23-f (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m31-g (rotation w (acl2-sqrt 2))))
+                            (e (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m12-b (rotation w (acl2-sqrt 2))))
+                            (x (/ (- (m23-f (rotation w (acl2-sqrt 2))) (m32-h (rotation w (acl2-sqrt 2))))
+                                  (acl2-sqrt (+ (square (- (m32-h (rotation w (acl2-sqrt 2))) (m23-f (rotation w (acl2-sqrt 2)))))
+                                                (square (- (m13-c (rotation w (acl2-sqrt 2))) (m31-g (rotation w (acl2-sqrt 2)))))
+                                                (square (- (m21-d (rotation w (acl2-sqrt 2))) (m12-b (rotation w (acl2-sqrt 2)))))))))
+                            (y (/ (- (m31-g (rotation w (acl2-sqrt 2))) (m13-c (rotation w (acl2-sqrt 2))))
+                                  (acl2-sqrt (+ (square (- (m32-h (rotation w (acl2-sqrt 2))) (m23-f (rotation w (acl2-sqrt 2)))))
+                                                (square (- (m13-c (rotation w (acl2-sqrt 2))) (m31-g (rotation w (acl2-sqrt 2)))))
+                                                (square (- (m21-d (rotation w (acl2-sqrt 2))) (m12-b (rotation w (acl2-sqrt 2)))))))))
+                            (z (/ (- (m12-b (rotation w (acl2-sqrt 2))) (m21-d (rotation w (acl2-sqrt 2))))
+                                  (acl2-sqrt (+ (square (- (m32-h (rotation w (acl2-sqrt 2))) (m23-f (rotation w (acl2-sqrt 2)))))
+                                                (square (- (m13-c (rotation w (acl2-sqrt 2))) (m31-g (rotation w (acl2-sqrt 2)))))
+                                                (square (- (m21-d (rotation w (acl2-sqrt 2))) (m12-b (rotation w (acl2-sqrt 2))))))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 (:instance m32-h (m (rotation w (acl2-sqrt 2))))
+                 (:instance m23-f (m (rotation w (acl2-sqrt 2))))
+                 (:instance m13-c (m (rotation w (acl2-sqrt 2))))
+                 (:instance m31-g (m (rotation w (acl2-sqrt 2))))
+                 (:instance m21-d (m (rotation w (acl2-sqrt 2))))
+                 (:instance m12-b (m (rotation w (acl2-sqrt 2))))
+                 (:instance r3-matrixp (m (rotation w (acl2-sqrt 2))))
+                 (:instance s2-def-p (point (second (poles w))))
+                 (:instance poles (w w))
+                 (:instance reducedwordp=>weak-wordp (x w))
+                 )
+           :in-theory nil
+           )))
+
+;; (skip-proofs
+;;  (defthmd r3-matrixp-m-inverse-1
+;;    (implies (r3-matrixp m)
+;;             (r3-matrixp (r3-m-inverse m)))
+;;    :hints (("goal"
+;;             ;:use ((:instance r3-matrixp-m-inverse (m m)))
+;;             )))
+;;  )
+
+
+(defthmd f-returns-poles-1-first-2
+  (and (EQUAL (AREF2 :FAKE-NAME
+                     (LIST '(:HEADER :DIMENSIONS (3 1)
+                                     :MAXIMUM-LENGTH 4
+                                     :DEFAULT 0
+                                     :NAME MATRIX-PRODUCT)
+                           (CONS '(2 . 0)
+                                 (AREF2 :FAKE-NAME P2 2 0))
+                           (CONS '(1 . 0)
+                                 (AREF2 :FAKE-NAME P2 1 0))
+                           (CONS '(0 . 0)
+                                 (AREF2 :FAKE-NAME P2 0 0)))
+                     2 0)
+              (AREF2 :FAKE-NAME P2 2 0))
+       (EQUAL (AREF2 :FAKE-NAME
+                     (LIST '(:HEADER :DIMENSIONS (3 1)
+                                     :MAXIMUM-LENGTH 4
+                                     :DEFAULT 0
+                                     :NAME MATRIX-PRODUCT)
+                           (CONS '(2 . 0)
+                                 (AREF2 :FAKE-NAME P2 2 0))
+                           (CONS '(1 . 0)
+                                 (AREF2 :FAKE-NAME P2 1 0))
+                           (CONS '(0 . 0)
+                                 (AREF2 :FAKE-NAME P2 0 0)))
+                     1 0)
+              (AREF2 :FAKE-NAME P2 1 0))
+       (EQUAL (AREF2 :FAKE-NAME
+                     (LIST '(:HEADER :DIMENSIONS (3 1)
+                                     :MAXIMUM-LENGTH 4
+                                     :DEFAULT 0
+                                     :NAME MATRIX-PRODUCT)
+                           (CONS '(2 . 0)
+                                 (AREF2 :FAKE-NAME P2 2 0))
+                           (CONS '(1 . 0)
+                                 (AREF2 :FAKE-NAME P2 1 0))
+                           (CONS '(0 . 0)
+                                 (AREF2 :FAKE-NAME P2 0 0)))
+                     0 0)
+              (AREF2 :FAKE-NAME P2 0 0)))
+  :hints (("Goal"
+           :in-theory (enable aref2)
+           )))
+
+(defthmd f-returns-poles-1-first-3
+  (implies (point-in-r3 p2)
+           (ALIST2P :FAKE-NAME (LIST '(:HEADER :DIMENSIONS (3 1)
+                                                        :MAXIMUM-LENGTH 4
+                                                        :DEFAULT 0
+                                                        :NAME MATRIX-PRODUCT)
+                                              (CONS '(2 . 0)
+                                                    (AREF2 :FAKE-NAME P2 2 0))
+                                              (CONS '(1 . 0)
+                                                    (AREF2 :FAKE-NAME P2 1 0))
+                                              (CONS '(0 . 0)
+                                                    (AREF2 :FAKE-NAME P2 0 0))))
+           )
+  :hints (("Goal"
+           :in-theory (enable alist2p)
+           )))
+
+(defthmd f-returns-poles-1-first-1
+  (implies (and (r3-matrixp m)
+                (point-in-r3 p1)
+                (point-in-r3 p2)
+                (equal (+ (* (m11-a m) (point-in-r3-x1 p1))
+                          (* (m12-b m) (point-in-r3-y1 p1))
+                          (* (m13-c m) (point-in-r3-z1 p1)))
+                       (point-in-r3-x1 p2))
+                (equal (+ (* (m21-d m) (point-in-r3-x1 p1))
+                          (* (m22-e m) (point-in-r3-y1 p1))
+                          (* (m23-f m) (point-in-r3-z1 p1)))
+                       (point-in-r3-y1 p2))
+                (equal (+ (* (m31-g m) (point-in-r3-x1 p1))
+                          (* (m32-h m) (point-in-r3-y1 p1))
+                          (* (m33-i m) (point-in-r3-z1 p1)))
+                       (point-in-r3-z1 p2))
+                )
+           (m-= (m-* m p1) p2))
+  :hints (("Goal"
+           :use ((:instance f-returns-poles-1-first-2)
+                 (:instance f-returns-poles-1-first-3)
+                 (:instance array2p-alist2p (name :fake-name) (L p2)))
+           :in-theory (e/d (m-= m-* dimensions header) (aref2))
+           )))
+
+;; (defthmd f-returns-poles-1-first
+;;   (implies (and (reducedwordp w)
+;;                 w)
+;;            (m-= (m-* (rotation w (acl2-sqrt 2)) (first (poles w))) (first (poles w))))
+;;   :hints ((
+
+
+
+;; ------
+
+
+;; (defthmd f-returns-poles-1-first
+;;   (implies (and (reducedwordp w)
+;;                 w)
+;;            (m-= (m-* (rotation w (acl2-sqrt 2)) (first (poles w))) (first (poles w))))
+;;   :hints (("Goal"
+;;            :use ((:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+;;                  (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+;;                  (:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+;;                  (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+;;                  (:instance poles-lie-on-s2-1 (w w))
+;;                  (:instance reducedwordp=>weak-wordp (x w))
+;;                  (:instance array2p-alist2p (name :fake-name) (L (rotation w (acl2-sqrt 2))))
+;;                  (:instance array2p-alist2p (name :fake-name) (L (r3-m-inverse (rotation w (acl2-sqrt 2)))))
+;;                  (:instance r3-matrixp-m-inverse-1 (m (rotation w (acl2-sqrt 2))))
+;;                  )
+;;            :in-theory (e/d (m-=) (rotation aref2 acl2-sqrt f-poles-1 f-poles-2 reducedwordp r3-m-inverse m-trans))
+;;            )
+;;           ("Subgoal 3"
+;;            :use ((:instance r3-matrixp-m-inverse-1 (m (rotation w (acl2-sqrt 2))))
+;;                  (:instance r3-matrixp (m (r3-m-inverse (rotation w (acl2-sqrt 2)))))
+;;                  (:instance array2p-alist2p (name :fake-name) (L (r3-m-inverse (rotation w (acl2-sqrt 2)))))
+;;                  (:instance r3-rotationp (m (rotation w (acl2-sqrt 2)))))
+;;            ;:in-theory nil
+;;            ))
+;;   )
+
+
+;; -----
+
+;; (encapsulate
+;;   ()
+
+;;   (local (include-book "arithmetic-3/top" :dir :system))
+
+;;   (defthmd poles-lie-on-s2-2
+;;     (implies (realp x)
+;;              (>= (* x x)
+;;                  0))
+;;     :hints (("Goal"
+;;              :in-theory (enable expt)
+;;              )))
+
+;;   (defthmd poles-lie-on-s2-1
+;;     (implies (and (reducedwordp w)
+;;                   w)
+;;              (> (+ (square (- (m32-h (rotation w (acl2-sqrt 2))) (m23-f (rotation w (acl2-sqrt 2))) ))
+;;                    (square (- (m13-c (rotation w (acl2-sqrt 2))) (m31-g (rotation w (acl2-sqrt 2))) ))
+;;                    (square (- (m21-d (rotation w (acl2-sqrt 2))) (m12-b (rotation w (acl2-sqrt 2))) )))
+;;                 0))
+;;     :hints (("Goal"
+;;              :use ((:instance reduced-rotation-prop-1 (w w) (x (acl2-sqrt 2)))
+;;                    (:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+;;                    ;(:instance
+;;                    )
+;;              :in-theory (disable acl2-sqrt rotation)
+;;              :do-not-induct t
+
+;;              )))
+;;   )
+
+;; (defthmd poles-lie-on-s2
+;;   (implies (and (reducedwordp w)
+;;                 w)
+;;            (and (s2-def-p (first (poles w)))
+;;                 (s2-def-p (second (poles w)))))
+;;   :hints (("Goal"
+;;            :use ((:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2)))
+;;                  (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2)))))
+;;            :in-theory (e/d () (f-poles-1 f-poles-2 square aref2 acl2-sqrt))
+;;            )))
+
+;; (encapsulate
+;;   ((poles (w) t))
+;;   (local (defun poles (w) (declare (ignore w)) '(1 2)))
+
+;;   (skip-proofs
+;;    (defthmd two-poles-for-each-rotation
+;;      (implies (weak-wordp w)
+;;               (equal (len (poles w)) 2))))
+
+;;   (skip-proofs
+;;    (defthmd poles-lie-on-s2
+;;      (implies (weak-wordp w)
+;;               (and (s2-def-p (first (poles w)))
+;;                    (s2-def-p (second (poles w)))))))
+
+;;   (skip-proofs
+;;    (defthmd f-returns-poles-1
+;;      (implies (weak-wordp w)
+;;               (and (m-= (m-* (rotation w (acl2-sqrt 2)) (first (poles w))) (first (poles w)))
+;;                    (m-= (m-* (rotation w (acl2-sqrt 2)) (second (poles w))) (second (poles w)))))))
+
+;;   (skip-proofs
+;;    (defthmd two-poles-for-all-rotations
+;;      (implies (and (weak-wordp w)
+;;                    (point-in-r3 p)
+;;                    (m-= (m-* (rotation w (acl2-sqrt 2)) p) p))
+;;               (or (m-= (first (poles w)) p)
+;;                   (m-= (second (poles w)) p))))))
+
+;; (defthmd f-returns-poles
+;;   (implies (and (reducedwordp w)
+;;                 w)
+;;            (and (d-p (first (poles w)))
+;;                 (d-p (second (poles w)))))
+;;   :hints (("goal"
+;;            :use ((:instance f-returns-poles-1 (w w))
+;;                  (:instance word-exists-suff (w w) (point (first (poles w))))
+;;                  (:instance word-exists-suff (w w) (point (second (poles w))))
+;;                  (:instance poles-lie-on-s2 (w w))
+;;                  (:instance d-p (point (first (poles w))))
+;;                  (:instance d-p (point (second (poles w))))
+;;                  (:instance reducedwordp=>weak-wordp (x w)))
+;;            :in-theory nil
+;;            )))
 
 (defun generate-word-len-1 (n)
   (cond ((equal n 1) '((#\a)))
@@ -705,6 +1276,11 @@
   (exists n
           (and (posp n)
                (exists-weak-word-1 w n))))
+
+;; (defun-sk exists-word-n (w)
+;;   (exists n
+;;           (and (posp n)
+;;                (equal (seq n) w))))
 
 (defthmd exists-weak-word-implies
   (implies (exists-weak-word w)
@@ -2165,5 +2741,42 @@
            :use ((:instance exists-weak-word-suff (n 1) (w nil))
                  (:instance exists-weak-word-1-suff (m 0) (w nil) (n 1)))
            :do-not-induct t
-           )
-          ))
+           )))
+
+(defthmd generate-words-main-lemma11
+  (implies (natp n)
+           (< n (len (generate-words-main (+ n 1)))))
+  :hints (("Goal"
+           :use ((:instance generate-words-main-lemma7-1 (m (+ n 1))))
+           )))
+
+(defthmd generate-words-main-lemma12
+  (implies (and (natp n)
+                (natp x)
+                (> x n))
+           (equal (nth n (generate-words-main (+ n 1)))
+                  (nth n (generate-words-main x))))
+  :hints (("Goal"
+           :use ((:instance generate-words-main-lemma10 (m (+ n 1)) (n n) (x x))
+                 (:instance generate-words-main-lemma11 (n n)))
+           )))
+
+(defun word-sequence (n)
+ (nth n (generate-words-main (+ n 1))))
+
+(defun-sk exists-word-n (w)
+  (exists n
+          (and (natp n)
+               (equal (word-sequence n) w))))
+
+(defthmd exists-word-n-thm
+  (implies (weak-wordp w)
+           (exists-word-n w))
+  :hints (("Goal"
+           :use ((:instance any-weak-word-exists (w w))
+                 (:instance exists-weak-word-implies (w w))
+                 (:instance generate-words-main-lemma12
+                            (n (exists-weak-word-1-witness w (exists-weak-word-witness w)))
+                            (x (exists-weak-word-witness w)))
+                 (:instance exists-word-n-suff (n (exists-weak-word-1-witness w (exists-weak-word-witness w)))))
+           )))
