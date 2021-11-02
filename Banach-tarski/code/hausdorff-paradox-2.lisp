@@ -128,7 +128,7 @@
                 (m-= m1 m2))
            (equal (aref2 :fake-name m1 0 0)
                   (aref2 :fake-name m2 0 0)))
-  :hints (("Goal"
+  :hints (("goal"
            :in-theory (e/d (m-=) ())
            )))
 
@@ -146,7 +146,7 @@
                 (equal (m23-f m) (- (* (m12-b m) (m31-g m)) (* (m11-a m) (m32-h m))))
                 (equal (m33-i m) (- (* (m11-a m) (m22-e m)) (* (m12-b m) (m21-d m))))
                 ))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance r3-m-inverse-= (m m)))
            :in-theory (e/d (m-=) (r3-m-inverse))
            )))
@@ -195,7 +195,7 @@
                 (array2p :fake-name (second (f-poles m)))
                 (equal (car (dimensions :fake-name (second (f-poles m)))) 3)
                 (equal (cadr (dimensions :fake-name (second (f-poles m)))) 1)))
-  :hints (("Goal"
+  :hints (("goal"
            :in-theory (e/d (array2p header dimensions) (acl2-sqrt square))
            )))
 
@@ -226,7 +226,7 @@
                                                                  (square (- (m13-c m) (m31-g m) ))
                                                                  (square (- (m21-d m) (m12-b m) ))))) )
                 ))
-  :hints (("Goal"
+  :hints (("goal"
            :in-theory (e/d (aref2) (square))
            )))
 
@@ -240,7 +240,7 @@
   (implies (r3-matrixp m)
            (and (point-in-r3 (first (f-poles m)))
                 (point-in-r3 (second (f-poles m)))))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance f-poles-prop-1)
                  (:instance f-poles-prop-3-1)
                  (:instance f-poles-prop-2))
@@ -292,21 +292,21 @@
                     (not (equal e f))))
            (> (+ (square (- a b)) (square (- c d)) (square (- e f)))
               0))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance poles-lie-on-s2-3 (x (- a b)) (y (- c d)) (z (- e f)))
                  (:instance poles-lie-on-s2-6 (x (- a b)) (y (- c d)) (z (- e f))))
            )
-          ("Subgoal 3"
+          ("subgoal 3"
            :use (
                  (:instance poles-lie-on-s2-7 (x a) (y b)))
            :in-theory (enable realp integerp zp)
            )
-          ("Subgoal 2"
+          ("subgoal 2"
            :use (
                  (:instance poles-lie-on-s2-7 (x e) (y f)))
            :in-theory (enable realp integerp zp)
            )
-          ("Subgoal 1"
+          ("subgoal 1"
            :use (
                  (:instance poles-lie-on-s2-7 (x c) (y d)))
            :in-theory (enable realp integerp zp)
@@ -320,7 +320,7 @@
                  (square (- (m13-c (rotation w (acl2-sqrt 2))) (m31-g (rotation w (acl2-sqrt 2))) ))
                  (square (- (m21-d (rotation w (acl2-sqrt 2))) (m12-b (rotation w (acl2-sqrt 2))) )))
               0))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance reduced-rotation-prop-1 (w w) (x (acl2-sqrt 2)))
                  (:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
                  (:instance poles-lie-on-s2-8
@@ -382,7 +382,7 @@
                 )
            (equal (+ (* x x) (* y y) (* z z))
                   1))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance poles-lie-on-s2-9 (a (- a b))
                             (b (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
                  (:instance poles-lie-on-s2-9 (a (- c d))
@@ -422,7 +422,7 @@
                 )
            (equal (+ (* x x) (* y y) (* z z))
                   1))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance poles-lie-on-s2-9 (a (- b a))
                             (b (acl2-sqrt (+ (square (- a b)) (square (- c d)) (square (- e f))))))
                  (:instance poles-lie-on-s2-9 (a (- d c))
@@ -444,7 +444,7 @@
   (implies (and (reducedwordp w)
                 w)
            (s2-def-p (first (poles w))))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
                  (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
                  (:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
@@ -487,7 +487,7 @@
   (implies (and (reducedwordp w)
                 w)
            (s2-def-p (second (poles w))))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
                  (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
                  (:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
@@ -526,74 +526,64 @@
            :in-theory nil
            )))
 
-;; (skip-proofs
-;;  (defthmd r3-matrixp-m-inverse-1
-;;    (implies (r3-matrixp m)
-;;             (r3-matrixp (r3-m-inverse m)))
-;;    :hints (("goal"
-;;             ;:use ((:instance r3-matrixp-m-inverse (m m)))
-;;             )))
-;;  )
-
-
 (defthmd f-returns-poles-1-first-2
-  (and (EQUAL (AREF2 :FAKE-NAME
-                     (LIST '(:HEADER :DIMENSIONS (3 1)
-                                     :MAXIMUM-LENGTH 4
-                                     :DEFAULT 0
-                                     :NAME MATRIX-PRODUCT)
-                           (CONS '(2 . 0)
-                                 (AREF2 :FAKE-NAME P2 2 0))
-                           (CONS '(1 . 0)
-                                 (AREF2 :FAKE-NAME P2 1 0))
-                           (CONS '(0 . 0)
-                                 (AREF2 :FAKE-NAME P2 0 0)))
+  (and (equal (aref2 :fake-name
+                     (list '(:header :dimensions (3 1)
+                                     :maximum-length 4
+                                     :default 0
+                                     :name matrix-product)
+                           (cons '(2 . 0)
+                                 (aref2 :fake-name p2 2 0))
+                           (cons '(1 . 0)
+                                 (aref2 :fake-name p2 1 0))
+                           (cons '(0 . 0)
+                                 (aref2 :fake-name p2 0 0)))
                      2 0)
-              (AREF2 :FAKE-NAME P2 2 0))
-       (EQUAL (AREF2 :FAKE-NAME
-                     (LIST '(:HEADER :DIMENSIONS (3 1)
-                                     :MAXIMUM-LENGTH 4
-                                     :DEFAULT 0
-                                     :NAME MATRIX-PRODUCT)
-                           (CONS '(2 . 0)
-                                 (AREF2 :FAKE-NAME P2 2 0))
-                           (CONS '(1 . 0)
-                                 (AREF2 :FAKE-NAME P2 1 0))
-                           (CONS '(0 . 0)
-                                 (AREF2 :FAKE-NAME P2 0 0)))
+              (aref2 :fake-name p2 2 0))
+       (equal (aref2 :fake-name
+                     (list '(:header :dimensions (3 1)
+                                     :maximum-length 4
+                                     :default 0
+                                     :name matrix-product)
+                           (cons '(2 . 0)
+                                 (aref2 :fake-name p2 2 0))
+                           (cons '(1 . 0)
+                                 (aref2 :fake-name p2 1 0))
+                           (cons '(0 . 0)
+                                 (aref2 :fake-name p2 0 0)))
                      1 0)
-              (AREF2 :FAKE-NAME P2 1 0))
-       (EQUAL (AREF2 :FAKE-NAME
-                     (LIST '(:HEADER :DIMENSIONS (3 1)
-                                     :MAXIMUM-LENGTH 4
-                                     :DEFAULT 0
-                                     :NAME MATRIX-PRODUCT)
-                           (CONS '(2 . 0)
-                                 (AREF2 :FAKE-NAME P2 2 0))
-                           (CONS '(1 . 0)
-                                 (AREF2 :FAKE-NAME P2 1 0))
-                           (CONS '(0 . 0)
-                                 (AREF2 :FAKE-NAME P2 0 0)))
+              (aref2 :fake-name p2 1 0))
+       (equal (aref2 :fake-name
+                     (list '(:header :dimensions (3 1)
+                                     :maximum-length 4
+                                     :default 0
+                                     :name matrix-product)
+                           (cons '(2 . 0)
+                                 (aref2 :fake-name p2 2 0))
+                           (cons '(1 . 0)
+                                 (aref2 :fake-name p2 1 0))
+                           (cons '(0 . 0)
+                                 (aref2 :fake-name p2 0 0)))
                      0 0)
-              (AREF2 :FAKE-NAME P2 0 0)))
-  :hints (("Goal"
+              (aref2 :fake-name p2 0 0)))
+  :hints (("goal"
            :in-theory (enable aref2)
            )))
 
 (defthmd f-returns-poles-1-first-3
   (implies (point-in-r3 p2)
-           (ALIST2P :FAKE-NAME (LIST '(:HEADER :DIMENSIONS (3 1)
-                                                        :MAXIMUM-LENGTH 4
-                                                        :DEFAULT 0
-                                                        :NAME MATRIX-PRODUCT)
-                                              (CONS '(2 . 0)
-                                                    (AREF2 :FAKE-NAME P2 2 0))
-                                              (CONS '(1 . 0)
-                                                    (AREF2 :FAKE-NAME P2 1 0))
-                                              (CONS '(0 . 0)
-                                                    (AREF2 :FAKE-NAME P2 0 0))))
+           (alist2p :fake-name (list '(:header :dimensions (3 1)
+                                               :maximum-length 4
+                                               :default 0
+                                               :name matrix-product)
+                                     (cons '(2 . 0)
+                                           (aref2 :fake-name p2 2 0))
+                                     (cons '(1 . 0)
+                                           (aref2 :fake-name p2 1 0))
+                                     (cons '(0 . 0)
+                                           (aref2 :fake-name p2 0 0))))
            )
-  :hints (("Goal"
+  :hints (("goal"
            :in-theory (enable alist2p)
            )))
 
@@ -615,20 +605,1041 @@
                        (point-in-r3-z1 p2))
                 )
            (m-= (m-* m p1) p2))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance f-returns-poles-1-first-2)
                  (:instance f-returns-poles-1-first-3)
-                 (:instance array2p-alist2p (name :fake-name) (L p2)))
+                 (:instance array2p-alist2p (name :fake-name) (l p2)))
            :in-theory (e/d (m-= m-* dimensions header) (aref2))
            )))
 
-;; (defthmd f-returns-poles-1-first
-;;   (implies (and (reducedwordp w)
-;;                 w)
-;;            (m-= (m-* (rotation w (acl2-sqrt 2)) (first (poles w))) (first (poles w))))
-;;   :hints ((
+(defthmd f-returns-poles-1-first-4
+  (equal (f-poles-1 m)
+         (first (f-poles m))))
 
+(encapsulate
+  ()
 
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd f-returns-poles-1-first-5-1
+    (implies (and (equal f (- (* b g) (* a h)))
+                  (equal h (- (* c d) (* a f))))
+             (equal (+ (* a (/ (- h f) x)) (* b (/ (- c g) x)) (* c (/ (- d b) x)))
+                    (/ (- h f) x))))
+  )
+
+(defthmd f-returns-poles-1-first-5-3
+  (implies (and (reducedwordp w)
+                (equal m (rotation w (acl2-sqrt 2)))
+                w)
+           (equal (+ (* (m11-a m)
+                        (/ (- (m32-h m) (m23-f m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) ))))))
+                     (* (m12-b m)
+                        (/ (- (m13-c m) (m31-g m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) ))))))
+                     (* (m13-c m)
+                        (/ (- (m21-d m) (m12-b m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) )))))))
+                  (/ (- (m32-h m) (m23-f m))
+                     (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                   (square (- (m13-c m) (m31-g m) ))
+                                   (square (- (m21-d m) (m12-b m) )))))))
+
+  :hints (("goal"
+           :use ((:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-5-1
+                            (a (m11-a (rotation w (acl2-sqrt 2))))
+                            (b (m12-b (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m23-f (rotation w (acl2-sqrt 2))))
+                            (g (m31-g (rotation w (acl2-sqrt 2))))
+                            (h (m32-h (rotation w (acl2-sqrt 2))))
+                            (x (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                             (square (- (m13-c m) (m31-g m) ))
+                                             (square (- (m21-d m) (m12-b m) ))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           ))
+  )
+
+(defthmd f-returns-poles-1-first-5-2
+  (implies (and (r3-matrixp m)
+                (equal (+ (* (m11-a m)
+                             (/ (- (m32-h m) (m23-f m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) ))))))
+                          (* (m12-b m)
+                             (/ (- (m13-c m) (m31-g m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) ))))))
+                          (* (m13-c m)
+                             (/ (- (m21-d m) (m12-b m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) )))))))
+                       (/ (- (m32-h m) (m23-f m))
+                          (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                        (square (- (m13-c m) (m31-g m) ))
+                                        (square (- (m21-d m) (m12-b m) )))))))
+
+           (and (equal (+ (* (aref2 :fake-name m
+                                    0 0)
+                             (aref2 :fake-name
+                                    (f-poles-1 m)
+                                    0 0))
+                          (* (aref2 :fake-name m
+                                    0 1)
+                             (aref2 :fake-name
+                                    (f-poles-1 m)
+                                    1 0))
+                          (* (aref2 :fake-name m
+                                    0 2)
+                             (aref2 :fake-name
+                                    (f-poles-1 m)
+                                    2 0)))
+                       (aref2 :fake-name
+                              (f-poles-1 m)
+                              0 0))
+                (equal (+ (* (m11-a m)
+                             (aref2 :fake-name
+                                    (car (f-poles m))
+                                    0 0))
+                          (* (m12-b m)
+                             (aref2 :fake-name
+                                    (car (f-poles m))
+                                    1 0))
+                          (* (m13-c m)
+                             (aref2 :fake-name
+                                    (car (f-poles m))
+                                    2 0)))
+                       (aref2 :fake-name
+                              (car (f-poles m))
+                              0 0)))
+           )
+  :hints (("goal"
+           :use ((:instance f-poles-prop-2 (m m)))
+           :in-theory (disable square aref2 f-poles-1 associativity-of-+ commutativity-2-of-+ commutativity-of-* commutativity-of-+ distributivity)
+           )))
+
+(defthmd f-returns-poles-1-first-5
+  (implies (and (reducedwordp w)
+                w)
+           (equal (+ (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               0 0)
+                        (aref2 :fake-name
+                               (f-poles-1 (rotation w (acl2-sqrt 2)))
+                               0 0))
+                     (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               0 1)
+                        (aref2 :fake-name
+                               (f-poles-1 (rotation w (acl2-sqrt 2)))
+                               1 0))
+                     (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               0 2)
+                        (aref2 :fake-name
+                               (f-poles-1 (rotation w (acl2-sqrt 2)))
+                               2 0)))
+                  (aref2 :fake-name
+                         (f-poles-1 (rotation w (acl2-sqrt 2)))
+                         0 0)))
+  :hints (("goal"
+           :use ((:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-5-1
+                            (a (m11-a (rotation w (acl2-sqrt 2))))
+                            (b (m12-b (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m23-f (rotation w (acl2-sqrt 2))))
+                            (g (m31-g (rotation w (acl2-sqrt 2))))
+                            (h (m32-h (rotation w (acl2-sqrt 2))))
+                            (x (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                             (square (- (m13-c m) (m31-g m) ))
+                                             (square (- (m21-d m) (m12-b m) ))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-5-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-5-3 (w w) (m (rotation w (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd f-returns-poles-1-first-6-1
+    (implies (and (equal b (- (* g f) (* d i)))
+                  (equal d (- (* c h) (* b i))))
+             (equal (+ (* g (/ (- h f) x)) (* h (/ (- c g) x)) (* i (/ (- d b) x)))
+                    (/ (- d b) x))))
+  )
+
+(defthmd f-returns-poles-1-first-6-3
+  (implies (and (reducedwordp w)
+                (equal m (rotation w (acl2-sqrt 2)))
+                w)
+           (equal (+ (* (m31-g m)
+                        (/ (- (m32-h m) (m23-f m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) ))))))
+                     (* (m32-h m)
+                        (/ (- (m13-c m) (m31-g m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) ))))))
+                     (* (m33-i m)
+                        (/ (- (m21-d m) (m12-b m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) )))))))
+                  (/ (- (m21-d m) (m12-b m))
+                     (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                   (square (- (m13-c m) (m31-g m) ))
+                                   (square (- (m21-d m) (m12-b m) )))))))
+
+  :hints (("goal"
+           :use ((:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-6-1
+                            (i (m33-i (rotation w (acl2-sqrt 2))))
+                            (b (m12-b (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m23-f (rotation w (acl2-sqrt 2))))
+                            (g (m31-g (rotation w (acl2-sqrt 2))))
+                            (h (m32-h (rotation w (acl2-sqrt 2))))
+                            (x (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                             (square (- (m13-c m) (m31-g m) ))
+                                             (square (- (m21-d m) (m12-b m) ))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           ))
+  )
+
+(defthmd f-returns-poles-1-first-6-2
+  (implies (and (r3-matrixp m)
+                (equal (+ (* (m31-g m)
+                             (/ (- (m32-h m) (m23-f m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) ))))))
+                          (* (m32-h m)
+                             (/ (- (m13-c m) (m31-g m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) ))))))
+                          (* (m33-i m)
+                             (/ (- (m21-d m) (m12-b m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) )))))))
+                       (/ (- (m21-d m) (m12-b m))
+                          (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                        (square (- (m13-c m) (m31-g m) ))
+                                        (square (- (m21-d m) (m12-b m) )))))))
+
+           (and (equal (+ (* (aref2 :fake-name m
+                                    2 0)
+                             (aref2 :fake-name
+                                    (f-poles-1 m)
+                                    0 0))
+                          (* (aref2 :fake-name m
+                                    2 1)
+                             (aref2 :fake-name
+                                    (f-poles-1 m)
+                                    1 0))
+                          (* (aref2 :fake-name m
+                                    2 2)
+                             (aref2 :fake-name
+                                    (f-poles-1 m)
+                                    2 0)))
+                       (aref2 :fake-name
+                              (f-poles-1 m)
+                              2 0))
+                (equal (+ (* (m31-g m)
+                             (aref2 :fake-name
+                                    (car (f-poles m))
+                                    0 0))
+                          (* (m32-h m)
+                             (aref2 :fake-name
+                                    (car (f-poles m))
+                                    1 0))
+                          (* (m33-i m)
+                             (aref2 :fake-name
+                                    (car (f-poles m))
+                                    2 0)))
+                       (aref2 :fake-name
+                              (car (f-poles m))
+                              2 0)))
+           )
+  :hints (("goal"
+           :use ((:instance f-poles-prop-2 (m m)))
+           :in-theory (disable square aref2 f-poles-1 associativity-of-+ commutativity-2-of-+ commutativity-of-* commutativity-of-+ distributivity)
+           )))
+
+(defthmd f-returns-poles-1-first-6
+  (implies (and (reducedwordp w)
+                w)
+           (equal (+ (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               2 0)
+                        (aref2 :fake-name
+                               (f-poles-1 (rotation w (acl2-sqrt 2)))
+                               0 0))
+                     (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               2 1)
+                        (aref2 :fake-name
+                               (f-poles-1 (rotation w (acl2-sqrt 2)))
+                               1 0))
+                     (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               2 2)
+                        (aref2 :fake-name
+                               (f-poles-1 (rotation w (acl2-sqrt 2)))
+                               2 0)))
+                  (aref2 :fake-name
+                         (f-poles-1 (rotation w (acl2-sqrt 2)))
+                         2 0)))
+  :hints (("goal"
+           :use ((:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-6-1
+                            (i (m33-i (rotation w (acl2-sqrt 2))))
+                            (b (m12-b (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m23-f (rotation w (acl2-sqrt 2))))
+                            (g (m31-g (rotation w (acl2-sqrt 2))))
+                            (h (m32-h (rotation w (acl2-sqrt 2))))
+                            (x (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                             (square (- (m13-c m) (m31-g m) ))
+                                             (square (- (m21-d m) (m12-b m) ))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-6-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-6-3 (w w) (m (rotation w (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd f-returns-poles-1-first-7-1
+    (implies (and (equal c (- (* d h) (* g e)))
+                  (equal g (- (* b f) (* e c))))
+             (equal (+ (* d (/ (- h f) x)) (* e (/ (- c g) x)) (* f (/ (- d b) x)))
+                    (/ (- c g) x))))
+  )
+
+(defthmd f-returns-poles-1-first-7-3
+  (implies (and (reducedwordp w)
+                (equal m (rotation w (acl2-sqrt 2)))
+                w)
+           (equal (+ (* (m21-d m)
+                        (/ (- (m32-h m) (m23-f m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) ))))))
+                     (* (m22-e m)
+                        (/ (- (m13-c m) (m31-g m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) ))))))
+                     (* (m23-f m)
+                        (/ (- (m21-d m) (m12-b m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) )))))))
+                  (/ (- (m13-c m) (m31-g m))
+                     (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                   (square (- (m13-c m) (m31-g m) ))
+                                   (square (- (m21-d m) (m12-b m) )))))))
+
+  :hints (("goal"
+           :use ((:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-7-1
+                            (e (m22-e (rotation w (acl2-sqrt 2))))
+                            (b (m12-b (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m23-f (rotation w (acl2-sqrt 2))))
+                            (g (m31-g (rotation w (acl2-sqrt 2))))
+                            (h (m32-h (rotation w (acl2-sqrt 2))))
+                            (x (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                             (square (- (m13-c m) (m31-g m) ))
+                                             (square (- (m21-d m) (m12-b m) ))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           ))
+  )
+
+(defthmd f-returns-poles-1-first-7-2
+  (implies (and (r3-matrixp m)
+                (equal (+ (* (m21-d m)
+                             (/ (- (m32-h m) (m23-f m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) ))))))
+                          (* (m22-e m)
+                             (/ (- (m13-c m) (m31-g m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) ))))))
+                          (* (m23-f m)
+                             (/ (- (m21-d m) (m12-b m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) )))))))
+                       (/ (- (m13-c m) (m31-g m))
+                          (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                        (square (- (m13-c m) (m31-g m) ))
+                                        (square (- (m21-d m) (m12-b m) )))))))
+
+           (and (equal (+ (* (aref2 :fake-name m
+                                    1 0)
+                             (aref2 :fake-name
+                                    (f-poles-1 m)
+                                    0 0))
+                          (* (aref2 :fake-name m
+                                    1 1)
+                             (aref2 :fake-name
+                                    (f-poles-1 m)
+                                    1 0))
+                          (* (aref2 :fake-name m
+                                    1 2)
+                             (aref2 :fake-name
+                                    (f-poles-1 m)
+                                    2 0)))
+                       (aref2 :fake-name
+                              (f-poles-1 m)
+                              1 0))
+                (equal (+ (* (m21-d m)
+                             (aref2 :fake-name
+                                    (car (f-poles m))
+                                    0 0))
+                          (* (m22-e m)
+                             (aref2 :fake-name
+                                    (car (f-poles m))
+                                    1 0))
+                          (* (m23-f m)
+                             (aref2 :fake-name
+                                    (car (f-poles m))
+                                    2 0)))
+                       (aref2 :fake-name
+                              (car (f-poles m))
+                              1 0)))
+           )
+  :hints (("goal"
+           :use ((:instance f-poles-prop-2 (m m)))
+           :in-theory (disable square aref2 f-poles-1 associativity-of-+ commutativity-2-of-+ commutativity-of-* commutativity-of-+ distributivity)
+           )))
+
+(defthmd f-returns-poles-1-first-7
+  (implies (and (reducedwordp w)
+                w)
+           (equal (+ (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               1 0)
+                        (aref2 :fake-name
+                               (f-poles-1 (rotation w (acl2-sqrt 2)))
+                               0 0))
+                     (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               1 1)
+                        (aref2 :fake-name
+                               (f-poles-1 (rotation w (acl2-sqrt 2)))
+                               1 0))
+                     (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               1 2)
+                        (aref2 :fake-name
+                               (f-poles-1 (rotation w (acl2-sqrt 2)))
+                               2 0)))
+                  (aref2 :fake-name
+                         (f-poles-1 (rotation w (acl2-sqrt 2)))
+                         1 0)))
+  :hints (("goal"
+           :use ((:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-7-1
+                            (e (m22-e (rotation w (acl2-sqrt 2))))
+                            (b (m12-b (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m23-f (rotation w (acl2-sqrt 2))))
+                            (g (m31-g (rotation w (acl2-sqrt 2))))
+                            (h (m32-h (rotation w (acl2-sqrt 2))))
+                            (x (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                             (square (- (m13-c m) (m31-g m) ))
+                                             (square (- (m21-d m) (m12-b m) ))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-7-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-7-3 (w w) (m (rotation w (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd f-returns-poles-1-first
+  (implies (and (reducedwordp w)
+                w)
+           (m-= (m-* (rotation w (acl2-sqrt 2)) (first (poles w))) (first (poles w))))
+  :hints (("goal"
+           :use ((:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance poles-lie-on-s2-1 (w w))
+                 (:instance reducedwordp=>weak-wordp (x w))
+                 (:instance f-returns-poles-1-first-1 (m (rotation w (acl2-sqrt 2))) (p1 (first (poles w)))
+                            (p2 (first (poles w))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-4 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-5 (w w))
+                 (:instance f-returns-poles-1-first-6 (w w))
+                 (:instance f-returns-poles-1-first-7 (w w))
+                 )
+           :in-theory (e/d () (m-= weak-wordp reducedwordp square rotation aref2 acl2-sqrt f-poles f-poles-1 f-poles-2 reducedwordp r3-m-inverse m-trans))
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd f-returns-poles-1-second-5-1
+    (implies (and (equal f (- (* b g) (* a h)))
+                  (equal h (- (* c d) (* a f))))
+             (equal (+ (* a (/ (- f h) x)) (* b (/ (- g c) x)) (* c (/ (- b d) x)))
+                    (/ (- f h) x))))
+  )
+
+(defthmd f-returns-poles-1-second-5-3
+  (implies (and (reducedwordp w)
+                (equal m (rotation w (acl2-sqrt 2)))
+                w)
+           (equal (+ (* (m11-a m)
+                        (/ (- (m23-f m) (m32-h m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) ))))))
+                     (* (m12-b m)
+                        (/ (- (m31-g m) (m13-c m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) ))))))
+                     (* (m13-c m)
+                        (/ (- (m12-b m) (m21-d m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) )))))))
+                  (/ (- (m23-f m) (m32-h m))
+                     (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                   (square (- (m13-c m) (m31-g m) ))
+                                   (square (- (m21-d m) (m12-b m) )))))))
+
+  :hints (("goal"
+           :use ((:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-second-5-1
+                            (a (m11-a (rotation w (acl2-sqrt 2))))
+                            (b (m12-b (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m23-f (rotation w (acl2-sqrt 2))))
+                            (g (m31-g (rotation w (acl2-sqrt 2))))
+                            (h (m32-h (rotation w (acl2-sqrt 2))))
+                            (x (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                             (square (- (m13-c m) (m31-g m) ))
+                                             (square (- (m21-d m) (m12-b m) ))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           ))
+  )
+
+(defthmd f-returns-poles-1-second-5-2
+  (implies (and (r3-matrixp m)
+                (equal (+ (* (m11-a m)
+                             (/ (- (m23-f m) (m32-h m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) ))))))
+                          (* (m12-b m)
+                             (/ (- (m31-g m) (m13-c m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) ))))))
+                          (* (m13-c m)
+                             (/ (- (m12-b m) (m21-d m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) )))))))
+                       (/ (- (m23-f m) (m32-h m))
+                          (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                        (square (- (m13-c m) (m31-g m) ))
+                                        (square (- (m21-d m) (m12-b m) )))))))
+
+           (and (equal (+ (* (aref2 :fake-name m
+                                    0 0)
+                             (aref2 :fake-name
+                                    (f-poles-2 m)
+                                    0 0))
+                          (* (aref2 :fake-name m
+                                    0 1)
+                             (aref2 :fake-name
+                                    (f-poles-2 m)
+                                    1 0))
+                          (* (aref2 :fake-name m
+                                    0 2)
+                             (aref2 :fake-name
+                                    (f-poles-2 m)
+                                    2 0)))
+                       (aref2 :fake-name
+                              (f-poles-2 m)
+                              0 0))
+                (equal (+ (* (m11-a m)
+                             (aref2 :fake-name
+                                    (cadr (f-poles m))
+                                    0 0))
+                          (* (m12-b m)
+                             (aref2 :fake-name
+                                    (cadr (f-poles m))
+                                    1 0))
+                          (* (m13-c m)
+                             (aref2 :fake-name
+                                    (cadr (f-poles m))
+                                    2 0)))
+                       (aref2 :fake-name
+                              (cadr (f-poles m))
+                              0 0)))
+           )
+  :hints (("goal"
+           :use ((:instance f-poles-prop-2 (m m)))
+           :in-theory (disable square aref2 f-poles-1 f-poles-2 associativity-of-+ commutativity-2-of-+ commutativity-of-* commutativity-of-+ distributivity)
+           )))
+
+(defthmd f-returns-poles-1-second-5
+  (implies (and (reducedwordp w)
+                w)
+           (equal (+ (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               0 0)
+                        (aref2 :fake-name
+                               (f-poles-2 (rotation w (acl2-sqrt 2)))
+                               0 0))
+                     (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               0 1)
+                        (aref2 :fake-name
+                               (f-poles-2 (rotation w (acl2-sqrt 2)))
+                               1 0))
+                     (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               0 2)
+                        (aref2 :fake-name
+                               (f-poles-2 (rotation w (acl2-sqrt 2)))
+                               2 0)))
+                  (aref2 :fake-name
+                         (f-poles-2 (rotation w (acl2-sqrt 2)))
+                         0 0)))
+  :hints (("goal"
+           :use ((:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-second-5-1
+                            (a (m11-a (rotation w (acl2-sqrt 2))))
+                            (b (m12-b (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m23-f (rotation w (acl2-sqrt 2))))
+                            (g (m31-g (rotation w (acl2-sqrt 2))))
+                            (h (m32-h (rotation w (acl2-sqrt 2))))
+                            (x (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                             (square (- (m13-c m) (m31-g m) ))
+                                             (square (- (m21-d m) (m12-b m) ))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-second-5-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-second-5-3 (w w) (m (rotation w (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd f-returns-poles-1-second-6-1
+    (implies (and (equal b (- (* g f) (* d i)))
+                  (equal d (- (* c h) (* b i))))
+             (equal (+ (* g (/ (- f h) x)) (* h (/ (- g c) x)) (* i (/ (- b d) x)))
+                    (/ (- b d) x))))
+  )
+
+(defthmd f-returns-poles-1-second-6-3
+  (implies (and (reducedwordp w)
+                (equal m (rotation w (acl2-sqrt 2)))
+                w)
+           (equal (+ (* (m31-g m)
+                        (/ (- (m23-f m) (m32-h m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) ))))))
+                     (* (m32-h m)
+                        (/ (- (m31-g m) (m13-c m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) ))))))
+                     (* (m33-i m)
+                        (/ (- (m12-b m) (m21-d m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) )))))))
+                  (/ (- (m12-b m) (m21-d m))
+                     (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                   (square (- (m13-c m) (m31-g m) ))
+                                   (square (- (m21-d m) (m12-b m) )))))))
+
+  :hints (("goal"
+           :use ((:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-second-6-1
+                            (i (m33-i (rotation w (acl2-sqrt 2))))
+                            (b (m12-b (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m23-f (rotation w (acl2-sqrt 2))))
+                            (g (m31-g (rotation w (acl2-sqrt 2))))
+                            (h (m32-h (rotation w (acl2-sqrt 2))))
+                            (x (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                             (square (- (m13-c m) (m31-g m) ))
+                                             (square (- (m21-d m) (m12-b m) ))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           ))
+  )
+
+(defthmd f-returns-poles-1-second-6-2
+  (implies (and (r3-matrixp m)
+                (equal (+ (* (m31-g m)
+                             (/ (- (m23-f m) (m32-h m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) ))))))
+                          (* (m32-h m)
+                             (/ (- (m31-g m) (m13-c m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) ))))))
+                          (* (m33-i m)
+                             (/ (- (m12-b m) (m21-d m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) )))))))
+                       (/ (- (m12-b m) (m21-d m))
+                          (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                        (square (- (m13-c m) (m31-g m) ))
+                                        (square (- (m21-d m) (m12-b m) )))))))
+
+           (and (equal (+ (* (aref2 :fake-name m
+                                    2 0)
+                             (aref2 :fake-name
+                                    (f-poles-2 m)
+                                    0 0))
+                          (* (aref2 :fake-name m
+                                    2 1)
+                             (aref2 :fake-name
+                                    (f-poles-2 m)
+                                    1 0))
+                          (* (aref2 :fake-name m
+                                    2 2)
+                             (aref2 :fake-name
+                                    (f-poles-2 m)
+                                    2 0)))
+                       (aref2 :fake-name
+                              (f-poles-2 m)
+                              2 0))
+                (equal (+ (* (m31-g m)
+                             (aref2 :fake-name
+                                    (cadr (f-poles m))
+                                    0 0))
+                          (* (m32-h m)
+                             (aref2 :fake-name
+                                    (cadr (f-poles m))
+                                    1 0))
+                          (* (m33-i m)
+                             (aref2 :fake-name
+                                    (cadr (f-poles m))
+                                    2 0)))
+                       (aref2 :fake-name
+                              (cadr (f-poles m))
+                              2 0)))
+           )
+  :hints (("goal"
+           :use ((:instance f-poles-prop-2 (m m)))
+           :in-theory (disable square aref2 f-poles-1 f-poles-2 associativity-of-+ commutativity-2-of-+ commutativity-of-* commutativity-of-+ distributivity)
+           )))
+
+(defthmd f-returns-poles-1-second-6
+  (implies (and (reducedwordp w)
+                w)
+           (equal (+ (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               2 0)
+                        (aref2 :fake-name
+                               (f-poles-2 (rotation w (acl2-sqrt 2)))
+                               0 0))
+                     (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               2 1)
+                        (aref2 :fake-name
+                               (f-poles-2 (rotation w (acl2-sqrt 2)))
+                               1 0))
+                     (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               2 2)
+                        (aref2 :fake-name
+                               (f-poles-2 (rotation w (acl2-sqrt 2)))
+                               2 0)))
+                  (aref2 :fake-name
+                         (f-poles-2 (rotation w (acl2-sqrt 2)))
+                         2 0)))
+  :hints (("goal"
+           :use ((:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-second-6-1
+                            (i (m33-i (rotation w (acl2-sqrt 2))))
+                            (b (m12-b (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m23-f (rotation w (acl2-sqrt 2))))
+                            (g (m31-g (rotation w (acl2-sqrt 2))))
+                            (h (m32-h (rotation w (acl2-sqrt 2))))
+                            (x (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                             (square (- (m13-c m) (m31-g m) ))
+                                             (square (- (m21-d m) (m12-b m) ))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-second-6-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-second-6-3 (w w) (m (rotation w (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd f-returns-poles-1-second-7-1
+    (implies (and (equal c (- (* d h) (* g e)))
+                  (equal g (- (* b f) (* e c))))
+             (equal (+ (* d (/ (- f h) x)) (* e (/ (- g c) x)) (* f (/ (- b d) x)))
+                    (/ (- g c) x))))
+  )
+
+(defthmd f-returns-poles-1-second-7-3
+  (implies (and (reducedwordp w)
+                (equal m (rotation w (acl2-sqrt 2)))
+                w)
+           (equal (+ (* (m21-d m)
+                        (/ (- (m23-f m) (m32-h m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) ))))))
+                     (* (m22-e m)
+                        (/ (- (m31-g m) (m13-c m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) ))))))
+                     (* (m23-f m)
+                        (/ (- (m12-b m) (m21-d m))
+                           (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                         (square (- (m13-c m) (m31-g m) ))
+                                         (square (- (m21-d m) (m12-b m) )))))))
+                  (/ (- (m31-g m) (m13-c m))
+                     (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                   (square (- (m13-c m) (m31-g m) ))
+                                   (square (- (m21-d m) (m12-b m) )))))))
+
+  :hints (("goal"
+           :use ((:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-second-7-1
+                            (e (m22-e (rotation w (acl2-sqrt 2))))
+                            (b (m12-b (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m23-f (rotation w (acl2-sqrt 2))))
+                            (g (m31-g (rotation w (acl2-sqrt 2))))
+                            (h (m32-h (rotation w (acl2-sqrt 2))))
+                            (x (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                             (square (- (m13-c m) (m31-g m) ))
+                                             (square (- (m21-d m) (m12-b m) ))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           ))
+  )
+
+(defthmd f-returns-poles-1-second-7-2
+  (implies (and (r3-matrixp m)
+                (equal (+ (* (m21-d m)
+                             (/ (- (m23-f m) (m32-h m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) ))))))
+                          (* (m22-e m)
+                             (/ (- (m31-g m) (m13-c m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) ))))))
+                          (* (m23-f m)
+                             (/ (- (m12-b m) (m21-d m))
+                                (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                              (square (- (m13-c m) (m31-g m) ))
+                                              (square (- (m21-d m) (m12-b m) )))))))
+                       (/ (- (m31-g m) (m13-c m))
+                          (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                        (square (- (m13-c m) (m31-g m) ))
+                                        (square (- (m21-d m) (m12-b m) )))))))
+
+           (and (equal (+ (* (aref2 :fake-name m
+                                    1 0)
+                             (aref2 :fake-name
+                                    (f-poles-2 m)
+                                    0 0))
+                          (* (aref2 :fake-name m
+                                    1 1)
+                             (aref2 :fake-name
+                                    (f-poles-2 m)
+                                    1 0))
+                          (* (aref2 :fake-name m
+                                    1 2)
+                             (aref2 :fake-name
+                                    (f-poles-2 m)
+                                    2 0)))
+                       (aref2 :fake-name
+                              (f-poles-2 m)
+                              1 0))
+                (equal (+ (* (m21-d m)
+                             (aref2 :fake-name
+                                    (cadr (f-poles m))
+                                    0 0))
+                          (* (m22-e m)
+                             (aref2 :fake-name
+                                    (cadr (f-poles m))
+                                    1 0))
+                          (* (m23-f m)
+                             (aref2 :fake-name
+                                    (cadr (f-poles m))
+                                    2 0)))
+                       (aref2 :fake-name
+                              (cadr (f-poles m))
+                              1 0)))
+           )
+  :hints (("goal"
+           :use ((:instance f-poles-prop-2 (m m)))
+           :in-theory (disable square aref2 f-poles-1 f-poles-2 associativity-of-+ commutativity-2-of-+ commutativity-of-* commutativity-of-+ distributivity)
+           )))
+
+(defthmd f-returns-poles-1-second-7
+  (implies (and (reducedwordp w)
+                w)
+           (equal (+ (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               1 0)
+                        (aref2 :fake-name
+                               (f-poles-2 (rotation w (acl2-sqrt 2)))
+                               0 0))
+                     (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               1 1)
+                        (aref2 :fake-name
+                               (f-poles-2 (rotation w (acl2-sqrt 2)))
+                               1 0))
+                     (* (aref2 :fake-name (rotation w (acl2-sqrt 2))
+                               1 2)
+                        (aref2 :fake-name
+                               (f-poles-2 (rotation w (acl2-sqrt 2)))
+                               2 0)))
+                  (aref2 :fake-name
+                         (f-poles-2 (rotation w (acl2-sqrt 2)))
+                         1 0)))
+  :hints (("goal"
+           :use ((:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-second-7-1
+                            (e (m22-e (rotation w (acl2-sqrt 2))))
+                            (b (m12-b (rotation w (acl2-sqrt 2))))
+                            (c (m13-c (rotation w (acl2-sqrt 2))))
+                            (d (m21-d (rotation w (acl2-sqrt 2))))
+                            (f (m23-f (rotation w (acl2-sqrt 2))))
+                            (g (m31-g (rotation w (acl2-sqrt 2))))
+                            (h (m32-h (rotation w (acl2-sqrt 2))))
+                            (x (acl2-sqrt (+ (square (- (m32-h m) (m23-f m) ))
+                                             (square (- (m13-c m) (m31-g m) ))
+                                             (square (- (m21-d m) (m12-b m) ))))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-second-7-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-second-7-3 (w w) (m (rotation w (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd f-returns-poles-1-second
+  (implies (and (reducedwordp w)
+                w)
+           (m-= (m-* (rotation w (acl2-sqrt 2)) (second (poles w))) (second (poles w))))
+  :hints (("goal"
+           :use ((:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
+                 (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
+                 (:instance poles-lie-on-s2-1 (w w))
+                 (:instance reducedwordp=>weak-wordp (x w))
+                 (:instance f-returns-poles-1-first-1 (m (rotation w (acl2-sqrt 2))) (p1 (second (poles w)))
+                            (p2 (second (poles w))))
+                 (:instance r3-rotationp (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-first-4 (m (rotation w (acl2-sqrt 2))))
+                 (:instance f-returns-poles-1-second-5 (w w))
+                 (:instance f-returns-poles-1-second-6 (w w))
+                 (:instance f-returns-poles-1-second-7 (w w))
+                 ;(:instance poles (w w))
+                 ;(:instance point-in-r3-x1)
+                 )
+           ;:in-theory nil
+           :in-theory (e/d () (m-= rotation aref2 acl2-sqrt  weak-wordp reducedwordp square f-poles-1 f-poles-2 reducedwordp r3-m-inverse m-trans))
+           )))
 
 ;; ------
 
@@ -637,23 +1648,23 @@
 ;;   (implies (and (reducedwordp w)
 ;;                 w)
 ;;            (m-= (m-* (rotation w (acl2-sqrt 2)) (first (poles w))) (first (poles w))))
-;;   :hints (("Goal"
+;;   :hints (("goal"
 ;;            :use ((:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2))))
 ;;                  (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2))))
 ;;                  (:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
 ;;                  (:instance reduced-rotation-prop-2 (m (rotation w (acl2-sqrt 2))))
 ;;                  (:instance poles-lie-on-s2-1 (w w))
 ;;                  (:instance reducedwordp=>weak-wordp (x w))
-;;                  (:instance array2p-alist2p (name :fake-name) (L (rotation w (acl2-sqrt 2))))
-;;                  (:instance array2p-alist2p (name :fake-name) (L (r3-m-inverse (rotation w (acl2-sqrt 2)))))
+;;                  (:instance array2p-alist2p (name :fake-name) (l (rotation w (acl2-sqrt 2))))
+;;                  (:instance array2p-alist2p (name :fake-name) (l (r3-m-inverse (rotation w (acl2-sqrt 2)))))
 ;;                  (:instance r3-matrixp-m-inverse-1 (m (rotation w (acl2-sqrt 2))))
 ;;                  )
 ;;            :in-theory (e/d (m-=) (rotation aref2 acl2-sqrt f-poles-1 f-poles-2 reducedwordp r3-m-inverse m-trans))
 ;;            )
-;;           ("Subgoal 3"
+;;           ("subgoal 3"
 ;;            :use ((:instance r3-matrixp-m-inverse-1 (m (rotation w (acl2-sqrt 2))))
 ;;                  (:instance r3-matrixp (m (r3-m-inverse (rotation w (acl2-sqrt 2)))))
-;;                  (:instance array2p-alist2p (name :fake-name) (L (r3-m-inverse (rotation w (acl2-sqrt 2)))))
+;;                  (:instance array2p-alist2p (name :fake-name) (l (r3-m-inverse (rotation w (acl2-sqrt 2)))))
 ;;                  (:instance r3-rotationp (m (rotation w (acl2-sqrt 2)))))
 ;;            ;:in-theory nil
 ;;            ))
@@ -671,7 +1682,7 @@
 ;;     (implies (realp x)
 ;;              (>= (* x x)
 ;;                  0))
-;;     :hints (("Goal"
+;;     :hints (("goal"
 ;;              :in-theory (enable expt)
 ;;              )))
 
@@ -682,7 +1693,7 @@
 ;;                    (square (- (m13-c (rotation w (acl2-sqrt 2))) (m31-g (rotation w (acl2-sqrt 2))) ))
 ;;                    (square (- (m21-d (rotation w (acl2-sqrt 2))) (m12-b (rotation w (acl2-sqrt 2))) )))
 ;;                 0))
-;;     :hints (("Goal"
+;;     :hints (("goal"
 ;;              :use ((:instance reduced-rotation-prop-1 (w w) (x (acl2-sqrt 2)))
 ;;                    (:instance rotation-is-r3-rotationp (w w) (x (acl2-sqrt 2)))
 ;;                    ;(:instance
@@ -698,7 +1709,7 @@
 ;;                 w)
 ;;            (and (s2-def-p (first (poles w)))
 ;;                 (s2-def-p (second (poles w)))))
-;;   :hints (("Goal"
+;;   :hints (("goal"
 ;;            :use ((:instance f-poles-prop-3 (m (rotation w (acl2-sqrt 2)))
 ;;                  (:instance f-poles-prop-2 (m (rotation w (acl2-sqrt 2)))))
 ;;            :in-theory (e/d () (f-poles-1 f-poles-2 square aref2 acl2-sqrt))
@@ -1039,7 +2050,7 @@
                 (natp x)
                 (> x 5))
            (equal (nth eit (generate-words-main x))
-                       '(#\a #\a)))
+                  '(#\a #\a)))
   :hints (("goal"
            :use ((:instance generate-words-main-lemma1-1 (lst '(nil (#\a) (#\b) (#\c) (#\d)))
                             (m (- x 5))))
@@ -1277,11 +2288,6 @@
           (and (posp n)
                (exists-weak-word-1 w n))))
 
-;; (defun-sk exists-word-n (w)
-;;   (exists n
-;;           (and (posp n)
-;;                (equal (seq n) w))))
-
 (defthmd exists-weak-word-implies
   (implies (exists-weak-word w)
            (and (posp (exists-weak-word-witness w))
@@ -1495,7 +2501,7 @@
                          4))
                 (natp (exists-weak-word-witness (cdr w)))
                 (posp (+ (exists-weak-word-1-witness (cdr w)
-                                          (exists-weak-word-witness (cdr w)))
+                                                     (exists-weak-word-witness (cdr w)))
                          5))
                 (natp
                  (len
@@ -1548,22 +2554,22 @@
                                                                                           (cdr w)))
                                                              (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
                                         (append (list (wa-inv)) (nth
-                                                             (exists-weak-word-1-witness (cdr w)
-                                                                                         (exists-weak-word-witness
-                                                                                          (cdr w)))
-                                                             (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
+                                                                 (exists-weak-word-1-witness (cdr w)
+                                                                                             (exists-weak-word-witness
+                                                                                              (cdr w)))
+                                                                 (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
                                         (append (list (wb)) (nth
                                                              (exists-weak-word-1-witness (cdr w)
                                                                                          (exists-weak-word-witness
                                                                                           (cdr w)))
                                                              (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
                                         (append (list (wb-inv)) (nth
-                                                             (exists-weak-word-1-witness (cdr w)
-                                                                                         (exists-weak-word-witness
-                                                                                          (cdr w)))
-                                                             (generate-words-main
-  (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w)))
-     4))))))))
+                                                                 (exists-weak-word-1-witness (cdr w)
+                                                                                             (exists-weak-word-witness
+                                                                                              (cdr w)))
+                                                                 (generate-words-main
+                                                                  (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w)))
+                                                                     4))))))))
            :do-not-induct t
            )))
 
@@ -1779,11 +2785,11 @@
                 (equal
                  (nth
                   (+
-                  (len
-                   (generate-words-main
-                    (+ (exists-weak-word-1-witness (cdr w)
-                                                   (exists-weak-word-witness (cdr w)))
-                       4))) 2)
+                   (len
+                    (generate-words-main
+                     (+ (exists-weak-word-1-witness (cdr w)
+                                                    (exists-weak-word-witness (cdr w)))
+                        4))) 2)
                   (generate-words-main
                    (+ (exists-weak-word-1-witness (cdr w)
                                                   (exists-weak-word-witness (cdr w)))
@@ -1846,7 +2852,7 @@
                          4))
                 (natp (exists-weak-word-witness (cdr w)))
                 (posp (+ (exists-weak-word-1-witness (cdr w)
-                                          (exists-weak-word-witness (cdr w)))
+                                                     (exists-weak-word-witness (cdr w)))
                          5))
                 (natp
                  (+
@@ -1902,22 +2908,22 @@
                                                                                           (cdr w)))
                                                              (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
                                         (append (list (wa-inv)) (nth
-                                                             (exists-weak-word-1-witness (cdr w)
-                                                                                         (exists-weak-word-witness
-                                                                                          (cdr w)))
-                                                             (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
+                                                                 (exists-weak-word-1-witness (cdr w)
+                                                                                             (exists-weak-word-witness
+                                                                                              (cdr w)))
+                                                                 (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
                                         (append (list (wb)) (nth
                                                              (exists-weak-word-1-witness (cdr w)
                                                                                          (exists-weak-word-witness
                                                                                           (cdr w)))
                                                              (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
                                         (append (list (wb-inv)) (nth
-                                                             (exists-weak-word-1-witness (cdr w)
-                                                                                         (exists-weak-word-witness
-                                                                                          (cdr w)))
-                                                             (generate-words-main
-  (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w)))
-     4))))))))
+                                                                 (exists-weak-word-1-witness (cdr w)
+                                                                                             (exists-weak-word-witness
+                                                                                              (cdr w)))
+                                                                 (generate-words-main
+                                                                  (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w)))
+                                                                     4))))))))
            :do-not-induct t
            )))
 
@@ -2133,11 +3139,11 @@
                 (equal
                  (nth
                   (+
-                  (len
-                   (generate-words-main
-                    (+ (exists-weak-word-1-witness (cdr w)
-                                                   (exists-weak-word-witness (cdr w)))
-                       4))) 1)
+                   (len
+                    (generate-words-main
+                     (+ (exists-weak-word-1-witness (cdr w)
+                                                    (exists-weak-word-witness (cdr w)))
+                        4))) 1)
                   (generate-words-main
                    (+ (exists-weak-word-1-witness (cdr w)
                                                   (exists-weak-word-witness (cdr w)))
@@ -2200,7 +3206,7 @@
                          4))
                 (natp (exists-weak-word-witness (cdr w)))
                 (posp (+ (exists-weak-word-1-witness (cdr w)
-                                          (exists-weak-word-witness (cdr w)))
+                                                     (exists-weak-word-witness (cdr w)))
                          5))
                 (natp
                  (+
@@ -2256,22 +3262,22 @@
                                                                                           (cdr w)))
                                                              (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
                                         (append (list (wa-inv)) (nth
-                                                             (exists-weak-word-1-witness (cdr w)
-                                                                                         (exists-weak-word-witness
-                                                                                          (cdr w)))
-                                                             (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
+                                                                 (exists-weak-word-1-witness (cdr w)
+                                                                                             (exists-weak-word-witness
+                                                                                              (cdr w)))
+                                                                 (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
                                         (append (list (wb)) (nth
                                                              (exists-weak-word-1-witness (cdr w)
                                                                                          (exists-weak-word-witness
                                                                                           (cdr w)))
                                                              (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
                                         (append (list (wb-inv)) (nth
-                                                             (exists-weak-word-1-witness (cdr w)
-                                                                                         (exists-weak-word-witness
-                                                                                          (cdr w)))
-                                                             (generate-words-main
-  (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w)))
-     4))))))))
+                                                                 (exists-weak-word-1-witness (cdr w)
+                                                                                             (exists-weak-word-witness
+                                                                                              (cdr w)))
+                                                                 (generate-words-main
+                                                                  (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w)))
+                                                                     4))))))))
            :do-not-induct t
            )))
 
@@ -2487,11 +3493,11 @@
                 (equal
                  (nth
                   (+
-                  (len
-                   (generate-words-main
-                    (+ (exists-weak-word-1-witness (cdr w)
-                                                   (exists-weak-word-witness (cdr w)))
-                       4))) 3)
+                   (len
+                    (generate-words-main
+                     (+ (exists-weak-word-1-witness (cdr w)
+                                                    (exists-weak-word-witness (cdr w)))
+                        4))) 3)
                   (generate-words-main
                    (+ (exists-weak-word-1-witness (cdr w)
                                                   (exists-weak-word-witness (cdr w)))
@@ -2554,7 +3560,7 @@
                          4))
                 (natp (exists-weak-word-witness (cdr w)))
                 (posp (+ (exists-weak-word-1-witness (cdr w)
-                                          (exists-weak-word-witness (cdr w)))
+                                                     (exists-weak-word-witness (cdr w)))
                          5))
                 (natp
                  (+
@@ -2610,22 +3616,22 @@
                                                                                           (cdr w)))
                                                              (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
                                         (append (list (wa-inv)) (nth
-                                                             (exists-weak-word-1-witness (cdr w)
-                                                                                         (exists-weak-word-witness
-                                                                                          (cdr w)))
-                                                             (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
+                                                                 (exists-weak-word-1-witness (cdr w)
+                                                                                             (exists-weak-word-witness
+                                                                                              (cdr w)))
+                                                                 (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
                                         (append (list (wb)) (nth
                                                              (exists-weak-word-1-witness (cdr w)
                                                                                          (exists-weak-word-witness
                                                                                           (cdr w)))
                                                              (generate-words-main (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w))) 4))))
                                         (append (list (wb-inv)) (nth
-                                                             (exists-weak-word-1-witness (cdr w)
-                                                                                         (exists-weak-word-witness
-                                                                                          (cdr w)))
-                                                             (generate-words-main
-  (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w)))
-     4))))))))
+                                                                 (exists-weak-word-1-witness (cdr w)
+                                                                                             (exists-weak-word-witness
+                                                                                              (cdr w)))
+                                                                 (generate-words-main
+                                                                  (+ (exists-weak-word-1-witness (cdr w) (exists-weak-word-witness (cdr w)))
+                                                                     4))))))))
            :do-not-induct t
            )))
 
@@ -2746,7 +3752,7 @@
 (defthmd generate-words-main-lemma11
   (implies (natp n)
            (< n (len (generate-words-main (+ n 1)))))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance generate-words-main-lemma7-1 (m (+ n 1))))
            )))
 
@@ -2756,13 +3762,13 @@
                 (> x n))
            (equal (nth n (generate-words-main (+ n 1)))
                   (nth n (generate-words-main x))))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance generate-words-main-lemma10 (m (+ n 1)) (n n) (x x))
                  (:instance generate-words-main-lemma11 (n n)))
            )))
 
 (defun word-sequence (n)
- (nth n (generate-words-main (+ n 1))))
+  (nth n (generate-words-main (+ n 1))))
 
 (defun-sk exists-word-n (w)
   (exists n
@@ -2772,7 +3778,7 @@
 (defthmd exists-word-n-thm
   (implies (weak-wordp w)
            (exists-word-n w))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance any-weak-word-exists (w w))
                  (:instance exists-weak-word-implies (w w))
                  (:instance generate-words-main-lemma12
