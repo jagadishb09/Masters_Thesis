@@ -1685,7 +1685,7 @@
 
   (local (include-book "arithmetic-5/top" :dir :system))
 
-  (defthmd pole-is-first-or-second-3-1
+  (defthmd pole-is-first-or-second-3-3-1
     (implies (and (realp p)
                   (realp q)
                   (realp r)
@@ -1694,14 +1694,14 @@
                   (not (equal p r)))
              (equal (* (- s q) j) (* (- p r) i))))
 
-  (defthmd pole-is-first-or-second-3-2-1
+  (defthmd pole-is-first-or-second-3-3-2
     (implies (and (realp x)
                   (realp y)
                   (equal x y)
                   (not (equal z 0)))
              (equal (/ x z) (/ y z))))
 
-  (defthmd pole-is-first-or-second-3-2
+  (defthmd pole-is-first-or-second-3-3-3
     (implies (and (realp a)
                   (realp b)
                   (realp c)
@@ -1710,7 +1710,7 @@
                   (not (equal b 0)))
              (equal (* (/ a b) c) d))
     :hints (("Goal"
-             :use ((:instance pole-is-first-or-second-3-2-1 (x (* a c)) (y (* b d)) (z b)))
+             :use ((:instance pole-is-first-or-second-3-3-2 (x (* a c)) (y (* b d)) (z b)))
              )))
 
   (defthmd pole-is-first-or-second-3-3
@@ -1724,10 +1724,130 @@
                   (not (equal p r)))
              (equal (* (/ (- s q) (- p r)) j) i))
     :hints (("Goal"
-             :use ((:instance pole-is-first-or-second-3-1)
-                   (:instance pole-is-first-or-second-3-2 (a (- s q)) (c j) (b (- p r)) (d i)))
+             :use ((:instance pole-is-first-or-second-3-3-1)
+                   (:instance pole-is-first-or-second-3-3-3 (a (- s q)) (c j) (b (- p r)) (d i)))
              )))
   )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd pole-is-first-or-second-3-2-1
+    (implies (and (equal (+ (* (/ a p) (/ a p) x x)
+                            (* (/ b p) (/ b p) x x)
+                            (* x x)) 1)
+                  (realp a)
+                  (realp a)
+                  (realp p)
+                  (realp b)
+                  (realp x)
+                  (not (equal p 0))
+                  (not (equal (+ (* a a) (* b b) (* p p)) 0)))
+             (equal (* (* x x) (/ (+ (* a a) (* b b) (* p p))
+                                  (* p p)))
+                    1)))
+
+  (defthmd pole-is-first-or-second-3-2-2
+    (implies (and (equal (* (* x x) a) 1)
+                  (realp x)
+                  (realp a)
+;(realp b)
+                  (not (equal a 0)))
+             (equal (* x x) (/ a))))
+
+  (defthmd pole-is-first-or-second-3-2-4
+    (implies (EQUAL (* X X)
+                    (/ (* (+ (* A A) (* B B) (* P P))
+                          (/ (* P P)))))
+             (EQUAL (* X X)
+                    (* (* P P)
+                       (/ (+ (* A A) (* B B) (* P P)))))))
+
+
+  (defthmd pole-is-first-or-second-3-2-3
+    (implies (and (equal (+ (* (/ a p) (/ a p) x x)
+                            (* (/ b p) (/ b p) x x)
+                            (* x x)) 1)
+                  (realp a)
+                  (realp a)
+                  (realp p)
+                  (realp b)
+                  (realp x)
+                  (not (equal p 0))
+                  (not (equal (+ (* a a) (* b b) (* p p)) 0)))
+             (equal (* x x)
+                    (/ (* p p)
+                       (+ (* a a) (* b b) (* p p)))))
+    :hints (("Goal"
+             :use ((:instance pole-is-first-or-second-3-2-1)
+                   (:instance pole-is-first-or-second-3-2-4)
+                   (:instance pole-is-first-or-second-3-2-2 (x x) (a (/ (+ (* a a) (* b b) (* p p))
+                                                                        (* p p))))
+                   )
+             :in-theory nil
+             )))
+
+  (defthmd pole-is-first-or-second-3-2-5
+    (implies (and (EQUAL (* (* (+ H (- F)) (/ (+ D (- B)))) Z)
+                         X)
+                  (EQUAL (* (* (+ C (- G)) (/ (+ D (- B)))) Z)
+                         Y)
+                  (equal (+ (* x x) (* y y) (* z z)) 1))
+             (EQUAL (+ (* (* (+ H (- F)) (/ (+ D (- B))))
+                                (* (+ H (- F)) (/ (+ D (- B))))
+                                Z Z)
+                             (* (* (+ C (- G)) (/ (+ D (- B))))
+                                (* (+ C (- G)) (/ (+ D (- B))))
+                                Z Z)
+                             (* Z Z))
+                    1)))
+
+  (defthmd pole-is-first-or-second-3-2
+    (implies (and (realp b)
+                  (realp c)
+                  (realp d)
+                  (realp g)
+                  (realp x)
+                  (realp y)
+                  (realp z)
+                  (realp f)
+                  (realp h)
+                  (not (equal d b))
+                  (not (equal (+ (* (- d b) (- d b)) (* (- h f) (- h f)) (* (- c g) (- c g))) 0))
+                  (equal (+ (* b y) (* c z)) (+ (* d y) (* g z)))
+                  (equal (+ (* d x) (* f z)) (+ (* b x) (* h z)))
+                  (equal (+ (* x x) (* y y) (* z z)) 1))
+             (equal (* z z)
+                    (/ (* (- d b) (- d b))
+                       (+ (* (- d b) (- d b)) (* (- h f) (- h f)) (* (- c g) (- c g))))))
+    :hints (("Goal"
+             :use ((:instance pole-is-first-or-second-3-3 (i y) (j z) (s c) (q g) (p d) (r b))
+                   (:instance pole-is-first-or-second-3-2-3 (a (- h f)) (p (- d b)) (b (- c g)) (x z))
+                   (:instance pole-is-first-or-second-3-2-5)
+                   (:instance pole-is-first-or-second-3-3 (i x) (j z) (s h) (q f) (p d) (r b))
+                   )
+             )))
+
+  )
+
+---
+
+
+  (defthmd pole-is-first-or-second-3-3
+    (implies (and (realp p)
+                  (realp q)
+                  (realp r)
+                  (realp s)
+                  (realp j)
+                  (realp i)
+                  (equal (+ (* p i) (* q j)) (+ (* r i) (* s j)))
+                  (not (equal p r)))
+             (equal (* (/ (- s q) (- p r)) j) i))
+
+
+
 
 -----------
 
