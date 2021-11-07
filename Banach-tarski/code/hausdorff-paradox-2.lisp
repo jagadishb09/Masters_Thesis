@@ -247,10 +247,32 @@
            :in-theory (e/d () (aref2 f-poles square))
            )))
 
+(defun f-poles-1-non-word ()
+  '((:header :dimensions (3 1)
+             :maximum-length 15)
+    ((0 . 0) . 0)
+    ((1 . 0) . 0)
+    ((2 . 0) . 0)
+    )
+  )
+
+(defun f-poles-2-non-word ()
+  '((:header :dimensions (3 1)
+             :maximum-length 15)
+    ((0 . 0) . 0)
+    ((1 . 0) . 0)
+    ((2 . 0) . 0)
+   )
+  )
+
+(defun f-poles-non-word ()
+  (list (f-poles-1-non-word) (f-poles-2-non-word)))
+
 (defun poles (w)
-  (if (weak-wordp w)
+  (if (and (reducedwordp w)
+           w)
       (f-poles (rotation w (acl2-sqrt 2)))
-    nil))
+    (f-poles-non-word)))
 
 (defthmd two-poles-for-each-rotation
   (implies (weak-wordp w)
@@ -2856,16 +2878,6 @@
           (nth (1- idx) (enumerate-x-of-poles-upto-length idx))
         (nth (/ (- idx 1) 2) (enumerate-x-of-poles-upto-length (+ idx 1))))
     0))
-
-(defun weak-words-reco (wp)
-  (if (atom wp)
-      t
-    (and (weak-wordp (car wp))
-         (weak-words-reco (cdr wp)))))
-
-(defun weak-words-listp (wp)
-  (and (consp wp)
-       (weak-words-reco wp)))
 
 (defthmd generate-words-func-equiv
   (implies (and (> h 1)
