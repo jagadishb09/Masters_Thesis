@@ -25,8 +25,6 @@
                (< x B)
                (not (exists-in-x-coord-sequence x)))))
 
------
-
 ;; (defthmd poles-x-coordinates-lemma1
 ;;   (implies (and (natp n)
 ;;                 lst
@@ -36,10 +34,27 @@
 ;;            :in-theory (disable acl2-sqrt f-poles-1 f-poles-2)
 ;;            )))
 
+(skip-proofs
+ (defthmd x-coord-sequence-lemma1
+   (realp (x-coord-sequence n)))
+ )
+
 (encapsulate
   ()
 
   (local (include-book "nonstd/transcendentals/reals-are-uncountable-1" :dir :system))
+
+  (local
+   (defthm existence-of-x-not-in-sequence-lemma-sub4
+     (IMPLIES (AND (REALP X)
+                   (< A X)
+                   (< X B)
+                   (NOT (EXISTS-IN-X-COORD-SEQUENCE X)))
+              (EXISTS-IN-INTERVAL-BUT-NOT-IN-X-COORD-SEQUENCE A B))
+     :hints (("Goal"
+              :use (:instance exists-in-interval-but-not-in-x-coord-sequence-suff (x x))
+              )))
+   )
 
   (defthm existence-of-x-not-in-sequence-lemma
     (exists-in-interval-but-not-in-x-coord-sequence -1 1)
@@ -53,15 +68,30 @@
                                          (exists-in-interval-but-not-in-sequence exists-in-interval-but-not-in-x-coord-sequence)
                                          (exists-in-interval-but-not-in-sequence-witness exists-in-interval-but-not-in-x-coord-sequence-witness)))
              )
-            ("Goal"
-             :use ((:instance x-coord-sequence-lemma2 (x x) (a a) (b b))
-                   (:instance x-coord-sequence-lemma1)
+            ("Subgoal 4"
+             :use (
+                   (:instance existence-of-x-not-in-sequence-lemma-sub4 (x x) (a a) (b b))
                    )
-             :in-theory (disable x-coord-sequence-lemma2 aref2)
-             )
-
-            ))
+             :in-theory (disable existence-of-x-not-in-sequence-lemma-sub4)
+             )))
   )
+
+(defun-sk exists-in-interval-but-not-in-x-coord-sequence-1 (A B)
+  (exists x
+          (and (realp x)
+               (<= A x)
+               (<= x B)
+               (not (exists-in-x-coord-sequence x)))))
+
+
+(defthm existence-of-x-not-in-sequence-lemma-1
+  (exists-in-interval-but-not-in-x-coord-sequence-1 -1 1)
+  :hints (("Goal"
+           :use ((:instance existence-of-x-not-in-sequence-lemma)
+                 (:instance exists-in-interval-but-not-in-x-coord-sequence (A -1) (B 1))
+                 (:instance exists-in-interval-but-not-in-x-coord-sequence-1-suff (x (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1)) (A -1) (B 1)))
+           :in-theory nil
+           )))
 
 
 --
