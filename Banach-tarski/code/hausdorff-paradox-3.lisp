@@ -2,65 +2,67 @@
 
 (include-book "hausdorff-paradox-2")
 
-;; (defthmd two-poles-for-all-rotations-1
-;;   (implies (and (point-in-r3 p)
-;;                 (point-in-r3 p1)
-;;                 (point-in-r3 p2)
-;;                 (or (m-= p1 p)
-;;                     (m-= p2 p)))
-;;            (or (equal p1 p)
-;;                (equal p2 p)))
-;;   :hints (("Goal"
-;;            :in-theory (e/d (m-=) (poles word-exists reducedwordp weak-wordp acl2-sqrt aref2))
-;;            )))
-
-;; (defthmd generate-words-main-is-a-list-1
-;;   (implies (natp n)
-;;            (true-listp (generate-words-main n))))
-
-(defun poles-list (word-list)
-  (if (atom word-list)
-      nil
-    (append (poles (car word-list))
-            (poles-list (cdr word-list)))))
-
-(defthmd poles-list-lemma1
-  (implies (and (true-listp lst)
-                (natp n)
-                (< n (len lst)))
-           (equal (nth (* 2 n) (poles-list lst))
-                  (first (poles (nth n lst)))))
-  :hints (("Goal"
-           :in-theory (disable f-poles-1 f-poles-2 aref2 reducedwordp rotation acl2-sqrt)
-           )))
-
-(defthmd poles-list-lemma2
-  (implies (and (true-listp lst)
-                (natp n)
-                (< n (len lst)))
-           (equal (nth (+ (* 2 n) 1) (poles-list lst))
-                  (second (poles (nth n lst)))))
-  :hints (("Goal"
-           :in-theory (disable f-poles-1 f-poles-2 aref2 reducedwordp rotation acl2-sqrt)
-           )))
-
-(defun pole-sequence (n)
-  (nth n (poles-list (generate-words-main (+ n 1)))))
-
 (defun poles-x-coordinates (poles-list)
   (if (atom poles-list)
       nil
     (append (list (aref2 :fake-name (car poles-list) 0 0))
             (poles-x-coordinates (cdr poles-list)))))
 
-(defthmd poles-x-coordinates-lemma1
-  (implies (and (natp n)
-                lst
-                (true-listp lst))
-           (real-listp (poles-x-coordinates (poles-list lst))))
-  :hints (("Goal"
-           :in-theory (disable acl2-sqrt f-poles-1 f-poles-2)
-           )))
+(defun x-coord-sequence (n)
+  (if (posp n)
+      (nth (- n 1) (poles-x-coordinates (poles-list (generate-words-main (+ n 1)))))
+    0))
+
+(defun-sk exists-in-x-coord-sequence (x)
+  (exists i
+          (and (posp i)
+               (equal (x-coord-sequence i) x))))
+
+(defun-sk exists-in-interval-but-not-in-x-coord-sequence (A B)
+  (exists x
+          (and (realp x)
+               (< A x)
+               (< x B)
+               (not (exists-in-x-coord-sequence x)))))
+
+-----
+
+;; (defthmd poles-x-coordinates-lemma1
+;;   (implies (and (natp n)
+;;                 lst
+;;                 (true-listp lst))
+;;            (real-listp (poles-x-coordinates (poles-list lst))))
+;;   :hints (("Goal"
+;;            :in-theory (disable acl2-sqrt f-poles-1 f-poles-2)
+;;            )))
+
+(encapsulate
+  ()
+
+  (local (include-book "nonstd/transcendentals/reals-are-uncountable-1" :dir :system))
+
+  (defthm existence-of-x-not-in-sequence-lemma
+    (exists-in-interval-but-not-in-x-coord-sequence -1 1)
+    :hints (("Goal"
+             :use ((:functional-instance reals-are-not-countable
+                                         (seq x-coord-sequence)
+                                         (a (lambda () -1))
+                                         (b (lambda () 1))
+                                         (exists-in-sequence exists-in-x-coord-sequence)
+                                         (exists-in-sequence-witness exists-in-x-coord-sequence-witness)
+                                         (exists-in-interval-but-not-in-sequence exists-in-interval-but-not-in-x-coord-sequence)
+                                         (exists-in-interval-but-not-in-sequence-witness exists-in-interval-but-not-in-x-coord-sequence-witness)))
+             )
+            ("Goal"
+             :use ((:instance x-coord-sequence-lemma2 (x x) (a a) (b b))
+                   (:instance x-coord-sequence-lemma1)
+                   )
+             :in-theory (disable x-coord-sequence-lemma2 aref2)
+             )
+
+            ))
+  )
+
 
 --
 

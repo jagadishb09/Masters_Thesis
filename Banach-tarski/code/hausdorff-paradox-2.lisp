@@ -4836,3 +4836,68 @@
                             (x (exists-weak-word-witness w)))
                  (:instance exists-word-n-suff (n (exists-weak-word-1-witness w (exists-weak-word-witness w)))))
            )))
+
+(defun poles-list (word-list)
+  (if (atom word-list)
+      nil
+    (append (poles (car word-list))
+            (poles-list (cdr word-list)))))
+
+(defthmd poles-list-lemma1
+  (implies (and (true-listp lst)
+                (natp n)
+                (< n (len lst)))
+           (equal (nth (* 2 n) (poles-list lst))
+                  (first (poles (nth n lst)))))
+  :hints (("Goal"
+           :in-theory (disable f-poles-1 f-poles-2 aref2 reducedwordp rotation acl2-sqrt)
+           )))
+
+(defthmd poles-list-lemma2
+  (implies (and (true-listp lst)
+                (natp n)
+                (< n (len lst)))
+           (equal (nth (+ (* 2 n) 1) (poles-list lst))
+                  (second (poles (nth n lst)))))
+  :hints (("Goal"
+           :in-theory (disable f-poles-1 f-poles-2 aref2 reducedwordp rotation acl2-sqrt)
+           )))
+
+(defun pole-sequence (n)
+  (nth n (poles-list (generate-words-main (+ n 1)))))
+
+(defun-sk exists-pole-n (pole)
+  (exists n
+          (and (natp n)
+               (m-= (pole-sequence n) pole))))
+
+(defthmd exists-pole-n-thm
+  (implies (d-p p)
+           (exists-pole-n p))
+  :hints (("Goal"
+           :use ((:instance poles-list-lemma1
+                            (lst (generate-words-main
+                                  (+ (* 2 (exists-word-n-witness (word-exists-witness p))) 1)))
+                            (n (exists-word-n-witness (word-exists-witness p))))
+                 (:instance two-poles-for-all-rotations (p p))
+                 (:instance poles-list-lemma2
+                            (lst (generate-words-main
+                                   (+ (* 2 (exists-word-n-witness (word-exists-witness p))) 2)))
+                            (n (exists-word-n-witness (word-exists-witness p))))
+                 (:instance generate-words-main-lemma10
+                            (m (+ (exists-word-n-witness (word-exists-witness p)) 1))
+                            (x (+ (* 2 (exists-word-n-witness (word-exists-witness p))) 1))
+                            (n (exists-word-n-witness (word-exists-witness p))))
+                 (:instance generate-words-main-lemma10
+                            (m (+ (exists-word-n-witness (word-exists-witness p)) 1))
+                            (x (+ (* 2 (exists-word-n-witness (word-exists-witness p))) 2))
+                            (n (exists-word-n-witness (word-exists-witness p))))
+                 (:instance exists-pole-n-suff (n (* 2 (exists-word-n-witness (word-exists-witness p))))
+                            (pole p))
+                 (:instance exists-pole-n-suff (n (+ (* 2 (exists-word-n-witness (word-exists-witness p))) 1))
+                            (pole p))
+                 (:instance exists-word-n-thm (w (word-exists-witness p)))
+                 (:instance reducedwordp=>weak-wordp (x (word-exists-witness p))))
+           :in-theory (disable aref2 m-= rotation reducedwordp r3-matrixp r3-rotationp weak-wordp acl2-sqrt poles generate-words-main)
+           :do-not-induct t
+           )))
