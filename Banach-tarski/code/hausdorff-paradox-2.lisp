@@ -1,5 +1,21 @@
+; Banach-Tarski theorem
+;
+; Proof of Hausdorff paradox.
+; Book contains the proof that the set D is countable
+;
+;
+; Copyright (C) 2021 University of Wyoming
+;
+; License: A 3-clause BSD license.  See the LICENSE file distributed with ACL2.
+;
+; Main Authors: Jagadish Bapanapally (jagadishb285@gmail.com)
+;
+; Contributing Authors:
+;   Ruben Gamboa (ruben@uwyo.edu)
 
 (in-package "ACL2")
+
+; cert_param: (uses-acl2r)
 
 (include-book "hausdorff-paradox-1")
 
@@ -2775,51 +2791,6 @@
           )
   )
 
-;; (encapsulate
-;;   ((poles (w) t))
-;;   (local (defun poles (w) (declare (ignore w)) '(1 2)))
-
-;;   (skip-proofs
-;;    (defthmd two-poles-for-each-rotation
-;;      (implies (weak-wordp w)
-;;               (equal (len (poles w)) 2))))
-
-;;   (skip-proofs
-;;    (defthmd poles-lie-on-s2
-;;      (implies (weak-wordp w)
-;;               (and (s2-def-p (first (poles w)))
-;;                    (s2-def-p (second (poles w)))))))
-
-;;   (skip-proofs
-;;    (defthmd f-returns-poles-1
-;;      (implies (weak-wordp w)
-;;               (and (m-= (m-* (rotation w (acl2-sqrt 2)) (first (poles w))) (first (poles w)))
-;;                    (m-= (m-* (rotation w (acl2-sqrt 2)) (second (poles w))) (second (poles w)))))))
-
-;;   (skip-proofs
-;;    (defthmd two-poles-for-all-rotations
-;;      (implies (and (weak-wordp w)
-;;                    (point-in-r3 p)
-;;                    (m-= (m-* (rotation w (acl2-sqrt 2)) p) p))
-;;               (or (m-= (first (poles w)) p)
-;;                   (m-= (second (poles w)) p))))))
-
-;; (defthmd f-returns-poles
-;;   (implies (and (reducedwordp w)
-;;                 w)
-;;            (and (d-p (first (poles w)))
-;;                 (d-p (second (poles w)))))
-;;   :hints (("goal"
-;;            :use ((:instance f-returns-poles-1 (w w))
-;;                  (:instance word-exists-suff (w w) (point (first (poles w))))
-;;                  (:instance word-exists-suff (w w) (point (second (poles w))))
-;;                  (:instance poles-lie-on-s2 (w w))
-;;                  (:instance d-p (point (first (poles w))))
-;;                  (:instance d-p (point (second (poles w))))
-;;                  (:instance reducedwordp=>weak-wordp (x w)))
-;;            :in-theory nil
-;;            )))
-
 (defun generate-word-len-1 (n)
   (cond ((equal n 1) '((#\a)))
         ((equal n 2) '((#\b)))
@@ -4849,7 +4820,7 @@
                 (< n (len lst)))
            (equal (nth (* 2 n) (poles-list lst))
                   (first (poles (nth n lst)))))
-  :hints (("Goal"
+  :hints (("goal"
            :in-theory (disable f-poles-1 f-poles-2 aref2 reducedwordp rotation acl2-sqrt)
            )))
 
@@ -4859,7 +4830,7 @@
                 (< n (len lst)))
            (equal (nth (+ (* 2 n) 1) (poles-list lst))
                   (second (poles (nth n lst)))))
-  :hints (("Goal"
+  :hints (("goal"
            :in-theory (disable f-poles-1 f-poles-2 aref2 reducedwordp rotation acl2-sqrt)
            )))
 
@@ -4874,7 +4845,7 @@
 (defthmd exists-pole-n-thm
   (implies (d-p p)
            (exists-pole-n p))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance poles-list-lemma1
                             (lst (generate-words-main
                                   (+ (* 2 (exists-word-n-witness (word-exists-witness p))) 1)))
@@ -4900,4 +4871,281 @@
                  (:instance reducedwordp=>weak-wordp (x (word-exists-witness p))))
            :in-theory (disable aref2 m-= rotation reducedwordp r3-matrixp r3-rotationp weak-wordp acl2-sqrt poles generate-words-main)
            :do-not-induct t
+           )))
+
+(defthmd generate-words-main-lemma-7-3
+  (implies (natp n)
+           (< n (len (generate-words-main (+ n 1)))))
+  :hints (("goal"
+           :use ((:instance generate-words-main-lemma7-1 (m (+ n 1))))
+           )))
+
+(defthmd poles-list-length
+  (implies (true-listp lst)
+           (equal (len (poles-list lst))
+                  (* 2 (len lst)))))
+
+(defthmd pole-sequence-point-in-r3-1
+  (implies (natp n)
+           (equal (* 2 1/2 n) n)))
+
+(encapsulate
+  ()
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd pole-sequence-point-in-r3-2
+    (implies (and (natp n)
+                  (oddp n))
+             (integerp (/ (- n 1) 2))))
+
+  (defthmd pole-sequence-point-in-r3-3
+    (implies (and (integerp n)
+                  (integerp (* 1/2 n)))
+             (equal (* 2 1/2 n) n)))
+
+  )
+
+(defthmd pole-sequence-point-in-r3
+  (implies (and (natp n)
+                lst
+                (< n (len (poles-list lst)))
+                (true-listp lst))
+           (point-in-r3 (nth n (poles-list lst))))
+  :hints (("goal"
+           :in-theory (disable acl2-sqrt aref2 reducedwordp weak-wordp f-poles-1 f-poles-2 rotation r3-matrixp r3-m-inverse r3-m-determinant)
+           :cases ((evenp n)
+                   (oddp n))
+           :do-not-induct t
+           )
+          ("subgoal 2"
+           :use ((:instance poles-list-lemma1 (lst lst) (n (/ n 2)))
+                 (:instance poles-list-length (lst lst))
+                 (:instance pole-sequence-point-in-r3-1)
+                 (:instance rotation-is-r3-rotationp (w (nth (* 1/2 n) lst)) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-3 (m (rotation (nth (* 1/2 n) lst)
+                                                        (acl2-sqrt 2))))
+                 )
+
+           )
+          ("subgoal 1"
+           :use ((:instance poles-list-lemma2 (lst lst) (n (/ (- n 1) 2)))
+                 (:instance poles-list-length (lst lst))
+                 (:instance pole-sequence-point-in-r3-1)
+                 (:instance rotation-is-r3-rotationp (w (nth (/ (- n 1) 2) lst)) (x (acl2-sqrt 2)))
+                 (:instance f-poles-prop-3 (m (rotation (nth (/ (- n 1) 2) lst)
+                                                        (acl2-sqrt 2))))
+                 (:instance pole-sequence-point-in-r3-2 (n n))
+                 )
+
+           )
+          ))
+
+(defun poles-x-coordinates (poles-list)
+  (if (atom poles-list)
+      nil
+    (append (list (aref2 :fake-name (car poles-list) 0 0))
+            (poles-x-coordinates (cdr poles-list)))))
+
+(defun x-coord-sequence-1 (n)
+  (nth n (poles-x-coordinates (poles-list (generate-words-main (+ n 1))))))
+
+(defun-sk exists-in-x-coord-sequence-1 (x)
+  (exists i
+          (and (natp i)
+               (equal (x-coord-sequence-1 i) x))))
+
+(defthmd x-coord-list-lemma1
+  (implies (and (true-listp poles-lst)
+                (natp n))
+           (equal (nth n (poles-x-coordinates poles-lst))
+                  (aref2 :fake-name (nth n poles-lst) 0 0))))
+
+(defthmd exists-in-x-coord-sequence-1-lemma1
+  (implies (and (natp n)
+                (< n x))
+           (and (true-listp
+                 (poles-list (generate-words-main (+ n 1))))
+                (generate-words-main (+ n 1))
+                (true-listp (generate-words-main (+ n 1)))
+                (< n (* 2 x)))))
+
+(defthmd exists-in-x-coord-sequence-1-lemma2
+  (implies (and (point-in-r3 p)
+                (point-in-r3 p2)
+                (m-= p2 p))
+           (equal (aref2 :fake-name p 0 0)
+                  (aref2 :fake-name p2 0 0)
+                  ))
+  :hints (("goal"
+           :in-theory (enable m-=)
+           )))
+
+(defthmd exists-in-x-coord-sequence-1-lemma
+  (implies (d-p p)
+           (exists-in-x-coord-sequence-1 (aref2 :fake-name p 0 0)))
+  :hints (("goal"
+           :use ((:instance exists-pole-n-thm (p p))
+                 (:instance exists-in-x-coord-sequence-1-suff (i (exists-pole-n-witness p))
+                            (x (aref2 :fake-name p 0 0)))
+                 (:instance x-coord-list-lemma1 (n (exists-pole-n-witness p))
+                            (poles-lst (poles-list (generate-words-main (+ (exists-pole-n-witness p) 1))))
+                            )
+                 (:instance exists-pole-n (pole p))
+                 (:instance exists-in-x-coord-sequence-1-lemma1 (n (exists-pole-n-witness p))
+                            (x (len (generate-words-main (+ (exists-pole-n-witness p) 1)))))
+                 (:instance x-coord-sequence-1 (n (exists-pole-n-witness p)))
+                 (:instance pole-sequence (n (exists-pole-n-witness p)))
+                 (:instance pole-sequence-point-in-r3 (n (exists-pole-n-witness p))
+                            (lst (generate-words-main (+ (exists-pole-n-witness p) 1))))
+                 (:instance generate-words-main-lemma-7-3 (n (exists-pole-n-witness p)))
+                 (:instance poles-list-length (lst (generate-words-main (+ (exists-pole-n-witness p) 1))))
+                 (:instance d-p (point p))
+                 (:instance s2-def-p (point p))
+                 (:instance exists-in-x-coord-sequence-1-lemma2
+                            (p2 (pole-sequence (exists-pole-n-witness p)))
+                            (p p))
+                 )
+           :in-theory nil
+           )))
+
+(defun x-coord-sequence (n)
+  (if (posp n)
+      (nth (- n 1) (poles-x-coordinates (poles-list (generate-words-main n))))
+    0))
+
+(defun-sk exists-in-x-coord-sequence (x)
+  (exists i
+          (and (posp i)
+               (equal (x-coord-sequence i) x))))
+
+(defthmd exists-in-x-coord-sequence-lemma-lemma1
+  (implies (natp n)
+           (posp (+ n 1))))
+
+(defthmd exists-in-x-coord-sequence-lemma
+  (implies (d-p p)
+           (exists-in-x-coord-sequence (aref2 :fake-name p 0 0)))
+  :hints (("goal"
+           :use ((:instance exists-in-x-coord-sequence-1-lemma (p p))
+                 (:instance exists-in-x-coord-sequence-1 (x (aref2 :fake-name p 0 0)))
+                 (:instance exists-in-x-coord-sequence-suff
+                            (i (+ (exists-in-x-coord-sequence-1-witness (aref2 :fake-name p 0 0)) 1))
+                            (x (aref2 :fake-name p 0 0)))
+                 (:instance exists-in-x-coord-sequence-lemma-lemma1
+                            (n (exists-in-x-coord-sequence-1-witness (aref2 :fake-name p 0 0))))
+                 (:instance x-coord-sequence-1
+                            (n (exists-in-x-coord-sequence-1-witness (aref2 :fake-name p 0 0))))
+                 )
+           :in-theory (disable poles-x-coordinates reducedwordp d-p generate-words-main poles-list poles word-exists)
+           )))
+
+(defthmd poles-x-coordinates-lemma1-1
+  (implies (and (true-listp lst)
+                (equal lst (append lst1 lst2)))
+           (equal (poles-x-coordinates (poles-list lst))
+                  (append (poles-x-coordinates (poles-list lst1))
+                          (poles-x-coordinates (poles-list lst2)))))
+  :hints (("goal"
+           :in-theory (disable acl2-sqrt f-poles-1 f-poles-2)
+           )))
+
+(defthmd poles-x-coordinates-lemma1
+  (implies (and (natp n)
+                lst
+                (true-listp lst))
+           (real-listp (poles-x-coordinates (poles-list lst))))
+  :hints (("goal"
+           :in-theory (disable acl2-sqrt f-poles-1 f-poles-2 rotation r3-m-inverse r3-m-determinant m-trans m-= aref2 reducedwordp weak-wordp)
+           )
+          ("subgoal *1/4"
+           :use ((:instance poles-x-coordinates-lemma1-1
+                            (lst lst)
+                            (lst1 (list (car lst)))
+                            (lst2 (cdr lst)))
+                 (:instance f-poles-prop-3 (m (rotation (car lst) (acl2-sqrt 2))))
+                 (:instance rotation-is-r3-rotationp (w (car lst)) (x (acl2-sqrt 2)))
+                 )
+           )
+          ("subgoal *1/2"
+           :use ((:instance f-poles-prop-3 (m (rotation (car lst) (acl2-sqrt 2))))
+                 (:instance rotation-is-r3-rotationp (w (car lst)) (x (acl2-sqrt 2))))
+           )
+          ))
+
+(defthmd x-coord-sequence-lemma1-1
+  (implies (and (real-listp lst)
+                (< n (len lst))
+                (natp n))
+           (realp (nth n lst))))
+
+(defthmd x-coord-sequence-lemma1-2
+  (implies (true-listp lst)
+           (equal (len (poles-x-coordinates (poles-list lst)))
+                  (len (poles-list lst))))
+  :hints (("goal"
+           :in-theory (disable acl2-sqrt rotation r3-m-inverse reducedwordp weak-wordp r3-m-determinant f-poles-1 f-poles-2)
+           )))
+
+(defthmd x-coord-sequence-lemma1
+  (realp (x-coord-sequence n))
+  :hints (("goal"
+           :use ((:instance poles-x-coordinates-lemma1 (n n)
+                            (lst (generate-words-main n)))
+                 (:instance x-coord-sequence-lemma1-1
+                            (lst (poles-x-coordinates (poles-list (generate-words-main n))))
+                            (n (- n 1)))
+                 (:instance generate-words-main-lemma-7-3 (n (- n 1)))
+                 (:instance poles-list-length (lst (generate-words-main n)))
+                 (:instance x-coord-sequence-lemma1-2 (lst (generate-words-main n)))
+                 )
+           :in-theory (disable generate-words-main)
+           )))
+
+
+
+(defun-sk exists-in-interval-but-not-in-x-coord-sequence-1 (a b)
+  (exists x
+          (and (realp x)
+               (< a x)
+               (< x b)
+               (not (exists-in-x-coord-sequence x)))))
+
+(encapsulate
+  ()
+
+  (local (include-book "nonstd/transcendentals/reals-are-uncountable-1" :dir :system))
+
+  (defthmd existence-of-x-not-in-sequence
+    (exists-in-interval-but-not-in-x-coord-sequence-1 -1 1)
+    :hints (("goal"
+             :use ((:functional-instance reals-are-not-countable
+                                         (seq x-coord-sequence)
+                                         (a (lambda () -1))
+                                         (b (lambda () 1))
+                                         (exists-in-sequence exists-in-x-coord-sequence)
+                                         (exists-in-sequence-witness exists-in-x-coord-sequence-witness)
+                                         (exists-in-interval-but-not-in-sequence exists-in-interval-but-not-in-x-coord-sequence-1)
+                                         (exists-in-interval-but-not-in-sequence-witness exists-in-interval-but-not-in-x-coord-sequence-1-witness)))
+             )
+            ("subgoal 4"
+             :use (
+                   (:instance exists-in-interval-but-not-in-x-coord-sequence-1-suff (x x))
+                   )
+             )))
+  )
+
+(defun-sk exists-in-interval-but-not-in-x-coord-sequence (a b)
+  (exists x
+          (and (realp x)
+               (<= a x)
+               (<= x b)
+               (not (exists-in-x-coord-sequence x)))))
+
+(defthmd existence-of-x-not-in-sequence-lemma
+  (exists-in-interval-but-not-in-x-coord-sequence -1 1)
+  :hints (("goal"
+           :use ((:instance existence-of-x-not-in-sequence)
+                 (:instance exists-in-interval-but-not-in-x-coord-sequence-1 (a -1) (b 1))
+                 (:instance exists-in-interval-but-not-in-x-coord-sequence-suff (x (exists-in-interval-but-not-in-x-coord-sequence-1-witness -1 1)) (a -1) (b 1)))
+           :in-theory nil
            )))
