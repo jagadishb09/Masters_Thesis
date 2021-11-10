@@ -3077,6 +3077,7 @@
                             (m (- x 5))))
            :do-not-induct t
            )))
+
 (defthmd generate-words-main-lemma2-1
   (implies (posp m)
            (equal (car (generate-words-func '(nil (#\a) (#\b) (#\c) (#\d)) m))
@@ -5101,8 +5102,6 @@
            :in-theory (disable generate-words-main)
            )))
 
-
-
 (defun-sk exists-in-interval-but-not-in-x-coord-sequence-1 (a b)
   (exists x
           (and (realp x)
@@ -5147,5 +5146,107 @@
            :use ((:instance existence-of-x-not-in-sequence)
                  (:instance exists-in-interval-but-not-in-x-coord-sequence-1 (a -1) (b 1))
                  (:instance exists-in-interval-but-not-in-x-coord-sequence-suff (x (exists-in-interval-but-not-in-x-coord-sequence-1-witness -1 1)) (a -1) (b 1)))
+           :in-theory nil
+           )))
+
+(defun-sk s2-def-p-not-d-p ()
+  (exists point
+          (and (s2-def-p point)
+               (not (d-p point)))))
+
+(defthmd witness-not-in-x-coord-sequence
+  (and (realp (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1))
+       (<= -1 (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1))
+       (<= (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1) 1)
+       (not (exists-in-x-coord-sequence (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1))))
+  :hints (("goal"
+           :use ((:instance existence-of-x-not-in-sequence-lemma))
+           )))
+
+(defun point-on-s2-not-d ()
+  `((:header :dimensions (3 1)
+             :maximum-length 15)
+    ((0 . 0) . ,(exists-in-interval-but-not-in-x-coord-sequence-witness -1 1) )
+    ((1 . 0) . 0)
+    ((2 . 0) . ,(acl2-sqrt (- 1 (* (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1)
+                                  (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1)))) )
+    )
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd exists-point-on-s2-not-d-1-1
+    (implies (and (realp p)
+                  (<= 0 p)
+                  (<= p 1))
+             (>= 1 (* p p))))
+
+  (defthmd exists-point-on-s2-not-d-1-2
+    (implies (and (realp p)
+                  (<= -1 p)
+                  (< p 0))
+             (and (>= 1 (abs p))
+                  (<= 0 (abs p)))))
+
+
+  (defthmd exists-point-on-s2-not-d-1-3
+    (implies (realp p)
+             (equal (* (abs p) (abs p))
+                    (* p p))))
+
+  (defthmd exists-point-on-s2-not-d-1-4
+    (implies (and (realp p)
+                  (<= p 1)
+                  (<= -1 p))
+             (>= 1 (* p p)))
+    :hints (("goal"
+             :cases ((>= p 0))
+             :use ((:instance exists-point-on-s2-not-d-1-1)
+                   (:instance exists-point-on-s2-not-d-1-2)
+                   (:instance exists-point-on-s2-not-d-1-1 (p (abs p)))
+                   (:instance exists-point-on-s2-not-d-1-3))
+             )))
+
+  (defthmd exists-point-on-s2-not-d-1
+    (implies (and (realp p)
+                  (<= -1 p)
+                  (<= p 1))
+             (equal (+ (* p p) (* (acl2-sqrt (- 1 (* p p))) (acl2-sqrt (- 1 (* p p)))))
+                    1))
+    :hints (("goal"
+             :use ((:instance sqrt-sqrt (x (- 1 (* p p))))
+                   (:instance exists-point-on-s2-not-d-1-4 (p p)))
+             )))
+  )
+
+(defthmd exists-point-on-s2-not-d-2
+  (s2-def-p (point-on-s2-not-d))
+  :hints (("goal"
+           :use ((:instance witness-not-in-x-coord-sequence)
+                 (:instance exists-point-on-s2-not-d-1 (p (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1))))
+           :in-theory (e/d (array2p header dimensions aref2) (x-coord-sequence generate-words-main exists-in-x-coord-sequence))
+           )))
+
+(defthmd exists-point-on-s2-not-d-3
+  (equal (aref2 :fake-name (point-on-s2-not-d) 0 0)
+         (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1))
+  :hints (("goal"
+           :in-theory (enable aref2)
+           )))
+
+(defthmd exists-point-on-s2-not-d
+  (s2-def-p-not-d-p)
+  :hints (("goal"
+           :use ((:instance exists-point-on-s2-not-d-2)
+                 (:instance witness-not-in-x-coord-sequence)
+                 (:instance s2-def-p-not-d-p-suff (point (point-on-s2-not-d)))
+                 (:instance exists-in-x-coord-sequence-lemma
+                            (p (point-on-s2-not-d)))
+                 (:instance exists-point-on-s2-not-d-1 (p (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1)))
+                 (:instance exists-point-on-s2-not-d-3)
+                 )
            :in-theory nil
            )))
