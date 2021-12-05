@@ -50,28 +50,28 @@
                  (* (point-in-r3-x1 point) (point-in-r3-x1 point) (- 1 (acl2-cosine angle)))))
        (equal (aref2 :fake-name (rotation-about-witness angle point) 0 1)
               (- (* (point-in-r3-x1 point) (point-in-r3-y1 point) (- 1 (acl2-cosine angle)))
-                   (* (point-in-r3-z1 point) (acl2-sine angle))))
+                 (* (point-in-r3-z1 point) (acl2-sine angle))))
        (equal (aref2 :fake-name (rotation-about-witness angle point) 0 2)
               (+ (* (point-in-r3-x1 point) (point-in-r3-z1 point) (- 1 (acl2-cosine angle)))
-                   (* (point-in-r3-y1 point) (acl2-sine angle))))
+                 (* (point-in-r3-y1 point) (acl2-sine angle))))
        (equal (aref2 :fake-name (rotation-about-witness angle point) 1 0)
               (+ (* (point-in-r3-y1 point) (point-in-r3-x1 point) (- 1 (acl2-cosine angle)))
-                   (* (point-in-r3-z1 point) (acl2-sine angle))))
+                 (* (point-in-r3-z1 point) (acl2-sine angle))))
        (equal (aref2 :fake-name (rotation-about-witness angle point) 1 1)
               (+ (acl2-cosine angle)
-                   (* (point-in-r3-y1 point) (point-in-r3-y1 point) (- 1 (acl2-cosine angle)))))
+                 (* (point-in-r3-y1 point) (point-in-r3-y1 point) (- 1 (acl2-cosine angle)))))
        (equal (aref2 :fake-name (rotation-about-witness angle point) 1 2)
               (- (* (point-in-r3-y1 point) (point-in-r3-z1 point) (- 1 (acl2-cosine angle)))
-                   (* (point-in-r3-x1 point) (acl2-sine angle))))
+                 (* (point-in-r3-x1 point) (acl2-sine angle))))
        (equal (aref2 :fake-name (rotation-about-witness angle point) 2 0)
               (- (* (point-in-r3-z1 point) (point-in-r3-x1 point) (- 1 (acl2-cosine angle)))
-                   (* (point-in-r3-y1 point) (acl2-sine angle))))
+                 (* (point-in-r3-y1 point) (acl2-sine angle))))
        (equal (aref2 :fake-name (rotation-about-witness angle point) 2 1)
               (+ (* (point-in-r3-z1 point) (point-in-r3-y1 point) (- 1 (acl2-cosine angle)))
-                   (* (point-in-r3-x1 point) (acl2-sine angle))))
+                 (* (point-in-r3-x1 point) (acl2-sine angle))))
        (equal (aref2 :fake-name (rotation-about-witness angle point) 2 2)
               (+ (acl2-cosine angle)
-                   (* (point-in-r3-z1 point) (point-in-r3-z1 point) (- 1 (acl2-cosine angle)))))
+                 (* (point-in-r3-z1 point) (point-in-r3-z1 point) (- 1 (acl2-cosine angle)))))
        )
   :hints (("Goal"
            :in-theory (enable aref2)
@@ -81,7 +81,7 @@
 (defthmd witness-not-in-x-coord-sequence-1
   (and (realp (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1))
        (realp (acl2-sqrt (- 1 (* (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1)
-                                  (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1)))))
+                                 (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1)))))
        (<= -1 (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1))
        (<= (exists-in-interval-but-not-in-x-coord-sequence-witness -1 1) 1))
   :hints (("goal"
@@ -558,7 +558,7 @@
 
   (local (include-book "arithmetic-5/top" :dir :system))
 
-  (defthmd r3-rotationp-r-theta
+  (defthmd r3-rotationp-r-theta-1
     (implies (realp angle)
              (equal (r3-m-determinant (rotation-about-witness angle (point-on-s2-not-d)))
                     1))
@@ -575,6 +575,1245 @@
              :in-theory (e/d (r3-m-determinant header default dimensions rotation-about-witness) (point-on-s2-not-d acl2-sqrt point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 sin**2+cos**2 aref2))
              )))
   )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-10
+    (implies (and (realp angle)
+                  (point-in-r3 p))
+             (r3-matrixp (rotation-about-witness angle p)))
+    :hints (("Goal"
+             :use ((:instance r3-rotationp-r-theta-8)
+                   (:instance rotation-about-witness-values (angle angle) (point p)))
+             :in-theory (e/d (header dimensions default array2p) (aref2))
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-matrixp-r3-m-inverse
+    (implies (r3-matrixp m)
+             (r3-matrixp (r3-m-inverse m)))
+    :hints (("Goal"
+             :use ((:instance r3-m-inverse-= (m m)))
+             :in-theory (e/d (array2p) (aref2 r3-m-inverse-=))
+             )))
+
+  (defthmd r3-matrixp-m-trans
+    (implies (r3-matrixp m)
+             (r3-matrixp (m-trans m))))
+
+  (defthmd m-trans-values
+    (implies (r3-matrixp m)
+             (and (equal (aref2 :fake-name (m-trans m) 0 0)
+                         (aref2 :fake-name m 0 0))
+                  (equal (aref2 :fake-name (m-trans m) 0 1)
+                         (aref2 :fake-name m 1 0))
+                  (equal (aref2 :fake-name (m-trans m) 0 2)
+                         (aref2 :fake-name m 2 0))
+                  (equal (aref2 :fake-name (m-trans m) 1 0)
+                         (aref2 :fake-name m 0 1))
+                  (equal (aref2 :fake-name (m-trans m) 1 1)
+                         (aref2 :fake-name m 1 1))
+                  (equal (aref2 :fake-name (m-trans m) 1 2)
+                         (aref2 :fake-name m 2 1))
+                  (equal (aref2 :fake-name (m-trans m) 2 0)
+                         (aref2 :fake-name m 0 2))
+                  (equal (aref2 :fake-name (m-trans m) 2 1)
+                         (aref2 :fake-name m 1 2))
+                  (equal (aref2 :fake-name (m-trans m) 2 2)
+                         (aref2 :fake-name m 2 2)))))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-lemma1
+    (iff (equal (+ (* s s) (* c c)) 1)
+         (equal (* s s) (- 1 (* c c)))))
+
+  (defthmd r3-rotationp-r-theta-11-1-lemma2
+    (equal (- a (* a c)) (* a (- 1 c))))
+
+  (defthmd r3-rotationp-r-theta-11-1-lemma3
+    (equal (+ (* c a) (* b a))
+           (+ (* a (+ b c)))))
+
+  (defthmd r3-rotationp-r-theta-11-1-lemma4
+    (implies (point-in-r3 p)
+             (and (realp (point-in-r3-x1 p))
+                  (realp (point-in-r3-y1 p))
+                  (realp (point-in-r3-z1 p)))))
+  )
+
+;; (encapsulate
+;;   ()
+
+;;   (local (include-book "arithmetic/top" :dir :system))
+
+;;   (defthmd r3-rotationp-r-theta-11-1-1-lemma1
+;;     (implies (and (realp x)
+;;                   (realp z)
+;;                   (realp s)
+;;                   (realp c)
+;;                   (equal (+ (* s s) (* c c)) 1)
+;;                   (equal (+ (* x x) (* z z)) 1))
+;;              (equal (- (* c
+;;                           (+ c (* z z (- 1 c))))
+;;                        (* (* x s)
+;;                           (- (* x s))))
+;;                     (+ (* x x) (* c z z))))
+;;     :hints (("Goal"
+;;             :use ((:instance r3-rotationp-r-theta-11-1-lemma2
+;;                              (a (* c c)) (c (* z z)))
+;;                   (:instance r3-rotationp-r-theta-11-1-lemma3 (c (* c c)) (a (* x x)) (b (* s s)))
+;;                   (:instance r3-rotationp-r-theta-11-1-lemma1 (s x) (c z)))
+;;             ))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-1-lemma1
+    (implies (and (realp x)
+                  (realp z)
+                  (realp s)
+                  (realp c)
+                  (equal (+ (* s s) (* c c)) 1)
+                  (equal (+ (* x x) (* z z)) 1))
+             (equal (- (* c
+                          (+ c (* z z (- 1 c))))
+                       (* (* x s)
+                          (- (* x s))))
+                    (+ c (* x x (- 1 c)))))
+    :hints (("Goal"
+            :use ((:instance r3-rotationp-r-theta-11-1-lemma2
+                             (a (* c c)) (c (* z z)))
+                  (:instance r3-rotationp-r-theta-11-1-lemma3 (c (* c c)) (a (* x x)) (b (* s s)))
+                  (:instance r3-rotationp-r-theta-11-1-lemma1 (s x) (c z)))
+             ))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-1-lemma2
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 1 1)
+                         (+ (acl2-cosine angle)
+                            (* (point-in-r3-y1 p) (point-in-r3-y1 p) (- 1 (acl2-cosine angle)))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 1 2)
+                         (- (* (point-in-r3-y1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-x1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 2 1)
+                         (+ (* (point-in-r3-z1 p) (point-in-r3-y1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-x1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 2 2)
+                         (+ (acl2-cosine angle)
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle))))))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           0 0)
+                    (- (* (acl2-cosine angle)
+                          (+ (acl2-cosine angle) (* (point-in-r3-z1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))))
+                       (* (* (point-in-r3-x1 p) (acl2-sine angle))
+                          (- (* (point-in-r3-x1 p) (acl2-sine angle)))))))
+    :hints (("Goal"
+             :use ((:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   )
+             :in-theory (e/d () (point-in-r3 r3-matrixp point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 m-trans rotation-about-witness r3-m-determinant point-on-s2-not-d acl2-sqrt sin**2+cos**2 acl2-sqrt r3-m-inverse aref2 aref2-m-trans r3-m-inverse-=)
+                             )))
+    ))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-1
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                         1))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           0 0)
+                    (AREF2 :FAKE-NAME
+                           (ROTATION-ABOUT-WITNESS ANGLE P)
+                           0 0)))
+    :hints (("Goal"
+             :use ((:instance r3-rotationp-r-theta-11-1-1-lemma1
+                              (x (point-in-r3-x1 p))
+                              (z (point-in-r3-z1 p))
+                              (s (acl2-sine angle))
+                              (c (acl2-cosine angle)))
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-matrixp-m-trans (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance m-trans-values (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   (:instance r3-rotationp-r-theta-8 (angle angle))
+                   (:instance rotation-about-witness-values (angle angle) (point p))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-1-lemma2 (angle angle) (p p))
+                   )
+             :in-theory nil
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-2-lemma1
+    (implies (and (realp x)
+                  (realp z)
+                  (realp s)
+                  (realp c)
+                  (equal (+ (* s s) (* c c)) 1)
+                  (equal (+ (* x x) (* z z)) 1))
+             (equal (- (* (* (* x z) (- 1 c))
+                          (* x s))
+                       (* (+ c (* z z (- 1 c)))
+                          (- (* z s))))
+                    (* z s)))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-2-lemma2
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 0 1)
+                         (- (* (point-in-r3-x1 p) (point-in-r3-y1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-z1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 0 2)
+                         (+ (* (point-in-r3-x1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-y1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 2 1)
+                         (+ (* (point-in-r3-z1 p) (point-in-r3-y1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-x1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 2 2)
+                         (+ (acl2-cosine angle)
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle))))))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           0 1)
+                    (- (* (* (* (point-in-r3-x1 p) (point-in-r3-z1 p)) (- 1 (acl2-cosine angle)))
+                          (* (point-in-r3-x1 p) (acl2-sine angle)))
+                       (* (+ (acl2-cosine angle) (* (point-in-r3-z1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle))))
+                          (- (* (point-in-r3-z1 p) (acl2-sine angle)))))))
+    :hints (("Goal"
+             :use ((:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   )
+             :in-theory (e/d () (point-in-r3 r3-matrixp point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 m-trans rotation-about-witness r3-m-determinant point-on-s2-not-d acl2-sqrt sin**2+cos**2 acl2-sqrt r3-m-inverse aref2 aref2-m-trans r3-m-inverse-=)
+                             )))
+    ))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-2
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                         1))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           0 1)
+                    (AREF2 :FAKE-NAME
+                           (ROTATION-ABOUT-WITNESS ANGLE P)
+                           1 0)))
+    :hints (("Goal"
+             :use ((:instance r3-rotationp-r-theta-11-1-2-lemma1
+                              (x (point-in-r3-x1 p))
+                              (z (point-in-r3-z1 p))
+                              (s (acl2-sine angle))
+                              (c (acl2-cosine angle)))
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-matrixp-m-trans (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance m-trans-values (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   (:instance r3-rotationp-r-theta-8 (angle angle))
+                   (:instance rotation-about-witness-values (angle angle) (point p))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-2-lemma2 (angle angle) (p p))
+                   )
+             :in-theory nil
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-3-lemma1
+    (implies (and (realp x)
+                  (realp z)
+                  (realp s)
+                  (realp c)
+                  (equal (+ (* s s) (* c c)) 1)
+                  (equal (+ (* x x) (* z z)) 1))
+             (equal (- (* (- (* z s))
+                          (- (* x s)))
+                       (* c (* x z (- 1 c))))
+                    (* z x (- 1 c))))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-3-lemma2
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 0 1)
+                         (- (* (point-in-r3-x1 p) (point-in-r3-y1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-z1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 0 2)
+                         (+ (* (point-in-r3-x1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-y1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 1 1)
+                         (+ (acl2-cosine angle)
+                            (* (point-in-r3-y1 p) (point-in-r3-y1 p) (- 1 (acl2-cosine angle)))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 1 2)
+                         (- (* (point-in-r3-y1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-x1 p) (acl2-sine angle)))))
+
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           0 2)
+                    (- (* (- (* (point-in-r3-z1 p) (acl2-sine angle)))
+                          (- (* (point-in-r3-x1 p) (acl2-sine angle))))
+                       (* (acl2-cosine angle) (* (point-in-r3-x1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))))))
+    :hints (("Goal"
+             :use ((:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   )
+             :in-theory (e/d () (point-in-r3 r3-matrixp point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 m-trans rotation-about-witness r3-m-determinant point-on-s2-not-d acl2-sqrt sin**2+cos**2 acl2-sqrt r3-m-inverse aref2 aref2-m-trans r3-m-inverse-=)
+                             )))
+    ))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-3
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                         1))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           0 2)
+                    (AREF2 :FAKE-NAME
+                           (ROTATION-ABOUT-WITNESS ANGLE P)
+                           2 0)))
+    :hints (("Goal"
+             :use ((:instance r3-rotationp-r-theta-11-1-3-lemma1
+                              (x (point-in-r3-x1 p))
+                              (z (point-in-r3-z1 p))
+                              (s (acl2-sine angle))
+                              (c (acl2-cosine angle)))
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-matrixp-m-trans (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance m-trans-values (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   (:instance r3-rotationp-r-theta-8 (angle angle))
+                   (:instance rotation-about-witness-values (angle angle) (point p))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-3-lemma2 (angle angle) (p p))
+                   )
+             :in-theory nil
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-4-lemma1
+    (implies (and (realp x)
+                  (realp z)
+                  (realp s)
+                  (realp c)
+                  (equal (+ (* s s) (* c c)) 1)
+                  (equal (+ (* x x) (* z z)) 1))
+             (equal (- (* (- (* x s))
+                          (* z x (- 1 c)))
+                       (* (+ c (* z z (- 1 c)))
+                          (* z s)))
+                    (- (* z s))))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-4-lemma2
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 1 0)
+                         (+ (* (point-in-r3-y1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-z1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 1 2)
+                         (- (* (point-in-r3-y1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-x1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 2 0)
+                         (- (* (point-in-r3-z1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-y1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 2 2)
+                         (+ (acl2-cosine angle)
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle))))))
+
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           1 0)
+                    (- (* (- (* (point-in-r3-x1 p) (acl2-sine angle)))
+                          (* (point-in-r3-z1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle))))
+                       (* (+ (acl2-cosine angle) (* (point-in-r3-z1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle))))
+                          (* (point-in-r3-z1 p) (acl2-sine angle))))))
+    :hints (("Goal"
+             :use ((:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   )
+             :in-theory (e/d () (point-in-r3 r3-matrixp point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 m-trans rotation-about-witness r3-m-determinant point-on-s2-not-d acl2-sqrt sin**2+cos**2 acl2-sqrt r3-m-inverse aref2 aref2-m-trans r3-m-inverse-=)
+                             )))
+    ))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-4
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                         1))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           1 0)
+                    (AREF2 :FAKE-NAME
+                           (ROTATION-ABOUT-WITNESS ANGLE P)
+                           0 1)))
+    :hints (("Goal"
+             :use ((:instance r3-rotationp-r-theta-11-1-4-lemma1
+                              (x (point-in-r3-x1 p))
+                              (z (point-in-r3-z1 p))
+                              (s (acl2-sine angle))
+                              (c (acl2-cosine angle)))
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-matrixp-m-trans (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance m-trans-values (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   (:instance r3-rotationp-r-theta-8 (angle angle))
+                   (:instance rotation-about-witness-values (angle angle) (point p))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-4-lemma2 (angle angle) (p p))
+                   )
+             :in-theory nil
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-5-lemma1
+    (implies (and (realp x)
+                  (realp z)
+                  (realp s)
+                  (realp c)
+                  (equal (+ (* s s) (* c c)) 1)
+                  (equal (+ (* x x) (* z z)) 1))
+             (equal (- (* (+ c (* x x (- 1 c)))
+                          (+ c (* z z (- 1 c))))
+                       (* (* z x (- 1 c))
+                          (* x z (- 1 c))))
+                    c))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-5-lemma2
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 0 0)
+                         (+ (acl2-cosine angle)
+                            (* (point-in-r3-x1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle)))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 2 2)
+                         (+ (acl2-cosine angle)
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 0 2)
+                         (+ (* (point-in-r3-x1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-y1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 2 0)
+                         (- (* (point-in-r3-z1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-y1 p) (acl2-sine angle)))))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           1 1)
+                    (- (* (+ (acl2-cosine angle) (* (point-in-r3-x1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle))))
+                          (+ (acl2-cosine angle) (* (point-in-r3-z1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))))
+                       (* (* (point-in-r3-z1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle)))
+                          (* (point-in-r3-x1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))))))
+    :hints (("Goal"
+             :use ((:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   )
+             :in-theory (e/d () (point-in-r3 r3-matrixp point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 m-trans rotation-about-witness r3-m-determinant point-on-s2-not-d acl2-sqrt sin**2+cos**2 acl2-sqrt r3-m-inverse aref2 aref2-m-trans r3-m-inverse-=)
+                             )))
+    ))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-5
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                         1))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           1 1)
+                    (AREF2 :FAKE-NAME
+                           (ROTATION-ABOUT-WITNESS ANGLE P)
+                           1 1)))
+    :hints (("Goal"
+             :use ((:instance r3-rotationp-r-theta-11-1-5-lemma1
+                              (x (point-in-r3-x1 p))
+                              (z (point-in-r3-z1 p))
+                              (s (acl2-sine angle))
+                              (c (acl2-cosine angle)))
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-matrixp-m-trans (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance m-trans-values (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   (:instance r3-rotationp-r-theta-8 (angle angle))
+                   (:instance rotation-about-witness-values (angle angle) (point p))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-5-lemma2 (angle angle) (p p))
+                   )
+             :in-theory nil
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-6-lemma1
+    (implies (and (realp x)
+                  (realp z)
+                  (realp s)
+                  (realp c)
+                  (equal (+ (* s s) (* c c)) 1)
+                  (equal (+ (* x x) (* z z)) 1))
+             (equal (- (* (* x z (- 1 c)) (* z s))
+                       (* (- (* x s)) (+ c (* x x (- 1 c)))))
+                    (* x s)))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-6-lemma2
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 0 0)
+                         (+ (acl2-cosine angle)
+                            (* (point-in-r3-x1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle)))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 0 2)
+                         (+ (* (point-in-r3-x1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-y1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 1 0)
+                         (+ (* (point-in-r3-y1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-z1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 1 2)
+                         (- (* (point-in-r3-y1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-x1 p) (acl2-sine angle)))))
+
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           1 2)
+                    (- (* (* (point-in-r3-x1 p) (point-in-r3-z1 p) (- 1 (acl2-cosine angle)))
+                          (* (point-in-r3-z1 p) (acl2-sine angle)))
+                       (* (- (* (point-in-r3-x1 p) (acl2-sine angle)))
+                          (+ (acl2-cosine angle) (* (point-in-r3-x1 p)
+                                                    (point-in-r3-x1 p)
+                                                    (- 1 (acl2-cosine angle))))))
+                    ))
+    :hints (("Goal"
+             :use ((:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   )
+             :in-theory (e/d () (point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 m-trans rotation-about-witness r3-m-determinant point-on-s2-not-d acl2-sqrt sin**2+cos**2 acl2-sqrt r3-m-inverse aref2 aref2-m-trans r3-m-inverse-=))
+             )
+            ))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-6
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                         1))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           1 2)
+                    (AREF2 :FAKE-NAME
+                           (ROTATION-ABOUT-WITNESS ANGLE P)
+                           2 1)))
+    :hints (("Goal"
+             :use ((:instance r3-rotationp-r-theta-11-1-6-lemma1
+                              (x (point-in-r3-x1 p))
+                              (z (point-in-r3-z1 p))
+                              (s (acl2-sine angle))
+                              (c (acl2-cosine angle)))
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-matrixp-m-trans (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance m-trans-values (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   (:instance r3-rotationp-r-theta-8 (angle angle))
+                   (:instance rotation-about-witness-values (angle angle) (point p))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-6-lemma2 (angle angle) (p p))
+                   )
+             :in-theory nil
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-7-lemma1
+    (implies (and (realp x)
+                  (realp z)
+                  (realp s)
+                  (realp c)
+                  (equal (+ (* s s) (* c c)) 1)
+                  (equal (+ (* x x) (* z z)) 1))
+             (equal (- (* (* z s) (* x s))
+                       (* (* z x) (- 1 c) c))
+                    (* x z (- 1 c))))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-7-lemma2
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 1 0)
+                         (+ (* (point-in-r3-y1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-z1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 1 1)
+                         (+ (acl2-cosine angle)
+                            (* (point-in-r3-y1 p) (point-in-r3-y1 p) (- 1 (acl2-cosine angle)))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 2 0)
+                         (- (* (point-in-r3-z1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-y1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 2 1)
+                         (+ (* (point-in-r3-z1 p) (point-in-r3-y1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-x1 p) (acl2-sine angle)))))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           2 0)
+                    (- (* (* (point-in-r3-z1 p) (acl2-sine angle))
+                          (* (point-in-r3-x1 p) (acl2-sine angle)))
+                       (* (* (point-in-r3-z1 p) (point-in-r3-x1 p)) (- 1 (acl2-cosine angle))
+                          (acl2-cosine angle)))
+                    ))
+    :hints (("Goal"
+             :use ((:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   )
+             :in-theory (e/d () (point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 m-trans rotation-about-witness r3-m-determinant point-on-s2-not-d acl2-sqrt sin**2+cos**2 acl2-sqrt r3-m-inverse aref2 aref2-m-trans r3-m-inverse-=))
+             )
+            ))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-7
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                         1))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           2 0)
+                    (AREF2 :FAKE-NAME
+                           (ROTATION-ABOUT-WITNESS ANGLE P)
+                           0 2)))
+    :hints (("Goal"
+             :use ((:instance r3-rotationp-r-theta-11-1-7-lemma1
+                              (x (point-in-r3-x1 p))
+                              (z (point-in-r3-z1 p))
+                              (s (acl2-sine angle))
+                              (c (acl2-cosine angle)))
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-matrixp-m-trans (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance m-trans-values (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   (:instance r3-rotationp-r-theta-8 (angle angle))
+                   (:instance rotation-about-witness-values (angle angle) (point p))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-7-lemma2 (angle angle) (p p))
+                   )
+             :in-theory nil
+             )))
+  )
+
+;; (encapsulate
+;;   ()
+
+;;   (local (include-book "arithmetic/top" :dir :system))
+
+;;   (defthmd r3-rotationp-r-theta-11-1-8
+;;     (implies (and (realp angle)
+;;                   (point-in-r3 p)
+;;                   (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+;;                   (equal (point-in-r3-y1 p) 0)
+;;                   (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+;;                             (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+;;                          1))
+;;              (EQUAL (AREF2 :FAKE-NAME
+;;                            (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+;;                            2 0)
+;;                     (AREF2 :FAKE-NAME
+;;                            (ROTATION-ABOUT-WITNESS ANGLE P)
+;;                            0 2)))
+;;     :hints (("Goal"
+;;              :use ((:instance r3-rotationp-r-theta-11-1-8-lemma1
+;;                               (x (point-in-r3-x1 p))
+;;                               (z (point-in-r3-z1 p))
+;;                               (s (acl2-sine angle))
+;;                               (c (acl2-cosine angle)))
+;;                    (:instance r3-rotationp-r-theta-11-1-8-lemma3
+;;                              (x (point-in-r3-x1 p))
+;;                              (z (point-in-r3-z1 p))
+;;                              (s (acl2-sine angle))
+;;                              (c (acl2-cosine angle)))
+;;                    (:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+;;                    (:instance sin**2+cos**2 (x angle))
+;;                    (:instance r3-matrixp-m-trans (m (rotation-about-witness angle p)))
+;;                    (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+;;                    (:instance m-trans-values (m (rotation-about-witness angle p)))
+;;                    (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+;;                    (:instance r3-rotationp-r-theta-8 (angle angle))
+;;                    (:instance rotation-about-witness-values (angle angle) (point p))
+;;                    (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+;;                    (:instance r3-rotationp-r-theta-11-1-8-lemma2 (angle angle) (p p))
+;;                    )
+;;              :in-theory nil
+;;              )))
+;;   )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-8-lemma1
+    (implies (and (realp x)
+                  (realp z)
+                  (realp s)
+                  (realp c)
+                  (equal (+ (* s s) (* c c)) 1)
+                  (equal (+ (* x x) (* z z)) 1))
+             (equal (- (* (- (* z s)) (* z x) (- 1 c))
+                       (* (* x s) (+ c (* x x (- 1 c)))))
+                    (- (* x s)))))
+
+  (defthmd r3-rotationp-r-theta-11-1-8-lemma3
+    (implies (and (realp x)
+                  (realp z)
+                  (realp s)
+                  (realp c))
+             (equal (- (* (- (* z s)) (* z x) (- 1 c))
+                       (* (* x s) (+ c (* x x (- 1 c)))))
+                    (+ (- (* z z s x))
+                       (* z z s x c)
+                       (- (* x s c))
+                       (- (* x x x s))
+                       (* x x x s c)))))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-8-lemma2
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 0 0)
+                         (+ (acl2-cosine angle)
+                            (* (point-in-r3-x1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle)))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 2 1)
+                         (+ (* (point-in-r3-z1 p) (point-in-r3-y1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-x1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 2 0)
+                         (- (* (point-in-r3-z1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-y1 p) (acl2-sine angle))))
+                  (equal (aref2 :fake-name (rotation-about-witness angle p) 0 1)
+                         (- (* (point-in-r3-x1 p) (point-in-r3-y1 p) (- 1 (acl2-cosine angle)))
+                            (* (point-in-r3-z1 p) (acl2-sine angle)))))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           2 1)
+                    (+ (- (* (point-in-r3-z1 p) (point-in-r3-z1 p) (acl2-sine angle) (point-in-r3-x1 p)))
+                       (* (point-in-r3-z1 p) (point-in-r3-z1 p) (acl2-sine angle) (point-in-r3-x1 p)
+                          (acl2-cosine angle))
+                       (- (* (point-in-r3-x1 p) (acl2-sine angle) (acl2-cosine angle)))
+                       (- (* (point-in-r3-x1 p) (point-in-r3-x1 p) (point-in-r3-x1 p) (acl2-sine angle)))
+                       (* (point-in-r3-x1 p) (point-in-r3-x1 p) (point-in-r3-x1 p) (acl2-sine angle)
+                          (acl2-cosine angle)))
+                    ))
+    :hints (("Goal"
+             :use ((:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   )
+             :in-theory (e/d () (point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 m-trans rotation-about-witness r3-m-determinant point-on-s2-not-d acl2-sqrt sin**2+cos**2 acl2-sqrt r3-m-inverse aref2 aref2-m-trans r3-m-inverse-=))
+             )
+            ))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-8
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                         1))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           2 1)
+                    (AREF2 :FAKE-NAME
+                           (ROTATION-ABOUT-WITNESS ANGLE P)
+                           1 2)))
+    :hints (("Goal"
+             :use ((:instance r3-rotationp-r-theta-11-1-8-lemma1
+                              (x (point-in-r3-x1 p))
+                              (z (point-in-r3-z1 p))
+                              (s (acl2-sine angle))
+                              (c (acl2-cosine angle)))
+                   (:instance r3-rotationp-r-theta-11-1-8-lemma3
+                             (x (point-in-r3-x1 p))
+                             (z (point-in-r3-z1 p))
+                             (s (acl2-sine angle))
+                             (c (acl2-cosine angle)))
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-matrixp-m-trans (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance m-trans-values (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   (:instance r3-rotationp-r-theta-8 (angle angle))
+                   (:instance rotation-about-witness-values (angle angle) (point p))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-8-lemma2 (angle angle) (p p))
+                   )
+             :in-theory nil
+             )))
+  )
+
+;; (encapsulate
+;;   ()
+
+;;   (local (include-book "arithmetic/top" :dir :system))
+
+;;   (defthmd r3-rotationp-r-theta-11-1-8
+;;     (implies (and (realp angle)
+;;                   (point-in-r3 p)
+;;                   (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+;;                   (equal (point-in-r3-y1 p) 0)
+;;                   (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+;;                             (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+;;                          1))
+;;              (EQUAL (AREF2 :FAKE-NAME
+;;                            (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+;;                            2 0)
+;;                     (AREF2 :FAKE-NAME
+;;                            (ROTATION-ABOUT-WITNESS ANGLE P)
+;;                            0 2)))
+;;     :hints (("Goal"
+;;              :use ((:instance r3-rotationp-r-theta-11-1-8-lemma1
+;;                               (x (point-in-r3-x1 p))
+;;                               (z (point-in-r3-z1 p))
+;;                               (s (acl2-sine angle))
+;;                               (c (acl2-cosine angle)))
+;;                    (:instance r3-rotationp-r-theta-11-1-8-lemma3
+;;                              (x (point-in-r3-x1 p))
+;;                              (z (point-in-r3-z1 p))
+;;                              (s (acl2-sine angle))
+;;                              (c (acl2-cosine angle)))
+;;                    (:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+;;                    (:instance sin**2+cos**2 (x angle))
+;;                    (:instance r3-matrixp-m-trans (m (rotation-about-witness angle p)))
+;;                    (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+;;                    (:instance m-trans-values (m (rotation-about-witness angle p)))
+;;                    (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+;;                    (:instance r3-rotationp-r-theta-8 (angle angle))
+;;                    (:instance rotation-about-witness-values (angle angle) (point p))
+;;                    (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+;;                    (:instance r3-rotationp-r-theta-11-1-8-lemma2 (angle angle) (p p))
+;;                    )
+;;              :in-theory nil
+;;              )))
+;;   )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-9-lemma1
+    (implies (and (realp x)
+                  (realp z)
+                  (realp s)
+                  (realp c)
+                  (equal (* s s) (- 1 (* c c)))
+                  (equal (* x x) (- 1 (* z z))))
+             (equal (- (* (+ c (* x x (- 1 c))) c)
+                       (* (* z s) (- (* z s))))
+                    (+ (* c x x) (* z z))))
+    :hints (("Goal"
+             :use ((:instance r3-rotationp-r-theta-11-1-lemma2 (a (* c c)) (c (* x x)))
+                   (:instance r3-rotationp-r-theta-11-1-lemma3 (a (* z z)) (b (* c c)) (c (* s s)))
+                   (:instance r3-rotationp-r-theta-11-1-lemma1 (s s) (c c))
+                   (:instance r3-rotationp-r-theta-11-1-lemma1 (s z) (c x))
+                   ))
+            ("Subgoal 1"
+             :use((:instance r3-rotationp-r-theta-11-1-lemma2 (a (* c c)) (c (* x x)))
+                  (:instance r3-rotationp-r-theta-11-1-lemma3 (a (* z z)) (b (* c c)) (c (* s s)))
+                  (:instance r3-rotationp-r-theta-11-1-lemma1 (s s) (c c))
+                  (:instance r3-rotationp-r-theta-11-1-lemma1 (s z) (c x)))
+             )))
+
+  (defthmd r3-rotationp-r-theta-11-1-9-lemma2
+    (implies (and (realp x)
+                  (realp z)
+                  (realp s)
+                  (realp c)
+                  (equal (+ (* s s) (* c c)) 1)
+                  (equal (+ (* x x) (* z z)) 1))
+             (equal (- (* (+ c (* x x (- 1 c))) c)
+                       (* (* z s) (- (* z s))))
+                    (+ c (* z z) (- (* z z c)))))
+    :hints (("Goal"
+             :use ((:instance r3-rotationp-r-theta-11-1-9-lemma1)
+                   (:instance r3-rotationp-r-theta-11-1-lemma1 (s x) (c z)))
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11-1-9-lemma3
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                         1))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           2 2)
+                    (- (* (+ (acl2-cosine angle) (* (point-in-r3-x1 p) (point-in-r3-x1 p) (- 1 (acl2-cosine angle)))) (acl2-cosine angle))
+                       (* (* (point-in-r3-z1 p) (acl2-sine angle)) (- (* (point-in-r3-z1 p) (acl2-sine angle)))))))
+    :hints (("Goal"
+             :use ((:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance rotation-about-witness-values (angle angle) (point p))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   )
+             :in-theory (e/d () (point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 m-trans rotation-about-witness r3-m-determinant point-on-s2-not-d acl2-sqrt sin**2+cos**2 acl2-sqrt r3-m-inverse aref2 aref2-m-trans r3-m-inverse-=))
+             )))
+
+  (defthmd r3-rotationp-r-theta-11-1-9
+    (implies (and (realp angle)
+                  (point-in-r3 p)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                         1))
+             (EQUAL (AREF2 :FAKE-NAME
+                           (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                           2 2)
+                    (AREF2 :FAKE-NAME
+                           (ROTATION-ABOUT-WITNESS ANGLE P)
+                           2 2)))
+    :hints (("Goal"
+             :use ((:instance r3-rotationp-r-theta-11-1-9-lemma2
+                              (x (point-in-r3-x1 p))
+                              (z (point-in-r3-z1 p))
+                              (s (acl2-sine angle))
+                              (c (acl2-cosine angle)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance r3-matrixp-m-trans (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance m-trans-values (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-11-1-lemma4 (p p))
+                   (:instance r3-rotationp-r-theta-8 (angle angle))
+                   (:instance rotation-about-witness-values (angle angle) (point p))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-rotationp-r-theta-11-1-9-lemma3 (angle angle) (p p))
+                   )
+             :in-theory (e/d () (point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 m-trans rotation-about-witness r3-m-determinant point-on-s2-not-d acl2-sqrt sin**2+cos**2 acl2-sqrt r3-m-inverse aref2 aref2-m-trans r3-m-inverse-=))
+             )))
+  )
+
+(defthmd r3-rotationp-r-theta-11-1
+  (implies (and (realp angle)
+                (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                (point-in-r3 p)
+                (equal (point-in-r3-y1 p) 0)
+                (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                          (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                       1))
+           (and (EQUAL (AREF2 :FAKE-NAME
+                              (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                              2 2)
+                       (AREF2 :FAKE-NAME
+                              (ROTATION-ABOUT-WITNESS ANGLE P)
+                              2 2))
+                (EQUAL (AREF2 :FAKE-NAME
+                              (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                              2 1)
+                       (AREF2 :FAKE-NAME
+                              (ROTATION-ABOUT-WITNESS ANGLE P)
+                              1 2))
+                (EQUAL (AREF2 :FAKE-NAME
+                              (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                              2 0)
+                       (AREF2 :FAKE-NAME
+                              (ROTATION-ABOUT-WITNESS ANGLE P)
+                              0 2))
+                (EQUAL (AREF2 :FAKE-NAME
+                              (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                              1 2)
+                       (AREF2 :FAKE-NAME
+                              (ROTATION-ABOUT-WITNESS ANGLE P)
+                              2 1))
+                (EQUAL (AREF2 :FAKE-NAME
+                              (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                              1 1)
+                       (AREF2 :FAKE-NAME
+                              (ROTATION-ABOUT-WITNESS ANGLE P)
+                              1 1))
+                (EQUAL (AREF2 :FAKE-NAME
+                              (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                              1 0)
+                       (AREF2 :FAKE-NAME
+                              (ROTATION-ABOUT-WITNESS ANGLE P)
+                              0 1))
+                (EQUAL (AREF2 :FAKE-NAME
+                              (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                              0 2)
+                       (AREF2 :FAKE-NAME
+                              (ROTATION-ABOUT-WITNESS ANGLE P)
+                              2 0))
+                (EQUAL (AREF2 :FAKE-NAME
+                              (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                              0 1)
+                       (AREF2 :FAKE-NAME
+                              (ROTATION-ABOUT-WITNESS ANGLE P)
+                              1 0))
+                (EQUAL (AREF2 :FAKE-NAME
+                              (R3-M-INVERSE (ROTATION-ABOUT-WITNESS ANGLE P))
+                              0 0)
+                       (AREF2 :FAKE-NAME
+                              (ROTATION-ABOUT-WITNESS ANGLE P)
+                              0 0))
+                ))
+  :hints (("Goal"
+           :use ((:instance r3-rotationp-r-theta-11-1-9)
+                 (:instance r3-rotationp-r-theta-11-1-8)
+                 (:instance r3-rotationp-r-theta-11-1-7)
+                 (:instance r3-rotationp-r-theta-11-1-6)
+                 (:instance r3-rotationp-r-theta-11-1-5)
+                 (:instance r3-rotationp-r-theta-11-1-4)
+                 (:instance r3-rotationp-r-theta-11-1-3)
+                 (:instance r3-rotationp-r-theta-11-1-2)
+                 (:instance r3-rotationp-r-theta-11-1-1)
+                 )
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-r-theta-11
+    (implies (and (realp angle)
+                  (equal (r3-m-determinant (rotation-about-witness angle p)) 1)
+                  (point-in-r3 p)
+                  (equal (point-in-r3-y1 p) 0)
+                  (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                         1))
+             (m-= (r3-m-inverse (rotation-about-witness angle p))
+                  (m-trans (rotation-about-witness angle p))))
+    :hints (("Goal"
+             :use ((:instance sin**2+cos**2 (x angle))
+                   (:instance r3-rotationp-r-theta-8)
+                   (:instance rotation-about-witness-values (angle angle) (point p))
+                   (:instance r3-rotationp-r-theta-10 (angle angle) (p p))
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-about-witness angle p)))
+                   (:instance r3-matrixp-m-trans (m (rotation-about-witness angle p)))
+                   (:instance r3-m-inverse-= (m (rotation-about-witness angle p)))
+                   (:instance m-trans-values (m (rotation-about-witness angle p)))
+                   (:instance r3-rotationp-r-theta-11-1)
+                   )
+             :in-theory (e/d (m-= header dimensions alist2p) (point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 m-trans rotation-about-witness r3-m-determinant point-on-s2-not-d acl2-sqrt sin**2+cos**2 acl2-sqrt r3-m-inverse aref2 aref2-m-trans r3-m-inverse-=))
+             )))
+  )
+
+(defthmd r3-rotationp-r-theta
+  (implies (realp angle)
+           (r3-rotationp (rotation-about-witness angle (point-on-s2-not-d))))
+  :hints (("Goal"
+           :use ((:instance r3-rotationp-r-theta-11 (angle angle) (p (point-on-s2-not-d)))
+                 (:instance r3-rotationp-r-theta-10 (angle angle) (p (point-on-s2-not-d)))
+                 (:instance r3-rotationp-r-theta-2 (point (point-on-s2-not-d)))
+                 (:instance r3-rotationp-r-theta-5 (point (point-on-s2-not-d)))
+                 (:instance exists-point-on-s2-not-d-2)
+                 (:instance s2-def-p (point (point-on-s2-not-d)))
+                 (:instance r3-rotationp (m (rotation-about-witness angle (point-on-s2-not-d))))
+                 (:instance r3-rotationp-r-theta-1 (angle angle)))
+           :in-theory nil
+           )))
+
+
+-----------------
+
+
+
+
+
+
+
+
+
 
 (defthmd sine-is-0-in-0<pi=>x=0-1
   (implies (and (realp x)
