@@ -489,6 +489,388 @@
            :in-theory (disable aref2 m-= m-* r3-rotationp rotation-about-witness r3-matrixp)
            )))
 
+;;;;sin t = 0, cos t =1 => t=0 if t in [0,2*pi)
+
+
+(defthmd sine-is-0-in-0<2pi=>x=0orpi-1
+  (implies (and (realp x)
+                (< 0 x)
+                (< x (acl2-pi)))
+           (> (acl2-sine x) 0))
+  :hints (("Goal"
+           :use ((:instance sine-positive-in-0-pi/2 (x x))
+                 (:instance sine-positive-in-pi/2-pi (x x)))
+           )))
+
+;;is this true?
+
+(defthmd sine-is-0-in-0<2pi=>x=0orpi-2
+  (implies (and (realp x)
+                (<= 0 x)
+                (< x (acl2-pi))
+                (equal (acl2-sine x) 0))
+           (equal (* x x) 0))
+  :hints (("Goal"
+           :use ((:instance sine-is-0-in-0<2pi=>x=0orpi-1 (x x)))
+           )))
+
+(defthmd sine-is-0-in-0<2pi=>x=0orpi-3
+  (implies (and (realp x)
+                (< (acl2-pi) x)
+                (< x (* 2 (acl2-pi))))
+           (< (acl2-sine x) 0))
+  :hints (("Goal"
+           :use ((:instance sine-negative-in-pi-3pi/2 (x x))
+                 (:instance sine-negative-in-3pi/2-2pi (x x)))
+           )))
+
+;;is this true?
+
+(defthmd sine-is-0-in-0<2pi=>x=0orpi-4
+  (implies (and (realp x)
+                (<= (acl2-pi) x)
+                (equal (acl2-sine x) 0)
+                (< x (* 2 (acl2-pi))))
+           (equal (* x x) (* (acl2-pi) (acl2-pi))))
+  :hints (("Goal"
+           :use ((:instance sine-is-0-in-0<2pi=>x=0orpi-3 (x x)))
+           ))
+  )
+
+(defthmd sine-is-0-in-0<2pi=>x=0orpi-5
+  (implies (and (realp x)
+                (<= 0 x)
+                (equal (acl2-sine x) 0)
+                (< x (* 2 (acl2-pi))))
+           (or (equal (* x x) 0)
+               (equal (* x x) (* (acl2-pi) (acl2-pi)))))
+  :hints (("Goal"
+           :use ((:instance sine-is-0-in-0<2pi=>x=0orpi-2)
+                 (:instance sine-is-0-in-0<2pi=>x=0orpi-4))
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "nonstd/nsa/inverse-trig" :dir :system))
+
+  (defthmd cosine-is-1-in-0<2pi=>x=0-1
+    (implies (and (realp x)
+                  (<= 0 x)
+                  (equal (acl2-cosine x) 1)
+                  (<= x (acl2-pi)))
+             (equal (* x x) 0))
+    :hints (("Goal"
+             :cases ((equal x 0)
+                     (not (equal x 0)))
+             :use ((:instance cosine-positive-in-0-pi/2 (x x))
+                   (:instance cosine-pi/2)
+                   (:instance cosine-pi)
+                   (:instance cosine-negative-in-pi/2-pi (x x)))
+             )
+            ("Subgoal 1"
+             :use ((:instance cosine-is-1-1-on-domain (x1 0) (x2 x)))
+             :in-theory (enable inside-interval-p)
+             ))
+    )
+
+  (defthmd cosine-is-1-in-0<2pi=>x=0-5
+    (implies (and (realp x)
+                  (>= (acl2-pi) x)
+                  (>= x 0)
+                  (equal (acl2-cosine x) -1))
+             (equal (* x x) (* (acl2-pi) (acl2-pi))))
+    :hints (("Goal"
+             :cases ((equal x (acl2-pi))
+                     (not (equal x (acl2-pi))))
+             )
+            ("subgoal 1"
+             :use ((:instance cosine-is-1-1-on-domain (x1 (acl2-pi)) (x2 x))
+                   (:instance cosine-pi))
+             :in-theory (e/d (inside-interval-p) (cosine-pi))
+             )
+
+            ))
+  )
+
+(encapsulate
+  ()
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd cosine-is-1-in-0<2pi=>x=0-2
+    (implies (and (realp r)
+                  (> r x)
+                  (realp x)
+                  (>= r 0)
+                  (< r (* 2 x)))
+             (equal (mod r x) (- r x))))
+
+  (defthmd cosine-is-1-in-0<2pi=>x=0-3
+    (implies (and (realp r)
+                  (> r x)
+                  (realp x)
+                  (>= r 0)
+                  (< r (* 2 x)))
+             (and (equal (+ x (mod r x)) r)
+                  (> (mod r x) 0)
+                  (< (mod r x) x))))
+
+  (defthmd cosine-is-1-in-0<2pi=>x=0-4
+    (implies (and (realp x)
+                  (< (acl2-pi) x)
+                  (< x (* 2 (acl2-pi))))
+             (equal (acl2-cosine x)
+                    (- (acl2-cosine (mod x (acl2-pi))))))
+    :hints (("Goal"
+             :use ((:instance cosine-is-1-in-0<2pi=>x=0-3
+                              (r x) (x (acl2-pi)))
+                   (:instance cos-pi+x (x (mod x (acl2-pi)))))
+             ))
+    )
+
+  (defthmd cosine-is-1-in-0<2pi=>x=0-6
+    (implies (and (realp x)
+                  (>= x 0)
+                  (< x (* 2 (acl2-pi)))
+                  (equal (acl2-cosine x) 1))
+             (equal (* x x) 0))
+    :hints (("Goal"
+             :use ((:instance cosine-is-1-in-0<2pi=>x=0-1 (x x))
+                   (:instance cosine-is-1-in-0<2pi=>x=0-4 (x x))
+                   (:instance cosine-is-1-in-0<2pi=>x=0-3 (r x) (x (acl2-pi)))
+                   (:instance cosine-is-1-in-0<2pi=>x=0-5 (x (mod x (acl2-pi))))
+                   )
+             )))
+  )
+
+(defthmd sin=0-cos=1
+  (implies (and (realp x)
+                (>= x 0)
+                (< x (* 2 (acl2-pi)))
+                (equal (acl2-sine x) 0)
+                (equal (acl2-cosine x) 1))
+           (equal (* x x) 0))
+  :hints (("Goal"
+           :use ((:instance sine-is-0-in-0<2pi=>x=0orpi-5 (x x))
+                 (:instance cosine-is-1-in-0<2pi=>x=0-6 (x x)))
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd cos-2npi-n>=0-1
+    (implies (and (integerp n)
+                  (EQUAL (ACL2-COSINE (+ (* 2 (ACL2-PI))
+                                         (* 2 (ACL2-PI) (+ N -1))))
+                         1))
+             (EQUAL (ACL2-COSINE (* 2 (ACL2-PI) N)) 1))
+    :hints (("Goal"
+             :in-theory (disable COSINE-OF-SUMS COS-2PI+X COSINE-2X)
+             ))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (local
+   (defun induction-hint (n)
+     (if (and (integerp n)
+              (< 0 n))
+         (1+ (induction-hint (+ n -1)))
+       1)))
+
+  (local
+   (defthm *-x-0
+     (equal (* x 0) 0)))
+
+  (local
+   (defthm cos-2npi-n>=0
+     (implies (and (integerp n)
+                   (<= 0 n))
+              (equal (acl2-cosine (* 2 (acl2-pi) n))
+                     1))
+     :hints (("Goal"
+              :induct (induction-hint n))
+             ("Subgoal *1/1"
+              :use ((:instance cos-2pi+x (x (* 2 (ACL2-PI) (+ N -1))))
+                    (:instance cos-2npi-n>=0-1 (n n)))
+              :in-theory nil
+              ))))
+
+  (defthm cos-2npi
+    (implies (integerp n)
+             (equal (acl2-cosine (* 2 (acl2-pi) n))
+                    1))
+    :hints (("Goal"
+             :cases ((< n 0)
+                     (= n 0)
+                     (> n 0)))
+            ("Subgoal 3"
+             :use ((:instance cos-uminus
+                              (x (* 2 (acl2-pi) n)))
+                   (:instance cos-2npi-n>=0 (n (- n))))
+             :in-theory (disable cos-uminus cos-2npi-n>=0 COSINE-2X))))
+
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+-------------
+;;is this true?
+
+(defthmd sine-is-0-in-0<2pi=>x=0orpi-2
+  (implies (and (realp x)
+                (<= 0 x)
+                (< x (acl2-pi))
+                (equal (acl2-sine x) 0))
+           (equal (* x x) 0))
+  :hints (("Goal"
+           :cases ((equal x 0)
+                   (not (equal x 0)))
+           :use ((:instance sine-is-0-in-0<2pi=>x=0orpi-1 (x x)))
+           )))
+
+(defthmd sine-is-0-in-0<2pi=>x=0orpi-3
+  (implies (and (realp x)
+                (< (acl2-pi) x)
+                (< x (* 2 (acl2-pi))))
+           (< (acl2-sine x) 0))
+  :hints (("Goal"
+           :use ((:instance sine-negative-in-pi-3pi/2 (x x))
+                 (:instance sine-negative-in-3pi/2-2pi (x x)))
+           )))
+
+;;is this true?
+
+(defthmd sine-is-0-in-0<2pi=>x=0orpi-4
+  (implies (and (realp x)
+                (<= (acl2-pi) x)
+                (equal (acl2-sine x) 0)
+                (< x (* 2 (acl2-pi))))
+           (equal (* x x) (* (acl2-pi) (acl2-pi))))
+  :hints (("Goal"
+           :use ((:instance sine-is-0-in-0<2pi=>x=0orpi-3 (x x)))
+                 ;(:instance sine-negative-in-3pi/2-2pi (x x)))
+           ))
+  ;:rule-classes nil
+  )
+
+(defthmd sine-is-0-in-0<2pi=>x=0orpi-5
+  (implies (and (realp x)
+                (<= 0 x)
+                (equal (acl2-sine x) 0)
+                (< x (* 2 (acl2-pi))))
+           (or (equal (* x x) 0)
+               (equal (* x x) (* (acl2-pi) (acl2-pi)))))
+  :hints (("Goal"
+           :use ((:instance sine-is-0-in-0<2pi=>x=0orpi-2)
+                 (:instance sine-is-0-in-0<2pi=>x=0orpi-4))
+           )))
+
+-----
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd cosine-is-1-in-0<2pi=>x=0-1
+    (implies (and (realp x)
+                  (equal (acl2-cosine x) 1)
+                  (<= 0 x)
+                  (< x (* 2 (acl2-pi))))
+             (equal (* x x) 0))
+    :hints (("Goal"
+             ;; :cases ((and (> x 0) (< x (* 1/2 (acl2-pi))))
+             ;;         (and (> x (* 1/2 (acl2-pi))) (< x (acl2-pi)))
+             ;;         (and (> x (* 3/2 (acl2-pi))) (< x (* 2 (acl2-pi))))
+             ;;         (and (> x (acl2-pi)) (< x (* 3/2 (acl2-pi))))
+             ;;         (equal x 0)
+             ;;         (equal x (* 1/2 (acl2-pi)))
+             ;;         (equal x (* 3/2 (acl2-pi))))
+             :use ((:instance cosine-positive-in-0-pi/2 (x x))
+                   (:instance cosine-positive-in-3pi/2-2pi (x x))
+                   (:instance cosine-negative-in-pi/2-pi (x x))
+                   (:instance cosine-0)
+                   (:instance cosine-pi/2)
+                   (:instance cosine-3pi/2)
+                   (:instance cosine-negative-in-pi/2-pi (x x)))
+             :in-theory (disable cosine-positive-in-0-pi/2 cosine-positive-in-3pi/2-2pi cosine-negative-in-pi/2-pi cosine-0 cosine-pi/2 cosine-3pi/2 cosine-negative-in-pi/2-pi)
+             )
+            ("Subgoal 2"
+             :cases ((equal x (* 1/2 (acl2-pi)))
+                     (equal x 0))
+             :use ((:instance cosine-positive-in-0-pi/2 (x x))
+                   (:instance cosine-0)
+                   (:instance cosine-pi/2))
+             )
+            ))
+  )
+
+;;is this true?
+
+(defthmd sine-is-0-in-0<pi=>x=0orpi-2
+  (implies (and (realp x)
+                (<= 0 x)
+                (< x (acl2-pi))
+                (equal (acl2-sine x) 0))
+           (equal (* x x) 0))
+  :hints (("Goal"
+           :use ((:instance sine-is-0-in-0<pi=>x=0orpi-1 (x x)))
+           )))
+
+(defthmd sine-is-0-in-0<pi=>x=0orpi-3
+  (implies (and (realp x)
+                (< (acl2-pi) x)
+                (< x (* 2 (acl2-pi))))
+           (< (acl2-sine x) 0))
+  :hints (("Goal"
+           :use ((:instance sine-negative-in-pi-3pi/2 (x x))
+                 (:instance sine-negative-in-3pi/2-2pi (x x)))
+           )))
+
+;;is this true?
+
+(defthmd sine-is-0-in-0<pi=>x=0orpi-4
+  (implies (and (realp x)
+                (<= (acl2-pi) x)
+                (equal (acl2-sine x) 0)
+                (< x (* 2 (acl2-pi))))
+           (equal (* x x) (* (acl2-pi) (acl2-pi))))
+  :hints (("Goal"
+           :use ((:instance sine-is-0-in-0<pi=>x=0orpi-3 (x x)))
+                 ;(:instance sine-negative-in-3pi/2-2pi (x x)))
+           ))
+  ;:rule-classes nil
+  )
+
+(defthmd sine-is-0-in-0<pi=>x=0orpi-5
+  (implies (and (realp x)
+                (<= 0 x)
+                (equal (acl2-sine x) 0)
+                (< x (* 2 (acl2-pi))))
+           (or (equal (* x x) 0)
+               (equal (* x x) (* (acl2-pi) (acl2-pi)))))
+  :hints (("Goal"
+           :use ((:instance sine-is-0-in-0<pi=>x=0orpi-2)
+                 (:instance sine-is-0-in-0<pi=>x=0orpi-4))
+           )))
+
+
+----
+
 
 
 
