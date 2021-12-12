@@ -1,6 +1,183 @@
 
 (include-book "banach-tarski-1")
 
+(defthmd cos2pik+x
+  (implies (integerp k)
+           (equal (acl2-cosine (+ (* 2 (acl2-pi) k) x))
+                  (acl2-cosine x)))
+  :hints (("Goal"
+           :use ((:instance cos-2npi (n k)))
+           :in-theory (disable SINE-2X)
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd sin2pik+x
+    (implies (integerp k)
+             (equal (acl2-sine (+ (* 2 (acl2-pi) k) x))
+                    (acl2-sine x)))
+    :hints (("Goal"
+             :use ((:instance sin-2npi (n k))
+                   (:instance cos-2npi (n k)))
+             :in-theory (disable sin-2npi COSINE-2X sine-2x)
+             )))
+  )
+
+
+(defthmd rotation-a-witn-of0
+  (implies (and (point-in-r3 p)
+                (point-in-r3 u))
+           (m-= (m-* (rotation-about-witness 0 u) p)
+                p))
+  :hints (("Goal"
+           :use ((:instance m-*point-id=point (p1 p))
+                 (:instance r-theta-0=id (u u)))
+           :in-theory (e/d () (ASSOCIATIVITY-OF-M-* m-* aref2 rotation-about-witness point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 id-rotation point-in-r3 (:EXECUTABLE-COUNTERPART ID-ROTATION)))
+           )))
+
+(defthmd rotation-angle=2pik
+  (implies (and (integerp k)
+                (point-in-r3 u))
+           (equal (rotation-about-witness (+ (* 2 (acl2-pi) k) x) u)
+                  (rotation-about-witness x u)))
+  :hints (("Goal"
+           :use ((:instance cos2pik+x (k k) (x x))
+                 (:instance sin2pik+x (k k) (x x))
+                 )
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd integerp-r-mod-r-x/x
+    (implies (and (realp r)
+                  (not (equal x 0))
+                  (realp x))
+             (integerp (/ (- r (mod r x)) x))))
+  )
+
+(encapsulate
+  ()
+  (local (include-book "workshops/1999/embedded/Exercises/Exercise1-2/Exercise1.2" :dir :system))
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd range-mod-r-x
+    (implies (and (realp r)
+                  (realp x)
+                  (> x 0))
+             (and (>= (mod r x) 0)
+                  (realp (mod r x))
+                  (< (mod r x) x)))
+    :hints (("Goal"
+             :in-theory (enable mod floor1)
+             )))
+  )
+
+
+----
+
+  (defthmd test-2002
+    (implies (and (realp r)
+;(>= r 0)
+                  (realp x)
+;(not (equal x 0)))
+                  (< x 0))
+             (and (>= (mod r x) 0)
+                  (realp (mod r x))))
+                  ;(< (mod r x) (- x))))
+    :hints (("Goal"
+             :in-theory (enable mod floor1)
+             )))
+  )
+
+(encapsulate
+  ()
+  (local (include-book "workshops/1999/embedded/Exercises/Exercise1-2/Exercise1.2" :dir :system))
+  (defthmd test-200
+    (implies (and (realp r)
+                  (>= r 0)
+                  (realp x)
+                  (> x 0))
+             (natp (/ (- r (mod r x)) x)))
+    :hints (("Goal"
+             :in-theory (enable mod)
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+  ;(local (include-book "workshops/1999/embedded/Exercises/Exercise1-2/Exercise1.2" :dir :system))
+
+  (defthmd integerp-r-mod-r-x/x
+    (implies (and (realp r)
+                  (not (equal x 0))
+                  (realp x))
+             (integerp (/ (- r (mod r x)) x))))
+
+  (local (include-book "workshops/1999/embedded/Exercises/Exercise1-2/Exercise1.2" :dir :system))
+
+  (defthmd range-mod-r-x
+    (implies (and (realp r)
+                  (realp x)
+                  (> x 0))
+             (and (>= (mod r x) 0)
+                  (< (mod r x) x)))
+    :hints (("Goal"
+             :in-theory (enable mod floor1)
+             )))
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------
+
 (encapsulate
   ()
 
