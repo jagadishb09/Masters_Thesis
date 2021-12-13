@@ -1,6 +1,421 @@
 
 (include-book "banach-tarski-1")
 
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd k-range-1
+    (implies (and (posp n)
+                  (realp den)
+                  (> den 0)
+                  (realp x)
+                  (< x den))
+             (> (- n (/ x den)) 0)))
+  )
+
+  (defthmd k-range
+    (implies (and (posp n)
+                  (realp x)
+                  (realp angle)
+                  (>= angle 0)
+                  (< angle (* 2 (acl2-pi)))
+                  (>= x 0)
+                  (integerp k)
+                  (< x (* 2 (acl2-pi)))
+                  (equal (* n angle)
+                         (+ (* 2 (acl2-pi) k) x)))
+             (and (>= k 0)
+                  (< k (- n (/ x (* 2 (acl2-pi))))))))
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd realnum-equiv
+    (implies (and (realp r)
+                  (realp x)
+                  (> x 0))
+             (equal (+ (* x (/ (- r (mod r x)) x)) (mod r x))
+                    r))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r-theta*p=p=>theta=2kpi
+    (implies (and (point-in-r3 p)
+                  (point-in-r3 u)
+                  (realp angle)
+                  (or (not (equal (point-in-r3-x1 p)
+                                  (point-in-r3-x1 u)))
+                      (not (equal (point-in-r3-x1 p)
+                                  (point-in-r3-x1 u)))
+                      (not (equal (point-in-r3-x1 p)
+                                  (point-in-r3-x1 u))))
+                  (or (not (equal (point-in-r3-x1 p)
+                                  (- (point-in-r3-x1 u))))
+                      (not (equal (point-in-r3-x1 p)
+                                  (- (point-in-r3-x1 u))))
+                      (not (equal (point-in-r3-x1 p)
+                                  (- (point-in-r3-x1 u)))))
+                  (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                            (* (point-in-r3-y1 p) (point-in-r3-y1 p))
+                            (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                         1)
+                  (equal (+ (* (point-in-r3-x1 u) (point-in-r3-x1 u))
+                            (* (point-in-r3-y1 u) (point-in-r3-y1 u))
+                            (* (point-in-r3-z1 u) (point-in-r3-z1 u)))
+                         1)
+                  (equal (point-in-r3-y1 u) 0)
+                  (m-= (m-* (rotation-about-witness angle u) p) p))
+             (equal (* 2 (acl2-pi) (/ (- angle (mod angle (* 2 (acl2-pi)))) (* 2 (acl2-pi))))
+                    angle))
+    :hints (("Goal"
+             :use ((:instance realnum-equiv (r angle) (x (* 2 (acl2-pi))))
+                   (:instance integerp-r-mod-r-x/x (r angle) (x (* 2 (acl2-pi))))
+                   (:instance range-mod-r-x (r angle) (x (* 2 (acl2-pi))))
+                   (:instance rotation-angle=2pik
+                              (k (/ (- angle (mod angle (* 2 (acl2-pi)))) (* 2 (acl2-pi))))
+                              (u u)
+                              (x (mod angle (* 2 (acl2-pi)))))
+                   (:instance r-theta*p=p=>sine=0 (p p) (u u) (angle (mod angle (* 2 (acl2-pi)))))
+                   (:instance r-theta*p=p=>cosine=1 (p p) (u u) (angle (mod angle (* 2 (acl2-pi)))))
+                   (:instance sin=0-cos=1 (x (mod angle (* 2 (acl2-pi))))))
+             :in-theory (e/d () (rotation-about-witness point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 aref2 m-= mod))
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r-theta1*p=r-theta2*p=>r-theta1-theta2*p=p
+    (implies (and (realp angle1)
+                  (realp angle2)
+                  (point-in-r3 u)
+                  (point-in-r3 p)
+                  (equal (+ (* (point-in-r3-x1 u) (point-in-r3-x1 u))
+                            (* (point-in-r3-y1 u) (point-in-r3-y1 u))
+                            (* (point-in-r3-z1 u) (point-in-r3-z1 u)))
+                         1)
+                  (m-= (m-* (rotation-about-witness angle1 u) p)
+                       (m-* (rotation-about-witness angle2 u) p)))
+             (m-= (m-* (rotation-about-witness (- angle1 angle2) u) p)
+                  p))
+    :hints (("Goal"
+             :use ((:instance r-t1*r-t2=r-t1+t2 (angle1 (- angle2)) (angle2 angle1) (u u))
+                   (:instance r-t1*r-t2=r-t1+t2 (angle1 (- angle2)) (angle2 angle2) (u u))
+                   (:instance r-theta*p=p=>r--theta*p=p-1
+                              (m1 (m-* (rotation-about-witness angle1 u) p))
+                              (m2 (m-* (rotation-about-witness angle2 u) p))
+                              (m3 (m-* (rotation-about-witness (- angle2) u) p)))
+                   (:instance r-theta*p=p=>r--theta*p=p-2
+                              (m1 (rotation-about-witness (- angle2) u))
+                              (m2 (rotation-about-witness angle1 u))
+                              (m3 p)
+                              (m4 (rotation-about-witness (- angle2) u))
+                              (m5 (m-* (rotation-about-witness angle2 u) p)))
+                   (:instance rotation-a-witn-of0 (p p) (u u)))
+             :in-theory (e/d () (aref2 m-= m-* rotation-about-witness point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1))
+             ))
+    )
+  )
+
+(encapsulate
+  ()
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd d-p=>d-p-p-1
+    (implies (and (s2-def-p p1)
+                  (point-in-r3 p2)
+                  (equal (aref2 :fake-name p2 0 0) (- (aref2 :fake-name p1 0 0)))
+                  (equal (aref2 :fake-name p2 1 0) (- (aref2 :fake-name p1 1 0)))
+                  (equal (aref2 :fake-name p2 2 0) (- (aref2 :fake-name p1 2 0))))
+             (s2-def-p p2))
+    :hints (("Goal"
+             :in-theory (disable aref2)
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd d-p=>d-p-p-2-1
+    (implies (r3-matrixp m)
+             (and (equal (aref2 :fake-name (second (f-poles m)) 0 0)
+                         (- (aref2 :fake-name (first (f-poles m)) 0 0)))
+                  (equal (aref2 :fake-name (second (f-poles m)) 1 0)
+                         (- (aref2 :fake-name (first (f-poles m)) 1 0)))
+                  (equal (aref2 :fake-name (second (f-poles m)) 2 0)
+                         (- (aref2 :fake-name (first (f-poles m)) 2 0)))))
+    :hints (("Goal"
+             :use ((:instance f-poles-prop-2 (m m)))
+             :in-theory (disable aref2 f-poles acl2-sqrt square)
+             )))
+
+  (defthmd d-p=>d-p-p-2-2
+    (implies (and (point-in-r3 p1)
+                  (point-in-r3 p2)
+                  (equal (aref2 :fake-name p2 0 0) (aref2 :fake-name p1 0 0))
+                  (equal (aref2 :fake-name p2 1 0) (aref2 :fake-name p1 1 0))
+                  (equal (aref2 :fake-name p2 2 0) (aref2 :fake-name p1 2 0)))
+             (m-= p1 p2))
+    :hints (("Goal"
+             :in-theory (enable m-=)
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd d-p=>d-p-p-2
+    (implies (and (d-p p1)
+                  (point-in-r3 p2)
+                  (equal (aref2 :fake-name p2 0 0) (- (aref2 :fake-name p1 0 0)))
+                  (equal (aref2 :fake-name p2 1 0) (- (aref2 :fake-name p1 1 0)))
+                  (equal (aref2 :fake-name p2 2 0) (- (aref2 :fake-name p1 2 0)))
+                  (m-= (first (poles (word-exists-witness p1))) p1))
+             (m-= p2 (second (poles (word-exists-witness p1)))))
+    :hints (("Goal"
+             :use ((:instance s2-def-p (point p1))
+                   (:instance point-in-r3 (x p1))
+                   (:instance d-p=>d-p-p-2-2 (p1 p2) (p2 (second (poles (word-exists-witness p1)))))
+                   (:instance d-p (point p1))
+                   (:instance poles (w (word-exists-witness p1)))
+                   (:instance word-exists (point p1))
+                   (:instance d-p=>d-p-p-2-1 (m (rotation (word-exists-witness p1) (acl2-sqrt 2))))
+                   (:instance r3-rotationp (m (rotation (word-exists-witness p1) (acl2-sqrt 2))))
+                   (:instance f-poles-prop-3 (m (rotation (word-exists-witness p1) (acl2-sqrt 2))))
+                   (:instance rotation-is-r3-rotationp (w (word-exists-witness p1)) (x (acl2-sqrt 2))))
+             :in-theory (e/d (m-=) (aref2 reducedwordp rotation acl2-sqrt square aref2 m-trans r3-m-inverse r3-m-determinant r3-matrixp f-poles word-exists d-p d-p-implies))
+             ))
+    )
+
+  (defthmd d-p=>d-p-p-3
+    (implies (and (d-p p1)
+                  (point-in-r3 p2)
+                  (equal (aref2 :fake-name p2 0 0) (- (aref2 :fake-name p1 0 0)))
+                  (equal (aref2 :fake-name p2 1 0) (- (aref2 :fake-name p1 1 0)))
+                  (equal (aref2 :fake-name p2 2 0) (- (aref2 :fake-name p1 2 0)))
+                  (m-= (second (poles (word-exists-witness p1))) p1))
+             (m-= p2 (first (poles (word-exists-witness p1)))))
+    :hints (("Goal"
+             :use ((:instance s2-def-p (point p1))
+                   (:instance point-in-r3 (x p1))
+                   (:instance d-p=>d-p-p-2-2 (p1 p2) (p2 (first (poles (word-exists-witness p1)))))
+                   (:instance d-p (point p1))
+                   (:instance poles (w (word-exists-witness p1)))
+                   (:instance word-exists (point p1))
+                   (:instance d-p=>d-p-p-2-1 (m (rotation (word-exists-witness p1) (acl2-sqrt 2))))
+                   (:instance r3-rotationp (m (rotation (word-exists-witness p1) (acl2-sqrt 2))))
+                   (:instance f-poles-prop-3 (m (rotation (word-exists-witness p1) (acl2-sqrt 2))))
+                   (:instance rotation-is-r3-rotationp (w (word-exists-witness p1)) (x (acl2-sqrt 2))))
+             :in-theory (e/d (m-=) (aref2 reducedwordp rotation acl2-sqrt square aref2 m-trans r3-m-inverse r3-m-determinant r3-matrixp f-poles word-exists d-p d-p-implies))
+             ))
+    )
+  )
+
+(defthmd d-p=>d-p-p-4
+  (implies (and (m-= p2 pole)
+                (m-= (m-* rot pole) pole))
+           (m-= (m-* rot p2) p2)))
+
+(defthmd d-p=>d-p-p
+  (implies (and (d-p p1)
+                (point-in-r3 p2)
+                (equal (aref2 :fake-name p2 0 0) (- (aref2 :fake-name p1 0 0)))
+                (equal (aref2 :fake-name p2 1 0) (- (aref2 :fake-name p1 1 0)))
+                (equal (aref2 :fake-name p2 2 0) (- (aref2 :fake-name p1 2 0))))
+           (d-p p2))
+  :hints (("Goal"
+           :use ((:instance two-poles-for-all-rotations (p p1)))
+           :cases ((m-= (first (poles (word-exists-witness p1))) p1)
+                   (m-= (second (poles (word-exists-witness p1))) p1))
+           :in-theory (disable reducedwordp d-p word-exists square s2-def-p wordp array2p word-exists-suff)
+           )
+          ("Subgoal 2"
+           :use ((:instance d-p=>d-p-p-2 (p1 p1) (p2 p2))
+                 (:instance d-p (point p1))
+                 (:instance d-p (point p2))
+                 (:instance word-exists-suff (point p2) (w (word-exists-witness p1)))
+                 (:instance word-exists (point p1))
+                 (:instance d-p=>d-p-p-1 (p1 p1) (p2 p2))
+                 (:instance f-returns-poles-1-second (w  (word-exists-witness p1)))
+                 (:instance d-p=>d-p-p-4 (p2 p2) (pole (second (poles (word-exists-witness p1))))
+                            (rot (rotation (word-exists-witness p1) (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 1"
+           :use ((:instance d-p=>d-p-p-3 (p1 p1) (p2 p2))
+                 (:instance d-p (point p1))
+                 (:instance d-p (point p2))
+                 (:instance word-exists-suff (point p2) (w (word-exists-witness p1)))
+                 (:instance word-exists (point p1))
+                 (:instance d-p=>d-p-p-1 (p1 p1) (p2 p2))
+                 (:instance f-returns-poles-1-first (w  (word-exists-witness p1)))
+                 (:instance d-p=>d-p-p-4 (p2 p2) (pole (first (poles (word-exists-witness p1))))
+                            (rot (rotation (word-exists-witness p1) (acl2-sqrt 2))))
+                 )
+           :in-theory nil
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd diff-d-p-p=>d-p-p1
+    (implies (and (d-p p)
+                  (point-in-r3 p1)
+                  (m-= p p1))
+             (d-p p1))
+    :hints (("goal"
+             :use ((:instance d-p (point p1))
+                   (:instance word-exists-suff (w (word-exists-witness p)) (point p1))
+                   (:instance d-p-p=>d-p-p1-lemma (m1 (rotation (word-exists-witness p) (acl2-sqrt 2)))
+                              (m2 p) (m3 p1))
+                   (:instance s2-def-p-p=>p1 (p p) (p1 p1)))
+
+             :in-theory (e/d () (m-* acl2-sqrt reducedwordp rotation r3-rotationp acl2-sqrt word-exists-suff d-p))
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd d-p-not-equal-to-u-n-u
+    (implies (and (d-p p)
+                  (point-in-r3 u)
+                  (not (d-p u))
+                  (point-in-r3 m-u)
+                  (equal (aref2 :fake-name m-u 0 0)
+                         (- (aref2 :fake-name u 0 0)))
+                  (equal (aref2 :fake-name m-u 1 0)
+                         (- (aref2 :fake-name u 1 0)))
+                  (equal (aref2 :fake-name m-u 2 0)
+                         (- (aref2 :fake-name u 2 0)))
+                  )
+             (and (not (m-= p u))
+                  (not (m-= p m-u))))
+    :hints (("Goal"
+             :use ((:instance diff-d-p-p=>d-p-p1 (p p) (p1 u))
+                   (:instance diff-d-p-p=>d-p-p1 (p p) (p1 m-u))
+                   (:instance d-p=>d-p-p (p1 m-u) (p2 u)))
+             :in-theory (e/d () (m-* acl2-sqrt reducedwordp rotation r3-rotationp acl2-sqrt word-exists-suff d-p))
+             )))
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------
+
 (defthmd cos2pik+x
   (implies (integerp k)
            (equal (acl2-cosine (+ (* 2 (acl2-pi) k) x))
