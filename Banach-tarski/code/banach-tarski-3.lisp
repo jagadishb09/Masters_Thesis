@@ -1,6 +1,56 @@
 
 (include-book "banach-tarski-1")
 
+(defun-sk exists-angle-p1-p2 (p1 p2)
+  (exists angle
+          (and (>= angle 0)
+               (< angle (* 2 (acl2-pi)))
+               (m-= (m-* (rotation-about-witness angle (point-on-s2-not-d)) p1)
+                    p2))))
+
+(defun angle-between-p1-p2 (p1 p2)
+  (if (exists-angle-p1-p2 p1 p2)
+      (exists-angle-p1-p2-witness p1 p2)
+    0))
+
+(defun generate-angle-2 (point poles-list2)
+  (if (atom poles-list2)
+      nil
+    (append (list (angle-between-p1-p2 point (car poles-list2)))
+            (generate-angle-2 point (cdr poles-list2)))))
+
+(defun generate-angle-1 (poles-list1 poles-list2)
+  (if (atom poles-list1)
+      nil
+    (append (generate-angle-2 (car poles-list1) poles-list2)
+            (generate-angle-1 (cdr poles-list1) poles-list2))))
+
+(defun generate-angles (poles-list)
+  (if (atom poles-list)
+      nil
+    (generate-angle-1 poles-list poles-list)))
+
+
+(defun angle-0-2pi-sequence (n)
+  (nth n (generate-angles (poles-list (generate-words-main (+ n 1))))))
+
+(defun-sk exists-angle0-2pi (angle)
+  (exists n
+          (and (natp n)
+               (equal (angle-0-2pi-sequence n) angle))))
+
+(defthmd exists-angle-0-2pi-thm
+  (implies (and (d-p p1)
+                (d-p p2)
+                (realp angle)
+                (>= angle 0)
+                (< angle (* 2 (acl2-pi)))
+                (m-= (m-* (rotation-about-witness angle (point-on-s2-not-d)) p1)
+                    p2))
+           (exists-angle0-2pi angle)))
+
+-----
+
 (encapsulate
   ()
 

@@ -3144,6 +3144,8 @@
                  (:instance sine-positive-in-pi/2-pi (x x)))
            )))
 
+----
+
 ;;is this true?
 
 (defthmd sine-is-0-in-0<2pi=>x=0orpi-2
