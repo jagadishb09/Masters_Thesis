@@ -20,20 +20,33 @@
 ; cert_param: (uses-acl2r)
 
 (encapsulate
-  (
-   ((f *) => * :formals (n) :guard (posp n))
-   ((g *) => * :formals (n) :guard (posp n)))
+  (((f *) => *)
+   ((g *) => *))
 
    (local (defun f (n)
-            (declare (xargs :guard (posp n))
-                     (ignore n))
+            (declare (ignore n))
             (list 0)))
 
    (local (defun g (n)
-            (declare (xargs :guard (posp n))
-                     (ignore n))
+            (declare (ignore n))
             (list 0)))
-  )
+   )
+
+;; (defun f-1 ()
+;;   (list #\a #\b #\c))
+
+;; (defun g-1 ()
+;;   (list #\p #\q #\r))
+
+;; (defun f (n)
+;;   (if (posp n)
+;;       (nth (- n 1) (f-1))
+;;     0))
+
+;; (defun g (n)
+;;   (if (posp n)
+;;       (nth (- n 1) (g-1))
+;;     0))
 
 (encapsulate
   ()
@@ -71,7 +84,10 @@
   (let ((rm-2 (mod-remainder-2 0 i)))
     (let ((rm-3 (mod-remainder-3 0 (nth 1 rm-2))))
       (if (equal (nth 1 rm-3) 1)
-          (list (list (f (nth 0 rm-2)) (g (nth 0 rm-3))))
+          (if (or (equal (nth 0 rm-2) 0)
+                  (equal (nth 0 rm-3) 0))
+              (list 0)
+            (list (list (f (nth 0 rm-2)) (g (nth 0 rm-3)))))
         (list 0)))))
 
 (encapsulate
@@ -459,59 +475,48 @@
 
   (local (include-book "arithmetic-5/top" :dir :system))
 
-  (defthmd f-*-g-seq-i-lemma3-sub1
+  (defthmd f-*-g-seq-i-lemma3-*1/1
     (implies (and (posp n1)
                   (posp n2)
                   (equal (* (expt 2 n1) (expt 3 n2)) q))
              (equal (mod q 2) 0)))
   )
 
-(encapsulate
-  ()
-
-  (local (include-book "arithmetic/top" :dir :system))
-
-  (defthmd f-*-g-seq-i-lemma3-1/2.1
-    (IMPLIES
-     (AND
-      (EXISTS-POSPN-2^N (* Q 1/2))
-      (< 0 Q)
-      (EQUAL (MOD Q 2) 0)
-      (IMPLIES
-       (AND (EXISTS-POSPN-2^N (* Q 1/2))
-            (INTEGERP (+ X 1)))
-       (EQUAL
-        (MOD-REMAINDER-2 (+ X 1) (* Q 1/2))
-        (LIST
-         (+ (+ X 1)
-            (EXISTS-POSPN-2^N-WITNESS (* Q 1/2)))
-         (EXPT 3
-               (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS (* Q 1/2))
-                                         (* Q 1/2)))))))
-     (IMPLIES
-      (AND (EXISTS-POSPN-2^N Q) (INTEGERP X))
-      (EQUAL (MOD-REMAINDER-2 X Q)
-             (LIST (+ X (EXISTS-POSPN-2^N-WITNESS Q))
-                   (EXPT 3
-                         (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS Q)
-                                                   Q))))))
-    :hints (("Goal"
-             :use ((:instance mod-remainder-2=> (x x) (q q))
-                   (:instance 2^x*3^y=1=>xy=0-4 (n1 (exists-pospn-2^n-witness q))
-                              (n2 (exists-pospn-3^n-witness (exists-pospn-2^n-witness q) q))
-                              )
-                   (:instance exists-pospn-2^n=> (q q))
-                   (:instance exists-pospn-2^n=> (q (* q 1/2)))
-                   (:instance 2^x*3^y=2^x1*3^y1
-                              (x (+ (EXISTS-POSPN-2^N-WITNESS (* Q 1/2)) 1))
-                              (y (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS (* Q 1/2))
-                                                           (* Q 1/2)))
-                              (x1 (EXISTS-POSPN-2^N-WITNESS Q))
-                              (y1 (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS Q)
-                                                            Q)))
-                   )
-             ))
-    )
+(defthmd f-*-g-seq-i-lemma3-1/2.1
+  (IMPLIES
+   (AND
+    (EXISTS-POSPN-2^N (* Q 1/2))
+    (< 0 Q)
+    (EQUAL (MOD Q 2) 0)
+    (EQUAL
+     (MOD-REMAINDER-2 (+ X 1) (* Q 1/2))
+     (LIST (+ (+ X 1)
+              (EXISTS-POSPN-2^N-WITNESS (* Q 1/2)))
+           (EXPT 3
+                 (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS (* Q 1/2))
+                                           (* Q 1/2)))))
+    (EXISTS-POSPN-2^N Q)
+    (INTEGERP X))
+   (EQUAL (MOD-REMAINDER-2 X Q)
+          (LIST (+ X (EXISTS-POSPN-2^N-WITNESS Q))
+                (EXPT 3
+                      (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS Q)
+                                                Q)))))
+  :hints (("Goal"
+           :use ((:instance mod-remainder-2=> (x x) (q q))
+                 (:instance 2^x*3^y=1=>xy=0-4 (n1 (exists-pospn-2^n-witness q))
+                            (n2 (exists-pospn-3^n-witness (exists-pospn-2^n-witness q) q)))
+                 (:instance exists-pospn-2^n=> (q q))
+                 (:instance exists-pospn-2^n=> (q (* q 1/2)))
+                 (:instance 2^x*3^y=2^x1*3^y1
+                            (x (+ (EXISTS-POSPN-2^N-WITNESS (* Q 1/2)) 1))
+                            (y (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS (* Q 1/2))
+                                                         (* Q 1/2)))
+                            (x1 (EXISTS-POSPN-2^N-WITNESS Q))
+                            (y1 (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS Q)
+                                                          Q)))
+                 )
+           ))
   )
 
 (encapsulate
@@ -519,19 +524,7 @@
 
   (local (include-book "arithmetic/top" :dir :system))
 
-  (defthm f-*-g-seq-i-lemma3-1/2.2-1
-    (implies (and (not (posp (- x 1)))
-                  (posp x))
-             (equal x 1))
-    :rule-classes nil)
-  )
-
-(encapsulate
-  ()
-
-  (local (include-book "arithmetic/top" :dir :system))
-
-  (defthmd f-*-g-seq-i-lemma3-1/2.2-2-2
+  (defthmd f-*-g-seq-i-lemma3-1/2.2-sub1-1
     (IMPLIES (AND (EQUAL (MOD (* 2 Y) 2) 0)
                   (EQUAL (MOD-REMAINDER-2 X (* 2 Y))
                          (MOD-REMAINDER-2 (+ X 1)
@@ -548,7 +541,7 @@
 
   (local (include-book "arithmetic-5/top" :dir :system))
 
-  (defthmd f-*-g-seq-i-lemma3-1/2.2-2-1
+  (defthmd f-*-g-seq-i-lemma3-1/2.2-sub1-2
     (implies (integerp x)
              (equal (mod (* 2 x) 2) 0))
     :hints (("Goal"
@@ -561,7 +554,7 @@
 
   (local (include-book "arithmetic/top" :dir :system))
 
-  (defthmd f-*-g-seq-i-lemma3-1/2.2-2
+  (defthmd f-*-g-seq-i-lemma3-1/2.2-sub1-3
     (implies (and (integerp x)
                   (not (equal (mod y 2) 0))
                   (integerp y)
@@ -575,10 +568,10 @@
              :do-not-induct t
              )
             ("Subgoal 2"
-             :use (:instance f-*-g-seq-i-lemma3-1/2.2-2-2)
+             :use (:instance f-*-g-seq-i-lemma3-1/2.2-sub1-1)
              )
             ("Subgoal 1"
-             :use (:instance f-*-g-seq-i-lemma3-1/2.2-2-1 (x y))
+             :use (:instance f-*-g-seq-i-lemma3-1/2.2-sub1-2 (x y))
              )
             ))
   )
@@ -588,11 +581,23 @@
 
   (local (include-book "arithmetic-5/top" :dir :system))
 
-  (defthmd f-*-g-seq-i-lemma3-1/2.2-sub1-1
+  (defthmd f-*-g-seq-i-lemma3-1/2.2-sub1-4
     (implies (posp y)
              (and (integerp (expt 3 y))
                   (> (expt 3 y) 0)))
     )
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthm f-*-g-seq-i-lemma3-1/2.2-sub1-5
+    (implies (and (not (posp (- x 1)))
+                  (posp x))
+             (equal x 1))
+    :rule-classes nil)
   )
 
 (encapsulate
@@ -616,62 +621,46 @@
                    (:instance exists-pospn-2^n=> (q q))
                    (:instance mod-3-y>0
                               (y (EXISTS-POSPN-3^N-WITNESS 1 Q)))
-                   (:instance f-*-g-seq-i-lemma3-1/2.2-2 (x x)
+                   (:instance f-*-g-seq-i-lemma3-1/2.2-sub1-3 (x x)
                               (y (expt 3 (EXISTS-POSPN-3^N-WITNESS 1 Q))))
-                   (:instance f-*-g-seq-i-lemma3-1/2.2-sub1-1
+                   (:instance f-*-g-seq-i-lemma3-1/2.2-sub1-4
                               (y (EXISTS-POSPN-3^N-WITNESS 1 Q)))
-                   (:instance f-*-g-seq-i-lemma3-1/2.2-1 (x (EXISTS-POSPN-2^N-WITNESS Q))))
+                   (:instance f-*-g-seq-i-lemma3-1/2.2-sub1-5 (x (EXISTS-POSPN-2^N-WITNESS Q))))
              :do-not-induct t
              ))
     )
   )
 
-(encapsulate
-  ()
-
-  (local (include-book "arithmetic/top" :dir :system))
-
-  (defthmd f-*-g-seq-i-lemma3-1/2.2
-    (IMPLIES
-     (AND
-      (NOT (EXISTS-POSPN-2^N (* Q 1/2)))
-      (< 0 Q)
-      (EQUAL (MOD Q 2) 0)
-      (IMPLIES
-       (AND (EXISTS-POSPN-2^N (* Q 1/2))
-            (INTEGERP (+ X 1)))
-       (EQUAL
-        (MOD-REMAINDER-2 (+ X 1) (* Q 1/2))
-        (LIST (+ (+ X 1)
-                 (EXISTS-POSPN-2^N-WITNESS (* Q 1/2)))
-              (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS (* Q 1/2))
-                                        (* Q 1/2))))))
-     (IMPLIES (AND (EXISTS-POSPN-2^N Q) (INTEGERP X))
-              (EQUAL (MOD-REMAINDER-2 X Q)
-                     (LIST (+ X (EXISTS-POSPN-2^N-WITNESS Q))
-                           (expt 3 (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS Q)
-                                                             Q))))))
-    :hints (("Goal"
-             :cases ((not (posp (- (EXISTS-POSPN-2^N-WITNESS Q) 1))))
-             :do-not-induct t
-             )
-            ("Subgoal 2"
-             :use ((:instance EXISTS-POSPN-2^N-suff (n-2 (- (EXISTS-POSPN-2^N-WITNESS q) 1))
-                              (q (* q 1/2)))
-                   (:instance exists-pospn-2^n=> (q q))
-                   (:instance EXISTS-POSPN-3^N-suff
-                              (n-3 (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS Q)
-                                                             Q))
-                              (n-2 (- (EXISTS-POSPN-2^N-WITNESS q) 1))
-                              (q (* q 1/2))))
-             )
-            ("Subgoal 1"
-             :use ((:instance f-*-g-seq-i-lemma3-1/2.2-sub1))
-             )
-
-            )
-    )
-  )
+(defthmd f-*-g-seq-i-lemma3-1/2.2
+  (IMPLIES
+   (AND (NOT (EXISTS-POSPN-2^N (* Q 1/2)))
+        (< 0 Q)
+        (EQUAL (MOD Q 2) 0)
+        (EXISTS-POSPN-2^N Q)
+        (INTEGERP X))
+   (EQUAL (MOD-REMAINDER-2 X Q)
+          (LIST (+ X (EXISTS-POSPN-2^N-WITNESS Q))
+                (EXPT 3
+                      (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS Q)
+                                                Q)))))
+  :hints (("Goal"
+           :cases ((not (posp (- (EXISTS-POSPN-2^N-WITNESS Q) 1))))
+           :do-not-induct t
+           )
+          ("Subgoal 2"
+           :use ((:instance EXISTS-POSPN-2^N-suff (n-2 (- (EXISTS-POSPN-2^N-WITNESS q) 1))
+                            (q (* q 1/2)))
+                 (:instance exists-pospn-2^n=> (q q))
+                 (:instance EXISTS-POSPN-3^N-suff
+                            (n-3 (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS Q)
+                                                           Q))
+                            (n-2 (- (EXISTS-POSPN-2^N-WITNESS q) 1))
+                            (q (* q 1/2))))
+           )
+          ("Subgoal 1"
+           :use (:instance f-*-g-seq-i-lemma3-1/2.2-sub1)
+           )
+          ))
 
 (encapsulate
   ()
@@ -689,13 +678,15 @@
              :in-theory nil
              )
             ("Subgoal *1/2.2"
+             :in-theory nil
              :use ((:instance f-*-g-seq-i-lemma3-1/2.2))
              )
             ("Subgoal *1/2.1"
+             :in-theory nil
              :use ((:instance f-*-g-seq-i-lemma3-1/2.1))
              )
             ("Subgoal *1/1"
-             :use ((:instance f-*-g-seq-i-lemma3-sub1 (n1 (exists-pospn-2^n-witness q))
+             :use ((:instance f-*-g-seq-i-lemma3-*1/1 (n1 (exists-pospn-2^n-witness q))
                               (n2 (exists-pospn-3^n-witness (exists-pospn-2^n-witness q) q))))
              )
             ))
@@ -724,26 +715,6 @@
                  (:instance f-*-g-seq-2-lemma3 (n (- n 1))))
            :do-not-induct t
            )))
-
-(encapsulate
-  ()
-  (local (include-book "arithmetic-5/top" :dir :system))
-
-  (defthm 2^x*3^y=2^x1*3^y1
-    (implies (and (integerp x)
-                  (integerp y)
-                  (integerp x1)
-                  (integerp y1)
-                  (equal (* (expt 2 x) (expt 3 y))
-                         (* (expt 2 x1) (expt 3 y1))))
-             (and (equal x x1)
-                  (equal y y1)))
-    :hints (("Goal"
-             :use ((:instance 2^x*3^y=1=>xy=0 (x (- x x1)) (y (- y y1))))
-             ))
-    :rule-classes nil)
-  )
-
 
 (encapsulate
   ()
