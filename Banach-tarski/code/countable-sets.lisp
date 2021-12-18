@@ -800,3 +800,15 @@
              :do-not-induct t
              )))
   )
+
+(defthmd f-*-g-sequence-nth
+  (implies (and (posp n1)
+                (posp n2)
+                (equal (f n1) p)
+                (equal (g n2) q))
+           (equal (f-*-g-sequence (* (expt 2 n1) (expt 3 n2)))
+                  (list p q)))
+  :hints (("Goal"
+           :use ((:instance f-*-g-seq-nth-value (n1 n1) (n2 n2) (p (f n1)) (q (g n2)))
+                 (:instance 2^x*3^y=1=>xy=0-4 (n1 n1) (n2 n2)))
+           )))
