@@ -1,7 +1,6 @@
 ; Banach-Tarski theorem
 ;
-; Proof of Banach-Tarski theorem for the surface of the spehere centered at the
-; origin with radius equal to 1.
+; Cartesian product of two countable sets is countable
 ;
 ;
 ; Copyright (C) 2021 University of Wyoming
@@ -31,22 +30,6 @@
             (declare (ignore n))
             (list 0)))
    )
-
-;; (defun f-1 ()
-;;   (list #\a #\b #\c))
-
-;; (defun g-1 ()
-;;   (list #\p #\q #\r))
-
-;; (defun f (n)
-;;   (if (posp n)
-;;       (nth (- n 1) (f-1))
-;;     0))
-
-;; (defun g (n)
-;;   (if (posp n)
-;;       (nth (- n 1) (g-1))
-;;     0))
 
 (encapsulate
   ()
@@ -86,9 +69,9 @@
       (if (equal (nth 1 rm-3) 1)
           (if (or (equal (nth 0 rm-2) 0)
                   (equal (nth 0 rm-3) 0))
-              (list 0)
+              (list (list 0 0))
             (list (list (f (nth 0 rm-2)) (g (nth 0 rm-3)))))
-        (list 0)))))
+        (list (list 0 0))))))
 
 (encapsulate
   ()
@@ -111,6 +94,10 @@
       (nth (- n 1) (f-*-g-seq n))
     0))
 
+(defthmd f-*-g-seq-i-lemma0
+  (implies (posp n)
+           (equal (len (car (f-*-g-seq-i n))) 2)))
+
 (defthmd f-*-g-seq-i-lemma1
   (implies (posp n)
            (equal (len (f-*-g-seq-i n))
@@ -129,10 +116,10 @@
            (true-listp (f-*-g-seq-2 n))))
 
 (defthm f-*-g-seq-2-lemma2-sub1/3
-  (implies (AND (NOT (ZP N))
-                (<= (+ -1 N) 0)
-                (INTEGERP N)
-                (< 0 N))
+  (implies (and (not (zp n))
+                (<= (+ -1 n) 0)
+                (integerp n)
+                (< 0 n))
            (and (equal n 1)
                 (posp 1)))
   :rule-classes nil)
@@ -154,17 +141,17 @@
     (implies (posp n)
              (equal (len (f-*-g-seq-2 n))
                     n))
-    :hints (("Subgoal *1/3"
+    :hints (("subgoal *1/3"
              :use ((:instance f-*-g-seq-2-lemma2-sub1/3 (n n))
                    (:instance f-*-g-seq-2-lemma1)
                    (:instance f-*-g-seq-i-lemma1 (n 1)))
              :in-theory nil
              )
-            ("Subgoal *1/4"
+            ("subgoal *1/4"
              :use ((:instance f-*-g-seq-i-lemma1 (n n))
-                   (:instance f-*-g-seq-2-lemma2-sub1/4 (x (F-*-G-SEQ-2 (+ -1 N)))
-                              (y (F-*-G-SEQ-I N))
-                              (p (LEN (F-*-G-SEQ-2 (+ -1 N))))))
+                   (:instance f-*-g-seq-2-lemma2-sub1/4 (x (f-*-g-seq-2 (+ -1 n)))
+                              (y (f-*-g-seq-i n))
+                              (p (len (f-*-g-seq-2 (+ -1 n))))))
              :in-theory (disable f-*-g-seq-i)
              )
             ))
@@ -182,7 +169,7 @@
   (implies (posp n)
            (equal (list (nth (- n 1) (f-*-g-seq-2 n)))
                   (f-*-g-seq-i n)))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance f-*-g-seq-2-lemma4-1 (f (f-*-g-seq-2 (- n 1)))
                             (g (f-*-g-seq-i n))
                             (n (- n 1)))
@@ -200,9 +187,9 @@
      (implies (and (integerp x)
                    (integerp y)
                    (not (equal y 0))
-                   (INTEGERP (/ x y)))
+                   (integerp (/ x y)))
               (rtl::divides y x))
-     :hints (("Goal"
+     :hints (("goal"
               :in-theory (enable rtl::divides)
               ))))
 
@@ -213,7 +200,7 @@
                    (not (equal y 0))
                    (rtl::divides y x))
               (integerp (/ x y)))
-     :hints (("Goal"
+     :hints (("goal"
               :in-theory (enable rtl::divides)
               ))))
 
@@ -221,23 +208,23 @@
    (defthmd mod-2-x>0-sub1/3-1
      (implies (and (integerp x)
                    (< 0 x)
-                   (INTEGERP (* 1/3 (EXPT 2 X))))
-              (INTEGERP (* 1/3 (EXPT 2 (+ -1 x)))))
-     :hints (("Goal"
-              :use ((:instance integerp=>divides (x (EXPT 2 X)) (y 3))
-                    (:instance rtl::euclid (p 3) (a 2) (b (EXPT 2 (+ -1 x)))))
+                   (integerp (* 1/3 (expt 2 x))))
+              (integerp (* 1/3 (expt 2 (+ -1 x)))))
+     :hints (("goal"
+              :use ((:instance integerp=>divides (x (expt 2 x)) (y 3))
+                    (:instance rtl::euclid (p 3) (a 2) (b (expt 2 (+ -1 x)))))
               :in-theory (enable rtl::primep rtl::least-divisor rtl::divides)
               ))))
 
   (defthmd mod-2-x>0-sub1/3
-    (IMPLIES (AND (NOT (ZIP X))
-                  (NOT (= (FIX 2) 0))
-                  (< 0 X)
-                  (IMPLIES (POSP (+ X -1))
-                           (< 0 (MOD (EXPT 2 (+ X -1)) 3))))
-             (IMPLIES (POSP X)
-                      (< 0 (MOD (EXPT 2 X) 3))))
-    :hints (("Goal"
+    (implies (and (not (zip x))
+                  (not (= (fix 2) 0))
+                  (< 0 x)
+                  (implies (posp (+ x -1))
+                           (< 0 (mod (expt 2 (+ x -1)) 3))))
+             (implies (posp x)
+                      (< 0 (mod (expt 2 x) 3))))
+    :hints (("goal"
              :use (mod-2-x>0-sub1/3-1)
              )))
 
@@ -245,23 +232,23 @@
    (defthmd mod-3-y>0-sub1/3-1
      (implies (and (integerp y)
                    (< 0 y)
-                   (INTEGERP (* 1/2 (EXPT 3 y))))
-              (INTEGERP (* 1/2 (EXPT 3 (+ -1 y)))))
-     :hints (("Goal"
-              :use ((:instance integerp=>divides (x (EXPT 3 y)) (y 2))
-                    (:instance rtl::euclid (p 2) (a 3) (b (EXPT 3 (+ -1 y)))))
+                   (integerp (* 1/2 (expt 3 y))))
+              (integerp (* 1/2 (expt 3 (+ -1 y)))))
+     :hints (("goal"
+              :use ((:instance integerp=>divides (x (expt 3 y)) (y 2))
+                    (:instance rtl::euclid (p 2) (a 3) (b (expt 3 (+ -1 y)))))
               :in-theory (enable rtl::primep rtl::least-divisor rtl::divides)
               ))))
 
   (defthmd mod-3-y>0-sub1/3
-    (IMPLIES (AND (NOT (ZIP Y))
-                  (NOT (= (FIX 3) 0))
-                  (< 0 Y)
-                  (IMPLIES (POSP (+ Y -1))
-                           (< 0 (MOD (EXPT 3 (+ Y -1)) 2))))
-             (IMPLIES (POSP Y)
-                      (< 0 (MOD (EXPT 3 Y) 2))))
-    :hints (("Goal"
+    (implies (and (not (zip y))
+                  (not (= (fix 3) 0))
+                  (< 0 y)
+                  (implies (posp (+ y -1))
+                           (< 0 (mod (expt 3 (+ y -1)) 2))))
+             (implies (posp y)
+                      (< 0 (mod (expt 3 y) 2))))
+    :hints (("goal"
              :use (mod-3-y>0-sub1/3-1)
              )))
 
@@ -270,14 +257,14 @@
 (defthmd mod-2-x>0
   (implies (posp x)
            (> (mod (expt 2 x) 3) 0))
-  :hints (("Subgoal *1/3"
+  :hints (("subgoal *1/3"
            :use (:instance mod-2-x>0-sub1/3)
            )))
 
 (defthmd mod-3-y>0
   (implies (posp y)
            (> (mod (expt 3 y) 2) 0))
-  :hints (("Subgoal *1/3"
+  :hints (("subgoal *1/3"
            :use (:instance mod-3-y>0-sub1/3)
            )))
 
@@ -288,12 +275,12 @@
   (defthmd 2^x*3^y=1=>xy=0-1
     (implies (and (> n1 0)
                   (integerp n1))
-             (> (EXPT 2 N1) 1)))
+             (> (expt 2 n1) 1)))
 
   (defthmd 2^x*3^y=1=>xy=0-2
     (implies (and (> n2 0)
                   (integerp n2))
-             (> (EXPT 3 N2) 1)))
+             (> (expt 3 n2) 1)))
 
   (defthmd 2^x*3^y=1=>xy=0-3
     (implies (and (realp x)
@@ -308,7 +295,7 @@
                   (> n1 0)
                   (> n2 0))
              (> (* (expt 2 n1) (expt 3 n2)) 1))
-    :hints (("Goal"
+    :hints (("goal"
              :use ((:instance 2^x*3^y=1=>xy=0-1)
                    (:instance 2^x*3^y=1=>xy=0-2)
                    (:instance 2^x*3^y=1=>xy=0-3 (x (expt 2 n1)) (y (expt 3 n2))))
@@ -368,7 +355,7 @@
                   (< 0 y)
                   (integerp y))
              (not (equal (* (expt 2 x) (expt 3 y)) 1)))
-    :hints (("Goal"
+    :hints (("goal"
              :do-not-induct t
              :use ((:instance 2^x*3^y=1=>xy=0-6 (x (expt 2 (- x))) (y (expt 3 y)))
                    (:instance mod-2-x>0 (x (- x)))
@@ -382,7 +369,7 @@
                   (> 0 y)
                   (integerp y))
              (not (equal (* (expt 2 x) (expt 3 y)) 1)))
-    :hints (("Goal"
+    :hints (("goal"
              :do-not-induct t
              :use ((:instance 2^x*3^y=1=>xy=0-6 (x (expt 3 (- y))) (y (expt 2 x)))
                    (:instance mod-2-x>0 (x x))
@@ -401,22 +388,22 @@
                   (equal (* (expt 2 x) (expt 3 y)) 1))
              (and (equal x 0)
                   (equal y 0)))
-    :hints (("Goal"
+    :hints (("goal"
             :cases ((and (> x 0) (> y 0))
                     (and (< x 0) (< y 0))
                     (and (< x 0) (> y 0))
                     (and (> x 0) (< y 0)))
              :do-not-induct t
              )
-            ("Subgoal 3"
+            ("subgoal 3"
              :use ((:instance 2^x*3^y=1=>xy=0-4 (n1 (- x)) (n2 (- y)))
                    (:instance 2^x*3^y=1=>xy=0-5 (x (* (expt 2 (- x)) (expt 3 (- y))))))
              )
-            ("Subgoal 2"
+            ("subgoal 2"
              :use ((:instance 2^x*3^y=1=>xy=0-9))
              :in-theory nil
              )
-            ("Subgoal 1"
+            ("subgoal 1"
              :use ((:instance 2^x*3^y=1=>xy=0-10))
              :in-theory nil
              )
@@ -437,7 +424,7 @@
                          (* (expt 2 x1) (expt 3 y1))))
              (and (equal x x1)
                   (equal y y1)))
-    :hints (("Goal"
+    :hints (("goal"
              :use ((:instance 2^x*3^y=1=>xy=0 (x (- x x1)) (y (- y y1))))
              ))
     :rule-classes nil)
@@ -483,38 +470,38 @@
   )
 
 (defthmd f-*-g-seq-i-lemma3-1/2.1
-  (IMPLIES
-   (AND
-    (EXISTS-POSPN-2^N (* Q 1/2))
-    (< 0 Q)
-    (EQUAL (MOD Q 2) 0)
-    (EQUAL
-     (MOD-REMAINDER-2 (+ X 1) (* Q 1/2))
-     (LIST (+ (+ X 1)
-              (EXISTS-POSPN-2^N-WITNESS (* Q 1/2)))
-           (EXPT 3
-                 (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS (* Q 1/2))
-                                           (* Q 1/2)))))
-    (EXISTS-POSPN-2^N Q)
-    (INTEGERP X))
-   (EQUAL (MOD-REMAINDER-2 X Q)
-          (LIST (+ X (EXISTS-POSPN-2^N-WITNESS Q))
-                (EXPT 3
-                      (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS Q)
-                                                Q)))))
-  :hints (("Goal"
+  (implies
+   (and
+    (exists-pospn-2^n (* q 1/2))
+    (< 0 q)
+    (equal (mod q 2) 0)
+    (equal
+     (mod-remainder-2 (+ x 1) (* q 1/2))
+     (list (+ (+ x 1)
+              (exists-pospn-2^n-witness (* q 1/2)))
+           (expt 3
+                 (exists-pospn-3^n-witness (exists-pospn-2^n-witness (* q 1/2))
+                                           (* q 1/2)))))
+    (exists-pospn-2^n q)
+    (integerp x))
+   (equal (mod-remainder-2 x q)
+          (list (+ x (exists-pospn-2^n-witness q))
+                (expt 3
+                      (exists-pospn-3^n-witness (exists-pospn-2^n-witness q)
+                                                q)))))
+  :hints (("goal"
            :use ((:instance mod-remainder-2=> (x x) (q q))
                  (:instance 2^x*3^y=1=>xy=0-4 (n1 (exists-pospn-2^n-witness q))
                             (n2 (exists-pospn-3^n-witness (exists-pospn-2^n-witness q) q)))
                  (:instance exists-pospn-2^n=> (q q))
                  (:instance exists-pospn-2^n=> (q (* q 1/2)))
                  (:instance 2^x*3^y=2^x1*3^y1
-                            (x (+ (EXISTS-POSPN-2^N-WITNESS (* Q 1/2)) 1))
-                            (y (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS (* Q 1/2))
-                                                         (* Q 1/2)))
-                            (x1 (EXISTS-POSPN-2^N-WITNESS Q))
-                            (y1 (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS Q)
-                                                          Q)))
+                            (x (+ (exists-pospn-2^n-witness (* q 1/2)) 1))
+                            (y (exists-pospn-3^n-witness (exists-pospn-2^n-witness (* q 1/2))
+                                                         (* q 1/2)))
+                            (x1 (exists-pospn-2^n-witness q))
+                            (y1 (exists-pospn-3^n-witness (exists-pospn-2^n-witness q)
+                                                          q)))
                  )
            ))
   )
@@ -525,16 +512,16 @@
   (local (include-book "arithmetic/top" :dir :system))
 
   (defthmd f-*-g-seq-i-lemma3-1/2.2-sub1-1
-    (IMPLIES (AND (EQUAL (MOD (* 2 Y) 2) 0)
-                  (EQUAL (MOD-REMAINDER-2 X (* 2 Y))
-                         (MOD-REMAINDER-2 (+ X 1)
-                                          (* (* 2 Y) 1/2)))
-                  (INTEGERP X)
-                  (NOT (EQUAL (MOD Y 2) 0))
-                  (REALP Y)
-                  (< 0 Y))
-             (EQUAL (MOD-REMAINDER-2 X (* 2 Y))
-                    (LIST (+ X 1) Y)))))
+    (implies (and (equal (mod (* 2 y) 2) 0)
+                  (equal (mod-remainder-2 x (* 2 y))
+                         (mod-remainder-2 (+ x 1)
+                                          (* (* 2 y) 1/2)))
+                  (integerp x)
+                  (not (equal (mod y 2) 0))
+                  (realp y)
+                  (< 0 y))
+             (equal (mod-remainder-2 x (* 2 y))
+                    (list (+ x 1) y)))))
 
 (encapsulate
   ()
@@ -544,7 +531,7 @@
   (defthmd f-*-g-seq-i-lemma3-1/2.2-sub1-2
     (implies (integerp x)
              (equal (mod (* 2 x) 2) 0))
-    :hints (("Goal"
+    :hints (("goal"
              :in-theory (enable mod floor1)
              )))
   )
@@ -561,16 +548,16 @@
                   (> y 0))
              (equal (mod-remainder-2 x (* 2 y))
                     (list (+ x 1) y)))
-    :hints (("Goal"
+    :hints (("goal"
              :use ((:instance mod-remainder-2 (pow x)
                               (num (* 2 y))))
              :in-theory nil
              :do-not-induct t
              )
-            ("Subgoal 2"
+            ("subgoal 2"
              :use (:instance f-*-g-seq-i-lemma3-1/2.2-sub1-1)
              )
-            ("Subgoal 1"
+            ("subgoal 1"
              :use (:instance f-*-g-seq-i-lemma3-1/2.2-sub1-2 (x y))
              )
             ))
@@ -606,58 +593,58 @@
   (local (include-book "arithmetic/top" :dir :system))
 
   (defthmd f-*-g-seq-i-lemma3-1/2.2-sub1
-    (IMPLIES (AND (NOT (POSP (+ -1 (EXISTS-POSPN-2^N-WITNESS Q))))
-                  (NOT (EXISTS-POSPN-2^N (* Q 1/2)))
-                  (< 0 Q)
-                  (EQUAL (MOD Q 2) 0)
-                  (EXISTS-POSPN-2^N Q)
-                  (INTEGERP X))
-             (EQUAL (MOD-REMAINDER-2 X Q)
-                    (LIST (+ X (EXISTS-POSPN-2^N-WITNESS Q))
-                          (expt 3 (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS Q)
-                                                    Q)))))
-    :hints (("Goal"
+    (implies (and (not (posp (+ -1 (exists-pospn-2^n-witness q))))
+                  (not (exists-pospn-2^n (* q 1/2)))
+                  (< 0 q)
+                  (equal (mod q 2) 0)
+                  (exists-pospn-2^n q)
+                  (integerp x))
+             (equal (mod-remainder-2 x q)
+                    (list (+ x (exists-pospn-2^n-witness q))
+                          (expt 3 (exists-pospn-3^n-witness (exists-pospn-2^n-witness q)
+                                                    q)))))
+    :hints (("goal"
              :use (
                    (:instance exists-pospn-2^n=> (q q))
                    (:instance mod-3-y>0
-                              (y (EXISTS-POSPN-3^N-WITNESS 1 Q)))
+                              (y (exists-pospn-3^n-witness 1 q)))
                    (:instance f-*-g-seq-i-lemma3-1/2.2-sub1-3 (x x)
-                              (y (expt 3 (EXISTS-POSPN-3^N-WITNESS 1 Q))))
+                              (y (expt 3 (exists-pospn-3^n-witness 1 q))))
                    (:instance f-*-g-seq-i-lemma3-1/2.2-sub1-4
-                              (y (EXISTS-POSPN-3^N-WITNESS 1 Q)))
-                   (:instance f-*-g-seq-i-lemma3-1/2.2-sub1-5 (x (EXISTS-POSPN-2^N-WITNESS Q))))
+                              (y (exists-pospn-3^n-witness 1 q)))
+                   (:instance f-*-g-seq-i-lemma3-1/2.2-sub1-5 (x (exists-pospn-2^n-witness q))))
              :do-not-induct t
              ))
     )
   )
 
 (defthmd f-*-g-seq-i-lemma3-1/2.2
-  (IMPLIES
-   (AND (NOT (EXISTS-POSPN-2^N (* Q 1/2)))
-        (< 0 Q)
-        (EQUAL (MOD Q 2) 0)
-        (EXISTS-POSPN-2^N Q)
-        (INTEGERP X))
-   (EQUAL (MOD-REMAINDER-2 X Q)
-          (LIST (+ X (EXISTS-POSPN-2^N-WITNESS Q))
-                (EXPT 3
-                      (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS Q)
-                                                Q)))))
-  :hints (("Goal"
-           :cases ((not (posp (- (EXISTS-POSPN-2^N-WITNESS Q) 1))))
+  (implies
+   (and (not (exists-pospn-2^n (* q 1/2)))
+        (< 0 q)
+        (equal (mod q 2) 0)
+        (exists-pospn-2^n q)
+        (integerp x))
+   (equal (mod-remainder-2 x q)
+          (list (+ x (exists-pospn-2^n-witness q))
+                (expt 3
+                      (exists-pospn-3^n-witness (exists-pospn-2^n-witness q)
+                                                q)))))
+  :hints (("goal"
+           :cases ((not (posp (- (exists-pospn-2^n-witness q) 1))))
            :do-not-induct t
            )
-          ("Subgoal 2"
-           :use ((:instance EXISTS-POSPN-2^N-suff (n-2 (- (EXISTS-POSPN-2^N-WITNESS q) 1))
+          ("subgoal 2"
+           :use ((:instance exists-pospn-2^n-suff (n-2 (- (exists-pospn-2^n-witness q) 1))
                             (q (* q 1/2)))
                  (:instance exists-pospn-2^n=> (q q))
-                 (:instance EXISTS-POSPN-3^N-suff
-                            (n-3 (EXISTS-POSPN-3^N-WITNESS (EXISTS-POSPN-2^N-WITNESS Q)
-                                                           Q))
-                            (n-2 (- (EXISTS-POSPN-2^N-WITNESS q) 1))
+                 (:instance exists-pospn-3^n-suff
+                            (n-3 (exists-pospn-3^n-witness (exists-pospn-2^n-witness q)
+                                                           q))
+                            (n-2 (- (exists-pospn-2^n-witness q) 1))
                             (q (* q 1/2))))
            )
-          ("Subgoal 1"
+          ("subgoal 1"
            :use (:instance f-*-g-seq-i-lemma3-1/2.2-sub1)
            )
           ))
@@ -673,19 +660,19 @@
              (equal (mod-remainder-2 x q)
                     (list (+ x (exists-pospn-2^n-witness q))
                           (expt 3 (exists-pospn-3^n-witness (exists-pospn-2^n-witness q) q)))))
-    :hints (("Subgoal *1/2"
-             :cases ((EXISTS-POSPN-2^N (* Q 1/2)))
+    :hints (("subgoal *1/2"
+             :cases ((exists-pospn-2^n (* q 1/2)))
              :in-theory nil
              )
-            ("Subgoal *1/2.2"
+            ("subgoal *1/2.2"
              :in-theory nil
              :use ((:instance f-*-g-seq-i-lemma3-1/2.2))
              )
-            ("Subgoal *1/2.1"
+            ("subgoal *1/2.1"
              :in-theory nil
              :use ((:instance f-*-g-seq-i-lemma3-1/2.1))
              )
-            ("Subgoal *1/1"
+            ("subgoal *1/1"
              :use ((:instance f-*-g-seq-i-lemma3-*1/1 (n1 (exists-pospn-2^n-witness q))
                               (n2 (exists-pospn-3^n-witness (exists-pospn-2^n-witness q) q))))
              )
@@ -707,7 +694,7 @@
   (implies (posp n)
            (equal (list (nth (- n 1) (f-*-g-seq-2 n)))
                   (f-*-g-seq-i n)))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance f-*-g-seq-2-lemma4-1 (f (f-*-g-seq-2 (- n 1)))
                             (g (f-*-g-seq-i n))
                             (n (- n 1)))
@@ -724,7 +711,7 @@
   (defthmd f-*-g-seq-lemma1
    (implies (and (posp n1)
                  (posp n2))
-            (POSP (* (EXPT 2 N1) (EXPT 3 N2)))))
+            (posp (* (expt 2 n1) (expt 3 n2)))))
 
   (defthmd f-*-g-seq-1
     (implies (posp n1)
@@ -738,7 +725,7 @@
              (equal (nth (- (* (expt 2 n1) (expt 3 n2)) 1)
                          (f-*-g-seq (* (expt 2 n1) (expt 3 n2))))
                     (list p q)))
-    :hints (("Goal"
+    :hints (("goal"
              :use ((:instance f-*-g-seq-2-lemma4 (n (* (expt 2 n1) (expt 3 n2))))
                    (:instance f-*-g-seq-lemma1)
                    (:instance f-*-g-seq-i-lemma3 (x 0)
@@ -752,10 +739,10 @@
                               (q (* (expt 2 n1) (expt 3 n2))))
                    (:instance 2^x*3^y=2^x1*3^y1
                               (x n1) (y n2)
-                              (x1 (EXISTS-POSPN-2^N-WITNESS (* (EXPT 2 N1) (EXPT 3 N2))))
-                              (y1 (EXISTS-POSPN-3^N-WITNESS
-                                   (EXISTS-POSPN-2^N-WITNESS (* (EXPT 2 N1) (EXPT 3 N2)))
-                                   (* (EXPT 2 N1) (EXPT 3 N2)))))
+                              (x1 (exists-pospn-2^n-witness (* (expt 2 n1) (expt 3 n2))))
+                              (y1 (exists-pospn-3^n-witness
+                                   (exists-pospn-2^n-witness (* (expt 2 n1) (expt 3 n2)))
+                                   (* (expt 2 n1) (expt 3 n2)))))
                    (:instance f-*-g-seq-i-lemma3 (q (* (expt 2 n1) (expt 3 n2)))
                               (x 0))
                    (:instance f-*-g-seq-i-lemma4 (x 0) (y n2))
@@ -763,10 +750,10 @@
                    (:instance exists-pospn-2^n=>
                               (q (* (expt 2 n1) (expt 3 n2))))
                    (:instance f-*-g-seq-1 (n1 n2))
-                   (:instance f-*-g-seq-1 (n1 (EXISTS-POSPN-3^N-WITNESS
-                                               (EXISTS-POSPN-2^N-WITNESS (* (EXPT 2 N1) (EXPT 3 N2)))
-                                               (* (EXPT 2 N1) (EXPT 3 N2)))))
-                   (:instance f-*-g-seq-1 (n1 (EXISTS-POSPN-2^N-WITNESS (* (EXPT 2 N1) (EXPT 3 N2)))))
+                   (:instance f-*-g-seq-1 (n1 (exists-pospn-3^n-witness
+                                               (exists-pospn-2^n-witness (* (expt 2 n1) (expt 3 n2)))
+                                               (* (expt 2 n1) (expt 3 n2)))))
+                   (:instance f-*-g-seq-1 (n1 (exists-pospn-2^n-witness (* (expt 2 n1) (expt 3 n2)))))
                    )
              :do-not-induct t
              )))
@@ -779,7 +766,7 @@
                 (equal (g n2) q))
            (equal (f-*-g-sequence (* (expt 2 n1) (expt 3 n2)))
                   (list p q)))
-  :hints (("Goal"
+  :hints (("goal"
            :use ((:instance f-*-g-seq-nth-value (n1 n1) (n2 n2) (p (f n1)) (q (g n2)))
                  (:instance 2^x*3^y=1=>xy=0-4 (n1 n1) (n2 n2)))
            )))
