@@ -1,5 +1,404 @@
 
 (include-book "banach-tarski-1")
+(include-book "countable-sets")
+
+(defun pole-seq (n)
+  (if (posp n)
+      (nth (- n 1) (poles-list (generate-words-main n)))
+    0))
+
+(defun-sk nth-pole-exists (p)
+  (exists n
+          (and (posp n)
+               (m-= (pole-seq n) p))))
+
+
+(defthmd poles-countable-thm
+  (implies (d-p p)
+           (nth-pole-exists p))
+  :hints (("Goal"
+           :use ((:instance exists-pole-n-thm (p p))
+                 (:instance exists-pole-n (pole p))
+                 (:instance nth-pole-exists-suff (p p) (n (+ (exists-pole-n-witness p) 1))))
+           :in-theory (e/d () (poles-list generate-words-main))
+           )))
+
+(defun p1-*-p2-seq-i (i)
+  (let ((rm-2 (mod-remainder-2 0 i)))
+    (let ((rm-3 (mod-remainder-3 0 (nth 1 rm-2))))
+      (if (equal (nth 1 rm-3) 1)
+          (if (or (equal (nth 0 rm-2) 0)
+                  (equal (nth 0 rm-3) 0))
+              (list (list 0 0))
+            (list (list (pole-seq (nth 0 rm-2)) (pole-seq (nth 0 rm-3)))))
+        (list (list 0 0))))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defun p1*p2-seq-2 (i)
+    (if (zp i)
+        nil
+      (append (p1*p2-seq-2 (- i 1)) (p1-*-p2-seq-i i))))
+  )
+
+(defun p1-*-p2-seq (i)
+  (if (posp i)
+      (p1*p2-seq-2 i)
+    nil))
+
+(defun p1-*-p2-sequence (n)
+  (if (posp n)
+      (nth (- n 1) (p1-*-p2-seq n))
+    0))
+
+(defun-sk p1-*-p2-countable (x)
+  (exists n
+          (and (posp n)
+               (equal (p1-*-p2-sequence n) x))))
+
+(defthmd p1-*-p2-seq-exists
+  (implies (and (posp n1)
+                (posp n2)
+                (equal (pole-seq n1) p)
+                (equal (pole-seq n2) q))
+           (p1-*-p2-countable (list p q)))
+  :hints (("Goal"
+           :use (:functional-instance f-*-g-seq-exists
+                                      (f pole-seq)
+                                      (g pole-seq)
+                                      (f-*-g-countable p1-*-p2-countable)
+                                      (f-*-g-sequence p1-*-p2-sequence)
+                                      (f-*-g-seq p1-*-p2-seq)
+                                      (f-*-g-seq-2 p1*p2-seq-2)
+                                      (f-*-g-seq-i p1-*-p2-seq-i)
+                                      (f-*-g-countable-witness p1-*-p2-countable-witness))
+           )))
+
+(defun natp-seq (n)
+  (if (posp n)
+      (- n 1)
+    0))
+
+(defun-sk num>=0-exists (num)
+  (exists n
+          (and (posp n)
+               (equal (natp-seq n) num))))
+
+
+(defthmd natnum-countable-thm
+  (implies (natp num)
+           (num>=0-exists num))
+  :hints (("Goal"
+           :use (:instance num>=0-exists-suff (n (+ num 1)) (num num))
+           )))
+
+(defun p1p2-n-seq-i (i)
+  (let ((rm-2 (mod-remainder-2 0 i)))
+    (let ((rm-3 (mod-remainder-3 0 (nth 1 rm-2))))
+      (if (equal (nth 1 rm-3) 1)
+          (if (or (equal (nth 0 rm-2) 0)
+                  (equal (nth 0 rm-3) 0))
+              (list (list 0 0))
+            (list (list (p1-*-p2-sequence (nth 0 rm-2)) (natp-seq (nth 0 rm-3)))))
+        (list (list 0 0))))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defun p1p2-n-seq-2 (i)
+    (if (zp i)
+        nil
+      (append (p1p2-n-seq-2 (- i 1)) (p1p2-n-seq-i i))))
+  )
+
+(defun p1p2-n-seq (i)
+  (if (posp i)
+      (p1p2-n-seq-2 i)
+    nil))
+
+(defun p1p2-n-sequence (n)
+  (if (posp n)
+      (nth (- n 1) (p1p2-n-seq n))
+    0))
+
+(defun-sk p1p2-n-countable (x)
+  (exists n
+          (and (posp n)
+               (equal (p1p2-n-sequence n) x))))
+
+(defthmd p1p2-n-seq-exists
+  (implies (and (posp n1)
+                (posp n2)
+                (equal (p1-*-p2-sequence n1) p)
+                (equal (natp-seq n2) q))
+           (p1p2-n-countable (list p q)))
+  :hints (("Goal"
+           :use (:functional-instance f-*-g-seq-exists
+                                      (f p1-*-p2-sequence)
+                                      (g natp-seq)
+                                      (f-*-g-countable p1p2-n-countable)
+                                      (f-*-g-sequence p1p2-n-sequence)
+                                      (f-*-g-seq p1p2-n-seq)
+                                      (f-*-g-seq-2 p1p2-n-seq-2)
+                                      (f-*-g-seq-i p1p2-n-seq-i)
+                                      (f-*-g-countable-witness p1p2-n-countable-witness))
+           )))
+
+(defun posp-seq (n)
+  (if (posp n)
+      n
+    0))
+
+(defun-sk num>=1-exists (num)
+  (exists n
+          (and (posp n)
+               (equal (posp-seq n) num))))
+
+
+(defthmd posp-countable-thm
+  (implies (posp num)
+           (num>=1-exists num))
+  :hints (("Goal"
+           :use (:instance num>=1-exists-suff (n num) (num num))
+           )))
+
+(defun p1p2-n-p-seq-i (i)
+  (let ((rm-2 (mod-remainder-2 0 i)))
+    (let ((rm-3 (mod-remainder-3 0 (nth 1 rm-2))))
+      (if (equal (nth 1 rm-3) 1)
+          (if (or (equal (nth 0 rm-2) 0)
+                  (equal (nth 0 rm-3) 0))
+              (list (list 0 0))
+            (list (list (p1p2-n-sequence (nth 0 rm-2)) (posp-seq (nth 0 rm-3)))))
+        (list (list 0 0))))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defun p1p2-n-p-seq-2 (i)
+    (if (zp i)
+        nil
+      (append (p1p2-n-p-seq-2 (- i 1)) (p1p2-n-p-seq-i i))))
+  )
+
+(defun p1p2-n-p-seq (i)
+  (if (posp i)
+      (p1p2-n-p-seq-2 i)
+    nil))
+
+(defun p1p2-n-p-sequence (n)
+  (if (posp n)
+      (nth (- n 1) (p1p2-n-p-seq n))
+    0))
+
+(defun-sk p1p2-n-p-countable (x)
+  (exists n
+          (and (posp n)
+               (equal (p1p2-n-p-sequence n) x))))
+
+(defthmd p1p2-n-p-seq-exists
+  (implies (and (posp n1)
+                (posp n2)
+                (equal (p1p2-n-sequence n1) p)
+                (equal (posp-seq n2) q))
+           (p1p2-n-p-countable (list p q)))
+  :hints (("Goal"
+           :use (:functional-instance f-*-g-seq-exists
+                                      (f p1p2-n-sequence)
+                                      (g posp-seq)
+                                      (f-*-g-countable p1p2-n-p-countable)
+                                      (f-*-g-sequence p1p2-n-p-sequence)
+                                      (f-*-g-seq p1p2-n-p-seq)
+                                      (f-*-g-seq-2 p1p2-n-p-seq-2)
+                                      (f-*-g-seq-i p1p2-n-p-seq-i)
+                                      (f-*-g-countable-witness p1p2-n-p-countable-witness))
+           )))
+
+(defthmd p1p2-n-p-in-the-list
+  (implies (and (posp n1)
+                (posp n2)
+                (posp n3)
+                (posp n4)
+                (equal (pole-seq n1) p1)
+                (equal (pole-seq n2) p2)
+                (equal (natp-seq n3) nat)
+                (equal (posp-seq n4) pos))
+           (p1p2-n-p-countable (list (list (list p1 p2) nat) pos)))
+  :hints (("Goal"
+           :use ((:instance p1-*-p2-seq-exists (n1 n1) (n2 n2) (p (pole-seq n1)) (q (pole-seq n2)))
+                 (:instance p1p2-n-seq-exists (n1 (p1-*-p2-countable-witness (list p1 p2)))
+                            (p (list (pole-seq n1) (pole-seq n2)))
+                            (q (natp-seq n3))
+                            (n2 n3))
+                 (:instance p1p2-n-p-seq-exists
+                            (n1 (p1p2-n-countable-witness (list (list (pole-seq n1) (pole-seq n2)) nat)))
+                            (p (list (list (pole-seq n1) (pole-seq n2)) nat))
+                            (q (posp-seq n4))
+                            (n2 n4))
+                 (:instance P1-*-P2-COUNTABLE (x (LIST (POLE-SEQ N1) (POLE-SEQ N2))))
+                 (:instance P1P2-N-COUNTABLE (x (LIST (LIST (POLE-SEQ N1) (POLE-SEQ N2))
+                                                      (NATP-SEQ N3))))
+                 )
+           :in-theory nil
+           )))
+
+(defun-sk exists-angle>=0<2pi (p1 p2)
+  (exists angle
+          (and (realp angle)
+               (>= angle 0)
+               (< angle (* 2 (acl2-pi)))
+               (m-= (m-* (rotation-about-witness angle (point-on-s2-not-d)) p1) p2))))
+
+(defun angle-p1p2 (angle nat pos)
+  (/ (+ (* 2 (acl2-pi) nat) angle) pos))
+
+(defun generate-angles (n)
+  (if (zp n)
+      nil
+    (let ((p1 (caaar (p1p2-n-p-sequence n)))
+          (p2 (cadaar (p1p2-n-p-sequence n)))
+          (nat (cadar (p1p2-n-p-sequence n)))
+          (pos (cadr (p1p2-n-p-sequence n))))
+      (if (exists-angle>=0<2pi p1 p2)
+          (append (generate-angles (- n 1)) (list (angle-p1p2 (exists-angle>=0<2pi-witness p1 p2) nat pos)))
+        (append (generate-angles (- n 1)) (list nil))))))
+
+(defthmd realp-angle-p1p2
+  (implies (and (realp angle)
+                (realp nat)
+                (realp pos))
+           (realp (angle-p1p2 angle nat pos))))
+
+(defun angles-seq (n)
+  (if (posp n)
+      (nth (- n 1) (generate-angles n))
+    0))
+
+(defun-sk nth-angle-exists (angle)
+  (exists n
+          (and (posp n)
+               (equal (angles-seq n) angle))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd generate-angles-lemma1
+    (implies (natp n)
+             (equal (len (generate-angles n)) n))
+    :hints (("Goal"
+             :in-theory (disable p1p2-n-p-sequence rotation-about-witness point-on-s2-not-d)
+             :induct (generate-angles n)
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd angles-countable-thm-1
+    (implies (and (posp (- n 1))
+                  (natp q)
+                  (< q (len (generate-angles (- n 1)))))
+             (equal (nth q (generate-angles n))
+                    (nth q (generate-angles (- n 1)))))
+    :hints (("Goal"
+             :in-theory (disable p1p2-n-p-sequence rotation-about-witness point-on-s2-not-d angle-p1p2)
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd angles-countable-thm-2
+    (implies (and (posp n)
+                  (natp q)
+                  (< q (len (generate-angles n))))
+             (equal (nth q (generate-angles n))
+                    (let ((p1 (caaar (p1p2-n-p-sequence (+ q 1))))
+                          (p2 (cadaar (p1p2-n-p-sequence (+ q 1))))
+                          (nat (cadar (p1p2-n-p-sequence (+ q 1))))
+                          (pos (cadr (p1p2-n-p-sequence (+ q 1)))))
+                      (if (exists-angle>=0<2pi p1 p2)
+                          (angle-p1p2 (exists-angle>=0<2pi-witness p1 p2) nat pos)
+                        nil))))
+    :hints (("Goal"
+             :in-theory (disable p1p2-n-p-sequence rotation-about-witness point-on-s2-not-d angle-p1p2)
+             )
+            ("Subgoal *1/3"
+             :use ((:instance angles-countable-thm-1 (n n) (q q))
+                   (:instance generate-angles-lemma1 (n n))
+                   (:instance generate-angles-lemma1 (n (- n 1))))
+             )
+            ("Subgoal *1/2"
+             :use ((:instance angles-countable-thm-1 (n n) (q q))
+                   (:instance generate-angles-lemma1 (n n))
+                   (:instance generate-angles-lemma1 (n (- n 1))))
+             )
+            ))
+  )
+
+(defthmd angles-countable-thm
+  (implies (and (posp n1)
+                (posp n2)
+                (posp n3)
+                (posp n4)
+                (equal (pole-seq n1) p1)
+                (equal (pole-seq n2) p2)
+                (equal (natp-seq n3) nat)
+                (equal (posp-seq n4) pos)
+                (realp angle)
+                (>= angle 0)
+                (< angle (* 2 (acl2-pi)))
+                (m-= (m-* (rotation-about-witness angle (point-on-s2-not-d)) p1) p2))
+           (nth-angle-exists (/ (+ (* 2 (acl2-pi) nat) (exists-angle>=0<2pi-witness p1 p2)) pos)))
+  :hints (("Goal"
+           :use ((:instance p1p2-n-p-in-the-list (n1 n1) (n2 n2) (n3 n3) (n4 n4)
+                            (p1 (pole-seq n1))
+                            (p2 (pole-seq n2))
+                            (nat (natp-seq n3))
+                            (pos (posp-seq n4)))
+                 (:instance angles-countable-thm-2
+                            (q (- (p1p2-n-p-countable-witness (list (list (list p1 p2) nat) pos)) 1))
+                            (n (p1p2-n-p-countable-witness (list (list (list p1 p2) nat) pos))))
+                 (:instance generate-angles-lemma1
+                            (n (p1p2-n-p-countable-witness (list (list (list p1 p2) nat) pos))))
+                 (:instance nth-angle-exists-suff
+                            (n (p1p2-n-p-countable-witness (list (list (list p1 p2) nat) pos)))
+                            (angle angle))
+                 (:instance exists-angle>=0<2pi-suff (p1 p1) (p2 p2)
+                            (angle angle)))
+           :in-theory (e/d () (p1p2-n-p-sequence pole-seq point-on-s2-not-d rotation-about-witness natp-seq posp-seq m-* m-= acl2-sqrt))
+           )))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------
 
 (defun-sk exists-angle-p1-p2 (p1 p2)
   (exists angle
@@ -409,7 +808,26 @@
              )))
   )
 
+(defun angle-seq (n)
+  (if (posp n)
+      (nth (- n 1) (poles-list (generate-words-main n)))
+    0))
 
+(defun-sk nth-pole-exists (p)
+  (exists n
+          (and (posp n)
+               (m-= (pole-seq n) p))))
+
+
+(defthmd poles-countable-thm
+  (implies (d-p p)
+           (nth-pole-exists p))
+  :hints (("Goal"
+           :use ((:instance exists-pole-n-thm (p p))
+                 (:instance exists-pole-n (pole p))
+                 (:instance nth-pole-exists-suff (p p) (n (+ (exists-pole-n-witness p) 1))))
+           :in-theory (e/d () (poles-list generate-words-main))
+           )))
 
 
 
