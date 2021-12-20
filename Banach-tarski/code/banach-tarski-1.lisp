@@ -3144,8 +3144,6 @@
                  (:instance sine-positive-in-pi/2-pi (x x)))
            )))
 
-;;is this true?
-
 (defthmd sine-is-0-in-0<2pi=>x=0orpi-2
   (implies (and (realp x)
                 (<= 0 x)
@@ -3165,8 +3163,6 @@
            :use ((:instance sine-negative-in-pi-3pi/2 (x x))
                  (:instance sine-negative-in-3pi/2-2pi (x x)))
            )))
-
-;;is this true?
 
 (defthmd sine-is-0-in-0<2pi=>x=0orpi-4
   (implies (and (realp x)
