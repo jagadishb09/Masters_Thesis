@@ -1,5 +1,506 @@
 
 (include-book "banach-tarski-1")
+
+(defthm r-theta*p=p=>angle>=0<2pi=>0
+  (implies (and (point-in-r3 p)
+                (point-in-r3 u)
+                (realp angle)
+                (or (not (equal (point-in-r3-x1 p)
+                                (point-in-r3-x1 u)))
+                    (not (equal (point-in-r3-y1 p)
+                                (point-in-r3-y1 u)))
+                    (not (equal (point-in-r3-z1 p)
+                                (point-in-r3-z1 u))))
+                (or (not (equal (point-in-r3-x1 p)
+                                (- (point-in-r3-x1 u))))
+                    (not (equal (point-in-r3-y1 p)
+                                (- (point-in-r3-y1 u))))
+                    (not (equal (point-in-r3-z1 p)
+                                (- (point-in-r3-z1 u)))))
+                (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                          (* (point-in-r3-y1 p) (point-in-r3-y1 p))
+                          (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                       1)
+                (equal (+ (* (point-in-r3-x1 u) (point-in-r3-x1 u))
+                          (* (point-in-r3-y1 u) (point-in-r3-y1 u))
+                          (* (point-in-r3-z1 u) (point-in-r3-z1 u)))
+                       1)
+                (equal (point-in-r3-y1 u) 0)
+                (>= angle 0)
+                (< angle (* 2 (acl2-pi)))
+                (m-= (m-* (rotation-about-witness angle u) p) p))
+           (equal angle 0))
+  :hints (("Goal"
+           :use ((:instance r-theta*p=p=>cosine=1 (p p) (u u))
+                 (:instance r-theta*p=p=>sine=0 (p p) (u u))
+                 (:instance sin=0-cos=1 (x angle)))
+           :in-theory (e/d () (m-= m-* rotation-about-witness point-in-r3-x1 point-in-r3-y1 point-in-r3-z1))
+           ))
+  :rule-classes nil)
+
+(defthm r-theta1*p=p-r-theta2*p=p=>1=2
+  (implies (and (realp angle1)
+                (realp angle2)
+                (>= angle1 0)
+                (< angle1 (* 2 (acl2-pi)))
+                (>= angle2 0)
+                (< angle2 (* 2 (acl2-pi)))
+                (point-in-r3 p)
+                (point-in-r3 u)
+                (or (not (equal (point-in-r3-x1 p)
+                                (point-in-r3-x1 u)))
+                    (not (equal (point-in-r3-y1 p)
+                                (point-in-r3-y1 u)))
+                    (not (equal (point-in-r3-z1 p)
+                                (point-in-r3-z1 u))))
+                (or (not (equal (point-in-r3-x1 p)
+                                (- (point-in-r3-x1 u))))
+                    (not (equal (point-in-r3-y1 p)
+                                (- (point-in-r3-y1 u))))
+                    (not (equal (point-in-r3-z1 p)
+                                (- (point-in-r3-z1 u)))))
+                (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                          (* (point-in-r3-y1 p) (point-in-r3-y1 p))
+                          (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                       1)
+                (equal (+ (* (point-in-r3-x1 u) (point-in-r3-x1 u))
+                          (* (point-in-r3-y1 u) (point-in-r3-y1 u))
+                          (* (point-in-r3-z1 u) (point-in-r3-z1 u)))
+                       1)
+                (equal (point-in-r3-y1 u) 0)
+                (m-= (m-* (rotation-about-witness angle1 u) p)
+                     (m-* (rotation-about-witness angle2 u) p)))
+           (equal angle1 angle2))
+  :hints (("Goal"
+           :use ((:instance r-theta1*p=r-theta2*p=>r-theta1-theta2*p=p (angle1 angle1)
+                            (angle2 angle2)
+                            (u u) (p p))
+                 (:instance r-theta1*p=r-theta2*p=>r-theta1-theta2*p=p (angle1 angle2)
+                            (angle2 angle1)
+                            (u u) (p p))
+                 (:instance r-theta*p=p=>angle>=0<2pi=>0 (p p) (u u) (angle (- angle1 angle2)))
+                 (:instance r-theta*p=p=>angle>=0<2pi=>0 (p p) (u u) (angle (- angle2 angle1))))
+           :in-theory (e/d () (m-= m-* rotation-about-witness point-in-r3-x1 point-in-r3-y1 point-in-r3-z1))
+           ))
+  :rule-classes nil)
+
+(defthmd point-on-s2-not-d-on-s2
+  (implies (equal (point-on-s2-not-d) u)
+           (and (equal (+ (* (point-in-r3-x1 u) (point-in-r3-x1 u))
+                          (* (point-in-r3-y1 u) (point-in-r3-y1 u))
+                          (* (point-in-r3-z1 u) (point-in-r3-z1 u)))
+                       1)
+                (not (d-p u))))
+  :hints (("Goal"
+           :use ((:instance r3-rotationp-r-theta-2 (point (point-on-s2-not-d)))
+                 (:instance r3-rotationp-r-theta-5 (point (point-on-s2-not-d)))
+                 (:instance exists-in-x-coord-sequence-lemma (p u))
+                 (:instance exists-point-on-s2-not-d-3)
+                 (:instance witness-not-in-x-coord-sequence))
+           :in-theory (disable point-on-s2-not-d point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 aref2 d-p)
+           )))
+
+(defthmd d-p=>notm-=u--u-1
+  (implies (and (d-p p)
+                (point-in-r3 u)
+                (not (d-p u)))
+           (and (or (not (equal (point-in-r3-x1 p)
+                                (point-in-r3-x1 u)))
+                    (not (equal (point-in-r3-y1 p)
+                                (point-in-r3-y1 u)))
+                    (not (equal (point-in-r3-z1 p)
+                                (point-in-r3-z1 u))))
+                (or (not (equal (point-in-r3-x1 p)
+                                (- (point-in-r3-x1 u))))
+                    (not (equal (point-in-r3-y1 p)
+                                (- (point-in-r3-y1 u))))
+                    (not (equal (point-in-r3-z1 p)
+                                (- (point-in-r3-z1 u)))))))
+  :hints (("Goal"
+           :use ((:instance d-p=>notm-=u--u (p p) (u u)))
+           :in-theory (e/d (m-=) (word-exists))
+           )))
+
+(defthm r-theta1*p=p-r-theta2*p=p=>1=2-d-p-1
+  (implies (d-p p)
+           (and (equal (+ (* (point-in-r3-x1 p) (point-in-r3-x1 p))
+                          (* (point-in-r3-y1 p) (point-in-r3-y1 p))
+                          (* (point-in-r3-z1 p) (point-in-r3-z1 p)))
+                       1)
+                (point-in-r3 p))))
+
+(defthm r-theta1*p=p-r-theta2*p=p=>1=2-d-p
+  (implies (and (realp angle1)
+                (realp angle2)
+                (>= angle1 0)
+                (< angle1 (* 2 (acl2-pi)))
+                (>= angle2 0)
+                (< angle2 (* 2 (acl2-pi)))
+                (d-p p)
+                (equal (point-on-s2-not-d) u)
+                (m-= (m-* (rotation-about-witness angle1 u) p)
+                     (m-* (rotation-about-witness angle2 u) p)))
+           (equal angle1 angle2))
+  :hints (("Goal"
+           :use ((:instance r-theta1*p=p-r-theta2*p=p=>1=2 (angle1 angle1)
+                            (angle2 angle2)
+                            (u (point-on-s2-not-d)) (p p))
+                 (:instance d-p (point p))
+                 (:instance s2-def-p (point p))
+                 (:instance exists-point-on-s2-not-d-2)
+                 (:instance s2-def-p (point u))
+                 (:instance r3-rotationp-r-theta-5 (point (point-on-s2-not-d)))
+                 (:instance r-theta1*p=p-r-theta2*p=p=>1=2-d-p-1 (p p))
+                 (:instance point-on-s2-not-d-on-s2 (u (point-on-s2-not-d)))
+                 (:instance d-p=>notm-=u--u-1 (p p) (u (point-on-s2-not-d))))
+           :in-theory nil
+           ))
+  :rule-classes nil)
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd angles-countable-1
+    (implies (and (realp angle)
+                  (posp n)
+                  (>= angle 0)
+                  (< angle (* 2 (acl2-pi))))
+             (and (NATP (* (+ (* N ANGLE)
+                               (- (MOD (* N ANGLE) (* 2 (ACL2-PI)))))
+                           (/ (* 2 (ACL2-PI)))))
+                  (REALP (MOD (* N ANGLE) (* 2 (ACL2-PI))))
+                  (REALP (* N ANGLE))
+                  (REALP (* 2 (ACL2-PI)))))
+    :hints (("Goal"
+             :use (:instance k-range-3 (n n) (x (mod (* n angle) (* 2 (acl2-pi)))) (angle angle)
+                              (k (/ (- (* n angle) (mod (* n angle) (* 2 (acl2-pi))))
+                                    (* 2 (acl2-pi)))))
+             )))
+
+  (defthmd angles-countable-2
+    (implies (and (d-p p1)
+                  (d-p p2)
+                  (NTH-POLE-EXISTS P1)
+                  (NTH-POLE-EXISTS P2)
+                  (EXISTS-ANGLE>=0<2PI P1 P2))
+             (and (REALP (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2))
+                  (m-= (pole-seq (NTH-POLE-EXISTS-WITNESS P1)) p1)
+                  (m-= (pole-seq (NTH-POLE-EXISTS-WITNESS P2)) p2)
+                  (POSP (NTH-POLE-EXISTS-WITNESS P1))
+                  (POSP (NTH-POLE-EXISTS-WITNESS P2))))
+    :hints (("Goal"
+             :in-theory (disable d-p)
+             )))
+  )
+
+(defthmd angles-countable-3
+  (implies (and (d-p p1)
+                (d-p p2)
+                (realp angle)
+                (posp n)
+                (>= angle 0)
+                (< angle (* 2 (acl2-pi)))
+                (m-= (m-* (rotation-about-witness (* n angle) (point-on-s2-not-d)) p1) p2))
+           (M-= (M-* (ROTATION-ABOUT-WITNESS (MOD (* N ANGLE) (* 2 (ACL2-PI)))
+                                             (POINT-ON-S2-NOT-D))
+                     P1)
+                P2))
+  :hints (("Goal"
+           :use ((:instance realnum-equiv (r (* n angle)) (x (* 2 (acl2-pi))))
+                 (:instance k-range-3 (n n) (x (mod (* n angle) (* 2 (acl2-pi)))) (angle angle)
+                            (k (/ (- (* n angle) (mod (* n angle) (* 2 (acl2-pi))))
+                                  (* 2 (acl2-pi)))))
+                 (:instance integerp-r-mod-r-x/x (r (* n angle)) (x (* 2 (acl2-pi))))
+                 (:instance exists-point-on-s2-not-d-2)
+                 (:instance s2-def-p (point (point-on-s2-not-d)))
+                 (:instance rotation-angle=2pik
+                            (k (* (+ (* N ANGLE)
+                                     (- (MOD (* N ANGLE) (* 2 (ACL2-PI)))))
+                                  (/ (* 2 (ACL2-PI)))))
+                            (x (MOD (* N ANGLE) (* 2 (ACL2-PI))))
+                            (u (point-on-s2-not-d))))
+           :in-theory (disable rotation-about-witness point-on-s2-not-d acl2-sqrt word-exists d-p)
+           )))
+
+(defthmd angles-countable-4
+  (implies (NUM>=0-EXISTS p)
+           (posp (NUM>=0-EXISTS-WITNESS p))))
+
+(defthmd angles-countable-5
+  (implies (NUM>=1-EXISTS n)
+           (posp (NUM>=1-EXISTS-WITNESS n))))
+
+(defthmd angles-countable-6
+  (implies (NUM>=0-EXISTS p)
+           (equal (natp-seq (num>=0-exists-witness p)) p)))
+
+(defthmd angles-countable-7
+  (implies (NUM>=1-EXISTS n)
+           (equal (posp-seq (num>=1-exists-witness n)) n)))
+
+(defthmd angles-countable-8
+  (implies (and (m-= witp1 p1)
+                (m-= witp2 p2)
+                (m-= (m-* p3 p1) p2))
+           (m-= (m-* p3 witp1) witp2)))
+
+(defthmd angles-countable-9
+  (implies (EXISTS-ANGLE>=0<2PI P1 P2)
+           (and (realp (EXISTS-ANGLE>=0<2PI-witness P1 P2))
+                (>= (EXISTS-ANGLE>=0<2PI-witness P1 P2) 0)
+                (< (EXISTS-ANGLE>=0<2PI-witness P1 P2) (* 2 (acl2-pi)))
+                (m-= (m-* (rotation-about-witness (EXISTS-ANGLE>=0<2PI-witness P1 P2)
+                                                  (point-on-s2-not-d)) p1) p2)))
+  :hints (("Goal"
+           :in-theory (disable rotation-about-witness)
+           )))
+
+(defthmd angles-countable-10
+  (implies (and (m-= (m-* x p1) p2)
+                (m-= (m-* y witp1) witp2)
+                (m-= witp1 p1)
+                (m-= witp2 p2))
+           (m-= (m-* x p1) (m-* y p1))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+  (defthm angles-countable-11
+    (implies (and (posp n)
+                  (realp angle)
+                  (EQUAL (+ (* (* 2 (ACL2-PI))
+                               (+ (* N ANGLE)
+                                  (- (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2)))
+                               (/ (* 2 (ACL2-PI))))
+                            (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2))
+                         (* N ANGLE)))
+             (equal angle
+                    (* (+ (* 2 (ACL2-PI)
+                             (+ (* N ANGLE)
+                                (- (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2)))
+                             (/ (* 2 (ACL2-PI))))
+                          (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2))
+                       (/ N))))
+    :rule-classes nil)
+  )
+
+(defthmd angles-countable-12
+  (implies
+   (EQUAL (+ (* (* 2 (ACL2-PI))
+                (+ (* N ANGLE)
+                   (- (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2)))
+                (/ (* 2 (ACL2-PI))))
+             (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2))
+          (* N ANGLE))
+   (EQUAL (* N ANGLE)
+          (+ (* 2 (ACL2-PI)
+                (+ (* N ANGLE)
+                   (- (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2)))
+                (/ (* 2 (ACL2-PI))))
+             (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2)))))
+
+(defthmd angles-countable
+  (implies (and (d-p p1)
+                (d-p p2)
+                (realp angle)
+                (posp n)
+                (>= angle 0)
+                (< angle (* 2 (acl2-pi)))
+                (m-= (m-* (rotation-about-witness (* n angle) (point-on-s2-not-d)) p1) p2))
+           (nth-angle-exists angle))
+  :hints (("Goal"
+           :use ((:instance poles-countable-thm (p p1))
+                 (:instance poles-countable-thm (p p2))
+                 (:instance natnum-countable-thm (num (/ (- (* n angle) (mod (* n angle) (* 2 (acl2-pi))))
+                                                         (* 2 (acl2-pi)))))
+                 (:instance k-range-3 (n n) (x (mod (* n angle) (* 2 (acl2-pi)))) (angle angle)
+                            (k (/ (- (* n angle) (mod (* n angle) (* 2 (acl2-pi))))
+                                  (* 2 (acl2-pi)))))
+                 (:instance integerp-r-mod-r-x/x (r (* n angle)) (x (* 2 (acl2-pi))))
+                 (:instance realnum-equiv (r (* n angle)) (x (* 2 (acl2-pi))))
+                 (:instance posp-countable-thm (num n))
+                 (:instance exists-angle>=0<2pi-suff (p1 p1) (p2 p2) (angle (mod (* n angle) (* 2 (acl2-pi)))))
+                 (:instance range-mod-r-x (r (* n angle)) (x (* 2 (acl2-pi))))
+                 (:instance angles-countable-1)
+                 (:instance angles-countable-2)
+                 (:instance angles-countable-8 (p1 p1) (p2 p2)
+                            (p3 (ROTATION-ABOUT-WITNESS (MOD (* N ANGLE) (* 2 (ACL2-PI)))
+                                                        (POINT-ON-S2-NOT-D)))
+                            (witp1 (POLE-SEQ (NTH-POLE-EXISTS-WITNESS P1)))
+                            (witp2 (POLE-SEQ (NTH-POLE-EXISTS-WITNESS P2))))
+                 (:instance r-theta1*p=p-r-theta2*p=p=>1=2-d-p
+                            (angle1 (mod (* n angle) (* 2 (acl2-pi))))
+                            (angle2 (exists-angle>=0<2pi-witness p1 p2))
+                            (u (point-on-s2-not-d))
+                            (p p1))
+                 (:instance r-theta1*p=p-r-theta2*p=p=>1=2-d-p
+                            (angle1 (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2))
+                            (angle2 (EXISTS-ANGLE>=0<2PI-WITNESS (POLE-SEQ (NTH-POLE-EXISTS-WITNESS P1))
+                                                                 (POLE-SEQ (NTH-POLE-EXISTS-WITNESS P2))))
+                            (u (point-on-s2-not-d))
+                            (p p1))
+                 (:instance angles-countable-11)
+                 (:instance rotation-angle=2pik
+                            (k (* (+ (* N ANGLE)
+                                     (- (MOD (* N ANGLE) (* 2 (ACL2-PI)))))
+                                  (/ (* 2 (ACL2-PI)))))
+                            (x (MOD (* N ANGLE) (* 2 (ACL2-PI))))
+                            (u (point-on-s2-not-d)))
+                 (:instance angles-countable-3)
+                 (:instance angles-countable-5)
+                 (:instance angles-countable-7)
+                 (:instance angles-countable-9)
+                 (:instance angles-countable-12)
+                 (:instance angles-countable-4 (p (* (+ (* N ANGLE)
+                                                        (- (MOD (* N ANGLE) (* 2 (ACL2-PI)))))
+                                                     (/ (* 2 (ACL2-PI))))))
+                 (:instance angles-countable-6 (p (* (+ (* N ANGLE)
+                                                        (- (MOD (* N ANGLE) (* 2 (ACL2-PI)))))
+                                                     (/ (* 2 (ACL2-PI))))))
+                 (:instance exists-point-on-s2-not-d-2)
+                 (:instance s2-def-p (point (point-on-s2-not-d)))
+                 (:instance EXISTS-ANGLE>=0<2PI-suff
+                            (angle (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2))
+                            (p1 (POLE-SEQ (NTH-POLE-EXISTS-WITNESS P1)))
+                            (p2 (POLE-SEQ (NTH-POLE-EXISTS-WITNESS P2))))
+                 (:instance EXISTS-ANGLE>=0<2PI
+                            (p1 (POLE-SEQ (NTH-POLE-EXISTS-WITNESS P1)))
+                            (p2 (POLE-SEQ (NTH-POLE-EXISTS-WITNESS P2))))
+                 (:instance angles-countable-10
+                            (y (ROTATION-ABOUT-WITNESS (EXISTS-ANGLE>=0<2PI-WITNESS
+                                                        (POLE-SEQ (NTH-POLE-EXISTS-WITNESS P1))
+                                                        (POLE-SEQ (NTH-POLE-EXISTS-WITNESS P2)))
+                                                       (POINT-ON-S2-NOT-D)))
+                            (x (ROTATION-ABOUT-WITNESS (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2)
+                                                       (POINT-ON-S2-NOT-D)))
+                            (p1 p1)
+                            (p2 p2)
+                            (witp1 (POLE-SEQ (NTH-POLE-EXISTS-WITNESS P1)))
+                            (witp2 (POLE-SEQ (NTH-POLE-EXISTS-WITNESS P2))))
+                 (:instance angles-countable-thm
+                            (n1 (nth-pole-exists-witness p1))
+                            (n2 (nth-pole-exists-witness p2))
+                            (n3 (num>=0-exists-witness (/ (- (* n angle) (mod (* n angle) (* 2 (acl2-pi))))
+                                                          (* 2 (acl2-pi)))))
+                            (n4 (num>=1-exists-witness n))
+                            (p1 (pole-seq (nth-pole-exists-witness p1)))
+                            (p2 (pole-seq (nth-pole-exists-witness p2)))
+                            (nat (/ (- (* n angle) (mod (* n angle) (* 2 (acl2-pi))))
+                                    (* 2 (acl2-pi))))
+                            (pos n)
+                            (angle (mod (* n angle) (* 2 (acl2-pi))))))
+           :in-theory nil
+           ))
+  )
+
+
+
+
+
+
+-------------------------
+
+(defthmd d-p=>notm-=u--u
+  (implies (and (d-p p)
+                (point-in-r3 u)
+                (not (d-p u)))
+           (and (not (m-= p u))
+                (or (not (equal (point-in-r3-x1 p)
+                                (- (point-in-r3-x1 u))))
+                    (not (equal (point-in-r3-y1 p)
+                                (- (point-in-r3-y1 u))))
+                    (not (equal (point-in-r3-z1 p)
+                                (- (point-in-r3-z1 u)))))))
+  :hints (("Goal"
+           :use ((:instance diff-d-p-p=>d-p-p1 (p p) (p1 u))
+                 (:instance d-p=>d-p-p (p1 p) (p2 u)))
+           :in-theory (e/d (m-=) (d-p))
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/inequalities" :dir :system))
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r-theta1*p1=r-theta2*p1=>theta1=theta2-1
+    (implies (and (realp angle)
+                  (integerp k)
+                  (< angle (* 2 (acl2-pi))))
+             (< (+ (* 2 (acl2-pi) k) angle) (+ (* 2 (acl2-pi) k) (* 2 (acl2-pi))))))
+
+  (defthmd r-theta1*p1=r-theta2*p1=>theta1=theta2-2
+    (implies (and (realp angle)
+                  (integerp k)
+                  (< angle (* 2 (acl2-pi)))
+                  (>= (+ (* 2 (acl2-pi) k) angle) 0))
+             (> (+ (* 2 (acl2-pi) k) (* 2 (acl2-pi))) 0))
+    :hints (("Goal"
+             :use ((:instance r-theta1*p1=r-theta2*p1=>theta1=theta2-1))
+             )))
+
+  (defthmd r-theta1*p1=r-theta2*p1=>theta1=theta2-3
+    (implies (and (integerp k)
+                  (> (+ (* 2 (acl2-pi) k) (* 2 (acl2-pi))) 0))
+             (> k -1)))
+
+  (defthmd r-theta1*p1=r-theta2*p1=>theta1=theta2-4
+    (implies (and (realp angle)
+                  (integerp k)
+                  (>= angle 0))
+             (>= (+ (* 2 (acl2-pi) k) angle) (* 2 (acl2-pi) k))))
+
+  (defthmd r-theta1*p1=r-theta2*p1=>theta1=theta2-5
+    (implies (and (realp angle)
+                  (integerp k)
+                  (>= angle 0)
+                  (< (+ (* 2 (acl2-pi) k) angle) (* 2 (acl2-pi))))
+             (< (* 2 (acl2-pi) k) (* 2 (acl2-pi))))
+    :hints (("Goal"
+             :use ((:instance r-theta1*p1=r-theta2*p1=>theta1=theta2-4))
+             )))
+
+  (defthmd r-theta1*p1=r-theta2*p1=>theta1=theta2-6
+    (implies (and (integerp k)
+                  (< (* 2 (acl2-pi) k) (* 2 (acl2-pi))))
+             (< k 1)))
+
+  (defthm r-theta1*p1=r-theta2*p1=>theta1=theta2-7
+    (implies (and (realp angle)
+                  (integerp k)
+                  (< angle (* 2 (acl2-pi)))
+                  (>= angle 0)
+                  (>= (+ (* 2 (acl2-pi) k) angle) 0)
+                  (< (+ (* 2 (acl2-pi) k) angle) (* 2 (acl2-pi))))
+             (equal k 0))
+    :hints (("Goal"
+             :use ((:instance r-theta1*p1=r-theta2*p1=>theta1=theta2-2)
+                   (:instance r-theta1*p1=r-theta2*p1=>theta1=theta2-3)
+                   (:instance r-theta1*p1=r-theta2*p1=>theta1=theta2-5)
+                   (:instance r-theta1*p1=r-theta2*p1=>theta1=theta2-6))
+             ))
+    :rule-classes nil)
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------
 (include-book "countable-sets")
 
 (defun pole-seq (n)
@@ -382,6 +883,118 @@
            :in-theory (e/d () (p1p2-n-p-sequence pole-seq point-on-s2-not-d rotation-about-witness natp-seq posp-seq m-* m-= acl2-sqrt))
            )))
 
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/inequalities" :dir :system))
+
+  (defthmd k-range-1
+    (implies (and (integerp y)
+                  (>= y (- x))
+                  (< x 1))
+             (>= y 0)))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd k-range-2
+    (implies (and (posp n)
+                  (realp x)
+                  (realp angle)
+                  (>= angle 0)
+                  (< angle (* 2 (acl2-pi)))
+                  (>= x 0)
+                  (integerp k)
+                  (< x (* 2 (acl2-pi)))
+                  (equal (* n angle)
+                         (+ (* 2 (acl2-pi) k) x)))
+             (equal (/ (- (* n angle) x) (* 2 (acl2-pi))) k)))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/inequalities" :dir :system))
+
+  (defthmd k-range-3
+    (implies (and (posp n)
+                  (realp x)
+                  (realp angle)
+                  (>= angle 0)
+                  (< angle (* 2 (acl2-pi)))
+                  (>= x 0)
+                  (integerp k)
+                  (< x (* 2 (acl2-pi)))
+                  (equal (* n angle)
+                         (+ (* 2 (acl2-pi) k) x)))
+             (>= k 0))
+    :hints (("Goal"
+             :use ((:instance k-range-1 (y k) (x (/ x (* 2 (acl2-pi)))))
+                   (:instance k-range-2 (n n) (x x) (angle angle) (k k)))
+             )))
+  )
+
+------------------------
+
+;; (defun-sk nth-pole-exists (p)
+;;   (exists n
+;;           (and (posp n)
+;;                (m-= (pole-seq n) p))))
+
+
+;; (defthmd poles-countable-thm
+;;   (implies (d-p p)
+;;            (nth-pole-exists p))
+
+;; (defthmd natnum-countable-thm
+;;   (implies (natp num)
+;;            (num>=0-exists num))
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd angles-countable
+    (implies (and (d-p p1)
+                  (d-p p2)
+                  (realp angle)
+                  (posp n)
+                  (>= angle 0)
+                  (< angle (* 2 (acl2-pi)))
+                  (m-= (m-* (rotation-about-witness (* n angle) (point-on-s2-not-d)) p1) p2))
+             (nth-angle-exists angle))
+    :hints (("Goal"
+             :use ((:instance poles-countable-thm (p p1))
+                   (:instance poles-countable-thm (p p2))
+                   (:instance natnum-countable-thm (num (/ (- (* n angle) (mod (* n angle) (* 2 (acl2-pi))))
+                                                           (* 2 (acl2-pi)))))
+                   (:instance k-range-3 (n n) (x (mod (* n angle) (* 2 (acl2-pi)))) (angle angle)
+                              (k (/ (- (* n angle) (mod (* n angle) (* 2 (acl2-pi))))
+                                    (* 2 (acl2-pi)))))
+                   (:instance integerp-r-mod-r-x/x (r (* n angle)) (x (* 2 (acl2-pi))))
+                   (:instance realnum-equiv (r (* n angle)) (x (* 2 (acl2-pi))))
+                   (:instance posp-countable-thm (num n))
+                   (:instance exists-angle>=0<2pi-suff (p1 p1) (p2 p2) (angle (mod (* n angle) (* 2 (acl2-pi)))))
+                   (:instance range-mod-r-x (r (* n angle)) (x (* 2 (acl2-pi))))
+                   (:instance angles-countable-thm
+                              (n1 (nth-pole-exists-witness p1))
+                              (n2 (nth-pole-exists-witness p2))
+                              (n3 (num>=0-exists-witness (/ (- (* n angle) (mod (* n angle) (* 2 (acl2-pi))))
+                                                            (* 2 (acl2-pi)))))
+                              (n4 (num>=1-exists-witness n))
+                              (p1 (pole-seq (nth-pole-exists-witness p1)))
+                              (p2 (pole-seq (nth-pole-exists-witness p2)))
+                              (nat (/ (- (* n angle) (mod (* n angle) (* 2 (acl2-pi))))
+                                      (* 2 (acl2-pi))))
+                              (pos n)
+                              (angle (mod (* n angle) (* 2 (acl2-pi))))))
+             :in-theory (e/d () (d-p rotation-about-witness point-on-s2-not-d m-* acl2-sqrt mod EXISTS-ANGLE>=0<2PI-SUFF))
+
+             )))
+  )
 
 
 
