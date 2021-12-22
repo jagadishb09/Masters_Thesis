@@ -28,9 +28,27 @@
 
   (defthmd p1p2-n-p-seq-lemma-1
     (implies (posp n)
-             (realp (cadar (p1p2-n-p-seq-i n))))))
+             (realp (cadar (p1p2-n-p-seq-i n)))))
 
----
+  (defthmd p1p2-n-p-seq-2-len
+    (implies (natp n)
+             (equal (len (p1p2-n-p-seq-2 n)) n)))
+  )
+
+(defthmd p1p2-n-p-seq-lemma-2
+  (implies (and (posp n)
+                (equal (append a b) c)
+                (equal (len a) (- n 1)))
+           (equal (nth (- n 1) c)
+                  (nth 0 b))))
+
+(defthmd p1p2-n-p-seq-lemma-3
+  (implies (posp n)
+           (equal (p1p2-n-p-seq-2 n)
+                  (append (p1p2-n-p-seq-2 (- n 1)) (p1p2-n-p-seq-i n))))
+  :hints (("Goal"
+           :in-theory (disable p1p2-n-p-seq-i)
+           )))
 
 (encapsulate
   ()
@@ -49,13 +67,250 @@
              :in-theory nil
              )
             ("Subgoal *1/2.1"
-             ;:in-theory nil
+             :use ((:instance p1p2-n-p-seq-lemma-2 (n n)
+                              (a (p1p2-n-p-seq-2 (- n 1)))
+                              (b (p1p2-n-p-seq-i n))
+                              (c (p1p2-n-p-seq-2 n)))
+                   (:instance p1p2-n-p-seq-2-len (n (- n 1)))
+                   (:instance p1p2-n-p-seq-lemma-3
+                              (n n)))
+             :in-theory (e/d (p1p2-n-p-seq natp) (P1P2-N-P-SEQ-i))
              )
             ("Subgoal *1/2.2"
              :use (:instance p1p2-n-p-seq-lemma*1/2.2-2)
              )
             ))
   )
+
+(defthmd realp-pos-p1p2-n-p-sequence
+  (implies (posp n)
+           (realp (cadr (P1P2-N-P-SEQUENCE N))))
+  :hints (("Goal"
+           :use ((:instance p1p2-n-p-seq-lemma (n n))
+                 (:instance p1p2-n-p-seq-lemma-1 (n n)))
+           :in-theory (disable p1p2-n-p-seq-i)
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthm p1p2-n-seq-lemma*1/2.2-1
+    (IMPLIES (AND (NOT (ZP N))
+                  (NOT (POSP (+ -1 N)))
+                  (POSP N))
+             (equal n 1))
+    :rule-classes nil)
+
+  (defthmd p1p2-n-seq-lemma*1/2.2-2
+    (IMPLIES (AND (NOT (ZP N))
+                  (NOT (POSP (+ -1 N)))
+                  (POSP N))
+             (EQUAL (NTH (+ -1 N) (P1P2-N-SEQ N))
+                    (NTH 0 (P1P2-N-SEQ-I N)))))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd p1p2-n-seq-lemma-1
+    (implies (posp n)
+             (realp (cadar (p1p2-n-seq-i n)))))
+
+  (defthmd p1p2-n-seq-2-len
+    (implies (natp n)
+             (equal (len (p1p2-n-seq-2 n)) n)))
+  )
+
+(defthmd p1p2-n-seq-lemma-3
+  (implies (posp n)
+           (equal (p1p2-n-seq-2 n)
+                  (append (p1p2-n-seq-2 (- n 1)) (p1p2-n-seq-i n))))
+  :hints (("Goal"
+           :in-theory (disable p1p2-n-seq-i)
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd p1p2-n-seq-lemma
+    (implies (posp n)
+             (equal (nth (- n 1) (p1p2-n-seq n))
+                    (nth 0 (p1p2-n-seq-i n))))
+    :hints (("Goal"
+             :in-theory (disable P1P2-N-SEQ-i)
+             :induct (P1P2-N-SEQ-2 N)
+             )
+            ("Subgoal *1/2"
+             :in-theory nil
+             )
+            ("Subgoal *1/2.1"
+             :use ((:instance p1p2-n-p-seq-lemma-2 (n n)
+                              (a (p1p2-n-seq-2 (- n 1)))
+                              (b (p1p2-n-seq-i n))
+                              (c (p1p2-n-seq-2 n)))
+                   (:instance p1p2-n-seq-2-len (n (- n 1)))
+                   (:instance p1p2-n-seq-lemma-3
+                              (n n)))
+             :in-theory (e/d (p1p2-n-seq natp) (P1P2-N-SEQ-i))
+             )
+            ("Subgoal *1/2.2"
+             :use (:instance p1p2-n-seq-lemma*1/2.2-2)
+             )
+            ))
+  )
+
+(defthmd realp-nat-p1p2-n-sequence
+  (implies (posp n)
+           (realp (cadr (P1P2-N-SEQUENCE N))))
+  :hints (("Goal"
+           :use ((:instance p1p2-n-seq-lemma (n n))
+                 (:instance p1p2-n-seq-lemma-1 (n n)))
+           :in-theory (disable p1p2-n-seq-i)
+           )))
+
+(defthmd realp-natp-p1p2-n-p-sequence-1
+  (implies (realp (cadar (nth 0 (p1p2-n-p-seq-i n))))
+           (realp (cadar (p1p2-n-p-sequence n))))
+  :hints (("Goal"
+           :use ((:instance p1p2-n-p-seq-lemma (n n)))
+           :in-theory (disable p1p2-n-p-seq-i)
+           )))
+
+(defthmd realp-natp-p1p2-n-p-sequence-2
+  (implies (posp n)
+           (equal (cadar (nth 0 (p1p2-n-p-seq-i n)))
+                  (car (cdr (p1p2-n-sequence (nth 0 (mod-remainder-2 0 n)))))))
+  :hints (("Goal"
+           :in-theory (disable mod-remainder-2 mod-remainder-3)
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd pip2-n-p-sequence-pos-realp
+    (realp (cadr (p1p2-n-p-sequence n)))
+    :hints (("Goal"
+             :use ((:instance realp-pos-p1p2-n-p-sequence (n n)))
+             :in-theory (disable p1p2-n-seq p1p2-n-p-seq p1p2-n-p-seq-i p1p2-n-seq-i mod-remainder-2)
+             ))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd pip2-n-p-sequence-nat-realp
+    (realp (cadar (p1p2-n-p-sequence n)))
+    :hints (("Goal"
+             :use ((:instance realp-natp-p1p2-n-p-sequence-1 (n n))
+                   (:instance realp-natp-p1p2-n-p-sequence-2 (n n))
+                   (:instance realp-nat-p1p2-n-sequence (n (nth 0 (mod-remainder-2 0 n)))))
+             :in-theory (disable p1p2-n-seq p1p2-n-p-seq p1p2-n-p-seq-i p1p2-n-seq-i mod-remainder-2)
+             ))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd angle-sequence-realp
+    (realp (angles-seq n))
+    :hints (("Goal"
+             :use ((:instance angles-countable-thm-2 (n n) (q (- n 1)))
+                   (:instance pip2-n-p-sequence-pos-realp)
+                   (:instance pip2-n-p-sequence-nat-realp)
+                   (:instance generate-angles-lemma1 (n (- n 1)))
+                   (:instance generate-angles-lemma1 (n n)))
+             :in-theory (disable generate-angles p1p2-n-p-sequence EXISTS-ANGLE>=0<2PI)
+             )
+            ("Subgoal 2"
+             :cases ((EXISTS-ANGLE>=0<2PI (CAR (CAR (CAR (P1P2-N-P-SEQUENCE N))))
+                                          (CADR (CAR (CAR (P1P2-N-P-SEQUENCE N)))))))
+            ("Subgoal 2.1"
+             :use ((:instance angles-countable-9 (p1 (CAR (CAR (CAR (P1P2-N-P-SEQUENCE N)))))
+                              (p2 (CADR (CAR (CAR (P1P2-N-P-SEQUENCE N)))))))
+             )
+            ))
+  )
+
+(defun-sk exists-in-interval-but-not-in-angle-sequence (a b)
+  (exists angle
+          (and (realp angle)
+               (< a angle)
+               (< angle b)
+               (not (nth-angle-exists angle)))))
+
+(encapsulate
+  ()
+
+  (local (include-book "nonstd/transcendentals/reals-are-uncountable-1" :dir :system))
+
+  (defthmd existence-of-angle-not-in-sequence
+    (exists-in-interval-but-not-in-angle-sequence 0 (* 2 (acl2-pi)))
+    :hints (("goal"
+             :use ((:functional-instance reals-are-not-countable
+                                         (seq angles-seq)
+                                         (a (lambda () 0))
+                                         (b (lambda () (* 2 (acl2-pi))))
+                                         (exists-in-sequence nth-angle-exists)
+                                         (exists-in-sequence-witness nth-angle-exists-witness)
+                                         (exists-in-interval-but-not-in-sequence exists-in-interval-but-not-in-angle-sequence)
+                                         (exists-in-interval-but-not-in-sequence-witness exists-in-interval-but-not-in-angle-sequence-witness)))
+             )
+            ("subgoal 4"
+             :use (
+                   (:instance exists-in-interval-but-not-in-angle-sequence-suff (angle x))
+                   )
+             )
+            ("Subgoal 3"
+             :in-theory (disable nth-angle-exists)
+             )
+            ("Subgoal 2"
+             :use (:instance nth-angle-exists-suff (n i) (angle x))
+             :in-theory (disable angles-seq)
+             )
+            ("Subgoal 1"
+             :in-theory (disable angles-seq)
+             )
+            ))
+  )
+
+(defthmd witness-not-in-angle-sequence
+  (and (realp (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))
+       (<= 0 (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))
+       (< (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))) (* 2 (acl2-pi)))
+       (not (nth-angle-exists (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))))
+  :hints (("goal"
+           :use ((:instance existence-of-angle-not-in-sequence))
+           )))
+
+(defthmd rot-angle-witness*p1!=p2
+  (implies (and (d-p p1)
+                (d-p p2)
+                (posp n))
+           (not (m-= (m-* (rotation-about-witness (* n (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))
+                                                  (point-on-s2-not-d)) p1) p2)))
+  :hints (("Goal"
+           :use ((:instance witness-not-in-angle-sequence)
+                 (:instance angles-countable (angle (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))
+                            (p1 p1)
+                            (p2 p2)
+                            (n n)))
+           )))
+
+
+
+
+
+-------------
 
   (defthmd p1p2-n-p-sequence-lemma
     (implies (posp n)
@@ -156,7 +411,9 @@
 
   ;(defthmd EXISTS-ANGLE>=0<2PI
 
-  (defthmd angle-sequence-realp
+(defthmd angle-sequence-realp
+(implies (and (realp (cadar (p1p2-n-p-sequence n)))
+              (realp (cadr (p1p2-n-p-sequence n))))
     (realp (angles-seq n))
     :hints (("Goal"
              ;:cases (())
