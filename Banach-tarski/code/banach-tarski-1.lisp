@@ -3826,11 +3826,8 @@
   (let ((rm-2 (mod-remainder-2 0 i)))
     (let ((rm-3 (mod-remainder-3 0 (nth 1 rm-2))))
       (if (equal (nth 1 rm-3) 1)
-          (if (or (equal (nth 0 rm-2) 0)
-                  (equal (nth 0 rm-3) 0))
-              (list (list 0 0))
-            (list (list (pole-seq (nth 0 rm-2)) (pole-seq (nth 0 rm-3)))))
-        (list (list 0 0))))))
+          (list (list (pole-seq (nth 0 rm-2)) (pole-seq (nth 0 rm-3))))
+        (list (list (pole-seq (nth 0 rm-2)) (pole-seq (nth 0 rm-3))))))))
 
 (encapsulate
   ()
@@ -3851,7 +3848,7 @@
 (defun p1-*-p2-sequence (n)
   (if (posp n)
       (nth (- n 1) (p1-*-p2-seq n))
-    0))
+    (list (pole-seq 0) (pole-seq 0))))
 
 (defun-sk p1-*-p2-countable (x)
   (exists n
@@ -3898,11 +3895,8 @@
   (let ((rm-2 (mod-remainder-2 0 i)))
     (let ((rm-3 (mod-remainder-3 0 (nth 1 rm-2))))
       (if (equal (nth 1 rm-3) 1)
-          (if (or (equal (nth 0 rm-2) 0)
-                  (equal (nth 0 rm-3) 0))
-              (list (list 0 0))
-            (list (list (p1-*-p2-sequence (nth 0 rm-2)) (natp-seq (nth 0 rm-3)))))
-        (list (list 0 0))))))
+          (list (list (p1-*-p2-sequence (nth 0 rm-2)) (natp-seq (nth 0 rm-3))))
+        (list (list (p1-*-p2-sequence (nth 0 rm-2)) (natp-seq (nth 0 rm-3))))))))
 
 (encapsulate
   ()
@@ -3923,7 +3917,7 @@
 (defun p1p2-n-sequence (n)
   (if (posp n)
       (nth (- n 1) (p1p2-n-seq n))
-    0))
+    (list (p1-*-p2-sequence 0) (natp-seq 0))))
 
 (defun-sk p1p2-n-countable (x)
   (exists n
@@ -3970,11 +3964,8 @@
   (let ((rm-2 (mod-remainder-2 0 i)))
     (let ((rm-3 (mod-remainder-3 0 (nth 1 rm-2))))
       (if (equal (nth 1 rm-3) 1)
-          (if (or (equal (nth 0 rm-2) 0)
-                  (equal (nth 0 rm-3) 0))
-              (list (list 0 0))
-            (list (list (p1p2-n-sequence (nth 0 rm-2)) (posp-seq (nth 0 rm-3)))))
-        (list (list 0 0))))))
+          (list (list (p1p2-n-sequence (nth 0 rm-2)) (posp-seq (nth 0 rm-3))))
+        (list (list (p1p2-n-sequence (nth 0 rm-2)) (posp-seq (nth 0 rm-3))))))))
 
 (encapsulate
   ()
@@ -3995,7 +3986,7 @@
 (defun p1p2-n-p-sequence (n)
   (if (posp n)
       (nth (- n 1) (p1p2-n-p-seq n))
-    0))
+    (list (p1p2-n-sequence 0) (posp-seq 0))))
 
 (defun-sk p1p2-n-p-countable (x)
   (exists n
@@ -4067,7 +4058,7 @@
           (pos (cadr (p1p2-n-p-sequence n))))
       (if (exists-angle>=0<2pi p1 p2)
           (append (generate-angles (- n 1)) (list (angle-p1p2 (exists-angle>=0<2pi-witness p1 p2) nat pos)))
-        (append (generate-angles (- n 1)) (list nil))))))
+        (append (generate-angles (- n 1)) (list 0))))))
 
 (defthmd realp-angle-p1p2
   (implies (and (realp angle)
@@ -4120,6 +4111,89 @@
 
   (local (include-book "arithmetic/top" :dir :system))
 
+  (defthm angles-countable-thm-2-sub*1/3-sub1-1
+    (implies (and (natp q)
+                  (posp n)
+                  (not (posp (- n 1)))
+                  (< q (len (generate-angles n))))
+             (and (equal q 0)
+                  (equal n 1)))
+    :hints (("Goal"
+             :use ((:instance generate-angles-lemma1 (n n)))
+             :in-theory (disable ANGLE-P1P2 EXISTS-ANGLE>=0<2PI P1P2-N-P-SEQUENCE GENERATE-ANGLES)
+             ))
+    :rule-classes nil)
+
+  (defthmd angles-countable-thm-2-sub*1/3-sub1-2
+    (EQUAL (NTH 0 (GENERATE-ANGLES 1))
+           (LET ((P1 (CAR (CAR (CAR (P1P2-N-P-SEQUENCE (+ 0 1))))))
+                 (P2 (CADR (CAR (CAR (P1P2-N-P-SEQUENCE (+ 0 1))))))
+                 (NAT (CADR (CAR (P1P2-N-P-SEQUENCE (+ 0 1)))))
+                 (POS (CADR (P1P2-N-P-SEQUENCE (+ 0 1)))))
+                (IF (EXISTS-ANGLE>=0<2PI P1 P2)
+                    (ANGLE-P1P2 (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2)
+                                NAT POS)
+                    0)))
+    :hints (("Goal"
+             :use ((:instance generate-angles (n 1)))
+             :cases ((EXISTS-ANGLE>=0<2PI (CAR (CAR (CAR (P1P2-N-P-SEQUENCE (+ 0 1)))))
+                                          (CADR (CAR (CAR (P1P2-N-P-SEQUENCE (+ 0 1)))))))
+             :in-theory (disable ANGLE-P1P2 EXISTS-ANGLE>=0<2PI P1P2-N-P-SEQUENCE GENERATE-ANGLES)
+             )))
+
+   (defthmd angles-countable-thm-2-sub*1/3
+     (IMPLIES
+      (AND
+       (NOT (ZP N))
+       (NOT (EXISTS-ANGLE>=0<2PI (CAR (CAR (CAR (P1P2-N-P-SEQUENCE N))))
+                                 (CADR (CAR (CAR (P1P2-N-P-SEQUENCE N))))))
+       (IMPLIES (AND (POSP (+ -1 N))
+                     (NATP Q)
+                     (< Q (LEN (GENERATE-ANGLES (+ -1 N)))))
+                (EQUAL (NTH Q (GENERATE-ANGLES (+ -1 N)))
+                       (LET ((P1 (CAR (CAR (CAR (P1P2-N-P-SEQUENCE (+ Q 1))))))
+                             (P2 (CADR (CAR (CAR (P1P2-N-P-SEQUENCE (+ Q 1))))))
+                             (NAT (CADR (CAR (P1P2-N-P-SEQUENCE (+ Q 1)))))
+                             (POS (CADR (P1P2-N-P-SEQUENCE (+ Q 1)))))
+                            (IF (EXISTS-ANGLE>=0<2PI P1 P2)
+                                (ANGLE-P1P2 (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2)
+                                            NAT POS)
+                                0)))))
+      (IMPLIES (AND (POSP N)
+                    (NATP Q)
+                    (< Q (LEN (GENERATE-ANGLES N))))
+               (EQUAL (NTH Q (GENERATE-ANGLES N))
+                      (LET ((P1 (CAR (CAR (CAR (P1P2-N-P-SEQUENCE (+ Q 1))))))
+                            (P2 (CADR (CAR (CAR (P1P2-N-P-SEQUENCE (+ Q 1))))))
+                            (NAT (CADR (CAR (P1P2-N-P-SEQUENCE (+ Q 1)))))
+                            (POS (CADR (P1P2-N-P-SEQUENCE (+ Q 1)))))
+                           (IF (EXISTS-ANGLE>=0<2PI P1 P2)
+                               (ANGLE-P1P2 (EXISTS-ANGLE>=0<2PI-WITNESS P1 P2)
+                                           NAT POS)
+                               0)))))
+     :hints (("Goal"
+              :cases ((not (posp (- n 1))))
+              :in-theory (disable ANGLE-P1P2 EXISTS-ANGLE>=0<2PI P1P2-N-P-SEQUENCE GENERATE-ANGLES)
+              :do-not-induct t
+              )
+             ("Subgoal 2"
+              :use ((:instance angles-countable-thm-1 (n n) (q q))
+                    (:instance generate-angles-lemma1 (n n))
+                    (:instance generate-angles (n n))
+                    (:instance generate-angles-lemma1 (n (- n 1))))
+              )
+             ("Subgoal 1"
+              :use ((:instance angles-countable-thm-2-sub*1/3-sub1-1)
+                    (:instance angles-countable-thm-2-sub*1/3-sub1-2))
+              )
+             ))
+   )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
   (defthmd angles-countable-thm-2
     (implies (and (posp n)
                   (natp q)
@@ -4131,14 +4205,12 @@
                           (pos (cadr (p1p2-n-p-sequence (+ q 1)))))
                       (if (exists-angle>=0<2pi p1 p2)
                           (angle-p1p2 (exists-angle>=0<2pi-witness p1 p2) nat pos)
-                        nil))))
+                        0))))
     :hints (("goal"
              :in-theory (disable p1p2-n-p-sequence rotation-about-witness point-on-s2-not-d angle-p1p2)
              )
             ("subgoal *1/3"
-             :use ((:instance angles-countable-thm-1 (n n) (q q))
-                   (:instance generate-angles-lemma1 (n n))
-                   (:instance generate-angles-lemma1 (n (- n 1))))
+             :use ((:instance angles-countable-thm-2-sub*1/3))
              )
             ("subgoal *1/2"
              :use ((:instance angles-countable-thm-1 (n n) (q q))

@@ -67,11 +67,8 @@
   (let ((rm-2 (mod-remainder-2 0 i)))
     (let ((rm-3 (mod-remainder-3 0 (nth 1 rm-2))))
       (if (equal (nth 1 rm-3) 1)
-          (if (or (equal (nth 0 rm-2) 0)
-                  (equal (nth 0 rm-3) 0))
-              (list (list 0 0))
-            (list (list (f (nth 0 rm-2)) (g (nth 0 rm-3)))))
-        (list (list 0 0))))))
+            (list (list (f (nth 0 rm-2)) (g (nth 0 rm-3))))
+        (list (list (f (nth 0 rm-2)) (g (nth 0 rm-3))))))))
 
 (encapsulate
   ()
@@ -92,7 +89,7 @@
 (defun f-*-g-sequence (n)
   (if (posp n)
       (nth (- n 1) (f-*-g-seq n))
-    0))
+    (list (f 0) (g 0))))
 
 (defthmd f-*-g-seq-i-lemma0
   (implies (posp n)
@@ -776,14 +773,20 @@
           (and (posp n)
                (equal (f-*-g-sequence n) x))))
 
-(defthmd f-*-g-seq-exists
-  (implies (and (posp n1)
-                (posp n2)
-                (equal (f n1) p)
-                (equal (g n2) q))
-           (f-*-g-countable (list p q)))
-  :hints (("Goal"
-           :use ((:instance f-*-g-sequence-nth (n1 n1) (n2 n2) (p (f n1)) (q (g n2)))
-                 (:instance f-*-g-countable-suff (n (* (expt 2 n1) (expt 3 n2))) (x (list p q)))
-                 (:instance 2^x*3^y=1=>xy=0-4 (n1 n1) (n2 n2)))
-           )))
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd f-*-g-seq-exists
+    (implies (and (posp n1)
+                  (posp n2)
+                  (equal (f n1) p)
+                  (equal (g n2) q))
+             (f-*-g-countable (list p q)))
+    :hints (("Goal"
+             :use ((:instance f-*-g-sequence-nth (n1 n1) (n2 n2) (p (f n1)) (q (g n2)))
+                   (:instance f-*-g-countable-suff (n (* (expt 2 n1) (expt 3 n2))) (x (list p q)))
+                   (:instance 2^x*3^y=1=>xy=0-4 (n1 n1) (n2 n2)))
+             )))
+  )
