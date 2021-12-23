@@ -1,6 +1,241 @@
 
 (include-book "banach-tarski-1")
 
+(defthmd rot-angle-witness*p1!=p2-intmn-1
+  (implies (m-= m n)
+           (m-= (m-* p m) (m-* p n))))
+
+(defthmd rot-angle-witness*p1!=p2-intmn-2
+  (implies (and (integerp m)
+                (posp n))
+           (REALP (* (+ M N)
+                     (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                      0 (* 2 (ACL2-PI))))))
+  :hints (("Goal"
+           :use ((:instance witness-not-in-angle-sequence))
+           )))
+
+(defthmd rot-angle-witness*p1!=p2-intmn-3
+  (equal (m-* p (m-* m1 m2))
+         (m-* (m-* p m1) m2)))
+
+(defthmd rot-angle-witness*p1!=p2-intmn-4
+  (implies (m-= x y)
+           (m-= (m-* x p1) (m-* y p1))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd rot-angle-witness*p1!=p2-intmn-5
+    (equal (ROTATION-ABOUT-WITNESS (+ (* (- M)
+                                         (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                          0 (* 2 (ACL2-PI))))
+                                      (* (+ M N)
+                                         (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                          0 (* 2 (ACL2-PI)))))
+                                   (POINT-ON-S2-NOT-D))
+           (ROTATION-ABOUT-WITNESS (* N
+                                      (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                       0 (* 2 (ACL2-PI))))
+                                   (POINT-ON-S2-NOT-D)))
+    :hints (("Goal"
+             :in-theory (disable rotation-about-witness)
+             )))
+  )
+
+
+(defthmd rot-angle-witness*p1!=p2-intmn-6
+  (implies (and (d-p p1)
+                (d-p p2)
+                (integerp m)
+                (posp n))
+           (m-= (m-*
+                 (rotation-about-witness (* (- m) (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d))
+                 (m-* (rotation-about-witness (* (+ m n) (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d))
+                      p1))
+                (m-* (rotation-about-witness (* n (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)) p1)))
+  :hints (("Goal"
+           :use ((:instance rot-angle-witness*p1!=p2-intmn-3
+                            (p (rotation-about-witness (* (- m) (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)))
+                            (m1 (rotation-about-witness (* (+ m n) (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)))
+                            (m2 p1))
+                 (:instance rot-angle-witness*p1!=p2-intmn-5)
+                 (:instance point-on-s2-not-d-on-s2 (u (point-on-s2-not-d)))
+                 (:instance exists-point-on-s2-not-d-2)
+                 (:instance r-t1*r-t2=r-t1+t2
+                            (angle1 (* (- m) (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                            (angle2 (* (+ m n) (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                            (u (point-on-s2-not-d)))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance s2-def-p (point (point-on-s2-not-d)))
+                 (:instance rot-angle-witness*p1!=p2-intmn-2 (m m) (n n))
+                 (:instance rot-angle-witness*p1!=p2-intmn-4
+                            (x (M-* (ROTATION-ABOUT-WITNESS (* (- M)
+                                                               (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                                0 (* 2 (ACL2-PI))))
+                                                            (POINT-ON-S2-NOT-D))
+                                    (ROTATION-ABOUT-WITNESS (* (+ M N)
+                                                               (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                                0 (* 2 (ACL2-PI))))
+                                                            (POINT-ON-S2-NOT-D))))
+                            (y (ROTATION-ABOUT-WITNESS (+ (* (- M)
+                                     (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                          0 (* 2 (ACL2-PI))))
+                                  (* (+ M N)
+                                     (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                          0 (* 2 (ACL2-PI)))))
+                                                       (POINT-ON-S2-NOT-D)))
+                            (p1 p1))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd rot-angle-witness*p1!=p2-intmn-7
+  (implies (and (m-= x y)
+                (m-= y p2))
+           (m-= x p2)))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+  (defthmd rot-angle-witness*p1!=p2-intmn-8
+    (equal
+     (ROTATION-ABOUT-WITNESS (+ (* (- M)
+                                   (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                    0 (* 2 (ACL2-PI))))
+                                (* M
+                                   (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                    0 (* 2 (ACL2-PI)))))
+                             (POINT-ON-S2-NOT-D))
+     (rotation-about-witness 0 (point-on-s2-not-d))))
+  )
+
+(defthmd rot-angle-witness*p1!=p2-intmn-9
+  (implies (and (d-p p1)
+                (d-p p2)
+                (integerp m)
+                (posp n))
+           (m-= (m-*
+                 (rotation-about-witness (* (- m) (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d))
+                 (m-* (rotation-about-witness (* m (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d))
+                      p2))
+                p2))
+  :hints (("Goal"
+           :use ((:instance rot-angle-witness*p1!=p2-intmn-3
+                            (p (rotation-about-witness (* (- m) (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)))
+                            (m1 (rotation-about-witness (* m (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)))
+                            (m2 p2))
+                 (:instance rot-angle-witness*p1!=p2-intmn-7 (x (M-* (M-* (ROTATION-ABOUT-WITNESS (* (- M)
+                                                                                                     (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                                                                      0 (* 2 (ACL2-PI))))
+                                                                                                  (POINT-ON-S2-NOT-D))
+                                                                          (ROTATION-ABOUT-WITNESS (* M
+                                                                                                     (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                                                                      0 (* 2 (ACL2-PI))))
+                                                                                                  (POINT-ON-S2-NOT-D)))
+                                                                     P2))
+                            (y (M-* (ROTATION-ABOUT-WITNESS (+ (* (- M)
+                                                                  (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                                   0 (* 2 (ACL2-PI))))
+                                                               (* M
+                                                                  (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                                   0 (* 2 (ACL2-PI)))))
+                                                            (POINT-ON-S2-NOT-D))
+                                    P2))
+                            (p2 p2))
+                 (:instance point-on-s2-not-d-on-s2 (u (point-on-s2-not-d)))
+                 (:instance exists-point-on-s2-not-d-2)
+                 (:instance r-t1*r-t2=r-t1+t2
+                            (angle1 (* (- m) (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                            (angle2 (* m (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                            (u (point-on-s2-not-d)))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance s2-def-p (point (point-on-s2-not-d)))
+                 (:instance rot-angle-witness*p1!=p2-intmn-4
+                            (x (M-* (ROTATION-ABOUT-WITNESS (* (- M)
+                                                               (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                                0 (* 2 (ACL2-PI))))
+                                                            (POINT-ON-S2-NOT-D))
+                                    (ROTATION-ABOUT-WITNESS (* m
+                                                               (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                                0 (* 2 (ACL2-PI))))
+                                                            (POINT-ON-S2-NOT-D))))
+                            (y (ROTATION-ABOUT-WITNESS (+ (* (- M)
+                                                             (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                              0 (* 2 (ACL2-PI))))
+                                                          (* m
+                                                             (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                              0 (* 2 (ACL2-PI)))))
+                                                       (POINT-ON-S2-NOT-D)))
+                            (p1 p2))
+                 (:instance rot-angle-witness*p1!=p2-intmn-8)
+                 (:instance rotation-a-witn-of0 (u (point-on-s2-not-d)) (p p2))
+                 (:instance d-p (point p2))
+                 (:instance s2-def-p (point p2))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd rot-angle-witness*p1!=p2-intmn
+  (implies (and (d-p p1)
+                (d-p p2)
+                (integerp m)
+                (posp n))
+           (not (m-= (m-*
+                      (rotation-about-witness (* (+ m n) (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d))
+                          p1)
+                     (m-* (rotation-about-witness (* m (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)) p2))))
+  :hints (("goal"
+           :use ((:instance rot-angle-witness*p1!=p2-intmn-1
+                            (m (m-* (rotation-about-witness (* (+ m n) (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)) p1))
+                            (p (rotation-about-witness (* (- m) (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)))
+                            (n (rotation-about-witness (* m (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d))))
+                 (:instance rot-angle-witness*p1!=p2 (p1 p1) (p2 p2) (n n))
+                 (:instance rot-angle-witness*p1!=p2-intmn-9)
+                 (:instance rot-angle-witness*p1!=p2-intmn-6)
+                 )
+           :in-theory (disable m-= d-p m-* nth-angle-exists rotation-about-witness point-in-r3 aref2 point-on-s2-not-d)
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd rot-angle-witness*p1!=p2-pospmn
+    (implies (and (d-p p1)
+                  (d-p p2)
+                  (posp m)
+                  (< m n)
+                  (posp n))
+             (not (m-= (m-*
+                        (rotation-about-witness (* n (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d))
+                        p1)
+                       (m-* (rotation-about-witness (* m (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)) p2))))
+    :hints (("Goal"
+             :use ((:instance rot-angle-witness*p1!=p2-intmn (p1 p1) (p2 p2) (m m) (n (- n m))))
+             :in-theory (disable m-= d-p m-* nth-angle-exists rotation-about-witness point-in-r3 aref2 point-on-s2-not-d)
+             )))
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------
+
 (encapsulate
   ()
 

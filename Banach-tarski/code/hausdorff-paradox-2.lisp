@@ -5237,6 +5237,7 @@
            :in-theory (enable aref2)
            )))
 
+;; exists a point on S^2 that is not in the set D.
 (defthmd exists-point-on-s2-not-d
   (s2-def-p-not-d-p)
   :hints (("goal"
