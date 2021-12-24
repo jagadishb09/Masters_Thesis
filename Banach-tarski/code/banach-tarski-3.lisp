@@ -1,6 +1,213 @@
 
 (include-book "banach-tarski-1")
 
+(defun-sk exists-d-p (n point)
+  (exists p
+          (and (d-p p)
+               (m-= (m-* (rotation-about-witness
+                          (* n (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))
+                          (point-on-s2-not-d))
+                         p)
+                    point))))
+
+(defthmd exists-d-p=>
+  (implies (exists-d-p n point)
+           (and (d-p (exists-d-p-witness n point))
+                (m-= (m-* (rotation-about-witness
+                           (* n (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))
+                           (point-on-s2-not-d))
+                          (exists-d-p-witness n point))
+                     point)))
+  :hints (("goal"
+           :in-theory (disable d-p point-on-s2-not-d rotation-about-witness)
+           )))
+
+(defun-sk efunc (point)
+  (exists n
+          (and (natp n)
+               (exists-d-p n point))))
+
+(defthmd efunc=>
+  (implies (efunc point)
+           (and (m-= (m-* (rotation-about-witness
+                           (* (efunc-witness point)
+                              (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))
+                           (point-on-s2-not-d))
+                          (exists-d-p-witness (efunc-witness point) point))
+                     point)
+                (natp (efunc-witness point))
+                (d-p (exists-d-p-witness (efunc-witness point) point))))
+  :hints (("goal"
+           :in-theory (disable d-p point-on-s2-not-d rotation-about-witness)
+           )))
+
+(defun-sk seq-witness*e-func (point)
+  (exists p
+          (and (efunc p)
+               (m-= (m-* (rotation-about-witness
+                          (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))
+                          (point-on-s2-not-d))
+                         p)
+                    point))))
+
+(defthmd seq-witness*e-func=>
+  (implies (seq-witness*e-func point)
+           (and (efunc (seq-witness*e-func-witness point))
+                (m-= (m-* (rotation-about-witness
+                           (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))
+                           (point-on-s2-not-d))
+                          (seq-witness*e-func-witness point))
+                     point)))
+  :hints (("goal"
+           :in-theory (disable d-p point-on-s2-not-d rotation-about-witness efunc)
+           )))
+
+(defun efunc-not-d (point)
+  (and (efunc point)
+       (not (d-p point))))
+
+(defthmd seq-witness*e-func=>enotd-1
+  (implies (natp n)
+           (natp (+ n 1))))
+
+(defthmd seq-witness*e-func=>enotd-2
+  (implies (and (m-= (m-* rn1 y) z)
+                (m-= (m-* r1 z) point))
+           (m-= (m-* (m-* r1 rn1) y) point)))
+
+(defthmd seq-witness*e-func=>enotd-3
+  (implies (and (natp n)
+                (realp x))
+           (realp (* n x))))
+
+(defthmd seq-witness*e-func=>e
+  (implies (seq-witness*e-func point)
+           (efunc point))
+  :hints (("goal"
+           :use ((:instance seq-witness*e-func=> (point point))
+                 (:instance efunc=> (point (seq-witness*e-func-witness point)))
+                 (:instance exists-d-p-suff
+                            (n (+ (efunc-witness (seq-witness*e-func-witness point)) 1))
+                            (point point)
+                            (p (exists-d-p-witness
+                                (efunc-witness (seq-witness*e-func-witness point))
+                                (seq-witness*e-func-witness point))))
+                 (:instance efunc-suff (point point) (n (+ (efunc-witness (seq-witness*e-func-witness point)) 1)))
+                 (:instance seq-witness*e-func=>enotd-1
+                            (n (efunc-witness (seq-witness*e-func-witness point))))
+                 (:instance seq-witness*e-func=>enotd-2
+                            (rn1 (rotation-about-witness
+                                  (* (efunc-witness (seq-witness*e-func-witness point))
+                                     (exists-in-interval-but-not-in-angle-sequence-witness
+                                      0 (* 2 (acl2-pi))))
+                                  (point-on-s2-not-d)))
+                            (y (exists-d-p-witness (efunc-witness (seq-witness*e-func-witness point))
+                                                   (seq-witness*e-func-witness point)))
+                            (z (seq-witness*e-func-witness point))
+                            (r1 (rotation-about-witness
+                                 (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))
+                                 (point-on-s2-not-d)))
+                            (point point))
+                 (:instance r-t1*r-t2=r-t1+t2
+                            (angle1 (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))
+                            (angle2 (* (efunc-witness (seq-witness*e-func-witness point))
+                                       (exists-in-interval-but-not-in-angle-sequence-witness
+                                        0 (* 2 (acl2-pi)))))
+                            (u (point-on-s2-not-d)))
+                 (:instance exists-point-on-s2-not-d-2)
+                 (:instance s2-def-p (point (point-on-s2-not-d)))
+                 (:instance point-on-s2-not-d-on-s2 (u (point-on-s2-not-d)))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance seq-witness*e-func=>enotd-3
+                            (n (efunc-witness (seq-witness*e-func-witness point)))
+                            (x (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                 )
+           :in-theory (disable rotation-about-witness d-p point-on-s2-not-d m-* exists-d-p efunc seq-witness*e-func
+                               point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 efunc aref2 m-= s2-def-p
+                               nth-angle-exists)
+           )))
+
+(defthmd seq-witness*e-func=>notd
+  (implies (seq-witness*e-func point)
+           (not (d-p point)))
+  :hints (("goal"
+           :use ((:instance seq-witness*e-func=> (point point))
+                 (:instance efunc=> (point (seq-witness*e-func-witness point)))
+                 (:instance exists-d-p-suff
+                            (n (+ (efunc-witness (seq-witness*e-func-witness point)) 1))
+                            (point point)
+                            (p (exists-d-p-witness
+                                (efunc-witness (seq-witness*e-func-witness point))
+                                (seq-witness*e-func-witness point))))
+                 (:instance seq-witness*e-func=>enotd-1
+                            (n (efunc-witness (seq-witness*e-func-witness point))))
+                 (:instance seq-witness*e-func=>enotd-2
+                            (rn1 (rotation-about-witness
+                                  (* (efunc-witness (seq-witness*e-func-witness point))
+                                     (exists-in-interval-but-not-in-angle-sequence-witness
+                                      0 (* 2 (acl2-pi))))
+                                  (point-on-s2-not-d)))
+                            (y (exists-d-p-witness (efunc-witness (seq-witness*e-func-witness point))
+                                                   (seq-witness*e-func-witness point)))
+                            (z (seq-witness*e-func-witness point))
+                            (r1 (rotation-about-witness
+                                 (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))
+                                 (point-on-s2-not-d)))
+                            (point point))
+                 (:instance r-t1*r-t2=r-t1+t2
+                            (angle1 (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))
+                            (angle2 (* (efunc-witness (seq-witness*e-func-witness point))
+                                       (exists-in-interval-but-not-in-angle-sequence-witness
+                                        0 (* 2 (acl2-pi)))))
+                            (u (point-on-s2-not-d)))
+                 (:instance exists-point-on-s2-not-d-2)
+                 (:instance s2-def-p (point (point-on-s2-not-d)))
+                 (:instance point-on-s2-not-d-on-s2 (u (point-on-s2-not-d)))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance seq-witness*e-func=>enotd-3
+                            (n (efunc-witness (seq-witness*e-func-witness point)))
+                            (x (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                 (:instance rot-angle-witness*p1!=p2
+                            (p1 (exists-d-p-witness (efunc-witness (seq-witness*e-func-witness point))
+                                                    (seq-witness*e-func-witness point)))
+                            (p2 point)
+                            (n (+ (efunc-witness (seq-witness*e-func-witness point))
+                                  1)))
+                 )
+           :in-theory (disable rotation-about-witness d-p point-on-s2-not-d m-* exists-d-p efunc seq-witness*e-func
+                               point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 efunc aref2 m-= s2-def-p
+                               nth-angle-exists)
+           )))
+
+(defthmd seq-witness*e-func=>efunc-not-d
+  (implies (seq-witness*e-func point)
+           (efunc-not-d point))
+  :hints (("goal"
+           :use ((:instance seq-witness*e-func=>e)
+                 (:instance seq-witness*e-func=>notd))
+           )))
+
+----------
+
+(defthmd efunc-not-d=>seq-witness*e-func
+  (implies (efunc-not-d point)
+           (seq-witness*e-func point))
+  :hints (("Goal"
+           ;:use ((:instance seq-witness*e-func=>efunc-not-d (point point)))
+           )))
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------
+
 (defthmd rot-angle-witness*p1!=p2-intmn-1
   (implies (m-= m n)
            (m-= (m-* p m) (m-* p n))))
