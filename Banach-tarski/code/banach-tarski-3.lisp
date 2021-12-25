@@ -41,9 +41,13 @@
            :in-theory (disable d-p point-on-s2-not-d rotation-about-witness)
            )))
 
+(defun set-e-p (point)
+  (and (point-in-r3 point)
+       (efunc point)))
+
 (defun-sk seq-witness*e-func (point)
   (exists p
-          (and (efunc p)
+          (and (set-e-p p)
                (m-= (m-* (rotation-about-witness
                           (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))
                           (point-on-s2-not-d))
@@ -52,7 +56,7 @@
 
 (defthmd seq-witness*e-func=>
   (implies (seq-witness*e-func point)
-           (and (efunc (seq-witness*e-func-witness point))
+           (and (set-e-p (seq-witness*e-func-witness point))
                 (m-= (m-* (rotation-about-witness
                            (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))
                            (point-on-s2-not-d))
@@ -62,8 +66,12 @@
            :in-theory (disable d-p point-on-s2-not-d rotation-about-witness efunc)
            )))
 
+(defun rot-witness*e-func (point)
+  (and (point-in-r3 point)
+       (seq-witness*e-func point)))
+
 (defun efunc-not-d (point)
-  (and (efunc point)
+  (and (set-e-p point)
        (not (d-p point))))
 
 (defthmd seq-witness*e-func=>enotd-1
@@ -80,9 +88,9 @@
                 (realp x))
            (realp (* n x))))
 
-(defthmd seq-witness*e-func=>e
-  (implies (seq-witness*e-func point)
-           (efunc point))
+(defthmd rot-witness*e-func=>e
+  (implies (rot-witness*e-func point)
+           (set-e-p point))
   :hints (("goal"
            :use ((:instance seq-witness*e-func=> (point point))
                  (:instance efunc=> (point (seq-witness*e-func-witness point)))
@@ -127,8 +135,8 @@
                                nth-angle-exists)
            )))
 
-(defthmd seq-witness*e-func=>notd
-  (implies (seq-witness*e-func point)
+(defthmd rot-witness*e-func=>notd
+  (implies (rot-witness*e-func point)
            (not (d-p point)))
   :hints (("goal"
            :use ((:instance seq-witness*e-func=> (point point))
@@ -179,26 +187,364 @@
                                nth-angle-exists)
            )))
 
-(defthmd seq-witness*e-func=>efunc-not-d
-  (implies (seq-witness*e-func point)
+(defthmd rot-witness*e-func=>efunc-not-d
+  (implies (rot-witness*e-func point)
            (efunc-not-d point))
   :hints (("goal"
-           :use ((:instance seq-witness*e-func=>e)
-                 (:instance seq-witness*e-func=>notd))
+           :use ((:instance rot-witness*e-func=>e)
+                 (:instance rot-witness*e-func=>notd))
+           :in-theory (disable rotation-about-witness d-p point-on-s2-not-d m-* exists-d-p efunc seq-witness*e-func
+                               point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 efunc aref2 m-= s2-def-p
+                               nth-angle-exists)
            )))
 
-----------
+(encapsulate
+  ()
 
-(defthmd efunc-not-d=>seq-witness*e-func
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd efunc-not-d=>rot-witness*e-func-1
+    (implies (efunc-not-d point)
+             (posp (efunc-witness point)))
+    :hints (("goal"
+             :use ((:instance efunc=> (point point))
+                   (:instance diff-d-p-p=>d-p-p1 (p (exists-d-p-witness (efunc-witness point) point))
+                              (p1 point))
+                   (:instance rotation-a-witn-of0 (p (exists-d-p-witness (efunc-witness point) point))
+                              (u (point-on-s2-not-d)))
+                   (:instance exists-point-on-s2-not-d-2)
+                   (:instance s2-def-p (point (point-on-s2-not-d)))
+                   (:instance efunc-not-d (point point))
+                   (:instance d-p (point (exists-d-p-witness (efunc-witness point) point)))
+                   (:instance s2-def-p (point (exists-d-p-witness (efunc-witness point) point)))
+                   )
+             :in-theory (disable rotation-about-witness d-p point-on-s2-not-d m-* exists-d-p efunc seq-witness*e-func
+                                 point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 efunc aref2 m-= s2-def-p
+                                 nth-angle-exists exists-d-p m-=)
+             )))
+  )
+
+(defthmd efunc-not-d=>rot-witness*e-func-2-1
+  (implies (posp n)
+           (natp (- n 1))))
+
+(defthmd efunc-not-d=>rot-witness*e-func-2
   (implies (efunc-not-d point)
-           (seq-witness*e-func point))
-  :hints (("Goal"
-           ;:use ((:instance seq-witness*e-func=>efunc-not-d (point point)))
+           (efunc (m-* (rotation-about-witness (* (+ -1 (efunc-witness point))
+                                                  (exists-in-interval-but-not-in-angle-sequence-witness
+                                                   0 (* 2 (acl2-pi))))
+                                               (point-on-s2-not-d))
+                       (exists-d-p-witness (efunc-witness point) point))))
+  :hints (("goal"
+           :use ((:instance efunc=> (point point))
+                 (:instance set-e-p (point point))
+                 (:instance efunc-not-d=>rot-witness*e-func-1 (point point))
+                 (:instance exists-d-p-suff
+                            (point (m-* (rotation-about-witness (* (+ -1 (efunc-witness point))
+                                                                   (exists-in-interval-but-not-in-angle-sequence-witness
+                                                                    0 (* 2 (acl2-pi))))
+                                                                (point-on-s2-not-d))
+                                        (exists-d-p-witness (efunc-witness point) point)))
+                            (p (exists-d-p-witness (efunc-witness point) point))
+                            (n (+ -1 (efunc-witness point))))
+                 (:instance efunc-suff
+                            (point (m-* (rotation-about-witness (* (+ -1 (efunc-witness point))
+                                                                   (exists-in-interval-but-not-in-angle-sequence-witness
+                                                                    0 (* 2 (acl2-pi))))
+                                                                (point-on-s2-not-d))
+                                        (exists-d-p-witness (efunc-witness point) point)))
+                            (n (+ -1 (efunc-witness point))))
+                 (:instance efunc-not-d=>rot-witness*e-func-2-1
+                            (n (efunc-witness point)))
+                 (:instance efunc-not-d (point point)))
+           :in-theory nil
            )))
 
+(defthmd efunc-not-d=>rot-witness*e-func-3-1
+  (equal (m-* a b c)
+         (m-* (m-* a b) c)))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd efunc-not-d=>rot-witness*e-func-3
+    (implies (and (efunc point)
+                  (point-in-r3 point)
+                  (REALP (* (+ -1 (EFUNC-WITNESS POINT))
+                 (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                      0 (* 2 (ACL2-PI)))))
+                  (not (d-p point)))
+             (rot-witness*e-func point))
+    :hints (("goal"
+             :use ((:instance efunc-not-d=>rot-witness*e-func-3-1
+                              (a (rotation-about-witness (exists-in-interval-but-not-in-angle-sequence-witness
+                                                          0 (* 2 (acl2-pi)))
+                                                         (point-on-s2-not-d)))
+                              (b (rotation-about-witness (* (+ -1 (efunc-witness point))
+                                                            (exists-in-interval-but-not-in-angle-sequence-witness
+                                                             0 (* 2 (acl2-pi))))
+                                                         (point-on-s2-not-d)))
+                              (c (exists-d-p-witness (efunc-witness point)
+                                                     point)))
+                   (:instance seq-witness*e-func-suff
+                              (p (m-* (rotation-about-witness (* (+ -1 (efunc-witness point))
+                                                                 (exists-in-interval-but-not-in-angle-sequence-witness
+                                                                  0 (* 2 (acl2-pi))))
+                                                              (point-on-s2-not-d))
+                                      (exists-d-p-witness (efunc-witness point) point)))
+                              (point point))
+                   (:instance rot-witness*e-func (point point))
+                   (:instance efunc-not-d (point point))
+                   (:instance efunc-not-d=>rot-witness*e-func-2 (point point))
+                   (:instance efunc=> (point point))
+                   (:instance r-t1*r-t2=r-t1+t2
+                              (angle1 (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))
+                              (angle2 (* (+ -1 (efunc-witness point))
+                                         (exists-in-interval-but-not-in-angle-sequence-witness
+                                          0 (* 2 (acl2-pi)))))
+                              (u (point-on-s2-not-d)))
+                   (:instance rot*p-on-s2 (p (EXISTS-D-P-WITNESS (EFUNC-WITNESS POINT) POINT))
+                              (rot (ROTATION-ABOUT-WITNESS (* (+ -1 (EFUNC-WITNESS POINT))
+                                                              (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                               0 (* 2 (ACL2-PI))))
+                                                           (POINT-ON-S2-NOT-D))))
+                   (:instance s2-def-p (point (M-* (ROTATION-ABOUT-WITNESS (* (+ -1 (EFUNC-WITNESS POINT))
+                                                                              (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                                               0 (* 2 (ACL2-PI))))
+                                                                           (POINT-ON-S2-NOT-D))
+                                                   (EXISTS-D-P-WITNESS (EFUNC-WITNESS POINT)
+                                                                       POINT))))
+                   (:instance d-p (point (exists-d-p-witness (efunc-witness point) point)))
+                   (:instance point-on-s2-not-d-on-s2 (u (point-on-s2-not-d)))
+                   (:instance exists-point-on-s2-not-d-2)
+                   (:instance s2-def-p (point (point-on-s2-not-d)))
+                   (:instance witness-not-in-angle-sequence)
+                   (:instance SET-E-P (point (M-* (ROTATION-ABOUT-WITNESS (* (+ -1 (EFUNC-WITNESS POINT))
+                                                (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                 0 (* 2 (ACL2-PI))))
+                                                                          (POINT-ON-S2-NOT-D))
+                                                  (EXISTS-D-P-WITNESS (EFUNC-WITNESS POINT)
+                                                                      POINT))))
+                   (:instance r3-rotationp-r-theta (angle (* (+ -1 (EFUNC-WITNESS POINT))
+                                                             (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                              0 (* 2 (ACL2-PI))))))
+                   )
+             :in-theory(disable rotation-about-witness d-p point-on-s2-not-d m-* exists-d-p efunc seq-witness*e-func
+                                point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 efunc aref2 m-= s2-def-p
+                                nth-angle-exists exists-d-p m-= r3-rotationp)
+             )))
+
+  (defthmd efunc-not-d=>rot-witness*e-func
+    (implies (efunc-not-d point)
+             (rot-witness*e-func point))
+    :hints (("Goal"
+             :use ((:instance efunc-not-d=>rot-witness*e-func-3 (point point))
+                   (:instance efunc=> (point point))
+                   (:instance witness-not-in-angle-sequence))
+             :in-theory (disable efunc d-p rot-witness*e-func point-in-r3)
+             )))
+  )
+
+(defthmd efunc-not-d-iff-rot-witness*e-func
+  (iff (efunc-not-d point)
+       (rot-witness*e-func point))
+  :hints (("goal"
+           :use ((:instance efunc-not-d=>rot-witness*e-func)
+                 (:instance rot-witness*e-func=>efunc-not-d))
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd d-p=>set-e
+    (implies (d-p point)
+             (set-e-p point))
+    :hints (("Goal"
+             :use ((:instance set-e-p (point point))
+                   (:instance efunc-suff (point point) (n 0))
+                   (:instance d-p (point point))
+                   (:instance s2-def-p (point point))
+                   (:instance rotation-a-witn-of0 (p point)
+                              (u (point-on-s2-not-d)))
+                   (:instance exists-point-on-s2-not-d-2)
+                   (:instance s2-def-p (point (point-on-s2-not-d)))
+                   (:instance exists-d-p-suff (point point) (n 0) (p point)))
+             :in-theory(disable rotation-about-witness d-p point-on-s2-not-d m-* exists-d-p efunc seq-witness*e-func
+                                point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 efunc aref2 m-= s2-def-p
+                                nth-angle-exists exists-d-p m-= r3-rotationp)
+             )))
+  )
+
+(defun s2-not-e (point)
+  (and (s2-def-p point)
+       (not (set-e-p point))))
+
+(defthmd s2-not-e=>s2-not-d
+  (implies (s2-not-e point)
+           (s2-d-p point))
+  :hints (("Goal"
+           :use ((:instance d-p=>set-e (point point)))
+           :in-theory (disable s2-def-p d-p set-e-p)
+           )))
+
+(defun s2-not-d-n-s2-not-e (point)
+  (and (s2-d-p point)
+       (s2-not-e point)))
+
+(defthmd s2-not-e=>s2-not-d-n-s2-not-e
+  (iff (s2-not-e point)
+       (s2-not-d-n-s2-not-e point))
+  :hints (("Goal"
+           :use ((:instance s2-not-e=>s2-not-d))
+           )))
+
+(defun s2-d-p-n-set-e (point)
+  (and (s2-d-p point)
+       (set-e-p point)))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd set-e-p=>s2-def-p
+    (implies (set-e-p point)
+             (s2-def-p point))
+    :hints (("Goal"
+             :use ((:instance s2-def-p-p=>p1
+                              (p (m-* (rotation-about-witness
+                                       (* (efunc-witness point)
+                                          (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))
+                                       (point-on-s2-not-d))
+                                      (exists-d-p-witness (efunc-witness point) point)))
+                              (p1 point))
+                   (:instance set-e-p (point point))
+                   (:instance efunc (point point))
+                   (:instance exists-d-p (n (EFUNC-WITNESS POINT))
+                              (point point))
+                   (:instance d-p (point (exists-d-p-witness (efunc-witness point) point)))
+                   (:instance rot*p-on-s2 (p (exists-d-p-witness (efunc-witness point) point))
+                              (rot (ROTATION-ABOUT-WITNESS (* (EFUNC-WITNESS POINT)
+                                                              (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                               0 (* 2 (ACL2-PI))))
+                                                           (POINT-ON-S2-NOT-D))))
+                   (:instance r3-rotationp-r-theta (angle (* (EFUNC-WITNESS POINT)
+                                                             (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                              0 (* 2 (ACL2-PI))))))
+                   (:instance witness-not-in-angle-sequence)
+                   )
+             :in-theory (disable rotation-about-witness d-p point-on-s2-not-d m-* exists-d-p efunc seq-witness*e-func point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 efunc aref2 nth-angle-exists exists-d-p m-= r3-rotationp)
+             )))
+  )
+
+
+(defthmd enotd=>s2-d-p-n-set-e
+  (iff (efunc-not-d point)
+       (s2-d-p-n-set-e point))
+  :hints (("Goal"
+           :use ((:instance s2-d-p (point point))
+                 (:instance set-e-p=>s2-def-p (point point)))
+           :in-theory (disable set-e-p d-p s2-d-p s2-def-p)
+           )))
+
+(defun-sk wit-inv*s2-d-p-n-set-e-1 (point)
+  (exists p
+          (and (s2-d-p-n-set-e p)
+               (m-= (m-* (rotation-about-witness
+                          (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))
+                          (point-on-s2-not-d)) p)
+                    point))))
+
+(defun wit-inv*s2-d-p-n-set-e-p (point)
+  (and (point-in-r3 point)
+       (wit-inv*s2-d-p-n-set-e-1 point)))
+
+(skip-proofs
+ (defthmd set-e-p-iff-wit-inv*s2-d-p-n-set-e-p-1-1
+   (implies (and (point-in-r3 p1)
+                 (r3-rotationp rot))
+            (point-in-r3 (m-* rot p1)))
+   :hints (("Goal"
+            :in-theory (e/d (m-* aref2) (r3-m-determinant r3-m-inverse m-trans))
+            )))
+ )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd set-e-p-iff-wit-inv*s2-d-p-n-set-e-p-1
+    (implies (set-e-p point)
+             (wit-inv*s2-d-p-n-set-e-p point))
+    :hints (("Goal"
+             :use ((:instance wit-inv*s2-d-p-n-set-e-p (point point))
+                   (:instance wit-inv*s2-d-p-n-set-e-1-suff
+                              (point point)
+                              (p (m-* (rotation-about-witness
+                                       (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))
+                                       (point-on-s2-not-d)) point)))
+                   (:instance enotd=>s2-d-p-n-set-e
+                              (point (m-* (rotation-about-witness
+                                           (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))
+                                           (point-on-s2-not-d)) point)))
+                   (:instance efunc-not-d-iff-rot-witness*e-func
+                              (point (m-* (rotation-about-witness
+                                           (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))
+                                           (point-on-s2-not-d)) point)))
+                   (:instance rot-witness*e-func
+                              (point (m-* (rotation-about-witness
+                                           (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))
+                                           (point-on-s2-not-d)) point)))
+                   (:instance seq-witness*e-func-suff (p point)
+                              (point (m-* (rotation-about-witness
+                                           (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))
+                                           (point-on-s2-not-d)) point)))
+                   (:instance set-e-p (point point))
+                   (:instance set-e-p-iff-wit-inv*s2-d-p-n-set-e-p-1-1
+                              (p1 point)
+                              (rot (rotation-about-witness
+                                    (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))
+                                    (point-on-s2-not-d))))
+                   (:instance r3-rotationp-r-theta (angle (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                   (:instance witness-not-in-angle-sequence)
+                   (:instance r-t1*r-t2=r-t1+t2
+                              (angle1 (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                          0 (* 2 (ACL2-PI)))))
+                              (angle2 (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                       0 (* 2 (ACL2-PI))))
+                              (u (point-on-s2-not-d)))
+                   (:instance exists-point-on-s2-not-d-2)
+                   (:instance s2-def-p (point (point-on-s2-not-d)))
+                   (:instance point-on-s2-not-d-on-s2 (u (point-on-s2-not-d)))
+                   (:instance rotation-a-witn-of0 (p point)
+                              (u (point-on-s2-not-d)))
+                   )
+             :in-theory (disable rotation-about-witness d-p point-on-s2-not-d m-* exists-d-p efunc seq-witness*e-func point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 efunc aref2 nth-angle-exists exists-d-p m-= r3-rotationp)
+             )))
+  )
 
 
 
+
+
+
+---------------------
+
+(defthmd efunc-not-d-iff-rot-witness*e-func
+  (iff (efunc-not-d point)
+       (rot-witness*e-func point))
+  :hints (("Goal"
+           ;:use ((:instance efunc-not-d=>rot-witness*e-func))
+                 ;(:instance rot-witness*e-func=>efunc-not-d))
+           ))
+  )
+
+---------------------
 
 
 
