@@ -1,6 +1,348 @@
 
 (include-book "banach-tarski-1")
 
+(defthmd s2-iff-s2-e-or-e
+  (iff (s2-def-p point)
+       (or (s2-not-e point)
+           (set-e-p point))))
+
+(defthmd iff-s2-s2-e-or-witinv*s2-d-n-e
+  (iff (s2-def-p point)
+       (or (s2-not-d-n-s2-not-e point)
+           (wit-inv*s2-d-p-n-set-e-p point)))
+  :hints (("Goal"
+           :use ((:instance s2-not-e=>s2-not-d-n-s2-not-e (point point))
+                 (:instance set-e-p-iff-wit-inv*s2-d-p-n-set-e-p (point point))
+                 (:instance s2-not-e (point point))
+                 (:instance s2-iff-s2-e-or-e (point point))
+                 )
+           :in-theory nil
+           )))
+
+(defun m0 (p)
+  (and (diff-n-s2-d-p p)
+       (s2-not-e p)))
+
+(defun m1 (p)
+  (and (diff-n-s2-d-p p)
+       (set-e-p p)))
+
+(defun wa-0 (p)
+  (and (diff-a-s2-d-p p)
+       (s2-not-e p)))
+
+(defun wa-1 (p)
+  (and (diff-a-s2-d-p p)
+       (set-e-p p)))
+
+(defun wa-inv-0 (p)
+  (and (diff-a-inv-s2-d-p p)
+       (s2-not-e p)))
+
+(defun wa-inv-1 (p)
+  (and (diff-a-inv-s2-d-p p)
+       (set-e-p p)))
+
+(defun wb-0 (p)
+  (and (diff-b-s2-d-p p)
+       (s2-not-e p)))
+
+(defun wb-1 (p)
+  (and (diff-b-s2-d-p p)
+       (set-e-p p)))
+
+(defun wb-inv-0 (p)
+  (and (diff-b-inv-s2-d-p p)
+       (s2-not-e p)))
+
+(defun wb-inv-1 (p)
+  (and (diff-b-inv-s2-d-p p)
+       (set-e-p p)))
+
+(defun-sk r-1*m1-1 (point)
+  (exists p
+          (and (m1 p)
+               (m-= (m-* (rotation-about-witness (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)) p) point))))
+
+(defun r-1*m1 (p)
+  (and (point-in-r3 p)
+       (r-1*m1-1 p)))
+
+(defun-sk r-1*wa-1-1 (point)
+  (exists p
+          (and (wa-1 p)
+               (m-= (m-* (rotation-about-witness (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)) p) point))))
+
+(defun r-1*wa-1 (p)
+  (and (point-in-r3 p)
+       (r-1*wa-1-1 p)))
+
+(defun-sk r-1*wa-inv-1-1 (point)
+  (exists p
+          (and (wa-inv-1 p)
+               (m-= (m-* (rotation-about-witness (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)) p) point))))
+
+(defun r-1*wa-inv-1 (p)
+  (and (point-in-r3 p)
+       (r-1*wa-inv-1-1 p)))
+
+(defun-sk r-1*wb-1-1 (point)
+  (exists p
+          (and (wb-1 p)
+               (m-= (m-* (rotation-about-witness (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)) p) point))))
+
+(defun r-1*wb-1 (p)
+  (and (point-in-r3 p)
+       (r-1*wb-1-1 p)))
+
+(defun-sk r-1*wb-inv-1-1 (point)
+  (exists p
+          (and (wb-inv-1 p)
+               (m-= (m-* (rotation-about-witness (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d)) p) point))))
+
+(defun r-1*wb-inv-1 (p)
+  (and (point-in-r3 p)
+       (r-1*wb-inv-1-1 p)))
+
+(defun r-1-diff-s2 (p)
+  (or (r-1*m1 p)
+      (r-1*wa-1 p)
+      (r-1*wa-inv-1 p)
+      (r-1*wb-1 p)
+      (r-1*wb-inv-1 p)))
+
+(defthmd s2=>r-1-diff-s2
+  (implies (wit-inv*s2-d-p-n-set-e-p p)
+           (r-1-diff-s2 p))
+  :hints (("Goal"
+           :use ((:instance wit-inv*s2-d-p-n-set-e-p (point p))
+                 (:instance wit-inv*s2-d-p-n-set-e-1 (point p))
+                 (:instance s2-d-p-n-set-e (point (WIT-INV*S2-D-P-N-SET-E-1-WITNESS P)))
+                 (:instance s2-d-p-equivalence-1 (p (WIT-INV*S2-D-P-N-SET-E-1-WITNESS P)))
+                 (:instance set-e-p (point (WIT-INV*S2-D-P-N-SET-E-1-WITNESS P)))
+                 (:instance r-1*m1-1-suff (point p)
+                            (p (WIT-INV*S2-D-P-N-SET-E-1-WITNESS P)))
+                 (:instance m1 (p (WIT-INV*S2-D-P-N-SET-E-1-WITNESS P)))
+                 (:instance r-1*m1 (p p))
+                 (:instance r-1-diff-s2 (p p))
+                 (:instance r-1*wa-1-1-suff (point p)
+                            (p (WIT-INV*S2-D-P-N-SET-E-1-WITNESS P)))
+                 (:instance wa-1 (p (WIT-INV*S2-D-P-N-SET-E-1-WITNESS P)))
+                 (:instance r-1*wa-1 (p p))
+                 (:instance r-1*wb-1-1-suff (point p)
+                            (p (WIT-INV*S2-D-P-N-SET-E-1-WITNESS P)))
+                 (:instance wb-1 (p (WIT-INV*S2-D-P-N-SET-E-1-WITNESS P)))
+                 (:instance r-1*wb-1 (p p))
+                 (:instance r-1*wb-inv-1-1-suff (point p)
+                            (p (WIT-INV*S2-D-P-N-SET-E-1-WITNESS P)))
+                 (:instance wb-inv-1 (p (WIT-INV*S2-D-P-N-SET-E-1-WITNESS P)))
+                 (:instance r-1*wb-inv-1 (p p))
+                 (:instance r-1*wa-inv-1-1-suff (point p)
+                            (p (WIT-INV*S2-D-P-N-SET-E-1-WITNESS P)))
+                 (:instance wa-inv-1 (p (WIT-INV*S2-D-P-N-SET-E-1-WITNESS P)))
+                 (:instance r-1*wa-inv-1 (p p))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd r-1-diff-s2=>s2
+  (implies (r-1-diff-s2 p)
+           (wit-inv*s2-d-p-n-set-e-p p))
+  :hints (("Goal"
+           :use ((:instance r-1-diff-s2 (p p))
+                 (:instance wit-inv*s2-d-p-n-set-e-p (point p))
+                 )
+           :cases ((r-1*m1 p)
+                   (r-1*wb-inv-1 p)
+                   (r-1*wa-inv-1 p)
+                   (r-1*wa-1 p)
+                   (r-1*wb-1 p))
+           :in-theory nil
+           )
+          ("Subgoal 5"
+           :use ((:instance r-1*m1 (p p))
+                 (:instance r-1*m1-1 (point p))
+                 (:instance m1 (p (R-1*M1-1-WITNESS P)))
+                 (:instance s2-d-p-equivalence-1 (p (R-1*M1-1-WITNESS P)))
+                 (:instance WIT-INV*S2-D-P-N-SET-E-1-suff (point p)
+                            (p (R-1*M1-1-WITNESS P)))
+                 (:instance s2-d-p-n-set-e (point (R-1*M1-1-WITNESS P)))
+                 )
+           )
+          ("Subgoal 4"
+           :use ((:instance r-1*wb-inv-1 (p p))
+                 (:instance r-1*wb-inv-1-1 (point p))
+                 (:instance wb-inv-1 (p (R-1*WB-INV-1-1-WITNESS P)))
+                 (:instance s2-d-p-equivalence-1 (p (R-1*WB-INV-1-1-WITNESS P)))
+                 (:instance WIT-INV*S2-D-P-N-SET-E-1-suff (point p)
+                            (p (R-1*WB-INV-1-1-WITNESS P)))
+                 (:instance s2-d-p-n-set-e (point (R-1*WB-INV-1-1-WITNESS P)))
+                 )
+           )
+          ("Subgoal 3"
+           :use ((:instance r-1*wa-inv-1 (p p))
+                 (:instance r-1*wa-inv-1-1 (point p))
+                 (:instance wa-inv-1 (p (R-1*Wa-INV-1-1-WITNESS P)))
+                 (:instance s2-d-p-equivalence-1 (p (R-1*Wa-INV-1-1-WITNESS P)))
+                 (:instance WIT-INV*S2-D-P-N-SET-E-1-suff (point p)
+                            (p (R-1*Wa-INV-1-1-WITNESS P)))
+                 (:instance s2-d-p-n-set-e (point (R-1*Wa-INV-1-1-WITNESS P)))
+                 )
+           )
+          ("Subgoal 2"
+           :use ((:instance r-1*wa-1 (p p))
+                 (:instance r-1*wa-1-1 (point p))
+                 (:instance wa-1 (p (R-1*Wa-1-1-WITNESS P)))
+                 (:instance s2-d-p-equivalence-1 (p (R-1*Wa-1-1-WITNESS P)))
+                 (:instance WIT-INV*S2-D-P-N-SET-E-1-suff (point p)
+                            (p (R-1*Wa-1-1-WITNESS P)))
+                 (:instance s2-d-p-n-set-e (point (R-1*Wa-1-1-WITNESS P)))
+                 )
+           )
+          ("Subgoal 1"
+           :use ((:instance r-1*wb-1 (p p))
+                 (:instance r-1*wb-1-1 (point p))
+                 (:instance wb-1 (p (R-1*Wb-1-1-WITNESS P)))
+                 (:instance s2-d-p-equivalence-1 (p (R-1*Wb-1-1-WITNESS P)))
+                 (:instance WIT-INV*S2-D-P-N-SET-E-1-suff (point p)
+                            (p (R-1*Wb-1-1-WITNESS P)))
+                 (:instance s2-d-p-n-set-e (point (R-1*Wb-1-1-WITNESS P)))
+                 )
+           )
+          ))
+
+(defthmd r-1-diff-s2-iff-s2
+  (iff (r-1-diff-s2 p)
+           (wit-inv*s2-d-p-n-set-e-p p)))
+
+(defun diff-s2 (p)
+  (or (m0 p)
+      (r-1*m1 p)
+      (wa-0 p)
+      (r-1*wa-1 p)
+      (wa-inv-0 p)
+      (r-1*wa-inv-1 p)
+      (wb-0 p)
+      (r-1*wb-1 p)
+      (wb-inv-0 p)
+      (r-1*wb-inv-1 p)))
+
+(defthmd s2-iff-diff-s2
+  (iff (s2-def-p p)
+       (diff-s2 p))
+  :hints (("Goal"
+           :use ((:instance diff-s2 (p p))
+                 (:instance r-1-diff-s2 (p p))
+                 (:instance iff-s2-s2-e-or-witinv*s2-d-n-e (point p))
+                 (:instance s2-not-d-n-s2-not-e (point p))
+                 (:instance r-1-diff-s2-iff-s2 (p p))
+                 (:instance s2-d-p-equivalence-1 (p p))
+                 (:instance m0 (p p))
+                 (:instance wa-0 (p p))
+                 (:instance wb-0 (p p))
+                 (:instance wa-inv-0 (p p))
+                 (:instance wb-inv-0 (p p))
+                 )
+           :in-theory nil
+           )))
+
+------------
+
+(defun-sk rot-a*s2-not-e-1 (point)
+  (exists p
+          (and (s2-not-e p)
+               (m-= (m-* (a-rotation (acl2-sqrt 2)) p)
+                    point))))
+
+(defun rot-a*s2-not-e (p)
+  (and (point-in-r3 p)
+       (rot-a*s2-not-e-1 p)))
+
+(defun-sk rot-a*-e-1 (point)
+  (exists p
+          (and (set-e-p p)
+               (m-= (m-* (a-rotation (acl2-sqrt 2)) p)
+                    point))))
+
+(defun rot-a*-e (p)
+  (and (point-in-r3 p)
+       (rot-a*-e-1 p)))
+
+(defun rot-a*s2-e-or-e (p)
+  (or (rot-a*s2-not-e p)
+      (rot-a*-e p)))
+
+------------
+
+(defthmd s2-iff-rot-a*s2-e-or-e
+  (iff (s2-def-p p)
+       (rot-a*s2-e-or-e p))
+  :hints (("Goal"
+           :in-theory nil
+           )
+          ("Subgoal 2"
+           :use ((:instance rot-a*s2-not-e (p p))
+                 (:instance rot-a*s2-not-e-1 (point p))
+                 (:instance s2-not-e (point (ROT-A*S2-NOT-E-1-WITNESS P)))
+                 (:instance s2-def-p-p=>p1
+                            (p (M-* (A-ROTATION (ACL2-SQRT 2))
+                                                   (ROT-A*S2-NOT-E-1-WITNESS P)))
+                            (p1 p))
+                 (:instance rot*p-on-s2 (p (ROT-A*S2-NOT-E-1-WITNESS P))
+                            (rot (a-rotation (acl2-sqrt 2))))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance rot-a*s2-e-or-e (p p))
+
+                 (:instance rot-a*-e (p p))
+                 (:instance rot-a*-e-1 (point p))
+                 (:instance set-e-p (point (ROT-A*-E-1-WITNESS P)))
+                 (:instance efunc=> (point (ROT-A*-E-1-WITNESS P)))
+                 ;; (:instance rotation-is-r3-rotationp-1 (w '(#\a)) (x (acl2-sqrt 2)))
+                 ;; (:instance a-rotation (x (acl2-sqrt 2)))
+                 ;; (:instance weak-wordp (w '(#\a)))
+                 ;; (:instance rotation (w '(#\a)) (x (acl2-sqrt 2)))
+                 ;; (:instance rotation (w nil) (x (acl2-sqrt 2)))
+                 )
+           )
+
+          ))
+
+-----
+
+;; (defun-sk rot-a*set-e-1 (point)
+;;   (exists p
+;;           (and (s2-not-e p)
+;;                (m-= (m-* (a-rotation (acl2-sqrt 2)) p)
+;;                     point))))
+
+;; (defun rot-a*set-e (p)
+;;   (and (point-in-r3 p)
+;;        (rot-a*set-e-1 p)))
+
+
+  :hints (("Goal"
+           :use ((:instance iff-s2-s2-e-or-witinv*s2-d-n-e (point p))
+                 (:instance s2-not-d-n-s2-not-e (point p))
+                 (:instance s2-d-p-equivalence-1)
+                 (:instance diff-s2 (p p))
+                 (:instance m0 (p p)))
+           :in-theory nil
+           )))
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------
+
 (defun-sk exists-d-p (n point)
   (exists p
           (and (d-p p)
