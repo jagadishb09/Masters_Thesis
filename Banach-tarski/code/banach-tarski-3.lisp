@@ -1,6 +1,100 @@
 
 (include-book "banach-tarski-1")
 
+(defun-sk set-a-inv-a3-1 (point)
+  (exists p
+          (and (set-a3 p)
+               (m-= (m-* (a-inv-rotation (acl2-sqrt 2)) p)
+                    point))))
+
+(defun set-a-inv-a3 (p)
+  (and (point-in-r3 p)
+       (set-a-inv-a3-1 p)))
+
+(defun-sk set-a-inv-r-a4-1 (point)
+  (exists p
+          (and (set-a4 p)
+               (m-= (m-* (a-inv-rotation (acl2-sqrt 2))
+                         (rotation-about-witness (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))) (point-on-s2-not-d))
+                         p)
+                    point))))
+
+(defun set-a-inv-r-a4 (p)
+  (and (point-in-r3 p)
+       (set-a-inv-r-a4-1 p)))
+
+(defun-sk set-r-1-a-inv-a5-1 (point)
+  (exists p
+          (and (set-a5 p)
+               (m-= (m-*
+                     (rotation-about-witness (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d))
+                     (a-inv-rotation (acl2-sqrt 2))
+                     p)
+                    point))))
+
+(defun set-r-1-a-inv-a5 (p)
+  (and (point-in-r3 p)
+       (set-r-1-a-inv-a5-1 p)))
+
+(defun-sk set-r-1-a-inv-r-a6-1 (point)
+  (exists p
+          (and (set-a6 p)
+               (m-= (m-*
+                     (rotation-about-witness (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))) (point-on-s2-not-d))
+                     (a-inv-rotation (acl2-sqrt 2))
+                     (rotation-about-witness (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))) (point-on-s2-not-d))
+                     p)
+                    point))))
+
+(defun set-r-1-a-inv-r-a6 (p)
+  (and (point-in-r3 p)
+       (set-r-1-a-inv-r-a6-1 p)))
+
+---
+
+(defthmd s2-equivalence-2-1
+  (implies (s2-def-p p)
+           (or (set-a-inv-a3 p)
+               (set-a-inv-r-a4 p)
+               (set-r-1-a-inv-a5 p)
+               (set-r-1-a-inv-r-a6 p)
+               (set-a7 p)
+               (set-a8 p)))
+  :hints (("Goal"
+           :use ((:instance s2-iff-s2-e-or-e (point p))
+                 (:instance s2-not-e=>s2-not-d-n-s2-not-e (point p))
+                 (:instance set-e-p-iff-wit-inv*s2-d-p-n-set-e-p (point p))
+                 (:instance s2-d-p-equivalence-2 (p p))
+                 (:instance s2-not-d-n-s2-not-e (point p))
+                 )
+           :cases ((and (a-inv-diff-a-s2-d-p p) (s2-not-e p))
+                   (and (diff-a-inv-s2-d-p p) (s2-not-e p))
+                   (wit-inv*s2-d-p-n-set-e-p p)
+                   )
+
+           :in-theory nil
+           )
+          ("Subgoal 3"
+           :use ((:instance a-inv-diff-a-s2-d-p (p p))
+                 (:instance a-inv-diff-a-s2-d-p-1 (p p))
+                 (:instance set-a-inv-a3 (p p))
+                 (:instance set-a-inv-a3-1-suff (p (A-INV-DIFF-A-S2-D-P-1-WITNESS P)) (point p))
+                 (:instance set-a3 (p (A-INV-DIFF-A-S2-D-P-1-WITNESS P)))
+                 (:instance wa-00 (p (A-INV-DIFF-A-S2-D-P-1-WITNESS P)))
+                 (:instance wa-0 (p (A-INV-DIFF-A-S2-D-P-1-WITNESS P)))
+                 (:instance set-a-inv-r-a4 (p p))
+                 (:instance set-a-inv-r-a4-1-suff (point p)
+                            (p (A-INV-DIFF-A-S2-D-P-1-WITNESS P)))
+                 (:instance set-a4 (p (A-INV-DIFF-A-S2-D-P-1-WITNESS P)))
+                 (:instance set-a4-1-suff (point p) (p (A-INV-DIFF-A-S2-D-P-1-WITNESS P)))
+                 (:instance wa-10 (p (A-INV-DIFF-A-S2-D-P-1-WITNESS P)))
+                 ;(:instance wa-0 (p (A-INV-DIFF-A-S2-D-P-1-WITNESS P)))
+                 )
+           )
+          ))
+
+---
+
 (defthmd s2-iff-s2-e-or-e
   (iff (s2-def-p point)
        (or (s2-not-e point)
