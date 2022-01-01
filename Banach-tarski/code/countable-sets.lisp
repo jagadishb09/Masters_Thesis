@@ -1,6 +1,6 @@
 ; Banach-Tarski theorem
 ;
-; Cartesian product of two countable sets is countable
+; Cartesian product of two countable sets is countable.
 ;
 ;
 ; Copyright (C) 2021 University of Wyoming
@@ -784,7 +784,7 @@
                   (equal (f n1) p)
                   (equal (g n2) q))
              (f-*-g-countable (list p q)))
-    :hints (("Goal"
+    :hints (("goal"
              :use ((:instance f-*-g-sequence-nth (n1 n1) (n2 n2) (p (f n1)) (q (g n2)))
                    (:instance f-*-g-countable-suff (n (* (expt 2 n1) (expt 3 n2))) (x (list p q)))
                    (:instance 2^x*3^y=1=>xy=0-4 (n1 n1) (n2 n2)))
