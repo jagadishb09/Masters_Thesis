@@ -202,16 +202,236 @@
 (defthmd sub-func-real
   (realp (sub-func x)))
 
-(defthm sub-func-prime-real
+(defthmd sub-func-prime-real
   (realp (sub-func-prime x)))
 
-;; (defthm sub-func-prime-continuous
-;;   (implies (and (standardp x)
-;; 		(inside-interval-p x (sub-domain))
-;; 		(i-close x x1)
-;; 		(inside-interval-p x1 (sub-domain)))
-;; 	   (i-close (sub-func-prime x)
-;; 		    (sub-func-prime x1)))
+(defthmd i-small-*-lemma
+  (implies (and (i-small x)
+                (i-small y))
+           (i-small (* x y))))
+
+(defthmd i-small-x-*-limited-y
+  (implies (and (i-limited z)
+                (i-small (- x x1)))
+           (i-small (* z (- x x1))))
+  :hints (("Goal"
+           :use (:instance limited*small->small (y (- x x1)) (x z))
+           )))
+
+(defthmd i-close-x-y=>
+   (implies (i-close x y)
+	    (i-small (- x y)))
+   :hints (("goal"
+	    :in-theory (enable i-close)
+	    )))
+
+(defthmd i-close-x-y=>x*x-c-to-x*y
+  (implies (and (i-limited x)
+                (i-close x y))
+           (i-close (* x x) (* x y))))
+
+(defthmd i-close-x-y=>x*x-c-to-y*y
+  (implies (and (i-limited x)
+                (i-close x y))
+           (i-close (* x x) (* y y))))
+
+(defthmd i-close-x-y=>1-x-c-to-1-y
+  (implies (i-close x y)
+           (i-close (- 1 x) (- 1 y)))
+  :hints (("Goal"
+           :in-theory (enable i-close)
+           )))
+
+(defthmd root-close-lemma
+  (implies (and (realp y1)
+		(realp y2)
+		(not (= (standard-part y1) (standard-part y2))))
+	   (not (i-close y1 y2)))
+  :hints (("goal"
+	   :in-theory (enable i-close i-small)
+	   )))
+
+(defthmd root-close-lemma-1
+  (implies (and (realp y1)
+		(realp y2)
+		(not (i-close y1 y2)))
+	   (not (= (standard-part y1) (standard-part y2))))
+  :hints (("goal"
+	   :in-theory (enable i-close i-small)
+	   )))
+
+(defthmd root-close-lemma-2
+  (implies (and (realp y1)
+                (realp y2)
+                (i-limited y1)
+                (i-limited y2)
+                (>= y1 0)
+                (>= y2 0)
+                (not (i-close y1 y2)))
+           (not (= (* (standard-part y1) (standard-part y1)) (* (standard-part y2) (standard-part y2))))
+           )
+  :hints (("goal"
+           :use ((:instance root-close-lemma-1 (y1 y1) (y2 y2))
+                 (:instance ineq-lemma4 (x1 (standard-part y1)) (x2 (standard-part y2)))
+                 (:instance ineq-lemma4 (x1 (standard-part y2)) (x2 (standard-part y1))))
+           :in-theory nil
+           )))
+
+(defthmd square-is-standard
+  (implies (and (i-limited y1)
+                (realp y1))
+           (equal (* (standard-part y1) (standard-part y1))
+                  (standard-part (square y1))
+                  )))
+
+(defthmd root-close-lemma-3
+  (implies (and (realp y1)
+                (realp y2)
+                (i-limited y1)
+                (i-limited y2)
+                (>= y1 0)
+                (>= y2 0)
+                (not (i-close y1 y2)))
+           (not (= (standard-part (square y1)) (standard-part (square y2)))))
+
+  :hints (("goal"
+           :use ((:instance root-close-lemma-2 (y1 y1) (y2 y2))
+                 (:instance square-is-standard (y1 y1))
+                 (:instance square-is-standard (y1 y2)))
+           :in-theory nil
+           )))
+
+(defthmd sqr-real-lemma
+  (implies (realp x)
+           (realp (square x))))
+
+(defthmd root-close-lemma-6
+  (implies (and (realp y1)
+                (realp y2)
+                (i-limited y1)
+                (i-limited y2)
+                (>= y1 0)
+                (>= y2 0)
+                (not (i-close y1 y2)))
+           (not (i-close (square y1) (square y2))))
+  :hints (("goal"
+           :use ((:instance root-close-lemma-3 (y1 y1) (y2 y2))
+                 (:instance root-close-lemma (y1 (square y1)) (y2 (square y2)))
+                 (:instance sqr-real-lemma (x y1))
+                 (:instance sqr-real-lemma (x y2)))
+           )))
+
+(defthmd sqrt-real-lemma
+  (implies (realp x)
+           (realp (acl2-sqrt x))))
+
+(defthmd sqrt>=0-lemma
+  (implies (and (i-limited x)
+                (realp x))
+           (>= (acl2-sqrt x) 0)))
+
+(defthmd i-close-x1-x2=>root-close
+  (implies (and (standardp x1)
+                (realp x1)
+                (realp x2)
+                (>= x1 0)
+                (>= x2 0)
+                (i-close x1 x2))
+           (i-close (acl2-sqrt x1) (acl2-sqrt x2)))
+  :hints (("goal"
+           :use ((:definition square)
+                 (:instance standards-are-limited-forward (x x1))
+                 (:instance i-close-limited-2 (y x1) (x x2))
+                 (:instance sqrt-real-lemma (x x1))
+                 (:instance sqrt-real-lemma (x x2))
+                 (:instance limited-sqrt (x x1))
+                 (:instance limited-sqrt (x x2))
+                 (:instance sqrt>=0-lemma (x x1))
+                 (:instance sqrt>=0-lemma (x x2))
+                 (:instance root-close-lemma-6 (y1 (acl2-sqrt x1) ) (y2 (acl2-sqrt x2))))
+           )))
+
+(defthmd i-close-x-x1=>i-limited-x1
+  (implies (and (standardp x)
+                (acl2-numberp x)
+                (i-close x x1))
+           (i-limited x1))
+  :hints (("Goal"
+           :use ((:instance i-close-limited (y x1) (x x)))
+           )))
+
+(defthmd inside-interval=>i-limited
+  (implies (inside-interval-p x (sub-domain))
+           (i-limited x))
+  :hints (("Goal"
+           :use ((:instance limited-squeeze (a (/ 1 4)) (b (/ 1 2)) (x x)))
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(defthmd i-limited-1-x*x
+  (implies (i-limited x)
+           (i-limited (- 1 (* x x)))))
+
+----
+
+
+
+;; (defthmd i-small-x-y
+;;   (implies (and (acl2-numberp x)
+;;                 (acl2-numberp y)
+;;                 (i-small (- x y)))
+;;            (i-close x y))
+;;   :hints (("goal"
+;;            :in-theory (enable i-small i-close)
+;;            )))
+
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd i-close-/-lemma
+    (implies (and (i-close x x1)
+                  (not (i-small x))
+                  (i-limited x)
+                  (i-limited x1)
+                  (not (i-small x1))
+                  (not (equal x 0))
+                  (not (equal x1 0)))
+             (i-close (/ x) (/ x1)))
+    :hints (("Goal"
+             :use ((:instance limited*small->small (y (- x1 x)) (x (/ (* x x1))))
+                   (:instance i-small-uminus (x (- x x1)))
+                   )
+             :in-theory (enable i-close)
+             )))
+  )
+
+(defthmd int-f-domain-real-1
+  (implies (and (realp x)
+                (not (i-small y1))
+                (not (i-small y2))
+                (realp y1)
+                (realp y2)
+                (<= x y2)
+                (<= y1 x))
+	   (not (i-small x)))
+  :hints (("Goal"
+           ;:in-theory (enable interval-definition-theory)
+           )))
+
+
+(defthmd i-small-sqrt-lemma
+  (i-limited 16))
+
+(defthmd sub-func-prime-continuous
+  (implies (and (standardp x)
+		(inside-interval-p x (sub-domain))
+		(i-close x x1)
+		(inside-interval-p x1 (sub-domain)))
+	   (i-close (sub-func-prime x)
+		    (sub-func-prime x1)))
 
 ;; (defthm sub-func-prime-is-derivative
 ;;   (implies (and (standardp x)
