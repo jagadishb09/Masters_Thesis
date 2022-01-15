@@ -839,6 +839,47 @@
 
 -------
 
+(defthmd sqrt-1-x**2-derivative-1
+  (equal (+ (- (* 1/2
+                  X (/ (ACL2-SQRT (+ 1 (- (* X X)))))))
+            (- (* 1/2
+                  X (/ (ACL2-SQRT (+ 1 (- (* X X))))))))
+         (- (* X (/ (ACL2-SQRT (+ 1 (- (* X X)))))))))
+
+(encapsulate
+  ()
+  (local (include-book "nonstd/workshops/2011/reid-gamboa-differentiator/support/sqrt-derivative" :dir :system))
+  (local (include-book "nonstd/nsa/sqrt" :dir :system))
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd sqrt-1-*x*x-not-i-small-100
+    (implies (standardp x)
+             (standardp (acl2-sqrt x))))
+
+  (local
+   (defderivative sqrt-1-x**2-derivative-lemma
+     (acl2-sqrt (- 1 (* x x))))
+   )
+
+  (defthm sqrt-1-x**2-derivative
+    (implies (and (inside-interval-p x (sub-domain))
+                  (inside-interval-p y (sub-domain))
+                  (standardp x)
+                  (i-close x y)
+                  (not (equal x y)))
+             (i-close (/ (- (acl2-sqrt (- 1 (* x x)))
+                            (acl2-sqrt (- 1 (* y y))))
+                         (- x y))
+                      (/ (- x) (acl2-sqrt (- 1 (* x x))))))
+    :hints (("Goal"
+             :use ((:instance sqrt-1-x**2-derivative-lemma)
+                   (:instance sqrt-1-x**2-derivative-1)
+                   (:instance sub-func-range-3 (x y))
+                   (:instance sub-func-range-3 (x x)))
+             :in-theory (enable interval-definition-theory)
+             )))
+  )
+
 
 
 ;; (defthmd i-small-x-y
