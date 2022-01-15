@@ -372,7 +372,472 @@
   (implies (i-limited x)
            (i-limited (- 1 (* x x)))))
 
+(defthmd standardp-x*x
+  (implies (standardp x)
+           (standardp (* x x))))
+
+(defthmd standard-1-*x*x
+  (implies (standardp x)
+           (standardp (- 1 (* x x)))))
+
+(defthmd x-in-sub-domain=>x>=0
+  (implies (and (realp x)
+                (>= x (acl2-sqrt (/ 12 16))))
+           (>= x 0)))
+
+(defthmd sqrt-1-*x*x-close-to-1-*x1*x1
+  (implies (and (standardp x)
+		(inside-interval-p x (sub-domain))
+                (inside-interval-p x1 (sub-domain))
+                (i-close x x1))
+           (i-close (acl2-sqrt (- 1 (* x x))) (acl2-sqrt (- 1 (* x1 x1)))))
+  :hints (("Goal"
+           :use ((:instance i-close-x1-x2=>root-close (x1 (- 1 (* x x))) (x2 (- 1 (* x1 x1))))
+                 (:instance sub-func-range-3 (x x))
+                 (:instance sub-func-range-3 (x x1))
+                 (:instance i-close-x-y=>x*x-c-to-y*y (x x) (y x1))
+                 (:instance i-close-x-y=>1-x-c-to-1-y (x (* x x)) (y (* x1 x1)))
+                 (:instance i-close (x x) (y x1))
+                 )
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(defthmd small-if-<-small-lemma
+  (implies (and (i-small x)
+                (realp x)
+                (realp y)
+                (<= 0 y)
+                (<= y x))
+           (i-small y))
+  :hints (("Goal"
+           :use ((:instance standard-part-squeeze
+                            (x 0)
+                            (y y)
+                            (z x)))
+           :in-theory (disable ;small-<-non-small-lemma
+                       small-<-non-small))))
+
+(defthmd sqrt-1-*x*x-not-i-small-1
+  (implies (and (standardp x)
+                (realp x)
+                (> x 0))
+           (not (i-small x)))
+  :hints (("Goal"
+           :in-theory (enable i-small)
+           )))
+
+(defthm-std sqrt-1-*x*x-not-i-small-2
+  (implies (standardp x)
+           (standardp (acl2-sqrt x))))
+
+(defthmd sqrt-1-*x*x-not-i-small
+  (implies (and (inside-interval-p x (sub-domain))
+                (standardp x))
+           (not (i-small (acl2-sqrt (- 1 (* x x))))))
+  :hints (("Goal"
+           :use ((:instance standard-part-sqrt (x (- 1 (* x x))))
+                 (:instance sub-func-range-3 (x x))
+                 (:instance small-if-<-small-lemma (x (- 1 (* x x))) (y (/ 12 16)))
+                 (:instance sqrt-1-*x*x-not-i-small-1 (x (acl2-sqrt (- 1 (* x x)))))
+                 (:instance sqrt-1-*x*x-not-i-small-2 (x (- 1 (* x x))))
+                 (:instance standard-1-*x*x (x x))
+                 )
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(defthmd sqrt-1-*x*x-not-i-small-x1
+  (implies (and (inside-interval-p x (sub-domain))
+                (inside-interval-p x1 (sub-domain))
+                (i-close x x1)
+                (standardp x))
+           (not (i-small (acl2-sqrt (- 1 (* x1 x1))))))
+  :hints (("Goal"
+           :use ((:instance i-close-small-2
+                            (y (acl2-sqrt (- 1 (* x1 x1))))
+                            (x (acl2-sqrt (- 1 (* x1 x1)))))
+                 (:instance sqrt-1-*x*x-not-i-small)
+                 (:instance sqrt-1-*x*x-close-to-1-*x1*x1)
+                 )
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd i-close-/-lemma
+    (implies (and (i-close x x1)
+                  (not (i-small x))
+                  (i-limited x)
+                  (i-limited x1)
+                  (not (i-small x1))
+                  (not (equal x 0))
+                  (not (equal x1 0)))
+             (i-close (/ x) (/ x1)))
+    :hints (("Goal"
+             :use ((:instance limited*small->small (y (- x1 x)) (x (/ (* x x1))))
+                   (:instance i-small-uminus (x (- x x1)))
+                   )
+             :in-theory (enable i-close)
+             )))
+  )
+
+(defthmd i-close-1/sqrt-x-1/sqrt-x1
+  (implies (and (inside-interval-p x (sub-domain))
+                (inside-interval-p x1 (sub-domain))
+                (i-close x x1)
+                (standardp x))
+           (i-close (/ (acl2-sqrt (- 1 (* x x)))) (/ (acl2-sqrt (- 1 (* x1 x1))))))
+  :hints (("Goal"
+           :use ((:instance i-close-/-lemma (x (acl2-sqrt (- 1 (* x x)))) (x1 (acl2-sqrt (- 1 (* x1 x1)))))
+                 (:instance sqrt-1-*x*x-close-to-1-*x1*x1 (x x) (X1 x1))
+                 (:instance sqrt-1-*x*x-not-i-small (x x))
+                 (:instance sqrt-1-*x*x-not-i-small-x1 (x x) (x1 x1))
+                 (:instance limited-sqrt (x (- 1 (* x x))))
+                 (:instance sub-func-range-3)
+                 )
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(defthmd i-close-x-x1=>xy-to-x1y
+  (implies (and (i-close x x1)
+                (i-limited y))
+           (i-close (* x y) (* x1 y))))
+
+(defthmd sub-func-prime-continuous-1
+  (implies (and (standardp x)
+		(inside-interval-p x (sub-domain))
+		(i-close x x1)
+		(inside-interval-p x1 (sub-domain)))
+           (i-close (/ (- x) (acl2-sqrt (- 1 (* x x))))
+                    (/ (- x) (acl2-sqrt (- 1 (* x1 x1))))))
+  :hints (("Goal"
+           :use ((:instance i-close-x-x1=>xy-to-x1y
+                            (y x)
+                            (x1 (/ (acl2-sqrt (- 1 (* x1 x1)))))
+                            (x (/ (acl2-sqrt (- 1 (* x x))))))
+                 (:instance i-limited-udivide (x (acl2-sqrt (- 1 (* x x)))))
+                 (:instance limited-sqrt (x (- 1 (* x x))))
+                 (:instance sub-func-range-3)
+                 (:instance sqrt-1-*x*x-not-i-small)
+                 (:instance i-close-1/sqrt-x-1/sqrt-x1)
+                 )
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(defthmd sub-func-prime-continuous-2
+  (implies (and (standardp x)
+		(inside-interval-p x (sub-domain))
+		(i-close x x1)
+		(inside-interval-p x1 (sub-domain)))
+           (i-close (/ (- x) (acl2-sqrt (- 1 (* x1 x1))))
+                    (/ (- x1) (acl2-sqrt (- 1 (* x1 x1))))))
+  :hints (("Goal"
+           :use ((:instance i-close-x-x1=>xy-to-x1y
+                            (x (- x))
+                            (x1 (- x1))
+                            (y (/ (acl2-sqrt (- 1 (* x1 x1))))))
+                 (:instance i-limited-udivide (x (acl2-sqrt (- 1 (* x x)))))
+                 (:instance limited-sqrt (x (- 1 (* x x))))
+                 (:instance sub-func-range-3)
+                 (:instance i-close-limited
+                            (x (/ (acl2-sqrt (- 1 (* x x)))))
+                            (y (/ (acl2-sqrt (- 1 (* x1 x1))))))
+                 (:instance i-close-1/sqrt-x-1/sqrt-x1)
+                 (:instance sqrt-1-*x*x-not-i-small)
+                 )
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(defthmd sub-func-prime-continuous
+  (implies (and (standardp x)
+		(inside-interval-p x (sub-domain))
+		(i-close x x1)
+		(inside-interval-p x1 (sub-domain)))
+	   (i-close (sub-func-prime x)
+		    (sub-func-prime x1)))
+  :hints (("Goal"
+           :use ((:instance sub-func-prime-continuous-1)
+                 (:instance sub-func-prime-continuous-2)
+                 )
+           )))
 ----
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd not-i-small-x+y
+    (implies (and (not (i-small x))
+                  (realp x)
+                  (realp y)
+                  (> x 0)
+                  (> y 0)
+                  (not (i-small y)))
+             (not (i-small (+ x y))))
+    :hints (("Goal"
+             :use ((:instance standard-part-<-2 (x 0) (y y))
+                   (:instance standard-part-<-2 (x 0) (y x))
+                   )
+             :in-theory (enable i-small)
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd test-case-100
+    (implies (and (realp x)
+                  (> a 0)
+                  (> b 0)
+                  (realp a)
+                  (realp b)
+                  (<= a x)
+                  (realp y)
+                  (<= b y))
+             (<= (* a b) (* x y))))
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(defthmd sqrt-1-*x*x-close-to-1-*x1*x1-f
+  (implies (and (standardp x)
+		(inside-interval-p x (int-f-domain))
+                (inside-interval-p x1 (int-f-domain))
+                (i-close x x1))
+           (i-close (acl2-sqrt (- 1 (* x x))) (acl2-sqrt (- 1 (* x1 x1)))))
+  :hints (("Goal"
+           :use ((:instance i-close-x1-x2=>root-close (x1 (- 1 (* x x))) (x2 (- 1 (* x1 x1))))
+                 (:instance sub-func-range-3 (x x))
+                 (:instance sub-func-range-3 (x x1))
+                 (:instance i-close-x-y=>x*x-c-to-y*y (x x) (y x1))
+                 (:instance i-close-x-y=>1-x-c-to-1-y (x (* x x)) (y (* x1 x1)))
+                 (:instance i-close (x x) (y x1))
+                 )
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(defthmd small-if-<-small-lemma
+  (implies (and (i-small x)
+                (realp x)
+                (realp y)
+                (<= 0 y)
+                (<= y x))
+           (i-small y))
+  :hints (("Goal"
+           :use ((:instance standard-part-squeeze
+                            (x 0)
+                            (y y)
+                            (z x)))
+           :in-theory (disable ;small-<-non-small-lemma
+                       small-<-non-small))))
+
+(defthmd sqrt-1-*x*x-not-i-small-1
+  (implies (and (standardp x)
+                (realp x)
+                (> x 0))
+           (not (i-small x)))
+  :hints (("Goal"
+           :in-theory (enable i-small)
+           )))
+
+(defthm-std sqrt-1-*x*x-not-i-small-2
+  (implies (standardp x)
+           (standardp (acl2-sqrt x))))
+
+(defthmd sqrt-1-*x*x-not-i-small
+  (implies (and (inside-interval-p x (sub-domain))
+                (standardp x))
+           (not (i-small (acl2-sqrt (- 1 (* x x))))))
+  :hints (("Goal"
+           :use ((:instance standard-part-sqrt (x (- 1 (* x x))))
+                 (:instance sub-func-range-3 (x x))
+                 (:instance small-if-<-small-lemma (x (- 1 (* x x))) (y (/ 12 16)))
+                 (:instance sqrt-1-*x*x-not-i-small-1 (x (acl2-sqrt (- 1 (* x x)))))
+                 (:instance sqrt-1-*x*x-not-i-small-2 (x (- 1 (* x x))))
+                 (:instance standard-1-*x*x (x x))
+                 )
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(defthmd sqrt-1-*x*x-not-i-small-x1
+  (implies (and (inside-interval-p x (sub-domain))
+                (inside-interval-p x1 (sub-domain))
+                (i-close x x1)
+                (standardp x))
+           (not (i-small (acl2-sqrt (- 1 (* x1 x1))))))
+  :hints (("Goal"
+           :use ((:instance i-close-small-2
+                            (y (acl2-sqrt (- 1 (* x1 x1))))
+                            (x (acl2-sqrt (- 1 (* x1 x1)))))
+                 (:instance sqrt-1-*x*x-not-i-small)
+                 (:instance sqrt-1-*x*x-close-to-1-*x1*x1)
+                 )
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd i-close-/-lemma
+    (implies (and (i-close x x1)
+                  (not (i-small x))
+                  (i-limited x)
+                  (i-limited x1)
+                  (not (i-small x1))
+                  (not (equal x 0))
+                  (not (equal x1 0)))
+             (i-close (/ x) (/ x1)))
+    :hints (("Goal"
+             :use ((:instance limited*small->small (y (- x1 x)) (x (/ (* x x1))))
+                   (:instance i-small-uminus (x (- x x1)))
+                   )
+             :in-theory (enable i-close)
+             )))
+  )
+
+(defthmd i-close-1/sqrt-x-1/sqrt-x1
+  (implies (and (inside-interval-p x (sub-domain))
+                (inside-interval-p x1 (sub-domain))
+                (i-close x x1)
+                (standardp x))
+           (i-close (/ (acl2-sqrt (- 1 (* x x)))) (/ (acl2-sqrt (- 1 (* x1 x1))))))
+  :hints (("Goal"
+           :use ((:instance i-close-/-lemma (x (acl2-sqrt (- 1 (* x x)))) (x1 (acl2-sqrt (- 1 (* x1 x1)))))
+                 (:instance sqrt-1-*x*x-close-to-1-*x1*x1 (x x) (X1 x1))
+                 (:instance sqrt-1-*x*x-not-i-small (x x))
+                 (:instance sqrt-1-*x*x-not-i-small-x1 (x x) (x1 x1))
+                 (:instance limited-sqrt (x (- 1 (* x x))))
+                 (:instance sub-func-range-3)
+                 )
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(defthmd i-close-x-x1=>xy-to-x1y
+  (implies (and (i-close x x1)
+                (i-limited y))
+           (i-close (* x y) (* x1 y))))
+
+(defthmd sub-func-prime-continuous-1
+  (implies (and (standardp x)
+		(inside-interval-p x (sub-domain))
+		(i-close x x1)
+		(inside-interval-p x1 (sub-domain)))
+           (i-close (/ (- x) (acl2-sqrt (- 1 (* x x))))
+                    (/ (- x) (acl2-sqrt (- 1 (* x1 x1))))))
+  :hints (("Goal"
+           :use ((:instance i-close-x-x1=>xy-to-x1y
+                            (y x)
+                            (x1 (/ (acl2-sqrt (- 1 (* x1 x1)))))
+                            (x (/ (acl2-sqrt (- 1 (* x x))))))
+                 (:instance i-limited-udivide (x (acl2-sqrt (- 1 (* x x)))))
+                 (:instance limited-sqrt (x (- 1 (* x x))))
+                 (:instance sub-func-range-3)
+                 (:instance sqrt-1-*x*x-not-i-small)
+                 (:instance i-close-1/sqrt-x-1/sqrt-x1)
+                 )
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(defthmd sub-func-prime-continuous-2
+  (implies (and (standardp x)
+		(inside-interval-p x (sub-domain))
+		(i-close x x1)
+		(inside-interval-p x1 (sub-domain)))
+           (i-close (/ (- x) (acl2-sqrt (- 1 (* x1 x1))))
+                    (/ (- x1) (acl2-sqrt (- 1 (* x1 x1))))))
+  :hints (("Goal"
+           :use ((:instance i-close-x-x1=>xy-to-x1y
+                            (x (- x))
+                            (x1 (- x1))
+                            (y (/ (acl2-sqrt (- 1 (* x1 x1))))))
+                 (:instance i-limited-udivide (x (acl2-sqrt (- 1 (* x x)))))
+                 (:instance limited-sqrt (x (- 1 (* x x))))
+                 (:instance sub-func-range-3)
+                 (:instance i-close-limited
+                            (x (/ (acl2-sqrt (- 1 (* x x)))))
+                            (y (/ (acl2-sqrt (- 1 (* x1 x1))))))
+                 (:instance i-close-1/sqrt-x-1/sqrt-x1)
+                 (:instance sqrt-1-*x*x-not-i-small)
+                 )
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(defthmd sub-func-prime-continuous
+  (implies (and (standardp x)
+		(inside-interval-p x (sub-domain))
+		(i-close x x1)
+		(inside-interval-p x1 (sub-domain)))
+	   (i-close (sub-func-prime x)
+		    (sub-func-prime x1)))
+  :hints (("Goal"
+           :use ((:instance sub-func-prime-continuous-1)
+                 (:instance sub-func-prime-continuous-2)
+                 )
+           )))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;; (defthm circle-continuous
+;;   (implies (and (standardp x)
+;; 		(inside-interval-p x (circle-x-domain))
+;; 		(i-close x x1)
+;; 		(inside-interval-p x1 (circle-x-domain)))
+;; 	   (i-close (circle x)
+;; 		    (circle x1)))
+
+
+-------
 
 
 
