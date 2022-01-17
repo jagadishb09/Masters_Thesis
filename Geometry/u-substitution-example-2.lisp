@@ -8,6 +8,7 @@
 (include-book "nonstd/nsa/inverse-square" :dir :system)
 (include-book "nonstd/nsa/inverse-trig" :dir :system)
 (include-book "nonstd/integrals/u-substitution" :dir :system)
+(include-book "nonstd/nsa/ln" :dir :system)
 
 (defun int-f-domain() (interval (acl2-sqrt (/ 12 16)) (acl2-sqrt (/ 15 16))))
 
@@ -180,8 +181,7 @@
                    (:instance sub-func-range-4 (x (/ 12 16)))
                    )
              :in-theory nil
-             )))
-  )
+             ))))
 
 (defthmd subfunc-range-in-domain-of-int-f
   (implies (inside-interval-p x (sub-domain))
@@ -368,6 +368,10 @@
 (defthmd i-limited-1-x*x
   (implies (i-limited x)
            (i-limited (- 1 (* x x)))))
+
+(defthmd i-limited-1-x
+  (implies (i-limited x)
+           (i-limited (+ -1 (- x)))))
 
 (defthmd standardp-x*x
   (implies (standardp x)
@@ -982,7 +986,7 @@
      (acl2-sqrt (- 1 (* x x))))
    )
 
-  (defthm sqrt-1-x**2-derivative
+  (defthmd sqrt-1-x**2-derivative
     (implies (and (inside-interval-p x (sub-domain))
                   (inside-interval-p y (sub-domain))
                   (standardp x)
@@ -1001,13 +1005,675 @@
              )))
   )
 
-;; (defthm sub-func-differentiable
-;;   (implies (and (standardp x)
-;; 		(inside-interval-p x (sub-domain))
-;; 		(inside-interval-p y1 (sub-domain))
-;; 		(inside-interval-p y2 (sub-domain))
-;; 		(i-close x y1) (not (= x y1))
-;; 		(i-close x y2) (not (= x y2)))
-;; 	   (and (i-limited (/ (- (sub-func x) (sub-func y1)) (- x y1)))
-;; 		(i-close (/ (- (sub-func x) (sub-func y1)) (- x y1))
-;; 			 (/ (- (sub-func x) (sub-func y2)) (- x y2)))))
+(defthmd sub-func-prime-is-derivative
+  (implies (and (inside-interval-p x (sub-domain))
+                (inside-interval-p y1 (sub-domain))
+                (standardp x)
+                (i-close x y1)
+                (not (equal x y1)))
+           (i-close (/ (- (sub-func x) (sub-func y1)) (- x y1))
+                    (sub-func-prime x)))
+  :hints (("goal"
+           :use ((:instance sqrt-1-x**2-derivative (x x) (y y1))
+                 )
+           )))
+
+(defthmd sub-func-differentiable-1
+  (implies (and (standardp x)
+		(inside-interval-p x (sub-domain))
+		(inside-interval-p y1 (sub-domain))
+		(inside-interval-p y2 (sub-domain))
+		(i-close x y1) (not (= x y1))
+		(i-close x y2) (not (= x y2)))
+           (i-close (/ (- (sub-func x) (sub-func y1)) (- x y1))
+                    (/ (- (sub-func x) (sub-func y2)) (- x y2))))
+  :hints (("goal"
+           :use ((:instance sub-func-prime-is-derivative (x x) (y1 y1))
+                 (:instance sub-func-prime-is-derivative (x x) (y1 y2))
+                 )
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd sub-func-prime-range-1
+    (implies (and (realp x)
+                  (> a 0)
+                  (> b 0)
+                  (realp a)
+                  (realp b)
+                  (<= x a)
+                  (>= x b))
+             (and (<= (- (/ 1 b)) (- (/ 1 x)))
+                  (<= (- (/ 1 x)) (- (/ 1 a))))))
+  )
+
+(defthmd sub-func-prime-range-2
+  (implies (and (realp x)
+                (<= x (/ 1 2))
+                (>= x (/ 1 4)))
+           (and (<= (- (acl2-sqrt 16/12))  (/ (- (acl2-sqrt (- 1 (* x x))))))
+                (<= (/ (- (acl2-sqrt (- 1 (* x x))))) (- (acl2-sqrt 16/15)))))
+  :hints (("goal"
+           :use ((:instance sub-func-prime-range-1
+                            (x (acl2-sqrt (- 1 (* x x))))
+                            (b (acl2-sqrt 12/16))
+                            (a (acl2-sqrt 15/16)))
+                 (:instance sub-func-range (x x))
+                 )
+           )))
+
+(defthmd sub-func-prime-range-3
+  (implies (and (realp x)
+                (realp a)
+                (realp y)
+                (< y 0)
+                (<= a x))
+           (>= (* a y) (* x y))))
+
+(defthmd sub-func-prime-range-4
+  (implies (and (realp x)
+                (realp y1)
+                (realp y)
+                (<= y1 y)
+                (> x 0))
+           (<= (* y1 x) (* x y))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd sub-func-prime-range-6
+    (implies (and (<= a x)
+                  (<= x y))
+             (<= a y)))
+
+  (defthmd sub-func-prime-range-5
+    (implies (and (realp x)
+                  (realp a1)
+                  (realp a2)
+                  (<= a1 x)
+                  (<= x a2)
+                  (> a1 0)
+                  (realp y)
+                  (realp b1)
+                  (realp b2)
+                  (< b2 0)
+                  (<= b1 y)
+                  (<= y b2)
+                  (i-limited a1)
+                  (i-limited b1)
+                  (i-limited a2)
+                  (i-limited b2)
+                  )
+             (and (<= (* x y) (* a1 b2))
+                  (<= (* a2 b1) (* x y))
+                  (i-limited (* x y))))
+    :hints (("goal"
+             :use ((:instance sub-func-prime-range-3 (x x) (y y) (a a1))
+                   (:instance sub-func-prime-range-4 (y1 y) (x a1) (y b2))
+                   (:instance sub-func-prime-range-6 (a (* x y)) (x (* a1 y)) (y (* a1 b2)))
+                   (:instance sub-func-prime-range-3 (x a2) (a x) (y y))
+                   (:instance sub-func-prime-range-4 (x a2) (y y) (y1 b1))
+                   (:instance sub-func-prime-range-6 (a (* a2 b1)) (x (* a2 y)) (y (* x y)))
+                   (:instance limited-squeeze (a (* a2 b1)) (x (* x y)) (b (* a1 b2)))
+                   )
+             )))
+  )
+
+(defthmd sub-func-prime-range-7
+  (implies (and (realp x)
+                (<= x (/ 1 2))
+                (>= x (/ 1 4)))
+           (and (<= (- (acl2-sqrt 16/12))  (/ (- (acl2-sqrt (- 1 (* x x))))))
+                (<= (/ (- (acl2-sqrt (- 1 (* x x))))) (- (acl2-sqrt 16/15)))))
+  :hints (("goal"
+           :use ((:instance sub-func-prime-range-1
+                            (x (acl2-sqrt (- 1 (* x x))))
+                            (b (acl2-sqrt 12/16))
+                            (a (acl2-sqrt 15/16)))
+                 (:instance sub-func-range (x x))
+                 )
+           )))
+
+(defthmd sub-func-prime-range
+  (implies (and (realp x)
+                (<= x (/ 1 2))
+                (>= x (/ 1 4)))
+           (i-limited (* x (/ (- (acl2-sqrt (- 1 (* x x))))))))
+  :hints (("goal"
+           :use ((:instance sub-func-prime-range-5
+                            (a1 1/4)
+                            (a2 1/2)
+                            (x x)
+                            (b1 (- (acl2-sqrt 16/12)))
+                            (b2 (- (acl2-sqrt 16/15)))
+                            (y (/ (- (acl2-sqrt (- 1 (* x x)))))))
+                 (:instance sub-func-prime-range-7)
+                 ))))
+
+(defthmd sub-func-differentiable-2
+  (implies (and (standardp x)
+		(inside-interval-p x (sub-domain))
+		(inside-interval-p y1 (sub-domain))
+		(i-close x y1) (not (= x y1)))
+           (i-limited (/ (- (sub-func x) (sub-func y1)) (- x y1))))
+  :hints (("goal"
+           :use ((:instance i-close-limited-2
+                            (x (/ (- (sub-func x) (sub-func y1)) (- x y1)))
+                            (y (sub-func-prime x)))
+                 (:instance sub-func-range (x x))
+                 (:instance sub-func-prime-is-derivative)
+                 (:instance sub-func-prime-range)
+                 )
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(defthmd sub-func-differentiable
+  (implies (and (standardp x)
+		(inside-interval-p x (sub-domain))
+		(inside-interval-p y1 (sub-domain))
+		(inside-interval-p y2 (sub-domain))
+		(i-close x y1) (not (= x y1))
+		(i-close x y2) (not (= x y2)))
+           (and (i-limited (/ (- (sub-func x) (sub-func y1)) (- x y1)))
+                (i-close (/ (- (sub-func x) (sub-func y1)) (- x y1))
+                         (/ (- (sub-func x) (sub-func y2)) (- x y2)))))
+  :hints (("goal"
+           :use ((:instance sub-func-differentiable-2)
+                 (:instance sub-func-differentiable-1)
+                 )
+           )))
+
+(encapsulate
+  (
+   (consta1 () t)
+   )
+
+  (local
+   (defun consta1()
+     (acl2-sqrt 14/16)))
+
+  (defthmd consta1-def
+    (and (inside-interval-p (consta1) (int-f-domain))
+         (standardp (consta1))
+         )
+    :hints (("goal"
+             :in-theory (enable interval-definition-theory)
+             )))
+  )
+
+(encapsulate
+  (((int-f-sub-derivative *) => *))
+
+  (local
+   (defun int-f-sub-derivative (x)
+     (* (integral-function (sub-func x)) (sub-func-prime x))
+     ))
+
+  (defthmd derivative-int-f-sub-definition
+    (implies (inside-interval-p x (sub-domain))
+             (equal (int-f-sub-derivative x)
+                    (* (integral-function (sub-func x))
+                       (sub-func-prime x))))
+    :hints (("goal"
+             :use (:functional-instance derivative-cr-f-o-fi-definition
+                                        (fi-domain sub-domain)
+                                        (f-prime integral-function)
+                                        (fi sub-func)
+                                        (fi-prime sub-func-prime)
+                                        (fi-range int-f-domain)
+                                        (derivative-cr-f-o-fi int-f-sub-derivative)
+                                        (consta consta1)
+                                        )
+             )
+            ("subgoal 9"
+             :use (:instance subfunc-range-in-domain-of-int-f)
+             )
+            ("subgoal 6"
+             :use (:instance sub-func-prime-continuous)
+             )
+            ("subgoal 5"
+             :use (:instance sub-func-prime-is-derivative (x x) (y1 x1))
+             )
+            ("subgoal 4"
+             :use (:instance int-f-continuous)
+             )
+            ("subgoal 3"
+             :use (:instance consta1-def)
+             )
+            ("subgoal 2"
+             :use (:instance consta1-def)
+             )
+            )
+    )
+  )
+
+(defun int-f-sub-prime (x)
+  (if (inside-interval-p x (sub-domain))
+      (int-f-sub-derivative x)
+    0)
+  )
+
+(defun map-int-f-sub-prime (p)
+  (if (consp p)
+      (cons (int-f-sub-prime (car p))
+	    (map-int-f-sub-prime (cdr p)))
+    nil))
+
+(defun riemann-int-f-sub-prime (p)
+  (dotprod (deltas p)
+	   (map-int-f-sub-prime (cdr p))))
+
+(encapsulate
+  nil
+
+  (local
+   (defthmd limited-riemann-int-f-sub-prime-small-partition
+     (implies (and (realp a) (standardp a)
+                   (realp b) (standardp b)
+                   (inside-interval-p a (sub-domain))
+                   (inside-interval-p b (sub-domain))
+                   (< a b))
+              (standardp (standard-part (riemann-int-f-sub-prime (make-small-partition a b)))))
+     :hints (("goal"
+              :use (:functional-instance limited-riemann-f-o-fi-prime-small-partition
+                                         (fi-domain sub-domain)
+                                         (f-o-fi-prime int-f-sub-prime)
+                                         (map-f-o-fi-prime map-int-f-sub-prime)
+                                         (riemann-f-o-fi-prime riemann-int-f-sub-prime)
+                                         (derivative-cr-f-o-fi int-f-sub-derivative)
+                                         (fi-range int-f-domain)
+                                         (consta  consta1)
+                                         (f-prime integral-function)
+                                         (fi sub-func)
+                                         (fi-prime sub-func-prime)
+                                         ))
+             ("subgoal 9"
+              :use (:instance derivative-int-f-sub-definition)
+              )
+             ("subgoal 8"
+              :use (:instance subfunc-range-in-domain-of-int-f)
+              )
+             ("subgoal 5"
+              :use (:instance sub-func-prime-continuous)
+              )
+             ("subgoal 4"
+              :use (:instance sub-func-prime-is-derivative (x x) (y1 x1))
+              )
+             ("subgoal 3"
+              :use (:instance int-f-continuous)
+              )
+             ("subgoal 2"
+              :use (:instance consta1-def)
+              )
+             ("subgoal 1"
+              :use (:instance consta1-def)
+              )
+             )
+     ))
+
+  (local (in-theory nil))
+  (local (in-theory (enable limited-riemann-int-f-sub-prime-small-partition nsa-theory)))
+
+  (defun-std strict-int-int-f-sub-prime (a b)
+    (if (and (realp a)
+             (realp b)
+             (inside-interval-p a (sub-domain))
+             (inside-interval-p b (sub-domain))
+             (< a b))
+        (standard-part (riemann-int-f-sub-prime (make-small-partition a b)))
+      0))
+
+  (defthmd strict-int-int-f-sub-prime-lemma
+    (implies
+     (and (standardp a) (standardp b))
+     (equal
+      (strict-int-int-f-sub-prime a b)
+      (if (and (realp a)
+               (realp b)
+               (inside-interval-p a (sub-domain))
+               (inside-interval-p b (sub-domain))
+               (< a b))
+          (standard-part (riemann-int-f-sub-prime (make-small-partition a b)))
+        0)))
+    )
+  )
+
+(defun int-int-f-sub-prime (a b)
+  (if (<= a b)
+      (strict-int-int-f-sub-prime a b)
+    (- (strict-int-int-f-sub-prime b a))))
+
+(defun map-int-f (p)
+  (if (consp p)
+      (cons (integral-function (car p))
+	    (map-int-f (cdr p)))
+    nil))
+
+(defun riemann-int-f (p)
+  (dotprod (deltas p)
+	   (map-int-f (cdr p))))
+
+
+(encapsulate
+  nil
+
+  (local
+   (defthmd limited-riemann-int-f-small-partition
+     (implies (and (realp a) (standardp a)
+                   (realp b) (standardp b)
+                   (inside-interval-p a (int-f-domain))
+                   (inside-interval-p b (int-f-domain))
+                   (< a b))
+              (standardp (standard-part (riemann-int-f (make-small-partition a b)))))
+     :hints (("goal"
+              :use (:functional-instance limited-riemann-f-prime-small-partition
+                                         (fi-range int-f-domain)
+                                         (f-prime integral-function)
+                                         (map-f-prime map-int-f)
+                                         (riemann-f-prime riemann-int-f)
+                                         (fi-domain sub-domain)
+                                         (fi sub-func)
+                                         (fi-prime sub-func-prime)
+                                         (consta consta1))
+              )
+             ("subgoal 2"
+              :use (:instance riemann-int-f)
+              )
+             ("subgoal 1"
+              :use (:instance  map-int-f)
+              )
+
+             )
+     )
+   )
+
+  (local (in-theory nil))
+  (local (in-theory (enable limited-riemann-int-f-small-partition nsa-theory)))
+
+  (defun-std strict-int-int-f (a b)
+    (if (and (realp a)
+             (realp b)
+             (inside-interval-p a (int-f-domain))
+             (inside-interval-p b (int-f-domain))
+             (< a b))
+        (standard-part (riemann-int-f (make-small-partition a b)))
+      0))
+
+  (defthmd strict-int-int-f-lemma
+    (implies
+     (and (standardp a) (standardp b))
+     (equal (strict-int-int-f a b)
+            (if (and (realp a)
+                     (realp b)
+                     (inside-interval-p a (int-f-domain))
+                     (inside-interval-p b (int-f-domain))
+                     (< a b))
+                (standard-part (riemann-int-f (make-small-partition a b)))
+              0)))
+    )
+  )
+
+(defun int-int-f (a b)
+  (if (<= a b)
+      (strict-int-int-f a b)
+    (- (strict-int-int-f b a))))
+
+(defthmd usubstitution-int-f
+  (implies (and (inside-interval-p a (sub-domain))
+		(inside-interval-p b (sub-domain)))
+	   (equal (int-int-f (sub-func a) (sub-func b))
+		  (int-int-f-sub-prime a b)))
+  :hints (("goal"
+	   :use (:functional-instance usubstitution-f-o-fi
+				      (int-f-prime int-int-f)
+				      (int-f-o-fi-prime int-int-f-sub-prime)
+				      (fi-domain sub-domain)
+				      (fi sub-func)
+				      (fi-prime sub-func-prime)
+				      (f-prime integral-function)
+				      (consta consta1)
+				      (fi-range int-f-domain)
+				      (strict-int-f-o-fi-prime strict-int-int-f-sub-prime)
+				      (strict-int-f-prime strict-int-int-f)
+				      (riemann-f-o-fi-prime riemann-int-f-sub-prime)
+				      (map-f-o-fi-prime map-int-f-sub-prime)
+				      (map-f-prime map-int-f)
+				      (riemann-f-prime riemann-int-f)
+				      (f-o-fi-prime int-f-sub-prime)
+				      (derivative-cr-f-o-fi int-f-sub-derivative)
+				      )
+	   )))
+
+(encapsulate
+  ()
+
+  (local
+   (defthm strict-int-rcdfn-prime-a-a-int-f
+     (implies (inside-interval-p a (int-f-domain))
+              (equal (strict-int-int-f a a) 0))
+     :hints (("goal"
+              :by (:functional-instance strict-int-a-a
+                                        (strict-int-rcfn strict-int-int-f)
+                                        (rcfn-domain int-f-domain)
+                                        (rcfn integral-function)
+                                        (riemann-rcfn riemann-int-f)
+                                        (map-rcfn map-int-f)))
+             ("subgoal 4"
+              :use (:instance int-f-continuous (x x) (x1 y))
+              )
+             )
+     ))
+
+  (defthmd integral-reverse-interval-int-f
+    (implies (and (realp a)
+                  (realp b)
+                  (inside-interval-p a (int-f-domain))
+                  (inside-interval-p b (int-f-domain)))
+             (equal (- (int-int-f a b))
+                    (int-int-f b a))))
+  )
+
+(defthmd u-substitution-int-f-1
+  (equal (int-int-f (acl2-sqrt 15/16) (acl2-sqrt 12/16))
+         (int-int-f-sub-prime 1/4 1/2))
+  :hints (("goal"
+           :use ((:instance usubstitution-int-f (a 1/4) (b 1/2))
+                 )
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(defthmd u-substitution-int-f-2
+  (equal (int-int-f (acl2-sqrt 12/16) (acl2-sqrt 15/16))
+         (- (int-int-f-sub-prime 1/4 1/2)))
+  :hints (("goal"
+           :use ((:instance u-substitution-int-f-1)
+                 (:instance integral-reverse-interval-int-f
+                            (b (acl2-sqrt 12/16))
+                            (a (acl2-sqrt 15/16)))
+                 )
+           :in-theory (enable interval-definition-theory)
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd int-int-f-sub-prime-equals-1
+    (implies (and (realp x)
+                  (> x 0))
+             (equal (- (* x (/ (+ x (* x x)))))
+                    (- (/ (+ x 1))))))
+  )
+
+(defthmd int-int-f-sub-prime-equals
+  (implies (inside-interval-p x (sub-domain))
+           (equal (int-f-sub-prime x) (- (/ (+ x 1)))))
+  :hints (("goal"
+           :in-theory (enable interval-definition-theory)
+           :use ((:instance derivative-int-f-sub-definition)
+                 (:instance sub-func-range)
+                 (:instance sqrt-sqrt (x (- 1 (* x x))))
+                 (:instance sub-func-range-3)
+                 (:instance int-int-f-sub-prime-equals-1)
+                 ))))
+
+(encapsulate
+  ()
+  (local (include-book "nonstd/workshops/2011/reid-gamboa-differentiator/support/ln-derivative-real" :dir :system))
+
+  (local
+   (defderivative ln-x+1-derivative-lemma
+     (- (acl2-ln (+ x 1)))))
+
+  (defthmd ln-x+1-derivative
+    (implies (and (inside-interval-p x (sub-domain))
+                  (inside-interval-p y (sub-domain))
+                  (standardp x)
+                  (i-close x y)
+                  (not (equal x y)))
+             (i-close (+ (- (* (acl2-ln (+ 1 x)) (/ (+ x (- y)))))
+                         (* (acl2-ln (+ 1 y)) (/ (+ x (- y)))))
+                      (- (/ (+ 1 x)))))
+    :hints (("goal"
+             :use ((:instance ln-x+1-derivative-lemma))
+             :in-theory (enable interval-definition-theory)
+             )))
+  )
+
+(defun minus-ln-x+1 (x)
+  (if (inside-interval-p x (sub-domain))
+      (- (acl2-ln (+ x 1)))
+    0))
+
+(defthmd minus-ln-x+1-is-derivative
+  (implies (and (standardp x)
+		(inside-interval-p x (sub-domain))
+		(inside-interval-p x1 (sub-domain))
+		(i-close x x1) (not (= x x1)))
+	   (i-close (/ (- (minus-ln-x+1 x) (minus-ln-x+1 x1)) (- x x1))
+		    (int-f-sub-prime x)))
+  :hints (("goal"
+           :use ((:instance ln-x+1-derivative (x x) (y x1))
+                 (:instance int-int-f-sub-prime-equals)
+                 )
+           )))
+
+(defthmd int-f-sub-prime-continuous-1
+  (implies (i-close x x1)
+           (i-close (- x) (- x1)))
+  :hints (("goal"
+           :in-theory (enable i-close)
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd int-f-sub-prime-continuous-2
+    (implies (realp x)
+             (equal (/ (- x)) (- (/ x)))))
+
+  (defthmd int-f-sub-prime-continuous-3
+    (implies (realp x)
+             (equal (/ (+ -1 (- x))) (- (/ (+ 1 x)))))
+    :hints (("goal"
+             :use (:instance int-f-sub-prime-continuous-2 (x (+ 1 x)))
+             )))
+  )
+
+(defthmd int-f-sub-prime-continuous-5
+  (implies (and (realp x)
+                (inside-interval-p x (sub-domain))
+                (inside-interval-p x1 (sub-domain))
+                (i-close (/ (+ -1 (- x)))
+                         (/ (+ -1 (- x1)))))
+           (i-close (int-f-sub-prime x)
+                    (int-f-sub-prime x1)))
+  :hints (("goal"
+           :use ((:instance int-int-f-sub-prime-equals (x x))
+                 (:instance int-int-f-sub-prime-equals (x x1))
+                 (:instance int-f-sub-prime-continuous-3 (x x))
+                 (:instance int-f-sub-prime-continuous-3 (x x1))
+                 )
+           :in-theory (disable int-int-f-sub-prime)
+           )))
+
+(defthmd int-f-sub-prime-continuous
+  (implies (and (standardp x)
+                (inside-interval-p x (sub-domain))
+                (i-close x x1)
+                (inside-interval-p x1 (sub-domain)))
+           (i-close (int-f-sub-prime x)
+                    (int-f-sub-prime x1)))
+  :hints (("goal"
+           :use ((:instance int-int-f-sub-prime-equals)
+                 (:instance int-int-f-sub-prime-equals (x x1))
+                 (:instance i-close-/-lemma (x (- (+ 1 x))) (x1 (- (+ 1 x1))))
+                 (:instance i-close-x-y=>1-x-c-to-1-y (x (- x)) (y (- x1)))
+                 (:instance int-f-sub-prime-continuous-1 (x (+ 1 x)) (x1 (+ 1 x1)))
+                 (:instance int-f-sub-prime-continuous-2 (x (+ 1 x)))
+                 (:instance int-f-sub-prime-continuous-2 (x (+ 1 x1)))
+                 (:instance int-f-sub-prime-continuous-3 (x x))
+                 (:instance int-f-sub-prime-continuous-3 (x x1))
+                 (:instance int-f-sub-prime-continuous-5 (x x) (x1 x1))
+                 (:instance small-if-<-small (x (+ -1 (- x1))) (y 1/4))
+                 (:instance i-close-limited (x (+ -1 (- x))) (y (+ -1 (- x1))))
+                 (:instance i-limited-1-x)
+                 (:instance i-close-limited (x (+ -1 (- x))) (y (+ -1 (- x1))))
+                 )
+           :in-theory (e/d (interval-definition-theory) (int-f-sub-prime))
+           )))
+
+(defthmd int-int-f-ftc-2
+  (implies (and (inside-interval-p a (sub-domain))
+		(inside-interval-p b (sub-domain)))
+	   (equal (int-int-f-sub-prime a b)
+		  (- (minus-ln-x+1 b)
+		     (minus-ln-x+1 a))))
+  :hints (("goal"
+	   :use (:functional-instance ftc-2
+				      (rcdfn minus-ln-x+1)
+				      (rcdfn-prime int-f-sub-prime)
+				      (map-rcdfn-prime map-int-f-sub-prime)
+				      (riemann-rcdfn-prime riemann-int-f-sub-prime)
+				      (rcdfn-domain sub-domain)
+				      (int-rcdfn-prime int-int-f-sub-prime)
+				      (strict-int-rcdfn-prime strict-int-int-f-sub-prime)
+				      )
+           :in-theory (disable int-f-sub-prime)
+	   )
+	  ("subgoal 9"
+	   :use (:instance int-f-sub-prime-continuous)
+	   )
+	  ("subgoal 8"
+	   :use (:instance minus-ln-x+1-is-derivative)
+	   )
+          ("subgoal 7"
+           :use (:instance int-int-f-sub-prime-equals)
+           :in-theory (enable interval-definition-theory)
+           )
+          ("subgoal 6"
+           :use (:instance int-int-f-sub-prime-equals)
+           :in-theory (enable interval-definition-theory)
+           )
+	  )
+  )
+
+
+(defthmd integral-function-value
+  (equal (int-int-f (acl2-sqrt 12/16) (acl2-sqrt 15/16))
+         (- (acl2-ln 3/2)
+            (acl2-ln 5/4)))
+  :hints (("goal"
+           :use ((:instance u-substitution-int-f-2)
+                 (:instance int-int-f-ftc-2 (a 1/4) (b 1/2))
+                 )
+           :in-theory (e/d (interval-definition-theory) (int-int-f int-int-f-sub-prime))
+           )))
