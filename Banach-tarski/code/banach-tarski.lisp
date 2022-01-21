@@ -53,28 +53,7 @@
            :in-theory (enable array2p header dimensions aref2)
            )))
 
-;; (verify-guards point-in-r3)
-;; (verify-guards point-in-r3-x1)
-;; (verify-guards point-in-r3-y1)
-;; (verify-guards point-in-r3-z1)
-;; (verify-guards return-point-in-r3)
-;; (verify-guards acl2-exp)
-;; (verify-guards acl2-sine)
-;; (verify-guards return-point-in-r3)
-
 (defun rotation-about-arbitrary-line (angle m n p)
-  ;; (declare (xargs :guard (and (point-in-r3 m)
-  ;;                             (point-in-r3 n)
-  ;;                             (not (m-= m n))
-  ;;                             (point-in-r3 p)
-  ;;                             (realp angle)
-  ;;                             (equal (+ (* (- (point-in-r3-x1 n) (point-in-r3-x1 m))
-  ;;                                          (- (point-in-r3-x1 n) (point-in-r3-x1 m)))
-  ;;                                       (* (- (point-in-r3-y1 n) (point-in-r3-y1 m))
-  ;;                                          (- (point-in-r3-y1 n) (point-in-r3-y1 m)))
-  ;;                                       (* (- (point-in-r3-z1 n) (point-in-r3-z1 m))
-  ;;                                          (- (point-in-r3-z1 n) (point-in-r3-z1 m))))
-  ;;                                    1))))
   (vect-tr (point-in-r3-x1 m) (point-in-r3-y1 m) (point-in-r3-z1 m)
            (m-* (rotation-3d angle
                              (return-point-in-r3 (- (point-in-r3-x1 n) (point-in-r3-x1 m))
@@ -202,30 +181,11 @@
             (not (m-= (rotation-about-arbitrary-line (* i angle) m n p)
                       (rotation-about-arbitrary-line (* j angle) m n p))))))
 
-(skip-proofs
- (defthmd rot-i*angle*p-in-
-   (implies (and (point-in-r3 m)
-                 (point-in-r3 n)
-                 (zero-p p)
-                 (<= (cal-radius m) 1/2)
-                 (not (zero-p m))
-                 (not (zero-p n))
-                 (not (m-= m n))
-                 (realp angle)
-                 (equal (+ (* (- (point-in-r3-x1 n) (point-in-r3-x1 m))
-                              (- (point-in-r3-x1 n) (point-in-r3-x1 m)))
-                           (* (- (point-in-r3-y1 n) (point-in-r3-y1 m))
-                              (- (point-in-r3-y1 n) (point-in-r3-y1 m)))
-                           (* (- (point-in-r3-z1 n) (point-in-r3-z1 m))
-                              (- (point-in-r3-z1 n) (point-in-r3-z1 m))))
-                        1))
-            (<= (cal-radius (rotation-about-arbitrary-line angle m n p)) 1))))
-
 (defun m-p ()
   `((:header :dimensions (3 1)
 	     :maximum-length 15)
     ((0 . 0) . 1/10)
-    ((1 . 0) . 0)
+    ((1 . 0) . 1/4)
     ((2 . 0) . 0)
     ))
 
@@ -234,9 +194,15 @@
   `((:header :dimensions (3 1)
 	     :maximum-length 15)
     ((0 . 0) . -9/10)
-    ((1 . 0) . 0)
+    ((1 . 0) . 1/4)
     ((2 . 0) . 0)
     ))
+
+(skip-proofs
+ (defthmd rot-i*angle*p-in-
+   (implies (and (zero-p p)
+                 (realp angle))
+            (<= (cal-radius (rotation-about-arbitrary-line angle (m-p) (n-p) p)) 1))))
 
 (defun rotation-about-sqrt-2 (i p)
   (rotation-about-arbitrary-line (* i (/ (* (acl2-sqrt 2) (acl2-pi)) 180)) (m-p) (n-p) p))
@@ -246,17 +212,13 @@
           (and (zero-p p)
                (m-= (rotation-about-sqrt-2 i p) point))))
 
-;; (defthmd exists-z-p=>
-;;   (implies (exists-d-p n point)
-;;            (and (d-p (exists-d-p-witness n point))
-;;                 (m-= (m-* (rotation-3d
-;;                            (* n (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))
-;;                            (point-on-s2-not-d))
-;;                           (exists-d-p-witness n point))
-;;                      point)))
-;;   :hints (("goal"
-;;            :in-theory (disable d-p point-on-s2-not-d rotation-3d)
-;;            )))
+(defthmd exists-z-p=>
+  (implies (exists-z-p i point)
+           (and (zero-p (exists-z-p-witness i point))
+                (m-= (rotation-about-sqrt-2 i (exists-z-p-witness i point)) point)))
+  :hints (("goal"
+           :in-theory (disable d-p point-on-s2-not-d rotation-3d rotation-about-sqrt-2)
+           )))
 
 (defun-sk ffunc (point)
   (exists i
@@ -272,17 +234,14 @@
           (and (set-f-p p)
                (m-= (rotation-about-sqrt-2 1 p) point))))
 
-;; (defthmd seq-witness*e-func=>
-;;   (implies (seq-witness*e-func point)
-;;            (and (set-e-p (seq-witness*e-func-witness point))
-;;                 (m-= (m-* (rotation-3d
-;;                            (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))
-;;                            (point-on-s2-not-d))
-;;                           (seq-witness*e-func-witness point))
-;;                      point)))
-;;   :hints (("goal"
-;;            :in-theory (disable d-p point-on-s2-not-d rotation-3d efunc)
-;;            )))
+(defthmd rot-sqrt-2*f-func-1=>
+  (implies (rot-sqrt-2*f-func-1 point)
+           (and (set-f-p (rot-sqrt-2*f-func-1-witness point))
+                (m-= (rotation-about-sqrt-2 1 (rot-sqrt-2*f-func-1-witness point))
+                     point)))
+  :hints (("goal"
+           :in-theory (disable d-p point-on-s2-not-d rotation-3d efunc rotation-about-sqrt-2)
+           )))
 
 (defun rot-sqrt-2*f-func (point)
   (and (point-in-r3 point)
