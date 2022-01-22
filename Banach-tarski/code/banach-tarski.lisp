@@ -621,3 +621,357 @@
                  )
            :in-theory nil
            )))
+
+(defthmd rot-sqrt-2*ffunc-iff-f-not-z
+  (iff (rot-sqrt-2*f-func p)
+       (ffunc-not-z p))
+  :hints (("Goal"
+           :use ((:instance rot-sqrt-2*ffunc=>f-not-z (point p))
+                 (:instance f-not-z=>rot-sqrt-2*ffunc (point p))
+                 (:instance ffunc-not-z (point p))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd cal-radius>=0
+  (implies (point-in-r3 p)
+           (>= (cal-radius p) 0))
+  :hints (("Goal"
+           :in-theory (disable (:TYPE-PRESCRIPTION CAL-RADIUS) (:EXECUTABLE-COUNTERPART TAU-SYSTEM))
+           )))
+
+(defun b3 (p)
+  (and (point-in-r3 p)
+       (<= (cal-radius p) 1)))
+
+(defthmd b3=>b3-0-or-0
+  (iff (b3 p)
+       (or (zero-p p)
+           (b3-0 p)))
+  :hints (("Goal"
+           :use ((:instance cal-radius>=0 (p p)))
+           :in-theory (disable cal-radius)
+           )))
+
+(defun b3-f (p)
+  (and (b3 p)
+       (not (set-f-p p))))
+
+(defthmd cal-radius-p1=p2
+  (implies (and (point-in-r3 p1)
+                (point-in-r3 p2)
+                (m-= p1 p2))
+           (equal (cal-radius p1)
+                  (cal-radius p2)))
+  :hints (("Goal"
+           :in-theory (enable m-=)
+           )))
+
+(defthmd f=>b3
+  (implies (set-f-p p)
+           (b3 p))
+  :hints (("Goal"
+           :use ((:instance set-f-p (point p))
+                 (:instance b3 (p p))
+                 (:instance ffunc (point p))
+                 (:instance exists-z-p=> (i (FFUNC-WITNESS P)) (point p))
+                 (:instance cal-radius-p1=p2 (p1 (ROTATION-ABOUT-ARBITRARY-LINE (* (FFUNC-WITNESS P) (ANGLE-CONST))
+                                                                                (M-P)
+                                                                                (N-P)
+                                                                                (EXISTS-Z-P-WITNESS (FFUNC-WITNESS P)
+                                                                                                    P)))
+                            (p2 p))
+                 (:instance rotation-about-arbitrary-line=>r3p-m-n
+                            (p (EXISTS-Z-P-WITNESS (FFUNC-WITNESS P)
+                                                   P))
+                            (angle (* (FFUNC-WITNESS P) (ANGLE-CONST))))
+                 (:instance zero-p (p (EXISTS-Z-P-WITNESS (FFUNC-WITNESS P)
+                                                          P)))
+                 (:instance rot-sqrt-2*f-func=>f-1
+                            (x (ANGLE-CONST))
+                            (i (FFUNC-WITNESS P)))
+                 (:instance angle-const-is-real)
+                 (:instance rot-i*angle*p-in-b^3 (p (EXISTS-Z-P-WITNESS (FFUNC-WITNESS P)
+                                                          P))
+                            (angle (* (FFUNC-WITNESS P) (ANGLE-CONST))))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd b3=>
+  (iff (b3 p)
+       (or (b3-f p)
+           (set-f-p p)))
+  :hints (("Goal"
+           :use ((:instance f=>b3))
+           :in-theory (disable set-f-p b3)
+           )))
+
+(defthmd z=>f-1
+  (natp 0))
+
+(defthmd z=>f
+  (implies (zero-p p)
+           (set-f-p p))
+  :hints (("Goal"
+           :use ((:instance zero-p (p p))
+                 (:instance set-f-p (point p))
+                 (:instance ffunc-suff (i 0) (point p))
+                 (:instance z=>f-1)
+                 (:instance exists-z-p-suff (p p) (i 0) (point p))
+                 (:instance rotation-about-arbitrary-line=p-m-n
+                            (angle (* 0 (ANGLE-CONST)))
+                            (p p))
+                 )
+           :in-theory nil
+           )))
+
+(defun b3-0-n-b3-f (p)
+  (and (b3-0 p)
+       (b3-f p)))
+
+(defthm b3-0-n-b3-f-iff-b3-f
+  (iff (b3-f p)
+       (b3-0-n-b3-f p))
+  :hints (("Goal"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b3-f (p p))
+                 (:instance b3=>b3-0-or-0 (p p))
+                 (:instance z=>f (p p))
+                 )
+           :in-theory nil
+           )))
+
+(defun b3-0-n-f (p)
+  (and (b3-0 p)
+       (set-f-p p)))
+
+(defthmd b3-0=>not-z
+  (implies (b3-0 p)
+           (not (zero-p p)))
+  :hints (("Goal"
+           :use ((:instance b3-0 (p p))
+                 (:instance zero-p (p p))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd f-not-z-iff-b3-0-n-f
+  (iff (ffunc-not-z p)
+       (b3-0-n-f p))
+  :hints (("Goal"
+           :use ((:instance ffunc-not-z (point p))
+                 (:instance b3-0-n-f (p p))
+                 (:instance z=>f (p p))
+                 (:instance b3=>)
+                 (:instance b3=>b3-0-or-0)
+                 (:instance b3-0=>not-z (p p))
+                 )
+           :in-theory nil
+           )))
+
+(defun-sk rota-1-rota-f-1 (point)
+  (exists p
+          (and (rot-sqrt-2*f-func p)
+               (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p) p)
+                    point))))
+
+(defun rota-1-rota-f (p)
+  (and (point-in-r3 p)
+       (rota-1-rota-f-1 p)))
+
+(defthmd rota-1-rota-f-iff-set-f-p-1
+  (implies (set-f-p p)
+           (rota-1-rota-f p))
+  :hints (("Goal"
+           :use ((:instance rota-1-rota-f (p p))
+                 (:instance set-f-p (point p))
+                 (:instance rota-1-rota-f-1-suff
+                            (p (rotation-about-arbitrary-line (angle-const) (m-p) (n-p) p))
+                            (point p))
+                 (:instance rot-sqrt-2*f-func (point (ROTATION-ABOUT-ARBITRARY-LINE (ANGLE-CONST)
+                                                                                    (M-P)
+                                                                                    (N-P)
+                                                                                    P)))
+                 (:instance rotation-about-arbitrary-line=>r3p-m-n
+                            (angle (ANGLE-CONST))
+                            (p p))
+                 (:instance angle-const-is-real)
+                 (:instance ROT-SQRT-2*F-FUNC-1-suff
+                            (p p)
+                            (point (ROTATION-ABOUT-ARBITRARY-LINE (ANGLE-CONST)
+                                                                  (M-P)
+                                                                  (N-P)
+                                                                  P)))
+                 (:instance rot-angle1-of-angle2*p=>m-n
+                            (p p)
+                            (angle1 (- (ANGLE-CONST)))
+                            (angle2 (ANGLE-CONST)))
+                 (:instance rotation-about-arbitrary-line=p-m-n
+                            (angle (+ (- (ANGLE-CONST)) (ANGLE-CONST)))
+                            (p p))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd rota-1-rota-f-iff-set-f-p-2-1
+  (implies (and (m-= p1 p2)
+                (point-in-r3 p2)
+                (set-f-p p1))
+           (set-f-p p2))
+  :hints (("Goal"
+           :use ((:instance set-f-p (point p1))
+                 (:instance ffunc (point p1))
+                 (:instance exists-z-p (point p1)
+                            (i (FFUNC-WITNESS P1)))
+                 (:instance set-f-p (point p2))
+                 (:instance ffunc-suff
+                            (i (FFUNC-WITNESS P1))
+                            (point p2))
+                 (:instance exists-z-p-suff (i (FFUNC-WITNESS P1))
+                            (p (EXISTS-Z-P-WITNESS (FFUNC-WITNESS P1)
+                                                   P1))
+                            (point p2))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd rota-1-rota-f-iff-set-f-p-2
+  (implies (rota-1-rota-f p)
+           (set-f-p p))
+  :hints (("Goal"
+           :use ((:instance rota-1-rota-f (p p))
+                 (:instance rota-1-rota-f-1 (point p))
+                 (:instance rot-sqrt-2*f-func (point (ROTA-1-ROTA-F-1-WITNESS P)))
+                 (:instance ROT-SQRT-2*F-FUNC-1 (point (ROTA-1-ROTA-F-1-WITNESS P)))
+                 (:instance rotation-about-arbitrary-line=>1
+                            (p1 (ROTA-1-ROTA-F-1-WITNESS P))
+                            (p2 (ROTATION-ABOUT-ARBITRARY-LINE
+                                 (ANGLE-CONST)
+                                 (M-P)
+                                 (N-P)
+                                 (ROT-SQRT-2*F-FUNC-1-WITNESS (ROTA-1-ROTA-F-1-WITNESS P))))
+                            (angle (- (angle-const)))
+                            (m (m-p))
+                            (n (n-p)))
+                 (:instance set-f-p (point (ROT-SQRT-2*F-FUNC-1-WITNESS (ROTA-1-ROTA-F-1-WITNESS P))))
+                 (:instance rotation-about-arbitrary-line=>r3p-m-n
+                            (p (ROT-SQRT-2*F-FUNC-1-WITNESS (ROTA-1-ROTA-F-1-WITNESS P)))
+                            (angle (angle-const)))
+                 (:instance angle-const-is-real)
+                 (:instance rot-angle1-of-angle2*p=>m-n
+                            (angle1 (- (angle-const)))
+                            (angle2 (angle-const))
+                            (p (ROT-SQRT-2*F-FUNC-1-WITNESS (ROTA-1-ROTA-F-1-WITNESS P))))
+                 (:instance rotation-about-arbitrary-line=p-m-n
+                            (angle (+ (- (ANGLE-CONST)) (ANGLE-CONST)))
+                            (p (ROT-SQRT-2*F-FUNC-1-WITNESS (ROTA-1-ROTA-F-1-WITNESS P))))
+                 (:instance set-f-p (point p))
+                 (:instance rota-1-rota-f-iff-set-f-p-2-1
+                            (p1 (ROT-SQRT-2*F-FUNC-1-WITNESS (ROTA-1-ROTA-F-1-WITNESS P)))
+                            (p2 p))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd rota-1-rota-f-iff-set-f-p
+  (iff (set-f-p p)
+       (rota-1-rota-f p))
+  :hints (("Goal"
+           :use ((:instance rota-1-rota-f-iff-set-f-p-1)
+                 (:instance rota-1-rota-f-iff-set-f-p-2))
+           )))
+
+(defun-sk rota-inv-b3-0-n-f-1 (point)
+  (exists p
+          (and (b3-0-n-f p)
+               (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p) p)
+                    point))))
+
+(defun rota-inv-b3-0-n-f (p)
+    (and (point-in-r3 p)
+         (rota-inv-b3-0-n-f-1 p)))
+
+
+(defthmd f-iff-rota-inv-b3-0-n-f-1
+  (implies (set-f-p p)
+           (rota-inv-b3-0-n-f p))
+  :hints (("Goal"
+           :use ((:instance rota-inv-b3-0-n-f (p p))
+                 (:instance set-f-p (point p))
+                 (:instance rota-1-rota-f-iff-set-f-p (p p))
+                 (:instance rota-1-rota-f (p p))
+                 (:instance rota-1-rota-f-1 (point p))
+                 (:instance rota-inv-b3-0-n-f (p p))
+                 (:instance rot-sqrt-2*ffunc-iff-f-not-z (p (ROTA-1-ROTA-F-1-WITNESS P)))
+                 (:instance f-not-z-iff-b3-0-n-f (p (ROTA-1-ROTA-F-1-WITNESS P)))
+                 (:instance ROTA-INV-B3-0-N-F-1-SUFF
+                            (p (ROTA-1-ROTA-F-1-WITNESS P))
+                            (point p))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd f-iff-rota-inv-b3-0-n-f-2
+  (implies (rota-inv-b3-0-n-f p)
+           (set-f-p p))
+  :hints (("Goal"
+           :use ((:instance rota-inv-b3-0-n-f (p p))
+                 (:instance set-f-p (point p))
+                 (:instance rota-inv-b3-0-n-f-1 (point p))
+                 (:instance f-not-z-iff-b3-0-n-f (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance rot-sqrt-2*ffunc-iff-f-not-z
+                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance ROT-SQRT-2*F-FUNC
+                            (point (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance ROT-SQRT-2*F-FUNC-1
+                            (point (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance rotation-about-arbitrary-line=>1
+                            (p1 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                            (p2 (ROTATION-ABOUT-ARBITRARY-LINE
+                                 (ANGLE-CONST)
+                                 (M-P)
+                                 (N-P)
+                                 (ROT-SQRT-2*F-FUNC-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+                            (angle (- (angle-const)))
+                            (m (m-p))
+                            (n (n-p)))
+                 (:instance set-f-p (point (ROT-SQRT-2*F-FUNC-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+                 (:instance rotation-about-arbitrary-line=>r3p-m-n
+                            (p (ROT-SQRT-2*F-FUNC-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                            (angle (angle-const)))
+                 (:instance angle-const-is-real)
+                 (:instance ROT-ANGLE1-OF-ANGLE2*P=>M-N
+                            (p (ROT-SQRT-2*F-FUNC-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                            (angle1 (- (ANGLE-CONST)))
+                            (angle2 (ANGLE-CONST)))
+                 (:instance rotation-about-arbitrary-line=p-m-n
+                            (p (ROT-SQRT-2*F-FUNC-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                            (angle (+ (- (ANGLE-CONST)) (ANGLE-CONST))))
+                 (:instance rota-1-rota-f-iff-set-f-p-2-1
+                            (p1 (ROT-SQRT-2*F-FUNC-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                            (p2 p))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd f-iff-rota-inv-b3-0-n-f
+  (iff (set-f-p p)
+       (rota-inv-b3-0-n-f p))
+  :hints (("Goal"
+           :use ((:instance f-iff-rota-inv-b3-0-n-f-1)
+                 (:instance f-iff-rota-inv-b3-0-n-f-2)
+                 )
+           )))
+
+(defthmd b3-iff-b3-0-n-b3-f-or-rota-inv-b3-0-n-f
+  (iff (b3 p)
+       (or (b3-0-n-b3-f p)
+           (rota-inv-b3-0-n-f p)))
+  :hints (("Goal"
+           :use ((:instance b3=> (p p))
+                 (:instance b3-0-n-b3-f-iff-b3-f (p p))
+                 (:instance f-iff-rota-inv-b3-0-n-f (p p))
+                 )
+           :in-theory nil
+           )))
