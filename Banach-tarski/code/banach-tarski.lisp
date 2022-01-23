@@ -975,3 +975,34 @@
                  )
            :in-theory nil
            )))
+
+------
+
+(defun-sk rot*b3-f-1 (rot point)
+  (exists p
+          (and (b3-f p)
+               (m-= (m-* rot p) point))))
+
+(defun rot*b3-f (rot p)
+  (and (point-in-r3 p)
+       (rot*b3-f-1 rot p)))
+
+(defun-sk rot*set-f-1 (rot point)
+  (exists p
+          (and (set-f-p p)
+               (m-= (m-* rot p) point))))
+
+(defun rot*set-f (rot p)
+  (and (point-in-r3 p)
+       (rot*set-f-1 rot p)))
+
+(defthm rotp-rot=>rot*b3-f-or-rot-sf=>b3
+  (implies (and (r3-rotationp rot)
+                (b3 p))
+           (or (rot*b3-f rot p)
+               (rot*set-f rot p)))
+  :hints (("Goal"
+           :use ((:instance b3 (p p))
+                 )
+           :in-theory nil
+           )))
