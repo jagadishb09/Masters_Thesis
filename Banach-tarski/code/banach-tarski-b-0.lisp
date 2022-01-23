@@ -104,61 +104,61 @@
            )))
 
 (encapsulate
-  ()
+ ()
 
-  (local (include-book "arithmetic/top" :dir :system))
+ (local (include-book "arithmetic/top" :dir :system))
 
-  (defthmd b3-0-iff-b3-0-equiv-1-1
-    (implies (and (realp d)
-                  (realp a)
-                  (realp b)
-                  (realp c)
-                  (equal x (/ a d))
-                  (equal y (/ b d))
-                  (equal z (/ c d)))
-             (equal (+ (* x x) (* y y) (* z z))
-                    (/ (+ (* a a) (* b b) (* c c)) (* d d)))))
+ (defthmd b3-0-iff-b3-0-equiv-1-1
+   (implies (and (realp d)
+		 (realp a)
+		 (realp b)
+		 (realp c)
+		 (equal x (/ a d))
+		 (equal y (/ b d))
+		 (equal z (/ c d)))
+	    (equal (+ (* x x) (* y y) (* z z))
+		   (/ (+ (* a a) (* b b) (* c c)) (* d d)))))
 
-  (defthmd b3-0-iff-b3-0-equiv-1
-    (implies (b3-0 p)
-             (s2-def-p (point-p/r p)))
-    :hints (("goal"
-             :use ((:instance b3-0-s2-1-suff (p-s2 (point-p/r p)) (p p))
-                   (:instance point-p/r=>1 (p p))
-                   (:instance s2-def-p (point (point-p/r p)))
-                   (:instance pr3-point-p (p p))
-                   (:instance b3-0 (p p))
-                   (:instance b3-0=>r^2>0 (p p))
-                   (:instance b3-0-iff-b3-0-equiv-1-1
-                              (d (cal-radius p))
-                              (x (aref2 :fake-name (point-p/r p) 0 0))
-                              (y (aref2 :fake-name (point-p/r p) 1 0))
-                              (z (aref2 :fake-name (point-p/r p) 2 0))
-                              (a (point-in-r3-x1 p))
-                              (b (point-in-r3-y1 p))
-                              (c (point-in-r3-z1 p)))
+ (defthmd b3-0-iff-b3-0-equiv-1
+   (implies (b3-0 p)
+	    (s2-def-p (point-p/r p)))
+   :hints (("goal"
+	    :use ((:instance b3-0-s2-1-suff (p-s2 (point-p/r p)) (p p))
+		  (:instance point-p/r=>1 (p p))
+		  (:instance s2-def-p (point (point-p/r p)))
+		  (:instance pr3-point-p (p p))
+		  (:instance b3-0 (p p))
+		  (:instance b3-0=>r^2>0 (p p))
+		  (:instance b3-0-iff-b3-0-equiv-1-1
+			     (d (cal-radius p))
+			     (x (aref2 :fake-name (point-p/r p) 0 0))
+			     (y (aref2 :fake-name (point-p/r p) 1 0))
+			     (z (aref2 :fake-name (point-p/r p) 2 0))
+			     (a (point-in-r3-x1 p))
+			     (b (point-in-r3-y1 p))
+			     (c (point-in-r3-z1 p)))
 
-                   )
-             :in-theory (e/d () (point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 point-p/r cal-radius s2-def-p b3-0-s2 b3-0-s2-1 (:rewrite b3-0-s2-1-suff) pr3-point-p))
-             )))
+		  )
+	    :in-theory (e/d () (point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 point-p/r cal-radius s2-def-p b3-0-s2 b3-0-s2-1 (:rewrite b3-0-s2-1-suff) pr3-point-p))
+	    )))
 
-  (defthmd b3-0-iff-b3-0-s2
-    (iff (b3-0 p)
-         (b3-0-s2 p))
-    :hints (("goal"
-             :use ((:instance b3-0-s2-1-suff (p-s2 (point-p/r p)) (p p))
-                   (:instance point-p/r=>1 (p p))
-                   (:instance point-p/r=>2 (p p))
-                   (:instance s2-def-p (point (point-p/r p)))
-                   (:instance pr3-point-p (p p))
-                   (:instance b3-0 (p p))
-                   (:instance b3-0=>r^2>0 (p p))
-                   (:instance b3-0-iff-b3-0-equiv-1 (p p))
-                   (:instance b3-0-s2 (p p))
-                   )
-             :in-theory (e/d () (point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 point-p/r cal-radius s2-def-p b3-0-s2 b3-0-s2-1 (:rewrite b3-0-s2-1-suff) pr3-point-p))
-             )))
-  )
+ (defthmd b3-0-iff-b3-0-s2
+   (iff (b3-0 p)
+	(b3-0-s2 p))
+   :hints (("goal"
+	    :use ((:instance b3-0-s2-1-suff (p-s2 (point-p/r p)) (p p))
+		  (:instance point-p/r=>1 (p p))
+		  (:instance point-p/r=>2 (p p))
+		  (:instance s2-def-p (point (point-p/r p)))
+		  (:instance pr3-point-p (p p))
+		  (:instance b3-0 (p p))
+		  (:instance b3-0=>r^2>0 (p p))
+		  (:instance b3-0-iff-b3-0-equiv-1 (p p))
+		  (:instance b3-0-s2 (p p))
+		  )
+	    :in-theory (e/d () (point-in-r3 point-in-r3-x1 point-in-r3-y1 point-in-r3-z1 point-p/r cal-radius s2-def-p b3-0-s2 b3-0-s2-1 (:rewrite b3-0-s2-1-suff) pr3-point-p))
+	    )))
+ )
 
 (defun-sk b3-0-set-a1-1 (p)
   (exists p-s2
@@ -1095,62 +1095,62 @@
            )))
 
 (encapsulate
-  ()
+ ()
 
-  (local (include-book "arithmetic/top" :dir :system))
+ (local (include-book "arithmetic/top" :dir :system))
 
-  (defthmd b3-0-a-1-r-a4=>b3-0-a-1-r-b3-0-a4-4
-    (m-= (m-* (rotation-3d (- (exists-in-interval-but-not-in-angle-sequence-witness
-                               0 (* 2 (acl2-pi))))
-                           (point-on-s2-not-d))
-              (rotation-3d (exists-in-interval-but-not-in-angle-sequence-witness
-                            0 (* 2 (acl2-pi)))
-                           (point-on-s2-not-d)))
-         (id-rotation))
-    :hints (("goal"
-             :use ((:instance r-t1*r-t2=r-t1+t2
-                              (angle2 (exists-in-interval-but-not-in-angle-sequence-witness
-                                       0 (* 2 (acl2-pi))))
-                              (angle1 (- (exists-in-interval-but-not-in-angle-sequence-witness
-                                          0 (* 2 (acl2-pi)))))
-                              (u (point-on-s2-not-d)))
-                   (:instance exists-point-on-s2-not-d-2)
-                   (:instance s2-def-p (point (point-on-s2-not-d)))
-                   (:instance witness-not-in-angle-sequence)
-                   (:instance r-theta-0=id (u (point-on-s2-not-d)))
-                   )
-             :in-theory (e/d () (point-on-s2-not-d rotation-3d s2-def-p point-in-r3 aref2 m-* rotation nth-angle-exists angles-seq alist2p))
-             )))
-  )
+ (defthmd b3-0-a-1-r-a4=>b3-0-a-1-r-b3-0-a4-4
+   (m-= (m-* (rotation-3d (- (exists-in-interval-but-not-in-angle-sequence-witness
+			      0 (* 2 (acl2-pi))))
+			  (point-on-s2-not-d))
+	     (rotation-3d (exists-in-interval-but-not-in-angle-sequence-witness
+			   0 (* 2 (acl2-pi)))
+			  (point-on-s2-not-d)))
+	(id-rotation))
+   :hints (("goal"
+	    :use ((:instance r-t1*r-t2=r-t1+t2
+			     (angle2 (exists-in-interval-but-not-in-angle-sequence-witness
+				      0 (* 2 (acl2-pi))))
+			     (angle1 (- (exists-in-interval-but-not-in-angle-sequence-witness
+					 0 (* 2 (acl2-pi)))))
+			     (u (point-on-s2-not-d)))
+		  (:instance exists-point-on-s2-not-d-2)
+		  (:instance s2-def-p (point (point-on-s2-not-d)))
+		  (:instance witness-not-in-angle-sequence)
+		  (:instance r-theta-0=id (u (point-on-s2-not-d)))
+		  )
+	    :in-theory (e/d () (point-on-s2-not-d rotation-3d s2-def-p point-in-r3 aref2 m-* rotation nth-angle-exists angles-seq alist2p))
+	    )))
+ )
 
 (encapsulate
-  ()
+ ()
 
-  (local (include-book "arithmetic/top" :dir :system))
+ (local (include-book "arithmetic/top" :dir :system))
 
-  (defthmd b3-0-a-1-r-a4=>b3-0-a-1-r-b3-0-a4-6
-    (m-= (m-* (rotation-3d (exists-in-interval-but-not-in-angle-sequence-witness
-                            0 (* 2 (acl2-pi)))
-                           (point-on-s2-not-d))
-              (rotation-3d (- (exists-in-interval-but-not-in-angle-sequence-witness
-                               0 (* 2 (acl2-pi))))
-                           (point-on-s2-not-d)))
-         (id-rotation))
-    :hints (("goal"
-             :use ((:instance r-t1*r-t2=r-t1+t2
-                              (angle1 (exists-in-interval-but-not-in-angle-sequence-witness
-                                       0 (* 2 (acl2-pi))))
-                              (angle2 (- (exists-in-interval-but-not-in-angle-sequence-witness
-                                          0 (* 2 (acl2-pi)))))
-                              (u (point-on-s2-not-d)))
-                   (:instance exists-point-on-s2-not-d-2)
-                   (:instance s2-def-p (point (point-on-s2-not-d)))
-                   (:instance witness-not-in-angle-sequence)
-                   (:instance r-theta-0=id (u (point-on-s2-not-d)))
-                   )
-             :in-theory (e/d () (point-on-s2-not-d rotation-3d s2-def-p point-in-r3 aref2 m-* rotation nth-angle-exists angles-seq alist2p))
-             )))
-  )
+ (defthmd b3-0-a-1-r-a4=>b3-0-a-1-r-b3-0-a4-6
+   (m-= (m-* (rotation-3d (exists-in-interval-but-not-in-angle-sequence-witness
+			   0 (* 2 (acl2-pi)))
+			  (point-on-s2-not-d))
+	     (rotation-3d (- (exists-in-interval-but-not-in-angle-sequence-witness
+			      0 (* 2 (acl2-pi))))
+			  (point-on-s2-not-d)))
+	(id-rotation))
+   :hints (("goal"
+	    :use ((:instance r-t1*r-t2=r-t1+t2
+			     (angle1 (exists-in-interval-but-not-in-angle-sequence-witness
+				      0 (* 2 (acl2-pi))))
+			     (angle2 (- (exists-in-interval-but-not-in-angle-sequence-witness
+					 0 (* 2 (acl2-pi)))))
+			     (u (point-on-s2-not-d)))
+		  (:instance exists-point-on-s2-not-d-2)
+		  (:instance s2-def-p (point (point-on-s2-not-d)))
+		  (:instance witness-not-in-angle-sequence)
+		  (:instance r-theta-0=id (u (point-on-s2-not-d)))
+		  )
+	    :in-theory (e/d () (point-on-s2-not-d rotation-3d s2-def-p point-in-r3 aref2 m-* rotation nth-angle-exists angles-seq alist2p))
+	    )))
+ )
 
 (defthmd b3-0-a-1-r-a4=>b3-0-a-1-r-b3-0-a4-5
   (implies (and (m-= (m-* a-1-2 a) id-1)

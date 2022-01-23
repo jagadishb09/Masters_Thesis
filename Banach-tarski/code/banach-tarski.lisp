@@ -976,8 +976,6 @@
            :in-theory nil
            )))
 
-------
-
 (defun-sk rot*b3-f-1 (rot point)
   (exists p
           (and (b3-f p)
@@ -996,13 +994,105 @@
   (and (point-in-r3 p)
        (rot*set-f-1 rot p)))
 
-(defthm rotp-rot=>rot*b3-f-or-rot-sf=>b3
+(defthmd m-=m-*rot-p1=p2=>r-p1=r-p2
+  (implies (and (b3 p)
+                (m-= (m-* rot p1) p2))
+           (equal (cal-radius p1)
+                  (cal-radius p2)))
+  :hints (("goal")))
+
+(defthmd rot*b3-in-b3
+  (implies (and (b3 p)
+                (r3-rotationp rot))
+           (b3 (m-* rot p)))
+  :hints (("Goal"
+           :use ((:instance b3 (p p))
+                 (:instance m-=m-*rot-p1=p2=>r-p1=r-p2
+                            (p1 p)
+                            (p2 (m-* rot p)))
+                 (:instance set-e-p-iff-wit-inv*s2-d-p-n-set-e-p-1-1
+                            (p1 p)
+                            (rot rot))
+                 (:instance r3-rotationp (m rot))
+                 (:instance b3 (p (m-* rot p)))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd rotp-rot=>rot*b3-f-or-rot-sf=>b3-1
+  (implies (and (m-= (m-* m1 m2) m3)
+                (m-= (m-* m3 m4) m5))
+           (m-= (m-* m1 m2 m4) m5)))
+
+
+(defthmd rotp-rot=>b3=>rot*b3-f-or-rot-sf
   (implies (and (r3-rotationp rot)
                 (b3 p))
            (or (rot*b3-f rot p)
                (rot*set-f rot p)))
   :hints (("Goal"
            :use ((:instance b3 (p p))
+                 (:instance rot*b3-f (rot rot) (p p))
+                 (:instance rot*b3-f-1-suff (p (m-* (r3-m-inverse rot) p)) (rot rot) (point p))
+                 (:instance rot*set-f (rot rot) (p p))
+                 (:instance rot*set-f-1-suff (p (m-* (r3-m-inverse rot) p)) (rot rot) (point p))
+                 (:instance rot*b3-in-b3
+                            (rot (r3-m-inverse rot))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv (m rot))
+                 (:instance b3-f (p (M-* (R3-M-INVERSE ROT) P)))
+                 (:instance m-*-m-m-inverse (m rot))
+                 (:instance r3-rotationp (m rot))
+                 (:instance m-*point-id=point (p1 p))
+                 (:instance rotp-rot=>rot*b3-f-or-rot-sf=>b3-1
+                            (m1 rot)
+                            (m2 (r3-m-inverse rot))
+                            (m4 p)
+                            (m3 (id-rotation))
+                            (m5 p))
                  )
+           :in-theory nil
+           )))
+
+(defthmd rotp-rot=>rot*b3-f-or-rot-sf=>b3
+  (implies (and (r3-rotationp rot)
+                (or (rot*b3-f rot p)
+                    (rot*set-f rot p)))
+           (b3 p))
+  :hints (("Goal"
+           :use ((:instance b3 (p p))
+                 (:instance rot*b3-f (rot rot) (p p))
+                 (:instance rot*b3-f-1 (rot rot) (point p))
+                 (:instance rot*set-f (rot rot) (p p))
+                 (:instance rot*set-f-1 (rot rot) (point p))
+                 (:instance rot*b3-in-b3
+                            (p (ROT*B3-F-1-WITNESS ROT P))
+                            (rot rot))
+                 (:instance b3-f (p (ROT*B3-F-1-WITNESS ROT P)))
+                 (:instance b3 (p (M-* ROT (ROT*B3-F-1-WITNESS ROT P))))
+                 (:instance cal-radius-p1=p2
+                            (p1 (M-* ROT (ROT*B3-F-1-WITNESS ROT P)))
+                            (p2 p))
+                 (:instance rot*b3-in-b3
+                            (p (ROT*SET-F-1-WITNESS ROT P))
+                            (rot rot))
+                 (:instance f=>b3
+                            (p (ROT*SET-F-1-WITNESS ROT P)))
+                 (:instance b3 (p (M-* ROT (ROT*SET-F-1-WITNESS ROT P))))
+                 (:instance cal-radius-p1=p2
+                            (p1 (M-* ROT (ROT*SET-F-1-WITNESS ROT P)))
+                            (p2 p))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd rotp-rot=>rot*b3-f-or-rot-sf-iff-b3
+  (implies (r3-rotationp rot)
+           (iff (or (rot*b3-f rot p)
+                    (rot*set-f rot p))
+                (b3 p)))
+  :hints (("Goal"
+           :use ((:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf)
+                 (:instance rotp-rot=>rot*b3-f-or-rot-sf=>b3))
            :in-theory nil
            )))
