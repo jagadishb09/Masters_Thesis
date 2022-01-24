@@ -3470,3 +3470,53 @@
                  (:instance b3-0-b-1-b3-0-a9-iff-b3-0-b-1-a9))
            :in-theory nil
            )))
+
+(defthmd b3-0-iff-a1-to-a14-1
+  (iff (b3-0 p)
+       (or (b3-0-set-a1 p)
+           (b3-0-set-a2 p)
+           (b3-0-set-a3 p)
+           (b3-0-set-a4 p)
+           (b3-0-set-a5 p)
+           (b3-0-set-a6 p)
+           (b3-0-set-a7 p)
+           (b3-0-set-a8 p)
+           (b3-0-set-a9 p)
+           (b3-0-set-a10 p)
+           (b3-0-set-a11 p)
+           (b3-0-set-a12 p)
+           (b3-0-set-a13 p)
+           (b3-0-set-a14 p)))
+  :hints (("goal"
+           :use ((:instance b3-0-iff-b3-0-s2 (p p))
+                 (:instance b3-0-iff-a1-to-a14 (p p)))
+           :in-theory nil
+           )))
+
+(defthmd b3-0-iff-a3-to-a8-1
+  (iff (b3-0 p)
+       (or (b3-0-a-inv-b3-0-set-a3 p)
+           (b3-0-a-inv-r-b3-0-set-a4 p)
+           (b3-0-r-1-a-inv-b3-0-set-a5 p)
+           (b3-0-r-1-a-inv-r-b3-0-set-a6 p)
+           (b3-0-set-a7 p)
+           (b3-0-set-a8 p)))
+  :hints (("goal"
+           :use ((:instance b3-0-iff-b3-0-s2 (p p))
+                 (:instance b3-0-iff-a3-to-a8 (p p)))
+           :in-theory nil
+           )))
+
+(defthmd b3-0-iff-a9-to-a14-1
+  (iff (b3-0 p)
+       (or (b3-0-b-inv-b3-0-set-a9 p)
+           (b3-0-b-inv-r-b3-0-set-a10 p)
+           (b3-0-r-1-b-inv-b3-0-set-a11 p)
+           (b3-0-r-1-b-inv-r-b3-0-set-a12 p)
+           (b3-0-set-a13 p)
+           (b3-0-set-a14 p)))
+  :hints (("goal"
+           :use ((:instance b3-0-iff-b3-0-s2 (p p))
+                 (:instance b3-0-iff-a9-to-a14 (p p)))
+           :in-theory nil
+           )))
