@@ -1188,12 +1188,79 @@
   (and (point-in-r3 p)
        (rota-1-rot-4-b4-11-1 p)))
 
+(defun-sk rot-5-inv*f (point)
+  (exists p
+          (and (set-f-p p)
+               (m-= (m-* (r3-m-inverse (rot-5)) p) point))))
 
-(defthmd a3-a8-rot-a-inv-b3-0-nf=>1
-  (implies (and (m-= (m-* m1 m2) m3)
-                (m-= (m-* m4 m1) m5)
-                (m-= (m-* m5 m2) m6))
-           (m-= (m-* m4 m3) m6)))
+(defun b5-01 (p)
+  (and (b3-0-set-a5 p)
+       (b3-f p)
+       (rot-5-inv*f p)))
+
+(defun b5-11 (p)
+  (and (b3-0-set-a5 p)
+       (set-f-p p)
+       (rot-5-inv*f p)))
+
+(defun-sk rota-1-rot-5-b5-01-1 (point)
+  (exists p
+          (and (b5-01 p)
+               (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p)
+                                                   (m-* (rot-5) p))
+                    point))))
+
+(defun rota-1-rot-5-b5-01 (p)
+  (and (point-in-r3 p)
+       (rota-1-rot-5-b5-01-1 p)))
+
+(defun-sk rota-1-rot-5-b5-11-1 (point)
+  (exists p
+          (and (b5-11 p)
+               (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p)
+                                                   (m-* (rot-5) p))
+                    point))))
+
+(defun rota-1-rot-5-b5-11 (p)
+  (and (point-in-r3 p)
+       (rota-1-rot-5-b5-11-1 p)))
+
+(defun-sk rot-6-inv*f (point)
+  (exists p
+          (and (set-f-p p)
+               (m-= (m-* (r3-m-inverse (rot-6)) p) point))))
+
+(defun b6-01 (p)
+  (and (b3-0-set-a6 p)
+       (b3-f p)
+       (rot-6-inv*f p)))
+
+(defun b6-11 (p)
+  (and (b3-0-set-a6 p)
+       (set-f-p p)
+       (rot-6-inv*f p)))
+
+(defun-sk rota-1-rot-6-b6-01-1 (point)
+  (exists p
+          (and (b6-01 p)
+               (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p)
+                                                   (m-* (rot-6) p))
+                    point))))
+
+(defun rota-1-rot-6-b6-01 (p)
+  (and (point-in-r3 p)
+       (rota-1-rot-6-b6-01-1 p)))
+
+(defun-sk rota-1-rot-6-b6-11-1 (point)
+  (exists p
+          (and (b6-11 p)
+               (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p)
+                                                   (m-* (rot-6) p))
+                    point))))
+
+(defun rota-1-rot-6-b6-11 (p)
+  (and (point-in-r3 p)
+       (rota-1-rot-6-b6-11-1 p)))
 
 ;; (defthmd a3-a8-rot-a-inv-b3-0-nf=>2
 ;;   (implies (and (m-= (m-* m1 m2 m3) m4)
@@ -1204,12 +1271,47 @@
 ;;                 (m-= (m-* m11 m10) m12))
 ;;            (m-= (m-* m11 m8 m5 m4) m12)))
 
+(defthmd a3-a8-rot-a-inv-b3-0-nf=>1
+  (implies (and (m-= (m-* m1 m2) m3)
+                (m-= (m-* m4 m1) m5)
+                (m-= (m-* m5 m2) m6))
+           (m-= (m-* m4 m3) m6)))
+
+(defthm a3-a8-rot-a-inv-b3-0-nf=>sub-3
+  (equal (m-* (m-* m1 m2 m3) m4)
+         (m-* m1 m2 m3 m4))
+  :hints (("Goal"
+           :use ((:instance associativity-of-m-*-3
+                            (m1 m1)
+                            (m2 m2)
+                            (m3 m3))
+                 (:instance associativity-of-m-*-2
+                            (m1 m1)
+                            (m2 m2)
+                            (m3 m3))
+                 (:instance associativity-of-m-*
+                            (m1 m1)
+                            (m2 (m-* m2 m3))
+                            (m3 m4))
+                 (:instance associativity-of-m-*-2
+                            (m1 m2)
+                            (m2 m3)
+                            (m3 m4))
+                 )
+           ))
+  :rule-classes nil
+  )
+
 ;; (defthmd a3-a8-rot-a-inv-b3-0-nf=>
 ;;   (implies (rota-inv-b3-0-n-f p)
 ;;            (or (rota-1-rot-3-b3-11 p)
 ;;                (rota-1-rot-3-b3-01 p)
 ;;                (rota-1-rot-4-b4-11 p)
-;;                (rota-1-rot-4-b4-01 p)))
+;;                (rota-1-rot-4-b4-01 p)
+;;                (rota-1-rot-5-b5-11 p)
+;;                (rota-1-rot-5-b5-01 p)
+;;                (rota-1-rot-6-b6-11 p)
+;;                (rota-1-rot-6-b6-01 p)))
 ;;   :hints (("Goal"
 ;;            :cases ((b3-0-a-inv-b3-0-set-a3 (ROTA-INV-B3-0-N-F-1-WITNESS P))
 ;;                    (b3-0-a-inv-r-b3-0-set-a4 (ROTA-INV-B3-0-N-F-1-WITNESS P))
@@ -1224,127 +1326,279 @@
 ;;                  )
 ;;            :in-theory nil
 ;;            )
-;;            ("Subgoal 6"
-;;             :use((:instance b3-0-a-inv-b3-0-set-a3 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-;;                  (:instance b3-0-a-inv-b3-0-set-a3-1 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-;;                  (:instance rota-1-rot-3-b3-01 (p p))
-;;                  (:instance rota-1-rot-3-b3-11 (p p))
-;;                  (:instance rota-1-rot-3-b3-01-1-suff
-;;                             (point p)
-;;                             (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance b3-01
-;;                             (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance rota-1-rot-3-b3-11-1-suff
-;;                             (point p)
-;;                             (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance b3-11
-;;                             (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance b3-f
-;;                             (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance b3-0-iff-a1-to-a14-1
-;;                             (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance b3-0
-;;                             (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance b3 (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance rot-3-inv*f-suff
-;;                             (point (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-;;                             (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-;;                  (:instance rot-3)
-;;                  (:instance a3-a8-rot-a-inv-b3-0-nf=>1
-;;                             (m1 (ROT-3))
-;;                             (m2 (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-;;                             (m3 (ROTA-INV-B3-0-N-F-1-WITNESS P))
-;;                             (m4 (R3-M-INVERSE (ROT-3)))
-;;                             (m5 (id-rotation))
-;;                             (m6 (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance m-*-m-inverse-m
-;;                             (m (rot-3)))
-;;                  (:instance m-*point-id=point
-;;                             (p1 (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance base-rotations
-;;                             (x (acl2-sqrt 2)))
-;;                  (:instance r3-rotationp (m (A-INV-ROTATION (ACL2-SQRT 2))))
-;;                  (:instance rotation-about-arbitrary-line=>1
-;;                             (p1 (M-* (ROT-3)
-;;                                      (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                             (p2 (ROTA-INV-B3-0-N-F-1-WITNESS P))
-;;                             (angle (- (angle-const)))
-;;                             (m (m-p))
-;;                             (n (n-p)))
-;;                  (:instance set-e-p-iff-wit-inv*s2-d-p-n-set-e-p-1-1
-;;                             (p1 (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-;;                             (rot (rot-3)))
-;;                  )
+;;           ("Subgoal 6"
+;;            :use((:instance b3-0-a-inv-b3-0-set-a3 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                 (:instance b3-0-a-inv-b3-0-set-a3-1 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                 (:instance rota-1-rot-3-b3-01 (p p))
+;;                 (:instance rota-1-rot-3-b3-11 (p p))
+;;                 (:instance rota-1-rot-3-b3-01-1-suff
+;;                            (point p)
+;;                            (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-01
+;;                            (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance rota-1-rot-3-b3-11-1-suff
+;;                            (point p)
+;;                            (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-11
+;;                            (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-f
+;;                            (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-0-iff-a1-to-a14-1
+;;                            (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-0
+;;                            (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3 (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance rot-3-inv*f-suff
+;;                            (point (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                 (:instance rot-3)
+;;                 (:instance a3-a8-rot-a-inv-b3-0-nf=>1
+;;                            (m1 (ROT-3))
+;;                            (m2 (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                            (m3 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+;;                            (m4 (R3-M-INVERSE (ROT-3)))
+;;                            (m5 (id-rotation))
+;;                            (m6 (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance m-*-m-inverse-m
+;;                            (m (rot-3)))
+;;                 (:instance m-*point-id=point
+;;                            (p1 (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance base-rotations
+;;                            (x (acl2-sqrt 2)))
+;;                 (:instance r3-rotationp (m (A-INV-ROTATION (ACL2-SQRT 2))))
+;;                 (:instance rotation-about-arbitrary-line=>1
+;;                            (p1 (M-* (ROT-3)
+;;                                     (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                            (p2 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+;;                            (angle (- (angle-const)))
+;;                            (m (m-p))
+;;                            (n (n-p)))
+;;                 (:instance set-e-p-iff-wit-inv*s2-d-p-n-set-e-p-1-1
+;;                            (p1 (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                            (rot (rot-3)))
+;;                 )
 ;;            :in-theory nil
 ;;            )
-;;            ("Subgoal 5"
-;;             :use((:instance B3-0-A-INV-R-B3-0-SET-A4 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-;;                  (:instance B3-0-A-INV-R-B3-0-SET-A4-1 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-;;                  (:instance rota-1-rot-4-b4-01 (p p))
-;;                  (:instance rota-1-rot-4-b4-11 (p p))
-;;                  (:instance rota-1-rot-4-b4-01-1-suff
-;;                             (point p)
-;;                             (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance b4-01
-;;                             (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance rota-1-rot-4-b4-11-1-suff
-;;                             (point p)
-;;                             (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance b4-11
-;;                             (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance b3-f
-;;                             (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance b3-0-iff-a1-to-a14-1
-;;                             (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance b3-0
-;;                             (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance b3 (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance rot-4-inv*f-suff
-;;                             (point (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-;;                             (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-;;                  (:instance rot-4)
-;;                  (:instance a3-a8-rot-a-inv-b3-0-nf=>1
-;;                             (m1 (ROT-4))
-;;                             (m2 (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-;;                             (m3 (ROTA-INV-B3-0-N-F-1-WITNESS P))
-;;                             (m4 (R3-M-INVERSE (ROT-4)))
-;;                             (m5 (id-rotation))
-;;                             (m6 (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance associativity-of-m-*
-;;                             (m1 (A-INV-ROTATION (ACL2-SQRT 2)))
-;;                             (m2 (ROTATION-3D
-;;                                  (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI)))
-;;                                  (POINT-ON-S2-NOT-D)))
-;;                             (m3 (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance m-*-m-inverse-m
-;;                             (m (rot-4)))
-;;                  (:instance rot*rot-is-rot
-;;                             (m1 (a-inv-rotation (acl2-sqrt 2)))
-;;                             (m2 (ROTATION-3D
-;;                                  (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI)))
-;;                                  (POINT-ON-S2-NOT-D))))
-;;                  (:instance m-*point-id=point
-;;                             (p1 (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                  (:instance base-rotations
-;;                             (x (acl2-sqrt 2)))
-;;                  (:instance r3-rotationp (m (rot-4)))
-;;                  (:instance r3-rotationp-r-theta
-;;                             (angle (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI)))))
-;;                  (:instance witness-not-in-angle-sequence)
-;;                  (:instance rotation-about-arbitrary-line=>1
-;;                             (p1 (M-* (ROT-4)
-;;                                      (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-;;                             (p2 (ROTA-INV-B3-0-N-F-1-WITNESS P))
-;;                             (angle (- (angle-const)))
-;;                             (m (m-p))
-;;                             (n (n-p)))
-;;                  (:instance set-e-p-iff-wit-inv*s2-d-p-n-set-e-p-1-1
-;;                             (p1 (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-;;                             (rot (rot-4)))
-;;                  )
-;;             :in-theory nil
-;;             )
+;;           ("Subgoal 5"
+;;            :use((:instance B3-0-A-INV-R-B3-0-SET-A4 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                 (:instance B3-0-A-INV-R-B3-0-SET-A4-1 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                 (:instance rota-1-rot-4-b4-01 (p p))
+;;                 (:instance rota-1-rot-4-b4-11 (p p))
+;;                 (:instance rota-1-rot-4-b4-01-1-suff
+;;                            (point p)
+;;                            (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b4-01
+;;                            (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance rota-1-rot-4-b4-11-1-suff
+;;                            (point p)
+;;                            (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b4-11
+;;                            (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-f
+;;                            (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-0-iff-a1-to-a14-1
+;;                            (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-0
+;;                            (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3 (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance rot-4-inv*f-suff
+;;                            (point (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                 (:instance rot-4)
+;;                 (:instance a3-a8-rot-a-inv-b3-0-nf=>1
+;;                            (m1 (ROT-4))
+;;                            (m2 (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                            (m3 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+;;                            (m4 (R3-M-INVERSE (ROT-4)))
+;;                            (m5 (id-rotation))
+;;                            (m6 (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance associativity-of-m-*
+;;                            (m1 (A-INV-ROTATION (ACL2-SQRT 2)))
+;;                            (m2 (ROTATION-3D
+;;                                 (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI)))
+;;                                 (POINT-ON-S2-NOT-D)))
+;;                            (m3 (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance m-*-m-inverse-m
+;;                            (m (rot-4)))
+;;                 (:instance rot*rot-is-rot
+;;                            (m1 (a-inv-rotation (acl2-sqrt 2)))
+;;                            (m2 (ROTATION-3D
+;;                                 (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI)))
+;;                                 (POINT-ON-S2-NOT-D))))
+;;                 (:instance m-*point-id=point
+;;                            (p1 (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance base-rotations
+;;                            (x (acl2-sqrt 2)))
+;;                 (:instance r3-rotationp (m (rot-4)))
+;;                 (:instance r3-rotationp-r-theta
+;;                            (angle (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI)))))
+;;                 (:instance witness-not-in-angle-sequence)
+;;                 (:instance rotation-about-arbitrary-line=>1
+;;                            (p1 (M-* (ROT-4)
+;;                                     (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                            (p2 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+;;                            (angle (- (angle-const)))
+;;                            (m (m-p))
+;;                            (n (n-p)))
+;;                 (:instance set-e-p-iff-wit-inv*s2-d-p-n-set-e-p-1-1
+;;                            (p1 (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                            (rot (rot-4)))
+;;                 )
+;;            :in-theory nil
+;;            )
 
+;;           ("Subgoal 4"
+;;            :use((:instance b3-0-r-1-a-inv-b3-0-set-a5 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                 (:instance b3-0-r-1-a-inv-b3-0-set-a5-1 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                 (:instance rota-1-rot-5-b5-01 (p p))
+;;                 (:instance rota-1-rot-5-b5-11 (p p))
+;;                 (:instance rota-1-rot-5-b5-01-1-suff
+;;                            (point p)
+;;                            (p (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b5-01
+;;                            (p (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance rota-1-rot-5-b5-11-1-suff
+;;                            (point p)
+;;                            (p (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b5-11
+;;                            (p (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-f
+;;                            (p (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-0-iff-a1-to-a14-1
+;;                            (p (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-0
+;;                            (p (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3 (p (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance rot-5-inv*f-suff
+;;                            (point (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                 (:instance rot-5)
+;;                 (:instance a3-a8-rot-a-inv-b3-0-nf=>1
+;;                            (m1 (ROT-5))
+;;                            (m2 (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                            (m3 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+;;                            (m4 (R3-M-INVERSE (ROT-5)))
+;;                            (m5 (id-rotation))
+;;                            (m6 (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance associativity-of-m-*
+;;                            (m2 (A-INV-ROTATION (ACL2-SQRT 2)))
+;;                            (m1 (ROTATION-3D
+;;                                 (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))
+;;                                 (POINT-ON-S2-NOT-D)))
+;;                            (m3 (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance m-*-m-inverse-m
+;;                            (m (rot-5)))
+;;                 (:instance rot*rot-is-rot
+;;                            (m2 (a-inv-rotation (acl2-sqrt 2)))
+;;                            (m1 (ROTATION-3D
+;;                                 (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))
+;;                                 (POINT-ON-S2-NOT-D))))
+;;                 (:instance m-*point-id=point
+;;                            (p1 (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance base-rotations
+;;                            (x (acl2-sqrt 2)))
+;;                 (:instance r3-rotationp (m (rot-5)))
+;;                 (:instance r3-rotationp-r-theta
+;;                            (angle (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))))
+;;                 (:instance witness-not-in-angle-sequence)
+;;                 (:instance rotation-about-arbitrary-line=>1
+;;                            (p1 (M-* (ROT-5)
+;;                                     (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                            (p2 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+;;                            (angle (- (angle-const)))
+;;                            (m (m-p))
+;;                            (n (n-p)))
+;;                 (:instance set-e-p-iff-wit-inv*s2-d-p-n-set-e-p-1-1
+;;                            (p1 (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                            (rot (rot-5)))
+;;                 )
+;;            :in-theory nil
+;;            )
+
+
+;;           ("Subgoal 3"
+;;            :use((:instance B3-0-R-1-A-INV-R-B3-0-SET-A6 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                 (:instance B3-0-R-1-A-INV-R-B3-0-SET-A6-1 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                 (:instance rota-1-rot-6-b6-01 (p p))
+;;                 (:instance rota-1-rot-6-b6-11 (p p))
+;;                 (:instance rota-1-rot-6-b6-01-1-suff
+;;                            (point p)
+;;                            (p (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b6-01
+;;                            (p (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance rota-1-rot-6-b6-11-1-suff
+;;                            (point p)
+;;                            (p (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b6-11
+;;                            (p (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-f
+;;                            (p (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-0-iff-a1-to-a14-1
+;;                            (p (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3-0
+;;                            (p (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance b3 (p (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance rot-6-inv*f-suff
+;;                            (point (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                 (:instance rot-6)
+;;                 (:instance a3-a8-rot-a-inv-b3-0-nf=>1
+;;                            (m1 (ROT-6))
+;;                            (m2 (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                            (m3 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+;;                            (m4 (R3-M-INVERSE (ROT-6)))
+;;                            (m5 (id-rotation))
+;;                            (m6 (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance associativity-of-m-*
+;;                            (m2 (A-INV-ROTATION (ACL2-SQRT 2)))
+;;                            (m1 (ROTATION-3D
+;;                                 (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))
+;;                                 (POINT-ON-S2-NOT-D)))
+;;                            (m3 (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS
+;;                                 (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance a3-a8-rot-a-inv-b3-0-nf=>sub-3
+;;                            (m1 (ROTATION-3D (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+;;                                         0 (* 2 (ACL2-PI))))
+;;                                             (POINT-ON-S2-NOT-D)))
+;;                            (m2 (A-INV-ROTATION (ACL2-SQRT 2)))
+;;                            (m3 (ROTATION-3D (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+;;                                              0 (* 2 (ACL2-PI)))
+;;                                             (POINT-ON-S2-NOT-D)))
+;;                            (m4 (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS
+;;                                 (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance m-*-m-inverse-m
+;;                            (m (rot-6)))
+;;                 (:instance b3-0-r-1-a-inv-r-b3-0-a6-iff-b3-0-r-1-a-1-r-a6-1
+;;                            (m2 (a-inv-rotation (acl2-sqrt 2)))
+;;                            (m1 (ROTATION-3D
+;;                                 (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))
+;;                                 (POINT-ON-S2-NOT-D)))
+;;                            (m3 (ROTATION-3D
+;;                                 (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI)))
+;;                                 (POINT-ON-S2-NOT-D))))
+;;                 (:instance m-*point-id=point
+;;                            (p1 (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                 (:instance base-rotations
+;;                            (x (acl2-sqrt 2)))
+;;                 (:instance r3-rotationp (m (rot-6)))
+;;                 (:instance r3-rotationp-r-theta
+;;                            (angle (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))))
+;;                 (:instance r3-rotationp-r-theta
+;;                            (angle (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI)))))
+;;                 (:instance witness-not-in-angle-sequence)
+;;                 (:instance rotation-about-arbitrary-line=>1
+;;                            (p1 (M-* (ROT-6)
+;;                                     (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+;;                            (p2 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+;;                            (angle (- (angle-const)))
+;;                            (m (m-p))
+;;                            (n (n-p)))
+;;                 (:instance set-e-p-iff-wit-inv*s2-d-p-n-set-e-p-1-1
+;;                            (p1 (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+;;                            (rot (rot-6)))
+;;                 )
+;;            :in-theory nil
+;;            )
 ;;            ))
 
 (defthmd rota-1-rot-3-b3-01-or-11=>1
@@ -1442,7 +1696,7 @@
            :in-theory nil
            )))
 
-(defthmd rota-1-rot-3-b3-01-or-11=>3
+(defthmd rota-1-rot-4-b4-01-or-11=>1
   (implies (b3-0-set-a4 p)
            (b3-0 (m-* (rot-4) p)))
   :hints (("Goal"
@@ -1483,7 +1737,7 @@
                             (p (M-* (ROT-4)
                                     (ROTA-1-ROT-4-B4-11-1-WITNESS P))))
                  (:instance b4-11 (p (ROTA-1-ROT-4-B4-11-1-WITNESS P)))
-                 (:instance rota-1-rot-3-b3-01-or-11=>3
+                 (:instance rota-1-rot-4-b4-01-or-11=>1
                             (p (ROTA-1-ROT-4-B4-11-1-WITNESS P)))
                  (:instance b3-0-set-a4 (p (ROTA-1-ROT-4-B4-11-1-WITNESS P)))
                  (:instance b3-0-n-f (p (M-* (ROT-4)
@@ -1511,7 +1765,7 @@
                             (p (M-* (ROT-4)
                                     (ROTA-1-ROT-4-B4-01-1-WITNESS P))))
                  (:instance b4-01 (p (ROTA-1-ROT-4-B4-01-1-WITNESS P)))
-                 (:instance rota-1-rot-3-b3-01-or-11=>3
+                 (:instance rota-1-rot-4-b4-01-or-11=>1
                             (p (ROTA-1-ROT-4-B4-01-1-WITNESS P)))
                  (:instance b3-0-set-a4 (p (ROTA-1-ROT-4-B4-01-1-WITNESS P)))
                  (:instance b3-0-n-f (p (M-* (ROT-4)
@@ -1525,6 +1779,181 @@
            :in-theory nil
            )))
 
+(defthmd rota-1-rot-5-b5-01-or-11=>1
+  (implies (b3-0-set-a5 p)
+           (b3-0 (m-* (rot-5) p)))
+  :hints (("Goal"
+           :use ((:instance b3-0-iff-a1-to-a14-1
+                            (p p))
+                 (:instance m-=m-*rot-p1=p2=>r-p1=r-p2
+                            (p1 p)
+                            (rot (rot-5))
+                            (p2 (m-* (rot-5) p)))
+                 (:instance b3-0-set-a5 (p p))
+                 (:instance b3-0 (p (m-* (rot-5) p)))
+                 (:instance set-e-p-iff-wit-inv*s2-d-p-n-set-e-p-1-1 (p1 p) (rot (rot-5)))
+                 (:instance rot-5)
+                 (:instance rot*rot-is-rot
+                            (m2 (a-inv-rotation (acl2-sqrt 2)))
+                            (m1 (ROTATION-3D
+                                 (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))
+                                 (POINT-ON-S2-NOT-D))))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance r3-rotationp (m (rot-5)))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd rota-1-rot-5-b5-01-or-11=>
+  (implies (or (rota-1-rot-5-b5-11 p)
+               (rota-1-rot-5-b5-01 p))
+           (rota-inv-b3-0-n-f p))
+  :hints (("Goal"
+           :use ((:instance rota-1-rot-5-b5-11 (p p))
+                 (:instance rota-1-rot-5-b5-11-1 (point p))
+                 (:instance rota-inv-b3-0-n-f (p p))
+                 (:instance ROTA-INV-B3-0-N-F-1-SUFF
+                            (point p)
+                            (p (M-* (ROT-5)
+                                    (ROTA-1-ROT-5-B5-11-1-WITNESS P))))
+                 (:instance b5-11 (p (ROTA-1-ROT-5-B5-11-1-WITNESS P)))
+                 (:instance rota-1-rot-5-b5-01-or-11=>1
+                            (p (ROTA-1-ROT-5-B5-11-1-WITNESS P)))
+                 (:instance b3-0-set-a5 (p (ROTA-1-ROT-5-B5-11-1-WITNESS P)))
+                 (:instance b3-0-n-f (p (M-* (ROT-5)
+                                             (ROTA-1-ROT-5-B5-11-1-WITNESS P))))
+                 (:instance rot-5-inv*f (point (ROTA-1-ROT-5-B5-11-1-WITNESS P)))
+                 (:instance rota-1-rot-3-b3-01-or-11=>2
+                            (rot (rot-5))
+                            (p1 (ROT-5-INV*F-WITNESS (ROTA-1-ROT-5-B5-11-1-WITNESS P)))
+                            (p2 (ROTA-1-ROT-5-B5-11-1-WITNESS P)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance rot-5)
+                 (:instance rot*rot-is-rot
+                            (m2 (a-inv-rotation (acl2-sqrt 2)))
+                            (m1 (ROTATION-3D
+                                 (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))
+                                 (POINT-ON-S2-NOT-D))))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance rota-1-rot-5-b5-01 (p p))
+                 (:instance rota-1-rot-5-b5-01-1 (point p))
+                 (:instance ROTA-INV-B3-0-N-F-1-SUFF
+                            (point p)
+                            (p (M-* (ROT-5)
+                                    (ROTA-1-ROT-5-B5-01-1-WITNESS P))))
+                 (:instance b5-01 (p (ROTA-1-ROT-5-B5-01-1-WITNESS P)))
+                 (:instance rota-1-rot-5-b5-01-or-11=>1
+                            (p (ROTA-1-ROT-5-B5-01-1-WITNESS P)))
+                 (:instance b3-0-set-a5 (p (ROTA-1-ROT-5-B5-01-1-WITNESS P)))
+                 (:instance b3-0-n-f (p (M-* (ROT-5)
+                                             (ROTA-1-ROT-5-B5-01-1-WITNESS P))))
+                 (:instance rot-5-inv*f (point (ROTA-1-ROT-5-B5-01-1-WITNESS P)))
+                 (:instance rota-1-rot-3-b3-01-or-11=>2
+                            (rot (rot-5))
+                            (p1 (ROT-5-INV*F-WITNESS (ROTA-1-ROT-5-B5-01-1-WITNESS P)))
+                            (p2 (ROTA-1-ROT-5-B5-01-1-WITNESS P)))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd rota-1-rot-6-b6-01-or-11=>1
+  (implies (b3-0-set-a6 p)
+           (b3-0 (m-* (rot-6) p)))
+  :hints (("Goal"
+           :use ((:instance b3-0-iff-a1-to-a14-1
+                            (p p))
+                 (:instance m-=m-*rot-p1=p2=>r-p1=r-p2
+                            (p1 p)
+                            (rot (rot-6))
+                            (p2 (m-* (rot-6) p)))
+                 (:instance b3-0-set-a6 (p p))
+                 (:instance b3-0 (p (m-* (rot-6) p)))
+                 (:instance set-e-p-iff-wit-inv*s2-d-p-n-set-e-p-1-1 (p1 p) (rot (rot-6)))
+                 (:instance rot-6)
+                 (:instance b3-0-r-1-a-inv-r-b3-0-a6-iff-b3-0-r-1-a-1-r-a6-1
+                            (m2 (a-inv-rotation (acl2-sqrt 2)))
+                            (m1 (ROTATION-3D
+                                 (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))
+                                 (POINT-ON-S2-NOT-D)))
+                            (m3 (ROTATION-3D
+                                 (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI)))
+                                 (POINT-ON-S2-NOT-D))))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))))
+                 (:instance r3-rotationp-r-theta
+                            (angle (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI)))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance r3-rotationp (m (rot-6)))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd rota-1-rot-6-b6-01-or-11=>
+  (implies (or (rota-1-rot-6-b6-11 p)
+               (rota-1-rot-6-b6-01 p))
+           (rota-inv-b3-0-n-f p))
+  :hints (("Goal"
+           :use ((:instance rota-1-rot-6-b6-11 (p p))
+                 (:instance rota-1-rot-6-b6-11-1 (point p))
+                 (:instance rota-inv-b3-0-n-f (p p))
+                 (:instance ROTA-INV-B3-0-N-F-1-SUFF
+                            (point p)
+                            (p (M-* (ROT-6)
+                                    (ROTA-1-ROT-6-B6-11-1-WITNESS P))))
+                 (:instance b6-11 (p (ROTA-1-ROT-6-B6-11-1-WITNESS P)))
+                 (:instance rota-1-rot-6-b6-01-or-11=>1
+                            (p (ROTA-1-ROT-6-B6-11-1-WITNESS P)))
+                 (:instance b3-0-set-a6 (p (ROTA-1-ROT-6-B6-11-1-WITNESS P)))
+                 (:instance b3-0-n-f (p (M-* (ROT-6)
+                                             (ROTA-1-ROT-6-B6-11-1-WITNESS P))))
+                 (:instance rot-6-inv*f (point (ROTA-1-ROT-6-B6-11-1-WITNESS P)))
+                 (:instance rota-1-rot-3-b3-01-or-11=>2
+                            (rot (rot-6))
+                            (p1 (ROT-6-INV*F-WITNESS (ROTA-1-ROT-6-B6-11-1-WITNESS P)))
+                            (p2 (ROTA-1-ROT-6-B6-11-1-WITNESS P)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance rot-6)
+                 (:instance b3-0-r-1-a-inv-r-b3-0-a6-iff-b3-0-r-1-a-1-r-a6-1
+                            (m2 (a-inv-rotation (acl2-sqrt 2)))
+                            (m1 (ROTATION-3D
+                                 (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))
+                                 (POINT-ON-S2-NOT-D)))
+                            (m3 (ROTATION-3D
+                                 (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI)))
+                                 (POINT-ON-S2-NOT-D))))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI))))))
+                 (:instance r3-rotationp-r-theta
+                            (angle (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS 0 (* 2 (ACL2-PI)))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance rota-1-rot-6-b6-01 (p p))
+                 (:instance rota-1-rot-6-b6-01-1 (point p))
+                 (:instance ROTA-INV-B3-0-N-F-1-SUFF
+                            (point p)
+                            (p (M-* (ROT-6)
+                                    (ROTA-1-ROT-6-B6-01-1-WITNESS P))))
+                 (:instance b6-01 (p (ROTA-1-ROT-6-B6-01-1-WITNESS P)))
+                 (:instance rota-1-rot-6-b6-01-or-11=>1
+                            (p (ROTA-1-ROT-6-B6-01-1-WITNESS P)))
+                 (:instance b3-0-set-a6 (p (ROTA-1-ROT-6-B6-01-1-WITNESS P)))
+                 (:instance b3-0-n-f (p (M-* (ROT-6)
+                                             (ROTA-1-ROT-6-B6-01-1-WITNESS P))))
+                 (:instance rot-6-inv*f (point (ROTA-1-ROT-6-B6-01-1-WITNESS P)))
+                 (:instance rota-1-rot-3-b3-01-or-11=>2
+                            (rot (rot-6))
+                            (p1 (ROT-6-INV*F-WITNESS (ROTA-1-ROT-6-B6-01-1-WITNESS P)))
+                            (p2 (ROTA-1-ROT-6-B6-01-1-WITNESS P)))
+                 )
+           :in-theory nil
+           )))
 
 
 
