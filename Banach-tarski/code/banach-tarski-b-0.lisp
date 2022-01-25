@@ -414,7 +414,7 @@
            :in-theory (disable b3-0-set-a1-1 b3-0-set-a2-1 b3-0-set-a3-1 b3-0-set-a4-1 b3-0-set-a5-1 b3-0-set-a6-1 b3-0-set-a7-1 b3-0-set-a8-1 b3-0-set-a9-1 b3-0-set-a10-1 b3-0-set-a11-1 b3-0-set-a12-1 b3-0-set-a13-1 b3-0-set-a14-1)
            )))
 
-(defthmd b3-0-iff-a1-to-a14
+(defthmd b3-0-iff-a1-to-a14-1
   (iff (or (b3-0-s2 p)
            (b3-0 p))
        (or (b3-0-set-a1 p)
@@ -2109,7 +2109,7 @@
                                b3-0-set-a8-1)
            )))
 
-(defthmd b3-0-iff-a3-to-a8
+(defthmd b3-0-iff-a3-to-a8-1
   (iff (or (b3-0-s2 p)
            (b3-0 p))
        ;; (or (or (b3-0-set-a-inv-a3 p)
@@ -3445,7 +3445,7 @@
                                b3-0-set-a14-1)
            )))
 
-(defthmd b3-0-iff-a9-to-a14
+(defthmd b3-0-iff-a9-to-a14-1
   (iff (or (b3-0-s2 p)
            (b3-0 p))
        ;; (or (or (b3-0-set-b-inv-a9 p)
@@ -3471,7 +3471,7 @@
            :in-theory nil
            )))
 
-(defthmd b3-0-iff-a1-to-a14-1
+(defthmd b3-0-iff-a1-to-a14
   (iff (b3-0 p)
        (or (b3-0-set-a1 p)
            (b3-0-set-a2 p)
@@ -3489,11 +3489,11 @@
            (b3-0-set-a14 p)))
   :hints (("goal"
            :use ((:instance b3-0-iff-b3-0-s2 (p p))
-                 (:instance b3-0-iff-a1-to-a14 (p p)))
+                 (:instance b3-0-iff-a1-to-a14-1 (p p)))
            :in-theory nil
            )))
 
-(defthmd b3-0-iff-a3-to-a8-1
+(defthmd b3-0-iff-a3-to-a8
   (iff (b3-0 p)
        (or (b3-0-a-inv-b3-0-set-a3 p)
            (b3-0-a-inv-r-b3-0-set-a4 p)
@@ -3503,11 +3503,11 @@
            (b3-0-set-a8 p)))
   :hints (("goal"
            :use ((:instance b3-0-iff-b3-0-s2 (p p))
-                 (:instance b3-0-iff-a3-to-a8 (p p)))
+                 (:instance b3-0-iff-a3-to-a8-1 (p p)))
            :in-theory nil
            )))
 
-(defthmd b3-0-iff-a9-to-a14-1
+(defthmd b3-0-iff-a9-to-a14
   (iff (b3-0 p)
        (or (b3-0-b-inv-b3-0-set-a9 p)
            (b3-0-b-inv-r-b3-0-set-a10 p)
@@ -3517,6 +3517,6 @@
            (b3-0-set-a14 p)))
   :hints (("goal"
            :use ((:instance b3-0-iff-b3-0-s2 (p p))
-                 (:instance b3-0-iff-a9-to-a14 (p p)))
+                 (:instance b3-0-iff-a9-to-a14-1 (p p)))
            :in-theory nil
            )))

@@ -1421,7 +1421,7 @@
                            (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
                 (:instance b3-f
                            (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-                (:instance b3-0-iff-a1-to-a14-1
+                (:instance b3-0-iff-a1-to-a14
                            (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
                 (:instance b3-0
                            (p (B3-0-A-INV-B3-0-SET-A3-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
@@ -1474,7 +1474,7 @@
                            (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
                 (:instance b3-f
                            (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-                (:instance b3-0-iff-a1-to-a14-1
+                (:instance b3-0-iff-a1-to-a14
                            (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
                 (:instance b3-0
                            (p (B3-0-A-INV-R-B3-0-SET-A4-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
@@ -1541,7 +1541,7 @@
                            (p (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
                 (:instance b3-f
                            (p (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-                (:instance b3-0-iff-a1-to-a14-1
+                (:instance b3-0-iff-a1-to-a14
                            (p (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
                 (:instance b3-0
                            (p (b3-0-r-1-a-inv-b3-0-set-a5-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
@@ -1608,7 +1608,7 @@
                            (p (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
                 (:instance b3-f
                            (p (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
-                (:instance b3-0-iff-a1-to-a14-1
+                (:instance b3-0-iff-a1-to-a14
                            (p (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
                 (:instance b3-0
                            (p (B3-0-R-1-A-INV-R-B3-0-SET-A6-1-WITNESS (ROTA-INV-B3-0-N-F-1-WITNESS P))))
@@ -1690,7 +1690,7 @@
                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
                 (:instance b3-f
                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-                (:instance b3-0-iff-a1-to-a14-1
+                (:instance b3-0-iff-a1-to-a14
                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
                 (:instance b3-0
                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
@@ -1742,7 +1742,7 @@
                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
                 (:instance b3-f
                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
-                (:instance b3-0-iff-a1-to-a14-1
+                (:instance b3-0-iff-a1-to-a14
                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
                 (:instance b3-0
                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
@@ -1785,8 +1785,6 @@
            (b3-0 (m-* (rot-3) p)))
   :hints (("Goal"
            :use ((:instance b3-0-iff-a1-to-a14
-                            (p p))
-                 (:instance b3-0-iff-b3-0-s2
                             (p p))
                  (:instance m-=m-*rot-p1=p2=>r-p1=r-p2
                             (p1 p)
@@ -1879,7 +1877,7 @@
   (implies (b3-0-set-a4 p)
            (b3-0 (m-* (rot-4) p)))
   :hints (("Goal"
-           :use ((:instance b3-0-iff-a1-to-a14-1
+           :use ((:instance b3-0-iff-a1-to-a14
                             (p p))
                  (:instance m-=m-*rot-p1=p2=>r-p1=r-p2
                             (p1 p)
@@ -1962,7 +1960,7 @@
   (implies (b3-0-set-a5 p)
            (b3-0 (m-* (rot-5) p)))
   :hints (("Goal"
-           :use ((:instance b3-0-iff-a1-to-a14-1
+           :use ((:instance b3-0-iff-a1-to-a14
                             (p p))
                  (:instance m-=m-*rot-p1=p2=>r-p1=r-p2
                             (p1 p)
@@ -2045,7 +2043,7 @@
   (implies (b3-0-set-a6 p)
            (b3-0 (m-* (rot-6) p)))
   :hints (("Goal"
-           :use ((:instance b3-0-iff-a1-to-a14-1
+           :use ((:instance b3-0-iff-a1-to-a14
                             (p p))
                  (:instance m-=m-*rot-p1=p2=>r-p1=r-p2
                             (p1 p)
@@ -2138,7 +2136,7 @@
   (implies (b3-0-set-a7 p)
            (b3-0 (m-* (rot-7) p)))
   :hints (("Goal"
-           :use ((:instance b3-0-iff-a1-to-a14-1
+           :use ((:instance b3-0-iff-a1-to-a14
                             (p p))
                  (:instance m-=m-*rot-p1=p2=>r-p1=r-p2
                             (p1 p)
@@ -2204,7 +2202,7 @@
   (implies (b3-0-set-a8 p)
            (b3-0 (m-* (rot-8) p)))
   :hints (("Goal"
-           :use ((:instance b3-0-iff-a1-to-a14-1
+           :use ((:instance b3-0-iff-a1-to-a14
                             (p p))
                  (:instance m-=m-*rot-p1=p2=>r-p1=r-p2
                             (p1 p)
