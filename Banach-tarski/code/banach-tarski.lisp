@@ -185,7 +185,6 @@
            :in-theory nil
            )))
 
------
 (defun m-p ()
   `((:header :dimensions (3 1)
 	     :maximum-length 15)
@@ -392,94 +391,247 @@
            :in-theory (e/d (m-*) (rotation-3d))
            )))
 
+(defthmd vectr-tr-m-*rot-3d-vect-tr=
+  (implies (and (realp angle)
+                (point-in-r3 p))
+           (equal (rotation-about-arbitrary-line angle (m-p) (n-p) p)
+                  `((:header :dimensions (3 1)
+                             :maximum-length 15)
+                    ((0 . 0) . ,(point-in-r3-x1 p) )
+                    ((1 . 0) . ,(+ (* (acl2-cosine angle) (- (point-in-r3-y1 p) 1/4))
+                                   (* (- (acl2-sine angle)) (point-in-r3-z1 p))
+                                   1/4) )
+                    ((2 . 0) . ,(+ (* (acl2-sine angle) (- (point-in-r3-y1 p) 1/4))
+                                   (* (acl2-cosine angle) (point-in-r3-z1 p))) )
+                    )
+                  ))
+  :hints (("Goal"
+           :use ((:instance m-*rot-3d-vect-tr-values
+                            (angle angle)
+                            (p p)
+                            (ret-point (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                                           (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                                           (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p)))))
+                            (vectr-tr-to-z (vect-tr (- (point-in-r3-x1 (m-p)))
+                                                    (- (point-in-r3-y1 (m-p)))
+                                                    (- (point-in-r3-z1 (m-p))) p)))
+                 (:instance vect-tr
+                            (x 1/10)
+                            (y 1/4)
+                            (z 0)
+                            (p (m-* (rotation-3d angle (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                                                           (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                                                           (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p)))))
+                                    (vect-tr (- (point-in-r3-x1 (m-p)))
+                                             (- (point-in-r3-y1 (m-p)))
+                                             (- (point-in-r3-z1 (m-p))) p))))
+                 )
+           :in-theory (disable m-* rotation-3d vect-tr)
+           )))
 
-------
-;; (defthmd vectr-tr-m-*rot-3d-vect-tr-values
-;;   (implies (and (realp angle)
-;;                 (point-in-r3 p)
-;;                 (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
-;;                                            (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
-;;                                            (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
-;;                        ret-point)
-;;                 (equal (vect-tr (- (point-in-r3-x1 (m-p))) (- (point-in-r3-y1 (m-p))) (- (point-in-r3-z1 (m-p))) p)
-;;                        vectr-tr-to-z))
-;;            (and (equal (aref2 :fake-name (rotation-about-arbitrary-line angle (m-p) (n-p) p) 0 0)
-;;                        (point-in-r3-x1 p))
-;;                 (equal (aref2 :fake-name (rotation-about-arbitrary-line angle (m-p) (n-p) p) 1 0)
-;;                        (+ (* (acl2-cosine angle) (- (point-in-r3-y1 p) 1/4))
-;;                           (* (- (acl2-sine angle)) (point-in-r3-z1 p))
-;;                           1/4))
-;;                 (equal (aref2 :fake-name (rotation-about-arbitrary-line angle (m-p) (n-p) p) 2 0)
-;;                        (+ (* (acl2-sine angle) (- (point-in-r3-y1 p) 1/4))
-;;                           (* (acl2-cosine angle) (point-in-r3-z1 p))))))
-;;   :hints (("Goal"
-;;            :in-theory nil
-;;            )))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+(defthmd vectr-tr-m-*rot-3d-vect-tr-values
+  (implies (and (realp angle)
+                (point-in-r3 p))
+           (and (equal (aref2 :fake-name (rotation-about-arbitrary-line angle (m-p) (n-p) p) 0 0)
+                       (point-in-r3-x1 p))
+                (equal (aref2 :fake-name (rotation-about-arbitrary-line angle (m-p) (n-p) p) 1 0)
+                       (+ (* (acl2-cosine angle) (- (point-in-r3-y1 p) 1/4))
+                          (* (- (acl2-sine angle)) (point-in-r3-z1 p))
+                          1/4))
+                (equal (aref2 :fake-name (rotation-about-arbitrary-line angle (m-p) (n-p) p) 2 0)
+                       (+ (* (acl2-sine angle) (- (point-in-r3-y1 p) 1/4))
+                          (* (acl2-cosine angle) (point-in-r3-z1 p))))))
+  :hints (("Goal"
+           :use ((:instance vectr-tr-m-*rot-3d-vect-tr= (angle angle) (p p))
+                 )
+           :in-theory (e/d (aref2) (rotation-about-arbitrary-line))
+           )))
 
 (defthmd rotation-about-arbitrary-line=p
   (implies (and (equal angle 0)
                 (point-in-r3 p))
            (m-= (rotation-about-arbitrary-line angle (m-p) (n-p) p) p))
   :hints (("Goal"
-           :use ((:instance rotation-about-witness-values
+           :use ((:instance vectr-tr-m-*rot-3d-vect-tr-values
                             (angle 0)
-                            (point (return-point-in-r3 (- (point-in-r3-x1 n) (point-in-r3-x1 m))
-                                                       (- (point-in-r3-y1 n) (point-in-r3-y1 m))
-                                                       (- (point-in-r3-z1 n) (point-in-r3-z1 m)))))
-                 (:instance r3-matrixp-r3d
-                            (angle 0)
-                            (u (return-point-in-r3 (- (point-in-r3-x1 n) (point-in-r3-x1 m))
-                                                   (- (point-in-r3-y1 n) (point-in-r3-y1 m))
-                                                   (- (point-in-r3-z1 n) (point-in-r3-z1 m)))))
-                 (:instance return-point-in-r3=>r3p
-                            (x (+ (POINT-IN-R3-X1 N)
-                                  (- (POINT-IN-R3-X1 M))))
-                            (y (+ (POINT-IN-R3-y1 N)
-                                  (- (POINT-IN-R3-y1 M))))
-                            (z (+ (POINT-IN-R3-z1 N)
-                                  (- (POINT-IN-R3-z1 M))))))
-           :in-theory (e/d (m-* m-= aref2 alist2p array2p) (rotation-3d))
+                            (p p))
+                 (:instance rotation-about-arbitrary-line=>r3p
+                            (m (m-p))
+                            (n (n-p))
+                            (p p)
+                            (angle 0)))
+           :in-theory (e/d (m-=) (rotation-about-arbitrary-line))
            )))
 
-(skip-proofs
- (defthmd rot-angle1-of-angle2*p=>
-   (implies (and (point-in-r3 m)
-                 (point-in-r3 n)
-                 (point-in-r3 p)
-                 (not (m-= m n))
-                 (realp angle1)
-                 (realp angle2)
-                 (equal (+ (* (- (point-in-r3-x1 n) (point-in-r3-x1 m))
-                              (- (point-in-r3-x1 n) (point-in-r3-x1 m)))
-                           (* (- (point-in-r3-y1 n) (point-in-r3-y1 m))
-                              (- (point-in-r3-y1 n) (point-in-r3-y1 m)))
-                           (* (- (point-in-r3-z1 n) (point-in-r3-z1 m))
-                              (- (point-in-r3-z1 n) (point-in-r3-z1 m))))
-                        1))
-            (m-= (rotation-about-arbitrary-line angle1 m n (rotation-about-arbitrary-line angle2 m n p))
-                 (rotation-about-arbitrary-line (+ angle1 angle2) m n p)))))
+(defthmd m-=-equiv-lemma-pr3
+  (implies (and (point-in-r3 p1)
+                (point-in-r3 p2)
+                (equal (aref2 :fake-name p1 0 0) (aref2 :fake-name p2 0 0))
+                (equal (aref2 :fake-name p1 1 0) (aref2 :fake-name p2 1 0))
+                (equal (aref2 :fake-name p1 2 0) (aref2 :fake-name p2 2 0))
+                )
+           (m-= p1 p2))
+  :hints (("goal"
+           :in-theory (enable m-=)
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd rot-angle1-of-angle2*p=>1
+    (implies (and (realp x)
+                  (realp y)
+                  (realp z)
+                  (realp angle1)
+                  (realp angle2)
+                  (equal y-of-ang2 (+ (* (ACL2-COSINE ANGLE2)
+                                         (+ -1/4 y))
+                                      (* (- (ACL2-SINE ANGLE2))
+                                         z)
+                                      1/4))
+                  (equal z-of-ang2 (+ (* (ACL2-SINE ANGLE2)
+                                         (+ -1/4 y))
+                                      (* (ACL2-COSINE ANGLE2)
+                                         z))))
+             (equal (+ (* (ACL2-COSINE ANGLE1)
+                          (+ -1/4
+                             y-of-ang2))
+                       (* (- (ACL2-SINE ANGLE1))
+                          z-of-ang2)
+                       1/4)
+                    (+ (* (ACL2-COSINE (+ ANGLE1 ANGLE2))
+                          (+ -1/4 y))
+                       (* (- (ACL2-SINE (+ ANGLE1 ANGLE2)))
+                          z)
+                       1/4))))
+
+  (defthmd rot-angle1-of-angle2*p=>2
+    (implies (and (realp x)
+                  (realp y)
+                  (realp z)
+                  (realp angle1)
+                  (realp angle2)
+                  (equal y-of-ang2 (+ (* (ACL2-COSINE ANGLE2)
+                                         (+ -1/4 y))
+                                      (* (- (ACL2-SINE ANGLE2))
+                                         z)
+                                      1/4))
+                  (equal z-of-ang2 (+ (* (ACL2-SINE ANGLE2)
+                                         (+ -1/4 y))
+                                      (* (ACL2-COSINE ANGLE2)
+                                         z))))
+             (equal (+ (* (ACL2-SINE ANGLE1)
+                          (+ -1/4
+                             y-of-ang2))
+                       (* (ACL2-coSINE ANGLE1)
+                          z-of-ang2))
+                    (+ (* (ACL2-SINE (+ ANGLE1 ANGLE2))
+                          (+ -1/4 y))
+                       (* (ACL2-coSINE (+ ANGLE1 ANGLE2))
+                          z)))))
+  )
+
+(defthmd rot-angle1-of-angle2*p=>
+  (implies (and (point-in-r3 p)
+                (point-in-r3 (m-p))
+                (point-in-r3 (n-p))
+                (realp angle1)
+                (realp angle2))
+           (m-= (rotation-about-arbitrary-line
+                 angle1 (m-p) (n-p)
+                 (rotation-about-arbitrary-line angle2 (m-p) (n-p) p))
+                (rotation-about-arbitrary-line (+ angle1 angle2) (m-p) (n-p) p)))
+  :hints (("Goal"
+           :use ((:instance vectr-tr-m-*rot-3d-vect-tr-values
+                            (angle angle2)
+                            (p p))
+                 (:instance vectr-tr-m-*rot-3d-vect-tr-values
+                            (angle angle1)
+                            (p (rotation-about-arbitrary-line angle2 (m-p) (n-p) p)))
+                 (:instance rotation-about-arbitrary-line=>r3p
+                            (m (m-p))
+                            (n (n-p))
+                            (p p)
+                            (angle angle2))
+                 (:instance rotation-about-arbitrary-line=>r3p
+                            (p (rotation-about-arbitrary-line angle2 (m-p) (n-p) p))
+                            (angle angle1)
+                            (m (m-p))
+                            (n (n-p)))
+                 (:instance vectr-tr-m-*rot-3d-vect-tr-values
+                            (angle (+ angle1 angle2))
+                            (p p))
+                 (:instance rotation-about-arbitrary-line=>r3p
+                            (p p)
+                            (angle (+ angle1 angle2))
+                            (m (m-p))
+                            (n (n-p)))
+                 (:instance r3-rotationp-r-theta-11-1-lemma4
+                            (p p))
+                 (:instance array2p-alist2p
+                            (name :fake-name)
+                            (l (rotation-about-arbitrary-line (+ angle1 angle2) (m-p) (n-p) p)))
+                 (:instance array2p-alist2p
+                            (name :fake-name)
+                            (l (rotation-about-arbitrary-line
+                                angle1 (m-p) (n-p)
+                                (rotation-about-arbitrary-line angle2 (m-p) (n-p) p))))
+                 (:instance point-in-r3
+                            (x (rotation-about-arbitrary-line (+ angle1 angle2) (m-p) (n-p) p)))
+                 (:instance point-in-r3
+                            (x (rotation-about-arbitrary-line angle2 (m-p) (n-p) p)))
+                 (:instance point-in-r3
+                            (x (rotation-about-arbitrary-line
+                                angle1 (m-p) (n-p)
+                                (rotation-about-arbitrary-line angle2 (m-p) (n-p) p))))
+                 (:instance point-in-r3-x1
+                            (p (rotation-about-arbitrary-line angle2 (m-p) (n-p) p)))
+                 (:instance point-in-r3-y1
+                            (p (rotation-about-arbitrary-line angle2 (m-p) (n-p) p)))
+                 (:instance point-in-r3-z1
+                            (p (rotation-about-arbitrary-line angle2 (m-p) (n-p) p)))
+                 (:instance m-=-equiv-lemma-pr3
+                            (p1 (rotation-about-arbitrary-line
+                                 angle1 (m-p) (n-p)
+                                 (rotation-about-arbitrary-line angle2 (m-p) (n-p) p)))
+                            (p2 (rotation-about-arbitrary-line (+ angle1 angle2) (m-p) (n-p) p)))
+                 (:instance rot-angle1-of-angle2*p=>2
+                            (x (point-in-r3-x1 p))
+                            (y (point-in-r3-y1 p))
+                            (z (point-in-r3-z1 p))
+                            (angle1 angle1)
+                            (angle2 angle2)
+                            (y-of-ang2 (+ (* (ACL2-COSINE ANGLE2)
+                                             (+ -1/4 (POINT-IN-R3-Y1 P)))
+                                          (* (- (ACL2-SINE ANGLE2))
+                                             (POINT-IN-R3-Z1 P))
+                                          1/4))
+                            (z-of-ang2 (+ (* (ACL2-SINE ANGLE2)
+                                             (+ -1/4 (POINT-IN-R3-Y1 P)))
+                                          (* (ACL2-COSINE ANGLE2)
+                                             (POINT-IN-R3-Z1 P))))
+                            )
+                 (:instance rot-angle1-of-angle2*p=>1
+                            (x (point-in-r3-x1 p))
+                            (y (point-in-r3-y1 p))
+                            (z (point-in-r3-z1 p))
+                            (angle1 angle1)
+                            (angle2 angle2)
+                            (y-of-ang2 (+ (* (ACL2-COSINE ANGLE2)
+                                             (+ -1/4 (POINT-IN-R3-Y1 P)))
+                                          (* (- (ACL2-SINE ANGLE2))
+                                             (POINT-IN-R3-Z1 P))
+                                          1/4))
+                            (z-of-ang2 (+ (* (ACL2-SINE ANGLE2)
+                                             (+ -1/4 (POINT-IN-R3-Y1 P)))
+                                          (* (ACL2-COSINE ANGLE2)
+                                             (POINT-IN-R3-Z1 P))))
+                            )
+                 )
+           :in-theory nil
+           )))
 
 (defun zero-p (p)
   (and (point-in-r3 p)
@@ -511,64 +663,64 @@
            :in-theory (e/d (m-=) ())
            )))
 
-(skip-proofs
- (defthmd rot-i*angle*p-not-=p
-   (implies (and (point-in-r3 m)
-                 (point-in-r3 n)
-                 (zero-p p)
-                 (not (zero-p m))
-                 (not (zero-p n))
-                 (not (m-= m n))
-                 (posp i)
-                 (equal angle (/ (* (acl2-sqrt 2) (acl2-pi)) 180))
-                 (equal (+ (* (- (point-in-r3-x1 n) (point-in-r3-x1 m))
-                              (- (point-in-r3-x1 n) (point-in-r3-x1 m)))
-                           (* (- (point-in-r3-y1 n) (point-in-r3-y1 m))
-                              (- (point-in-r3-y1 n) (point-in-r3-y1 m)))
-                           (* (- (point-in-r3-z1 n) (point-in-r3-z1 m))
-                              (- (point-in-r3-z1 n) (point-in-r3-z1 m))))
-                        1))
-            (not (m-= (rotation-about-arbitrary-line (* i angle) m n p)
-                      p)))))
+;; (skip-proofs
+;;  (defthmd rot-i*angle*p-not-=p
+;;    (implies (and (point-in-r3 m)
+;;                  (point-in-r3 n)
+;;                  (zero-p p)
+;;                  (not (zero-p m))
+;;                  (not (zero-p n))
+;;                  (not (m-= m n))
+;;                  (posp i)
+;;                  (equal angle 1/2)
+;;                  (equal (+ (* (- (point-in-r3-x1 n) (point-in-r3-x1 m))
+;;                               (- (point-in-r3-x1 n) (point-in-r3-x1 m)))
+;;                            (* (- (point-in-r3-y1 n) (point-in-r3-y1 m))
+;;                               (- (point-in-r3-y1 n) (point-in-r3-y1 m)))
+;;                            (* (- (point-in-r3-z1 n) (point-in-r3-z1 m))
+;;                               (- (point-in-r3-z1 n) (point-in-r3-z1 m))))
+;;                         1))
+;;             (not (m-= (rotation-about-arbitrary-line (* i angle) m n p)
+;;                       p)))))
 
-(skip-proofs
- (defthmd rot-i*angle*p-not-=rot-j
-   (implies (and (point-in-r3 m)
-                 (point-in-r3 n)
-                 (zero-p p)
-                 (not (zero-p m))
-                 (not (zero-p n))
-                 (not (m-= m n))
-                 (posp i)
-                 (posp j)
-                 (< i j)
-                 (equal angle (/ (* (acl2-sqrt 2) (acl2-pi)) 180))
-                 (equal (+ (* (- (point-in-r3-x1 n) (point-in-r3-x1 m))
-                              (- (point-in-r3-x1 n) (point-in-r3-x1 m)))
-                           (* (- (point-in-r3-y1 n) (point-in-r3-y1 m))
-                              (- (point-in-r3-y1 n) (point-in-r3-y1 m)))
-                           (* (- (point-in-r3-z1 n) (point-in-r3-z1 m))
-                              (- (point-in-r3-z1 n) (point-in-r3-z1 m))))
-                        1))
-            (not (m-= (rotation-about-arbitrary-line (* i angle) m n p)
-                      (rotation-about-arbitrary-line (* j angle) m n p))))))
+;; (skip-proofs
+;;  (defthmd rot-i*angle*p-not-=rot-j
+;;    (implies (and (point-in-r3 m)
+;;                  (point-in-r3 n)
+;;                  (zero-p p)
+;;                  (not (zero-p m))
+;;                  (not (zero-p n))
+;;                  (not (m-= m n))
+;;                  (posp i)
+;;                  (posp j)
+;;                  (< i j)
+;;                  (equal angle (/ (* (acl2-sqrt 2) (acl2-pi)) 180))
+;;                  (equal (+ (* (- (point-in-r3-x1 n) (point-in-r3-x1 m))
+;;                               (- (point-in-r3-x1 n) (point-in-r3-x1 m)))
+;;                            (* (- (point-in-r3-y1 n) (point-in-r3-y1 m))
+;;                               (- (point-in-r3-y1 n) (point-in-r3-y1 m)))
+;;                            (* (- (point-in-r3-z1 n) (point-in-r3-z1 m))
+;;                               (- (point-in-r3-z1 n) (point-in-r3-z1 m))))
+;;                         1))
+;;             (not (m-= (rotation-about-arbitrary-line (* i angle) m n p)
+;;                       (rotation-about-arbitrary-line (* j angle) m n p))))))
 
-(defun m-p ()
-  `((:header :dimensions (3 1)
-	     :maximum-length 15)
-    ((0 . 0) . 1/10)
-    ((1 . 0) . 1/4)
-    ((2 . 0) . 0)
-    ))
+;; (defun m-p ()
+;;   `((:header :dimensions (3 1)
+;; 	     :maximum-length 15)
+;;     ((0 . 0) . 1/10)
+;;     ((1 . 0) . 1/4)
+;;     ((2 . 0) . 0)
+;;     ))
 
 
-(defun n-p ()
-  `((:header :dimensions (3 1)
-	     :maximum-length 15)
-    ((0 . 0) . -9/10)
-    ((1 . 0) . 1/4)
-    ((2 . 0) . 0)
-    ))
+;; (defun n-p ()
+;;   `((:header :dimensions (3 1)
+;; 	     :maximum-length 15)
+;;     ((0 . 0) . -9/10)
+;;     ((1 . 0) . 1/4)
+;;     ((2 . 0) . 0)
+;;     ))
 
 (defthmd rotation-about-arbitrary-line=>r3p-m-n
   (implies (and (point-in-r3 p)
@@ -585,7 +737,7 @@
                 (equal angle 0))
            (m-= (rotation-about-arbitrary-line angle (m-p) (n-p) p) p))
   :hints (("goal"
-           :use ((:instance rotation-about-arbitrary-line=p (m (m-p)) (n (n-p)) (p p) (angle angle)))
+           :use ((:instance rotation-about-arbitrary-line=p (p p) (angle angle)))
            :in-theory (disable rotation-about-arbitrary-line)
            )))
 
@@ -597,7 +749,7 @@
                                                (rotation-about-arbitrary-line angle2 (m-p) (n-p) p))
                 (rotation-about-arbitrary-line (+ angle1 angle2) (m-p) (n-p) p)))
   :hints (("goal"
-           :use ((:instance rot-angle1-of-angle2*p=> (m (m-p)) (n (n-p)) (p p) (angle1 angle1) (angle2 angle2)))
+           :use ((:instance rot-angle1-of-angle2*p=> (p p) (angle1 angle1) (angle2 angle2)))
            :in-theory (disable rotation-about-arbitrary-line)
            )))
 
@@ -613,41 +765,47 @@
            :use ((:instance sqrt->-0 (x 349/400)))
            )))
 
-(defthmd rot-i*angle*p-not-=p-m-n
-  (implies (and (zero-p p)
-                (posp i)
-                (equal angle (/ (* (acl2-sqrt 2) (acl2-pi)) 180)))
-           (not (m-= (rotation-about-arbitrary-line (* i angle) (m-p) (n-p) p)
-                     p)))
-  :hints (("goal"
-           :use ((:instance rot-i*angle*p-not-=p (m (m-p)) (n (n-p)) (p p) (i i)
-                            (angle (/ (* (acl2-sqrt 2) (acl2-pi)) 180)))
-                 (:instance rot-i*angle*p-not-=p-m-n-1)
-                 (:instance rot-i*angle*p-not-=p-m-n-2))
-           :in-theory (disable rotation-about-arbitrary-line acl2-sqrt acl2-pi)
-           )))
+;; (defthmd rot-i*angle*p-not-=rot-j-m-n
+;;   (implies (and (zero-p p)
+;;                 (posp i)
+;;                 (posp j)
+;;                 (< i j)
+;;                 (equal angle (/ (* (acl2-sqrt 2) (acl2-pi)) 180)))
+;;            (not (m-= (rotation-about-arbitrary-line (* i angle) (m-p) (n-p) p)
+;;                      (rotation-about-arbitrary-line (* j angle) (m-p) (n-p) p))))
+;;   :hints (("goal"
+;;            :use ((:instance rot-i*angle*p-not-=rot-j (m (m-p)) (n (n-p)) (p p) (i i) (j j)
+;;                             (angle (/ (* (acl2-sqrt 2) (acl2-pi)) 180)))
+;;                  (:instance rot-i*angle*p-not-=p-m-n-1)
+;;                  (:instance rot-i*angle*p-not-=p-m-n-2))
+;;            :in-theory (disable rotation-about-arbitrary-line acl2-sqrt acl2-pi)
+;;            )))
 
-(defthmd rot-i*angle*p-not-=rot-j-m-n
-  (implies (and (zero-p p)
-                (posp i)
-                (posp j)
-                (< i j)
-                (equal angle (/ (* (acl2-sqrt 2) (acl2-pi)) 180)))
-           (not (m-= (rotation-about-arbitrary-line (* i angle) (m-p) (n-p) p)
-                     (rotation-about-arbitrary-line (* j angle) (m-p) (n-p) p))))
-  :hints (("goal"
-           :use ((:instance rot-i*angle*p-not-=rot-j (m (m-p)) (n (n-p)) (p p) (i i) (j j)
-                            (angle (/ (* (acl2-sqrt 2) (acl2-pi)) 180)))
-                 (:instance rot-i*angle*p-not-=p-m-n-1)
-                 (:instance rot-i*angle*p-not-=p-m-n-2))
-           :in-theory (disable rotation-about-arbitrary-line acl2-sqrt acl2-pi)
-           )))
+(encapsulate
+  (
+   ((angle-const) => *)
+   )
 
-(defun angle-const()
-  (/ (* (acl2-sqrt 2) (acl2-pi)) 180))
+  (local (defun angle-const ()
+                1/2))
 
-(defthmd angle-const-is-real
-  (realp (angle-const)))
+  (defthmd angle-const-is-real
+    (realp (angle-const)))
+  )
+
+(skip-proofs
+ (defthmd rot-i*angle*p-not-=p-m-n
+   (implies (and (zero-p p)
+                 (posp i)
+                 (equal angle (angle-const)))
+            (not (m-= (rotation-about-arbitrary-line (* i angle) (m-p) (n-p) p)
+                      p)))
+   :hints (("goal"
+            :use ((:instance rot-i*angle*p-not-=p-m-n-1)
+                  (:instance rot-i*angle*p-not-=p-m-n-2))
+            :in-theory (disable rotation-about-arbitrary-line acl2-sqrt acl2-pi)
+            )))
+ )
 
 (skip-proofs
  (defthmd rot-i*angle*p-in-b^3
@@ -666,7 +824,7 @@
                 (m-= (rotation-about-arbitrary-line (* i (angle-const)) (m-p) (n-p) (exists-z-p-witness i point))
                      point)))
   :hints (("goal"
-           :in-theory (disable d-p point-on-s2-not-d rotation-3d rotation-about-arbitrary-line angle-const)
+           :in-theory (disable d-p point-on-s2-not-d rotation-3d rotation-about-arbitrary-line)
            )))
 
 (defun-sk ffunc (point)
@@ -689,7 +847,7 @@
                 (m-= (rotation-about-arbitrary-line (angle-const) (m-p) (n-p) (rot-sqrt-2*f-func-1-witness point))
                      point)))
   :hints (("goal"
-           :in-theory (disable d-p point-on-s2-not-d rotation-3d ffunc rotation-about-arbitrary-line angle-const)
+           :in-theory (disable d-p point-on-s2-not-d rotation-3d ffunc rotation-about-arbitrary-line)
            )))
 
 (defun rot-sqrt-2*f-func (point)
@@ -803,7 +961,6 @@
                             (angle (angle-const))
                             (p (exists-z-p-witness (ffunc-witness (rot-sqrt-2*f-func-1-witness point))
                                                    (rot-sqrt-2*f-func-1-witness point))))
-                 (:instance angle-const)
                  (:instance zero-p-lemma2
                             (p2 (exists-z-p-witness (ffunc-witness (rot-sqrt-2*f-func-1-witness point))
                                                     (rot-sqrt-2*f-func-1-witness point)))
