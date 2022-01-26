@@ -18,6 +18,14 @@
 
 (include-book "banach-tarski-b-0")
 
+(defthmd r3-matrixp-r3d
+  (implies (and (realp angle)
+                (point-in-r3 u))
+           (r3-matrixp (rotation-3d angle u)))
+  :hints (("Goal"
+           :in-theory (enable aref2 header dimensions array2p)
+           )))
+
 (defun vect-tr (x y z p)
   `((:header :dimensions (3 1)
 	     :maximum-length 15)
@@ -25,6 +33,17 @@
     ((1 . 0) . ,(+ (aref2 :fake-name p 1 0) y) )
     ((2 . 0) . ,(+ (aref2 :fake-name p 2 0) z) )
     ))
+
+(defthmd vect-tr-values
+  (and (equal (aref2 :fake-name (vect-tr x y z p) 0 0)
+              (+ (aref2 :fake-name p 0 0) x))
+       (equal (aref2 :fake-name (vect-tr x y z p) 1 0)
+              (+ (aref2 :fake-name p 1 0) y))
+       (equal (aref2 :fake-name (vect-tr x y z p) 2 0)
+              (+ (aref2 :fake-name p 2 0) z)))
+  :hints (("Goal"
+           :in-theory (enable aref2)
+           )))
 
 (defthmd r3p-vectr-tr-p
   (implies (and (point-in-r3 p)
@@ -110,37 +129,339 @@
                                rotation-3d vect-tr m-*)
            )))
 
-(skip-proofs
- (defthmd rotation-about-arbitrary-line=>r3p
-   (implies (and (point-in-r3 m)
-                 (point-in-r3 n)
-                 (point-in-r3 p)
-                 (not (m-= m n))
-                 (realp angle)
-                 (equal (+ (* (- (point-in-r3-x1 n) (point-in-r3-x1 m))
-                              (- (point-in-r3-x1 n) (point-in-r3-x1 m)))
-                           (* (- (point-in-r3-y1 n) (point-in-r3-y1 m))
-                              (- (point-in-r3-y1 n) (point-in-r3-y1 m)))
-                           (* (- (point-in-r3-z1 n) (point-in-r3-z1 m))
-                              (- (point-in-r3-z1 n) (point-in-r3-z1 m))))
-                        1))
-            (point-in-r3 (rotation-about-arbitrary-line angle m n p)))))
+(defthmd rotation-about-arbitrary-line=>r3p
+  (implies (and (point-in-r3 m)
+                (point-in-r3 n)
+                (point-in-r3 p)
+                (realp angle))
+           (point-in-r3 (rotation-about-arbitrary-line angle m n p)))
+  :hints (("Goal"
+           :use ((:instance r3p-vectr-tr-p
+                            (p (m-* (rotation-3d angle
+                                             (return-point-in-r3 (- (point-in-r3-x1 n) (point-in-r3-x1 m))
+                                                                 (- (point-in-r3-y1 n) (point-in-r3-y1 m))
+                                                                 (- (point-in-r3-z1 n) (point-in-r3-z1 m))))
+                                    (vect-tr (- (point-in-r3-x1 m)) (- (point-in-r3-y1 m)) (- (point-in-r3-z1 m))
+                                             p)))
+                            (x (point-in-r3-x1 m))
+                            (y (point-in-r3-y1 m))
+                            (z (point-in-r3-z1 m)))
+                 (:instance set-e-p-iff-wit-inv*s2-d-p-n-set-e-p-1-1
+                            (rot (rotation-3d angle
+                                              (return-point-in-r3 (- (point-in-r3-x1 n) (point-in-r3-x1 m))
+                                                                  (- (point-in-r3-y1 n) (point-in-r3-y1 m))
+                                                                  (- (point-in-r3-z1 n) (point-in-r3-z1 m)))))
+                            (p1 (vect-tr (- (point-in-r3-x1 m)) (- (point-in-r3-y1 m)) (- (point-in-r3-z1 m))
+                                         p)))
+                 (:instance r3-matrixp-r3d
+                            (angle angle)
+                            (u (return-point-in-r3 (- (point-in-r3-x1 n) (point-in-r3-x1 m))
+                                                                 (- (point-in-r3-y1 n) (point-in-r3-y1 m))
+                                                                 (- (point-in-r3-z1 n) (point-in-r3-z1 m)))))
+                 (:instance r3p-vectr-tr-p
+                            (p p)
+                            (x (- (point-in-r3-x1 m)))
+                            (y (- (point-in-r3-y1 m)))
+                            (z (- (point-in-r3-z1 m))))
+                 (:instance r3-rotationp-r-theta-11-1-lemma4
+                            (p p))
+                 (:instance r3-rotationp-r-theta-11-1-lemma4
+                            (p m))
+                 (:instance r3-rotationp-r-theta-11-1-lemma4
+                            (p n))
+                 (:instance return-point-in-r3=>r3p
+                            (x (+ (POINT-IN-R3-X1 N)
+                                  (- (POINT-IN-R3-X1 M))))
+                            (y (+ (POINT-IN-R3-y1 N)
+                                  (- (POINT-IN-R3-y1 M))))
+                            (z (+ (POINT-IN-R3-z1 N)
+                                  (- (POINT-IN-R3-z1 M)))))
+                 (:instance rotation-about-arbitrary-line
+                            (p p)
+                            (m m)
+                            (n n)
+                            (angle angle))
+                 )
+           :in-theory nil
+           )))
 
-(skip-proofs
- (defthmd rotation-about-arbitrary-line=p
-   (implies (and (point-in-r3 m)
-                 (point-in-r3 n)
-                 (point-in-r3 p)
-                 (not (m-= m n))
-                 (equal angle 0)
-                 (equal (+ (* (- (point-in-r3-x1 n) (point-in-r3-x1 m))
-                              (- (point-in-r3-x1 n) (point-in-r3-x1 m)))
-                           (* (- (point-in-r3-y1 n) (point-in-r3-y1 m))
-                              (- (point-in-r3-y1 n) (point-in-r3-y1 m)))
-                           (* (- (point-in-r3-z1 n) (point-in-r3-z1 m))
-                              (- (point-in-r3-z1 n) (point-in-r3-z1 m))))
-                        1))
-            (m-= (rotation-about-arbitrary-line angle m n p) p))))
+-----
+(defun m-p ()
+  `((:header :dimensions (3 1)
+	     :maximum-length 15)
+    ((0 . 0) . 1/10)
+    ((1 . 0) . 1/4)
+    ((2 . 0) . 0)
+    ))
+
+
+(defun n-p ()
+  `((:header :dimensions (3 1)
+	     :maximum-length 15)
+    ((0 . 0) . 11/10)
+    ((1 . 0) . 1/4)
+    ((2 . 0) . 0)
+    ))
+
+(defthmd return-point-in-r3-n-m=
+  (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                             (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                             (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+         `((:header :dimensions (3 1)
+                    :maximum-length 15)
+           ((0 . 0) . 1)
+           ((1 . 0) . 0)
+           ((2 . 0) . 0)
+           ))
+  :hints (("Goal"
+           :in-theory (enable aref2 )
+           )))
+
+(defthmd rotation-3d-angle-n-m=
+  (implies (and (realp angle)
+                (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                           (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                           (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                       ret-point))
+           (equal (rotation-3d angle ret-point)
+                  `((:header :dimensions (3 3)
+                             :maximum-length 10)
+                    ((0 . 0) . 1)
+                    ((0 . 1) . 0)
+                    ((0 . 2) . 0)
+                    ((1 . 0) . 0)
+                    ((1 . 1) . ,(acl2-cosine angle) )
+                    ((1 . 2) . ,(- (acl2-sine angle)) )
+                    ((2 . 0) . 0)
+                    ((2 . 1) . ,(acl2-sine angle) )
+                    ((2 . 2) . ,(acl2-cosine angle) )
+                    )
+                  )
+           )
+  )
+
+(defthmd rotation-3d-angle-n-m=1
+  (implies (and (realp angle)
+                (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                           (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                           (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                       ret-point))
+           (and (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 0) 1)
+                (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 1) 0)
+                (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 2) 0)
+                (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 0) 0)
+                (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 1) (acl2-cosine angle))
+                (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 2) (- (acl2-sine angle)))
+                (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 0) 0)
+                (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 1) (acl2-sine angle))
+                (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 2) (acl2-cosine angle))))
+  :hints (("Goal"
+           :use ((:instance rotation-3d-angle-n-m= (angle angle) (ret-point ret-point))
+                 )
+           :in-theory (e/d (aref2) (rotation-3d))
+           )))
+
+(defthmd m-*rot-3d-vect-tr-values-1
+  (and (EQUAL (AREF2 :FAKE-NAME
+                     (LIST '(:HEADER :DIMENSIONS (3 1)
+                                     :MAXIMUM-LENGTH 4
+                                     :DEFAULT 0
+                                     :NAME MATRIX-PRODUCT)
+                           (CONS '(2 . 0)
+                                 (+ (* -1/4 (ACL2-SINE ANGLE))
+                                    (* 0 (AREF2 :FAKE-NAME P 0 0))
+                                    (* (ACL2-SINE ANGLE)
+                                       (AREF2 :FAKE-NAME P 1 0))
+                                    (* (ACL2-COSINE ANGLE)
+                                       (AREF2 :FAKE-NAME P 2 0))))
+                           (CONS '(1 . 0)
+                                 (+ (* -1/4 (ACL2-COSINE ANGLE))
+                                    (* 0 (AREF2 :FAKE-NAME P 0 0))
+                                    (* (ACL2-COSINE ANGLE)
+                                       (AREF2 :FAKE-NAME P 1 0))
+                                    (* (AREF2 :FAKE-NAME P 2 0)
+                                       (- (ACL2-SINE ANGLE)))))
+                           (CONS '(0 . 0)
+                                 (+ -1/10 (AREF2 :FAKE-NAME P 0 0)
+                                    (* 0 (AREF2 :FAKE-NAME P 1 0))
+                                    (* 0 (AREF2 :FAKE-NAME P 2 0)))))
+                     0 0)
+              (+ -1/10 (AREF2 :FAKE-NAME P 0 0)))
+       (EQUAL (AREF2 :FAKE-NAME
+                     (LIST '(:HEADER :DIMENSIONS (3 1)
+                                     :MAXIMUM-LENGTH 4
+                                     :DEFAULT 0
+                                     :NAME MATRIX-PRODUCT)
+                           (CONS '(2 . 0)
+                                 (+ (* -1/4 (ACL2-SINE ANGLE))
+                                    (* 0 (AREF2 :FAKE-NAME P 0 0))
+                                    (* (ACL2-SINE ANGLE)
+                                       (AREF2 :FAKE-NAME P 1 0))
+                                    (* (ACL2-COSINE ANGLE)
+                                       (AREF2 :FAKE-NAME P 2 0))))
+                           (CONS '(1 . 0)
+                                 (+ (* -1/4 (ACL2-COSINE ANGLE))
+                                    (* 0 (AREF2 :FAKE-NAME P 0 0))
+                                    (* (ACL2-COSINE ANGLE)
+                                       (AREF2 :FAKE-NAME P 1 0))
+                                    (* (AREF2 :FAKE-NAME P 2 0)
+                                       (- (ACL2-SINE ANGLE)))))
+                           (CONS '(0 . 0)
+                                 (+ -1/10 (AREF2 :FAKE-NAME P 0 0)
+                                    (* 0 (AREF2 :FAKE-NAME P 1 0))
+                                    (* 0 (AREF2 :FAKE-NAME P 2 0)))))
+                     2 0)
+              (+ (* -1/4 (ACL2-SINE ANGLE))
+                 (* (ACL2-SINE ANGLE)
+                    (AREF2 :FAKE-NAME P 1 0))
+                 (* (ACL2-COSINE ANGLE)
+                    (AREF2 :FAKE-NAME P 2 0))))
+       (EQUAL (AREF2 :FAKE-NAME
+                     (LIST '(:HEADER :DIMENSIONS (3 1)
+                                     :MAXIMUM-LENGTH 4
+                                     :DEFAULT 0
+                                     :NAME MATRIX-PRODUCT)
+                           (CONS '(2 . 0)
+                                 (+ (* -1/4 (ACL2-SINE ANGLE))
+                                    (* 0 (AREF2 :FAKE-NAME P 0 0))
+                                    (* (ACL2-SINE ANGLE)
+                                       (AREF2 :FAKE-NAME P 1 0))
+                                    (* (ACL2-COSINE ANGLE)
+                                       (AREF2 :FAKE-NAME P 2 0))))
+                           (CONS '(1 . 0)
+                                 (+ (* -1/4 (ACL2-COSINE ANGLE))
+                                    (* 0 (AREF2 :FAKE-NAME P 0 0))
+                                    (* (ACL2-COSINE ANGLE)
+                                       (AREF2 :FAKE-NAME P 1 0))
+                                    (* (AREF2 :FAKE-NAME P 2 0)
+                                       (- (ACL2-SINE ANGLE)))))
+                           (CONS '(0 . 0)
+                                 (+ -1/10 (AREF2 :FAKE-NAME P 0 0)
+                                    (* 0 (AREF2 :FAKE-NAME P 1 0))
+                                    (* 0 (AREF2 :FAKE-NAME P 2 0)))))
+                     1 0)
+              (+ (* -1/4 (ACL2-COSINE ANGLE))
+                 (* (ACL2-COSINE ANGLE)
+                    (AREF2 :FAKE-NAME P 1 0))
+                 (* (AREF2 :FAKE-NAME P 2 0)
+                    (- (ACL2-SINE ANGLE)))))
+       )
+
+  :hints (("Goal"
+           :in-theory (enable aref2)
+           )))
+
+(defthmd m-*rot-3d-vect-tr-values
+  (implies (and (realp angle)
+                (point-in-r3 p)
+                (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                           (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                           (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                       ret-point)
+                (equal (vect-tr (- (point-in-r3-x1 (m-p))) (- (point-in-r3-y1 (m-p))) (- (point-in-r3-z1 (m-p))) p)
+                       vectr-tr-to-z))
+           (and (equal (aref2 :fake-name (m-* (rotation-3d angle ret-point) vectr-tr-to-z) 0 0)
+                       (- (point-in-r3-x1 p) 1/10))
+                (equal (aref2 :fake-name (m-* (rotation-3d angle ret-point) vectr-tr-to-z) 1 0)
+                       (+ (* (acl2-cosine angle) (- (point-in-r3-y1 p) 1/4))
+                          (* (- (acl2-sine angle)) (point-in-r3-z1 p))))
+                (equal (aref2 :fake-name (m-* (rotation-3d angle ret-point) vectr-tr-to-z) 2 0)
+                       (+ (* (acl2-sine angle) (- (point-in-r3-y1 p) 1/4))
+                          (* (acl2-cosine angle) (point-in-r3-z1 p))))))
+  :hints (("Goal"
+           :use ((:instance rotation-3d-angle-n-m=)
+                 (:instance r3p-vectr-tr-p
+                            (p p)
+                            (x (- (point-in-r3-x1 (m-p))))
+                            (y (- (point-in-r3-y1 (m-p))))
+                            (z (- (point-in-r3-z1 (m-p)))))
+                 (:instance r3-matrixp-r3d
+                            (angle angle)
+                            (u ret-point))
+                 (:instance array2p-alist2p
+                            (name :fake-name)
+                            (l vectr-tr-to-z))
+                 (:instance vect-tr-values
+                            (p p)
+                            (x (- (point-in-r3-x1 (m-p))))
+                            (y (- (point-in-r3-y1 (m-p))))
+                            (z (- (point-in-r3-z1 (m-p)))))
+                 (:instance rotation-3d-angle-n-m=1)
+                 (:instance m-*rot-3d-vect-tr-values-1)
+                 )
+           :in-theory (e/d (m-*) (rotation-3d))
+           )))
+
+
+------
+;; (defthmd vectr-tr-m-*rot-3d-vect-tr-values
+;;   (implies (and (realp angle)
+;;                 (point-in-r3 p)
+;;                 (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+;;                                            (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+;;                                            (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+;;                        ret-point)
+;;                 (equal (vect-tr (- (point-in-r3-x1 (m-p))) (- (point-in-r3-y1 (m-p))) (- (point-in-r3-z1 (m-p))) p)
+;;                        vectr-tr-to-z))
+;;            (and (equal (aref2 :fake-name (rotation-about-arbitrary-line angle (m-p) (n-p) p) 0 0)
+;;                        (point-in-r3-x1 p))
+;;                 (equal (aref2 :fake-name (rotation-about-arbitrary-line angle (m-p) (n-p) p) 1 0)
+;;                        (+ (* (acl2-cosine angle) (- (point-in-r3-y1 p) 1/4))
+;;                           (* (- (acl2-sine angle)) (point-in-r3-z1 p))
+;;                           1/4))
+;;                 (equal (aref2 :fake-name (rotation-about-arbitrary-line angle (m-p) (n-p) p) 2 0)
+;;                        (+ (* (acl2-sine angle) (- (point-in-r3-y1 p) 1/4))
+;;                           (* (acl2-cosine angle) (point-in-r3-z1 p))))))
+;;   :hints (("Goal"
+;;            :in-theory nil
+;;            )))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(defthmd rotation-about-arbitrary-line=p
+  (implies (and (equal angle 0)
+                (point-in-r3 p))
+           (m-= (rotation-about-arbitrary-line angle (m-p) (n-p) p) p))
+  :hints (("Goal"
+           :use ((:instance rotation-about-witness-values
+                            (angle 0)
+                            (point (return-point-in-r3 (- (point-in-r3-x1 n) (point-in-r3-x1 m))
+                                                       (- (point-in-r3-y1 n) (point-in-r3-y1 m))
+                                                       (- (point-in-r3-z1 n) (point-in-r3-z1 m)))))
+                 (:instance r3-matrixp-r3d
+                            (angle 0)
+                            (u (return-point-in-r3 (- (point-in-r3-x1 n) (point-in-r3-x1 m))
+                                                   (- (point-in-r3-y1 n) (point-in-r3-y1 m))
+                                                   (- (point-in-r3-z1 n) (point-in-r3-z1 m)))))
+                 (:instance return-point-in-r3=>r3p
+                            (x (+ (POINT-IN-R3-X1 N)
+                                  (- (POINT-IN-R3-X1 M))))
+                            (y (+ (POINT-IN-R3-y1 N)
+                                  (- (POINT-IN-R3-y1 M))))
+                            (z (+ (POINT-IN-R3-z1 N)
+                                  (- (POINT-IN-R3-z1 M))))))
+           :in-theory (e/d (m-* m-= aref2 alist2p array2p) (rotation-3d))
+           )))
 
 (skip-proofs
  (defthmd rot-angle1-of-angle2*p=>
