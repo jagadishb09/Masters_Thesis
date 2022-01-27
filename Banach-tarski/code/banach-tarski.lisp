@@ -706,6 +706,175 @@
            :use ((:instance sqrt->-0 (x 349/400)))
            )))
 
+-----------------------------------------
+
+(defun integer-seq (n)
+  (if (posp n)
+      (if (evenp (- n 1))
+          (/ (- n 1) 2)
+        (- (/ (- n 2) 2)))
+    0))
+
+(defun-sk int-exists-in-seq (int-num)
+  (exists n
+          (and (posp n)
+               (equal (integer-seq n) int-num))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthmd integer-seq-countable
+    (implies (integerp num)
+             (int-exists-in-seq num))
+    :hints (("Goal"
+             :cases ((natp num))
+             :in-theory (enable natp posp)
+             )
+            ("Subgoal 2"
+             :use ((:instance int-exists-in-seq-suff (int-num num) (n (+ (* 2 (- num)) 2))))
+             )
+            ("Subgoal 1"
+             :use ((:instance int-exists-in-seq-suff (int-num num) (n (+ (* 2 num) 1))))
+             )
+            ))
+  )
+
+(defun int-seq-*-pos-seq-i (i)
+  (let ((rm-2 (mod-remainder-2 0 i)))
+    (let ((rm-3 (mod-remainder-3 0 (nth 1 rm-2))))
+      (if (equal (nth 1 rm-3) 1)
+            (list (list (integer-seq (nth 0 rm-2)) (posp-seq (nth 0 rm-3))))
+        (list (list (integer-seq (nth 0 rm-2)) (posp-seq (nth 0 rm-3))))))))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defun int*pos-seq-2 (i)
+    (if (zp i)
+        nil
+      (append (int*pos-seq-2 (- i 1)) (int-seq-*-pos-seq-i i))))
+  )
+
+(defun int*pos-seq (i)
+  (if (posp i)
+      (int*pos-seq-2 i)
+    nil))
+
+(defun int*pos-sequence (n)
+  (if (posp n)
+      (nth (- n 1) (int*pos-seq n))
+    (list (integer-seq 0) (posp-seq 0))))
+
+(defun-sk int*pos-countable (x)
+  (exists n
+          (and (posp n)
+               (equal (int*pos-sequence n) x))))
+
+(defthmd int*pos-seq-exists
+  (implies (and (posp n1)
+                (posp n2)
+                (equal (integer-seq n1) p)
+                (equal (posp-seq n2) q))
+           (int*pos-countable (list p q)))
+  :hints (("goal"
+           :use (:functional-instance f-*-g-seq-exists
+                                      (f integer-seq)
+                                      (g posp-seq)
+                                      (f-*-g-countable int*pos-countable)
+                                      (f-*-g-sequence int*pos-sequence)
+                                      (f-*-g-seq int*pos-seq)
+                                      (f-*-g-seq-2 int*pos-seq-2)
+                                      (f-*-g-seq-i int-seq-*-pos-seq-i)
+                                      (f-*-g-countable-witness int*pos-countable-witness))
+           )))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (encapsulate
   (
    ((angle-const) => *)
