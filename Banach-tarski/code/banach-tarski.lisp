@@ -732,11 +732,24 @@
             )))
  )
 
-(skip-proofs
- (defthmd rot-i*angle*p-in-b^3
-   (implies (and (zero-p p)
-                 (realp angle))
-            (<= (cal-radius (rotation-about-arbitrary-line angle (m-p) (n-p) p)) 1))))
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd rot-i*angle*p-in-b^3
+    (implies (and (zero-p p)
+                  (realp angle))
+             (<= (cal-radius (rotation-about-arbitrary-line angle (m-p) (n-p) p)) 1))
+    :hints (("Goal"
+             :use ((:instance vectr-tr-m-*rot-3d-vect-tr-values (p p) (angle angle))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance cosine-<-1-if-sine-non-0 (x angle))
+                   (:instance r-theta*p=p=>cosine=1-1 (angle angle))
+                   (:instance zero-p-lemma1 (p1 p))
+                   )
+             :in-theory (e/d (zero-p) (rotation-about-arbitrary-line sin**2+cos**2 cosine-<-1-if-sine-non-0))
+             ))))
 
 (defun-sk exists-z-p (i point)
   (exists p
