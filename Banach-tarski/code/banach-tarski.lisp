@@ -706,8 +706,6 @@
            :use ((:instance sqrt->-0 (x 349/400)))
            )))
 
------------------------------------------
-
 (defun integer-seq (n)
   (if (posp n)
       (if (evenp (- n 1))
@@ -769,6 +767,49 @@
       (nth (- n 1) (int*pos-seq n))
     (list (integer-seq 0) (posp-seq 0))))
 
+(defthmd angle-int*pos-thm-3
+  (implies (and (equal full-list (append p q))
+                (true-listp p)
+                (true-listp q)
+                (equal (len p) len-p))
+           (equal (nth len-p full-list)
+                  (car q))))
+
+(defthmd len-of-int*pos-seq-2
+  (implies (posp n)
+           (equal (len (int*pos-seq-2 n)) n)))
+
+(defthmd nth-n-1-int*pos-seq=
+  (implies (posp n)
+           (equal (nth (- n 1) (int*pos-seq n))
+                  (car (int-seq-*-pos-seq-i n))))
+  :hints (("Goal"
+           :use ((:instance angle-int*pos-thm-3
+                            (full-list (int*pos-seq-2 n))
+                            (p (int*pos-seq-2 (- n 1)))
+                            (q (int-seq-*-pos-seq-i n))
+                            (len-p (- n 1)))
+                 (:instance len-of-int*pos-seq-2 (n (- n 1)))
+                 )
+           :do-not-induct t
+           :in-theory (disable int-seq-*-pos-seq-i)
+           )))
+
+(defthmd real-car-int-seq-*-pos-seq-i
+  (implies (posp n)
+           (and (realp (car (car (int-seq-*-pos-seq-i n))))
+                (realp (cadr (car (int-seq-*-pos-seq-i n)))))))
+
+(defthmd realp-int*pos-sequence
+  (and (realp (car (int*pos-sequence n)))
+       (realp (cadr (int*pos-sequence n))))
+  :hints (("Goal"
+           :use ((:instance nth-n-1-int*pos-seq= (n n))
+                 (:instance real-car-int-seq-*-pos-seq-i (n n))
+                 )
+           :in-theory (disable int*pos-seq)
+           )))
+
 (defun-sk int*pos-countable (x)
   (exists n
           (and (posp n)
@@ -792,114 +833,253 @@
                                       (f-*-g-countable-witness int*pos-countable-witness))
            )))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+(defun angle-int*pos (num pos)
+  (if (posp pos)
+      (/ (* 2 (acl2-pi) num) pos)
+    0))
+
+(defun generate-angle-int*pos (n)
+  (if (zp n)
+      nil
+    (let ((num (car (int*pos-sequence n)))
+          (pos (cadr (int*pos-sequence n))))
+          (append (generate-angle-int*pos (- n 1)) (list (angle-int*pos num pos))))))
+
+(defun angles-int*pos-seq (n)
+  (if (posp n)
+      (nth (- n 1) (generate-angle-int*pos n))
+    0))
+
+(defun-sk angle-int*pos-exists-in-seq (angle)
+  (exists n
+          (and (posp n)
+               (equal (angles-int*pos-seq n) angle))))
 
 (encapsulate
-  (
-   ((angle-const) => *)
-   )
+  ()
 
-  (local (defun angle-const ()
-                1/2))
+  (local (include-book "arithmetic-5/top" :dir :system))
 
-  (defthmd angle-const-is-real
-    (realp (angle-const)))
+  (defthmd angle-int*pos-thm-2
+    (implies (posp n)
+             (equal (len (generate-angle-int*pos n)) n))
+    :hints (("Goal"
+             :in-theory (disable int*pos-sequence acl2-pi angle-int*pos)
+             )))
   )
 
-(skip-proofs
- (defthmd rot-i*angle*p-not-=p-m-n
-   (implies (and (zero-p p)
-                 (posp i)
-                 (equal angle (angle-const)))
-            (not (m-= (rotation-about-arbitrary-line (* i angle) (m-p) (n-p) p)
-                      p)))
+(defthmd angle-int*pos-thm-1
+  (implies (posp n)
+           (equal (nth (- n 1) (generate-angle-int*pos n))
+                  (angle-int*pos (car (int*pos-sequence n)) (cadr (int*pos-sequence n)))))
+  :hints (("Goal"
+           :use ((:instance angle-int*pos-thm-3
+                            (full-list (generate-angle-int*pos n))
+                            (p (generate-angle-int*pos (- n 1)))
+                            (q (list (angle-int*pos num pos)))
+                            (len-p (- n 1)))
+                 (:instance angle-int*pos-thm-2 (n (- n 1)))
+                 )
+           :do-not-induct t
+           :in-theory (disable int*pos-sequence angle-int*pos)
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd angle-int*pos-thm
+    (implies (and (posp n1)
+                  (posp n2)
+                  (equal (integer-seq n1) num)
+                  (equal (posp-seq n2) pos))
+             (angle-int*pos-exists-in-seq (/ (* 2 (acl2-pi) num) pos)))
+    :hints (("Goal"
+             :use ((:instance int*pos-seq-exists (n1 n1) (n2 n2) (p num) (q pos))
+                   (:instance angle-int*pos-exists-in-seq-suff
+                              (angle (/ (* 2 (acl2-pi) num) pos))
+                              (n (INT*POS-COUNTABLE-WITNESS (list num pos))))
+                   (:instance angle-int*pos-thm-1
+                              (n (INT*POS-COUNTABLE-WITNESS (LIST num pos))))
+                   )
+             :do-not-induct t
+             :in-theory (disable int*pos-sequence generate-angle-int*pos)
+
+             )))
+  )
+
+(defthmd rot-i*angle*p=p=>angle-in-seq-1
+  (implies (and (zero-p p)
+                (posp i)
+                (realp angle)
+                (m-= (rotation-about-arbitrary-line (* i angle) (m-p) (n-p) p) p))
+           (equal (acl2-cosine (* i angle)) 1))
+  :hints (("goal"
+           :use ((:instance rotation-about-arbitrary-line=>r3p-m-n
+                            (p p)
+                            (angle (* i angle)))
+                 (:instance vectr-tr-m-*rot-3d-vect-tr-values
+                            (angle (* i angle))
+                            (p p))
+                 (:instance zero-p-lemma1 (p1 p))
+                 )
+           :in-theory (e/d (m-=) (rotation-about-arbitrary-line acl2-sqrt acl2-pi m-p n-p))
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd rot-i*angle*p=p=>angle-in-seq-2
+    (implies (and (posp i)
+                  (realp angle)
+                  (equal (acl2-cosine (* i angle)) 1))
+             (and (equal (* i angle) (* 2 (acl2-pi) (/ (- (* i angle) (mod (* i angle) (* 2 (acl2-pi))))
+                                                       (* 2 (acl2-pi)))))
+                  (integerp (/ (- (* i angle) (mod (* i angle) (* 2 (acl2-pi))))
+                               (* 2 (acl2-pi))))))
+    :hints (("Goal"
+             :use ((:instance realnum-equiv
+                              (r (* i angle))
+                              (x (* 2 (acl2-pi))))
+                   (:instance integerp-r-mod-r-x/x
+                              (r (* i angle))
+                              (x (* 2 (acl2-pi))))
+                   (:instance range-mod-r-x
+                              (r (* i angle))
+                              (x (* 2 (acl2-pi))))
+                   (:instance cos2pik+x
+                              (k (/ (- (* i angle) (mod (* i angle) (* 2 (acl2-pi))))
+                                    (* 2 (acl2-pi))))
+                              (x (mod (* i angle) (* 2 (acl2-pi)))))
+                   (:instance cosine-is-1-in-0<2pi=>x=0-6
+                              (x (mod (* i angle) (* 2 (acl2-pi)))))
+                   )
+             :in-theory (disable mod SINE-OF-SUMS COSINE-OF-SUMS)
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd rot-i*angle*p=p=>angle-in-seq-3
+    (implies (and (zero-p p)
+                  (posp i)
+                  (realp angle)
+                  (m-= (rotation-about-arbitrary-line (* i angle) (m-p) (n-p) p) p))
+             (angle-int*pos-exists-in-seq angle))
+    :hints (("Goal"
+             :use ((:instance rot-i*angle*p=p=>angle-in-seq-2
+                              (i i)
+                              (angle angle))
+                   (:instance rot-i*angle*p=p=>angle-in-seq-1 (p p) (i i) (angle angle))
+                   (:instance integer-seq-countable
+                              (num (/ (- (* i angle) (mod (* i angle) (* 2 (acl2-pi))))
+                                      (* 2 (acl2-pi)))))
+                   (:instance posp-countable-thm (num i))
+                   (:instance angle-int*pos-thm
+                              (n1 (INT-EXISTS-IN-SEQ-WITNESS (/ (- (* i angle) (mod (* i angle) (* 2 (acl2-pi))))
+                                                                (* 2 (acl2-pi)))))
+                              (n2 (NUM>=1-EXISTS-WITNESS i))
+                              (num (/ (- (* i angle) (mod (* i angle) (* 2 (acl2-pi))))
+                                      (* 2 (acl2-pi))))
+                              (pos i))
+                   )
+             :in-theory (disable m-= rotation-about-arbitrary-line zero-p angle-int*pos-exists-in-seq
+                                 integer-seq posp-seq m-p n-p (:EXECUTABLE-COUNTERPART M-P)
+                                 (:EXECUTABLE-COUNTERPART n-P) )
+             )))
+  )
+
+(defthmd realp-angle-int*pos
+  (realp (angles-int*pos-seq n))
+  :hints (("Goal"
+           :use ((:instance angle-int*pos-thm-1 (n n))
+                 (:instance realp-int*pos-sequence (n n))
+                 )
+           :in-theory (disable generate-angle-int*pos int*pos-sequence)
+           )))
+
+(defun-sk exists-in-interval-but-not-in-angle-int*pos-seq (a b)
+  (exists angle
+          (and (realp angle)
+               (< a angle)
+               (< angle b)
+               (not (angle-int*pos-exists-in-seq angle)))))
+
+(encapsulate
+ ()
+
+ (local (include-book "nonstd/transcendentals/reals-are-uncountable-1" :dir :system))
+
+ (defthmd existence-of-angle-not-in-int*pos-sequence
+   (exists-in-interval-but-not-in-angle-int*pos-seq 0 (* 2 (acl2-pi)))
    :hints (("goal"
-            :use ((:instance rot-i*angle*p-not-=p-m-n-1)
-                  (:instance rot-i*angle*p-not-=p-m-n-2))
-            :in-theory (disable rotation-about-arbitrary-line acl2-sqrt acl2-pi)
-            )))
+	    :use ((:functional-instance reals-are-not-countable
+					(seq angles-int*pos-seq)
+					(a (lambda () 0))
+					(b (lambda () (* 2 (acl2-pi))))
+					(exists-in-sequence angle-int*pos-exists-in-seq)
+					(exists-in-sequence-witness angle-int*pos-exists-in-seq-witness)
+					(exists-in-interval-but-not-in-sequence exists-in-interval-but-not-in-angle-int*pos-seq)
+					(exists-in-interval-but-not-in-sequence-witness exists-in-interval-but-not-in-angle-int*pos-seq-witness)))
+	    )
+	   ("subgoal 4"
+	    :use (
+		  (:instance exists-in-interval-but-not-in-angle-int*pos-seq-suff (angle x))
+		  )
+	    )
+	   ("subgoal 3"
+	    :in-theory (disable angle-int*pos-exists-in-seq)
+	    )
+	   ("subgoal 2"
+	    :use (:instance angle-int*pos-exists-in-seq-suff (n i) (angle x))
+	    :in-theory (disable angles-int*pos-seq)
+	    )
+	   ))
  )
+
+(defthmd witness-not-in-angle-int*pos-sequence
+  (and (realp (exists-in-interval-but-not-in-angle-int*pos-seq-witness 0 (* 2 (acl2-pi))))
+       (<= 0 (exists-in-interval-but-not-in-angle-int*pos-seq-witness 0 (* 2 (acl2-pi))))
+       (< (exists-in-interval-but-not-in-angle-int*pos-seq-witness 0 (* 2 (acl2-pi))) (* 2 (acl2-pi)))
+       (not (angle-int*pos-exists-in-seq (exists-in-interval-but-not-in-angle-int*pos-seq-witness 0 (* 2 (acl2-pi))))))
+  :hints (("goal"
+           :use ((:instance existence-of-angle-not-in-int*pos-sequence))
+           )))
+
+(defun angle-const ()
+  (exists-in-interval-but-not-in-angle-int*pos-seq-witness 0 (* 2 (acl2-pi))))
+
+(defthmd angle-const-is-real
+  (realp (angle-const))
+  :hints (("goal"
+           :use ((:instance witness-not-in-angle-int*pos-sequence)
+                 )
+           :in-theory (disable m-= zero-p rotation-about-arbitrary-line acl2-sqrt acl2-pi
+                               exists-in-interval-but-not-in-angle-int*pos-seq)
+           )))
+
+(defthmd rot-i*angle*p-not-=p-m-n
+  (implies (and (zero-p p)
+                (posp i)
+                (equal angle (angle-const)))
+           (not (m-= (rotation-about-arbitrary-line (* i angle) (m-p) (n-p) p)
+                     p)))
+  :hints (("goal"
+           :use ((:instance rot-i*angle*p=p=>angle-in-seq-3
+                            (i i)
+                            (angle (angle-const))
+                            (p p))
+                 (:instance witness-not-in-angle-int*pos-sequence)
+                 )
+           :in-theory (disable m-= zero-p rotation-about-arbitrary-line acl2-sqrt acl2-pi
+                               exists-in-interval-but-not-in-angle-int*pos-seq)
+           )))
 
 (encapsulate
   ()
@@ -3678,7 +3858,41 @@
            )
           ))
 
-
+(defthmd b3-equiv-2
+  (iff (b3 p)
+       (or (rot-3-b3-00 p)
+           (rot-3-b3-10 p)
+           (rot-4-b4-00 p)
+           (rot-4-b4-10 p)
+           (rot-5-b5-00 p)
+           (rot-5-b5-10 p)
+           (rot-6-b6-00 p)
+           (rot-6-b6-10 p)
+           (rot-7-b7-00 p)
+           (rot-7-b7-10 p)
+           (rot-8-b8-00 p)
+           (rot-8-b8-10 p)
+           (rota-1-rot-3-b3-11 p)
+           (rota-1-rot-3-b3-01 p)
+           (rota-1-rot-4-b4-11 p)
+           (rota-1-rot-4-b4-01 p)
+           (rota-1-rot-5-b5-11 p)
+           (rota-1-rot-5-b5-01 p)
+           (rota-1-rot-6-b6-11 p)
+           (rota-1-rot-6-b6-01 p)
+           (rota-1-rot-7-b7-11 p)
+           (rota-1-rot-7-b7-01 p)
+           (rota-1-rot-8-b8-11 p)
+           (rota-1-rot-8-b8-01 p)))
+       :hints (("Goal"
+                :use ((:instance rot-3-8-b-3-8-01-or-11=>)
+                      (:instance a3-a8-b3-0-n-b3-f=>)
+                      (:instance rota-1-rot-3-8-b-3-8-01-or-11=>)
+                      (:instance a3-a8-rot-a-inv-b3-0-nf=>)
+                      (:instance b3-iff-b3-0-n-b3-f-or-rota-inv-b3-0-n-f)
+                      )
+                :in-theory nil
+                )))
 
 
 
