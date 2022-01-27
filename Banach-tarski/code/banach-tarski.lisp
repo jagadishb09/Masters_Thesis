@@ -663,65 +663,6 @@
            :in-theory (e/d (m-=) ())
            )))
 
-;; (skip-proofs
-;;  (defthmd rot-i*angle*p-not-=p
-;;    (implies (and (point-in-r3 m)
-;;                  (point-in-r3 n)
-;;                  (zero-p p)
-;;                  (not (zero-p m))
-;;                  (not (zero-p n))
-;;                  (not (m-= m n))
-;;                  (posp i)
-;;                  (equal angle 1/2)
-;;                  (equal (+ (* (- (point-in-r3-x1 n) (point-in-r3-x1 m))
-;;                               (- (point-in-r3-x1 n) (point-in-r3-x1 m)))
-;;                            (* (- (point-in-r3-y1 n) (point-in-r3-y1 m))
-;;                               (- (point-in-r3-y1 n) (point-in-r3-y1 m)))
-;;                            (* (- (point-in-r3-z1 n) (point-in-r3-z1 m))
-;;                               (- (point-in-r3-z1 n) (point-in-r3-z1 m))))
-;;                         1))
-;;             (not (m-= (rotation-about-arbitrary-line (* i angle) m n p)
-;;                       p)))))
-
-;; (skip-proofs
-;;  (defthmd rot-i*angle*p-not-=rot-j
-;;    (implies (and (point-in-r3 m)
-;;                  (point-in-r3 n)
-;;                  (zero-p p)
-;;                  (not (zero-p m))
-;;                  (not (zero-p n))
-;;                  (not (m-= m n))
-;;                  (posp i)
-;;                  (posp j)
-;;                  (< i j)
-;;                  (equal angle (/ (* (acl2-sqrt 2) (acl2-pi)) 180))
-;;                  (equal (+ (* (- (point-in-r3-x1 n) (point-in-r3-x1 m))
-;;                               (- (point-in-r3-x1 n) (point-in-r3-x1 m)))
-;;                            (* (- (point-in-r3-y1 n) (point-in-r3-y1 m))
-;;                               (- (point-in-r3-y1 n) (point-in-r3-y1 m)))
-;;                            (* (- (point-in-r3-z1 n) (point-in-r3-z1 m))
-;;                               (- (point-in-r3-z1 n) (point-in-r3-z1 m))))
-;;                         1))
-;;             (not (m-= (rotation-about-arbitrary-line (* i angle) m n p)
-;;                       (rotation-about-arbitrary-line (* j angle) m n p))))))
-
-;; (defun m-p ()
-;;   `((:header :dimensions (3 1)
-;; 	     :maximum-length 15)
-;;     ((0 . 0) . 1/10)
-;;     ((1 . 0) . 1/4)
-;;     ((2 . 0) . 0)
-;;     ))
-
-
-;; (defun n-p ()
-;;   `((:header :dimensions (3 1)
-;; 	     :maximum-length 15)
-;;     ((0 . 0) . -9/10)
-;;     ((1 . 0) . 1/4)
-;;     ((2 . 0) . 0)
-;;     ))
-
 (defthmd rotation-about-arbitrary-line=>r3p-m-n
   (implies (and (point-in-r3 p)
                 (realp angle))
@@ -764,22 +705,6 @@
   :hints (("goal"
            :use ((:instance sqrt->-0 (x 349/400)))
            )))
-
-;; (defthmd rot-i*angle*p-not-=rot-j-m-n
-;;   (implies (and (zero-p p)
-;;                 (posp i)
-;;                 (posp j)
-;;                 (< i j)
-;;                 (equal angle (/ (* (acl2-sqrt 2) (acl2-pi)) 180)))
-;;            (not (m-= (rotation-about-arbitrary-line (* i angle) (m-p) (n-p) p)
-;;                      (rotation-about-arbitrary-line (* j angle) (m-p) (n-p) p))))
-;;   :hints (("goal"
-;;            :use ((:instance rot-i*angle*p-not-=rot-j (m (m-p)) (n (n-p)) (p p) (i i) (j j)
-;;                             (angle (/ (* (acl2-sqrt 2) (acl2-pi)) 180)))
-;;                  (:instance rot-i*angle*p-not-=p-m-n-1)
-;;                  (:instance rot-i*angle*p-not-=p-m-n-2))
-;;            :in-theory (disable rotation-about-arbitrary-line acl2-sqrt acl2-pi)
-;;            )))
 
 (encapsulate
   (
