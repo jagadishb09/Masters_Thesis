@@ -511,23 +511,80 @@
 
 
 
-;; (defun-sk rota-1-b3-01-1 (point)
-;;   (exists p
-;;           (and (b3-10 p)
-;;                (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p) p) point))))
+(defun-sk rota-1-b3-10-1 (point)
+  (exists p
+          (and (b3-10 p)
+               (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p) p) point))))
 
-;; (defun rota-1-b3-01 (p)
-;;   (and (point-in-r3 p)
-;;        (rota-1-b3-01-1 p)))
+(defun rota-1-b3-10 (p)
+  (and (point-in-r3 p)
+       (rota-1-b3-10-1 p)))
 
-;; (defun-sk rota-1-b3-01-1 (point)
-;;   (exists p
-;;           (and (b3-10 p)
-;;                (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p) p) point))))
+(defun-sk rota-1-b3-11-1 (point)
+  (exists p
+          (and (b3-11 p)
+               (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p) p) point))))
 
-;; (defun rota-1-b3-01 (p)
-;;   (and (point-in-r3 p)
-;;        (rota-1-b3-01-1 p)))
+(defun rota-1-b3-11 (p)
+  (and (point-in-r3 p)
+       (rota-1-b3-11-1 p)))
+
+(defthmd rota-inv-b3-0-n-f=>rota-inv-1-14
+  (implies (rota-inv-b3-0-n-f p)
+           (or (rota-1-b3-10 p)
+               (rota-1-b3-11 p)))
+  :hints (("Goal"
+           :cases ((b3-0-set-a3 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                   (b3-0-set-a4 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                   (b3-0-set-a5 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                   (b3-0-set-a6 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                   (b3-0-set-a7 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                   (b3-0-set-a8 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                   (b3-0-set-a9 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                   (b3-0-set-a10 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                   (b3-0-set-a11 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                   (b3-0-set-a12 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                   (b3-0-set-a13 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                   (b3-0-set-a14 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                   (b3-0-set-a2 (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                   (b3-0-set-a1 (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+           :use ((:instance rota-inv-b3-0-n-f (p p))
+                 (:instance rota-inv-b3-0-n-f-1 (point p))
+                 (:instance b3-0-n-f (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance b3-0-iff-a1-to-a14 (p (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+           :in-theory nil
+           )
+          ("Subgoal 14"
+           :use ((:instance rota-1-b3-10 (p p))
+                 (:instance rota-1-b3-11 (p p))
+                 (:instance rota-1-b3-10-1-suff (point p) (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance rota-1-b3-11-1-suff (point p) (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance b3-10 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance b3-11 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (p (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                            (rot (R3-M-INVERSE (ROT-3))))
+                 (:instance rot*b3-f (rot (R3-M-INVERSE (ROT-3))) (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance rot*b3-f-1 (rot (R3-M-INVERSE (ROT-3))) (point (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance rot*set-f (rot (R3-M-INVERSE (ROT-3))) (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance rot*set-f-1 (rot (R3-M-INVERSE (ROT-3))) (point (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance ROT-3-INV*B3-F-suff (point (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                            (p (ROT*B3-F-1-WITNESS (R3-M-INVERSE (ROT-3))
+                                                   (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+                 (:instance ROT-3-INV*F-suff (point (ROTA-INV-B3-0-N-F-1-WITNESS P))
+                            (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-3))
+                                                    (ROTA-INV-B3-0-N-F-1-WITNESS P))))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance rot-3)
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-3)))
+                 (:instance b3-0 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 (:instance b3 (p (ROTA-INV-B3-0-N-F-1-WITNESS P)))
+                 )
+           :in-theory nil
+           )
+
+  ))
 
 ;; ----
 
