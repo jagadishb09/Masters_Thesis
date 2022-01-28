@@ -1,10 +1,50 @@
 
 (include-book "banach-tarski")
 
+(defun set-b10 (p)
+  (and (b3-0-set-a1 p)
+       (b3-f p)))
+
+(defun set-b20 (p)
+  (and (b3-0-set-a2 p)
+       (b3-f p)))
+
+(defun set-b11 (p)
+  (and (b3-0-set-a1 p)
+       (set-f-p p)))
+
+(defun set-b21 (p)
+  (and (b3-0-set-a2 p)
+       (set-f-p p)))
+
 (defthmd b3-0-n-b3-f=>1-14
   (implies (b3-0-n-b3-f p)
            (or (b3-00 p)
-               (b3-01 p)))
+               (b3-01 p)
+               (b4-00 p)
+               (b4-01 p)
+               (b5-00 p)
+               (b5-01 p)
+               (b6-00 p)
+               (b6-01 p)
+               (b7-00 p)
+               (b7-01 p)
+               (b8-00 p)
+               (b8-01 p)
+               (b9-00 p)
+               (b9-01 p)
+               (b10-00 p)
+               (b10-01 p)
+               (b11-00 p)
+               (b11-01 p)
+               (b12-00 p)
+               (b12-01 p)
+               (b13-00 p)
+               (b13-01 p)
+               (b14-00 p)
+               (b14-01 p)
+               (set-b20 p)
+               (set-b10 p)))
   :hints (("goal"
            :cases ((b3-0-set-a3 p)
                    (b3-0-set-a4 p)
@@ -18,8 +58,8 @@
                    (b3-0-set-a12 p)
                    (b3-0-set-a13 p)
                    (b3-0-set-a14 p)
-                   (b3-0-set-a1 p)
-                   (b3-0-set-a2 p))
+                   (b3-0-set-a2 p)
+                   (b3-0-set-a1 p))
            :use ((:instance b3-0-n-b3-f (p p))
                  (:instance b3-0-iff-a1-to-a14 (p p))
                  )
@@ -48,8 +88,770 @@
                  )
            :in-theory nil
            )
+          ("Subgoal 13"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b4-00 (p p))
+                 (:instance b4-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-4)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-4)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-4)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance rot*rot-is-rot
+                            (m1 (a-inv-rotation (acl2-sqrt 2)))
+                            (m2 (ROTATION-3D (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                             0 (* 2 (ACL2-PI)))
+                                        (POINT-ON-S2-NOT-D))))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-4))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-4))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-4))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-4))) (point p))
+                 (:instance rot-4-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-4))
+                                                                               P)))
+                 (:instance rot-4-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-4))
+                                                                               P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 12"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b5-00 (p p))
+                 (:instance b5-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-5)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-5)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-5)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance rot*rot-is-rot
+                            (m2 (a-inv-rotation (acl2-sqrt 2)))
+                            (m1 (ROTATION-3D (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                              0 (* 2 (ACL2-PI))))
+                                             (POINT-ON-S2-NOT-D))))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-5))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-5))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-5))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-5))) (point p))
+                 (:instance rot-5-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-5))
+                                                                               P)))
+                 (:instance rot-5-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-5))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 11"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b6-00 (p p))
+                 (:instance b6-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-6)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-6)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-6)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))))
+                 (:instance r3-rotationp-r-theta
+                            (angle (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance b3-0-r-1-a-inv-r-b3-0-a6-iff-b3-0-r-1-a-1-r-a6-1
+                            (m2 (a-inv-rotation (acl2-sqrt 2)))
+                            (m1 (ROTATION-3D (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                 0 (* 2 (ACL2-PI))))
+                                             (POINT-ON-S2-NOT-D)))
+                            (m3 (ROTATION-3D (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                 0 (* 2 (ACL2-PI)))
+                                             (POINT-ON-S2-NOT-D))))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-6))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-6))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-6))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-6))) (point p))
+                 (:instance rot-6-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-6))
+                                                                               P)))
+                 (:instance rot-6-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-6))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 10"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b7-00 (p p))
+                 (:instance b7-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-7)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-7)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-7)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-7))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-7))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-7))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-7))) (point p))
+                 (:instance rot-7-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-7))
+                                                                               P)))
+                 (:instance rot-7-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-7))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 9"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b8-00 (p p))
+                 (:instance b8-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-8)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-8)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-8)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-8))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-8))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-8))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-8))) (point p))
+                 (:instance rot-8-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-8))
+                                                                               P)))
+                 (:instance rot-8-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-8))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
 
+          ("Subgoal 8"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b9-00 (p p))
+                 (:instance b9-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-9)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-9)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-9)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-9))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-9))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-9))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-9))) (point p))
+                 (:instance rot-9-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-9))
+                                                                               P)))
+                 (:instance rot-9-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-9))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 7"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b10-00 (p p))
+                 (:instance b10-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-10)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-10)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-10)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance rot*rot-is-rot
+                            (m1 (b-inv-rotation (acl2-sqrt 2)))
+                            (m2 (ROTATION-3D (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                              0 (* 2 (ACL2-PI)))
+                                             (POINT-ON-S2-NOT-D))))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-10))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-10))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-10))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-10))) (point p))
+                 (:instance rot-10-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-10))
+                                                                               P)))
+                 (:instance rot-10-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-10))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 6"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b11-00 (p p))
+                 (:instance b11-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-11)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-11)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-11)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance rot*rot-is-rot
+                            (m2 (b-inv-rotation (acl2-sqrt 2)))
+                            (m1 (ROTATION-3D (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                 0 (* 2 (ACL2-PI))))
+                                             (POINT-ON-S2-NOT-D))))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-11))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-11))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-11))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-11))) (point p))
+                 (:instance rot-11-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-11))
+                                                                               P)))
+                 (:instance rot-11-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-11))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 5"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b12-00 (p p))
+                 (:instance b12-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-12)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-12)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-12)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))))
+                 (:instance r3-rotationp-r-theta
+                            (angle (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance b3-0-r-1-a-inv-r-b3-0-a6-iff-b3-0-r-1-a-1-r-a6-1
+                            (m2 (b-inv-rotation (acl2-sqrt 2)))
+                            (m1 (ROTATION-3D (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                 0 (* 2 (ACL2-PI))))
+                                             (POINT-ON-S2-NOT-D)))
+                            (m3 (ROTATION-3D (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                              0 (* 2 (ACL2-PI)))
+                                             (POINT-ON-S2-NOT-D))))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-12))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-12))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-12))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-12))) (point p))
+                 (:instance rot-12-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-12))
+                                                                               P)))
+                 (:instance rot-12-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-12))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 4"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b13-00 (p p))
+                 (:instance b13-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-13)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-13)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-13)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-13))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-13))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-13))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-13))) (point p))
+                 (:instance rot-13-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-13))
+                                                                               P)))
+                 (:instance rot-13-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-13))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 3"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b14-00 (p p))
+                 (:instance b14-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-14)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-14)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-14)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-14))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-14))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-14))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-14))) (point p))
+                 (:instance rot-14-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-14))
+                                                                               P)))
+                 (:instance rot-14-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-14))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 2"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance set-b20 (p p))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 1"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance set-b10 (p p))
+                 )
+           :in-theory nil
+           )
           ))
+
+----
+
+(defthmd b3-0-n-b3-f=>1-14
+  (implies (or (b3-00 p)
+               (b3-01 p)
+               (b4-00 p)
+               (b4-01 p)
+               (b5-00 p)
+               (b5-01 p)
+               (b6-00 p)
+               (b6-01 p)
+               (b7-00 p)
+               (b7-01 p)
+               (b8-00 p)
+               (b8-01 p)
+               (b9-00 p)
+               (b9-01 p)
+               (b10-00 p)
+               (b10-01 p)
+               (b11-00 p)
+               (b11-01 p)
+               (b12-00 p)
+               (b12-01 p)
+               (b13-00 p)
+               (b13-01 p)
+               (b14-00 p)
+               (b14-01 p)
+               (set-b20 p)
+               (set-b10 p))
+           (b3-0-n-b3-f p))
+  :hints (("goal"
+           :cases ((b3-0-set-a3 p)
+                   (b3-0-set-a4 p)
+                   (b3-0-set-a5 p)
+                   (b3-0-set-a6 p)
+                   (b3-0-set-a7 p)
+                   (b3-0-set-a8 p)
+                   (b3-0-set-a9 p)
+                   (b3-0-set-a10 p)
+                   (b3-0-set-a11 p)
+                   (b3-0-set-a12 p)
+                   (b3-0-set-a13 p)
+                   (b3-0-set-a14 p)
+                   (b3-0-set-a2 p)
+                   (b3-0-set-a1 p))
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b3-0-iff-a1-to-a14 (p p))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 14"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b3-00 (p p))
+                 (:instance b3-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-3)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-3)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-3)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-3))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-3))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-3))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-3))) (point p))
+                 (:instance rot-3-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-3))
+                                                                               P)))
+                 (:instance rot-3-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-3))
+                                                                               P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 13"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b4-00 (p p))
+                 (:instance b4-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-4)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-4)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-4)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance rot*rot-is-rot
+                            (m1 (a-inv-rotation (acl2-sqrt 2)))
+                            (m2 (ROTATION-3D (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                             0 (* 2 (ACL2-PI)))
+                                        (POINT-ON-S2-NOT-D))))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-4))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-4))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-4))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-4))) (point p))
+                 (:instance rot-4-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-4))
+                                                                               P)))
+                 (:instance rot-4-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-4))
+                                                                               P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 12"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b5-00 (p p))
+                 (:instance b5-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-5)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-5)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-5)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance rot*rot-is-rot
+                            (m2 (a-inv-rotation (acl2-sqrt 2)))
+                            (m1 (ROTATION-3D (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                              0 (* 2 (ACL2-PI))))
+                                             (POINT-ON-S2-NOT-D))))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-5))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-5))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-5))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-5))) (point p))
+                 (:instance rot-5-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-5))
+                                                                               P)))
+                 (:instance rot-5-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-5))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 11"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b6-00 (p p))
+                 (:instance b6-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-6)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-6)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-6)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))))
+                 (:instance r3-rotationp-r-theta
+                            (angle (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance b3-0-r-1-a-inv-r-b3-0-a6-iff-b3-0-r-1-a-1-r-a6-1
+                            (m2 (a-inv-rotation (acl2-sqrt 2)))
+                            (m1 (ROTATION-3D (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                 0 (* 2 (ACL2-PI))))
+                                             (POINT-ON-S2-NOT-D)))
+                            (m3 (ROTATION-3D (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                 0 (* 2 (ACL2-PI)))
+                                             (POINT-ON-S2-NOT-D))))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-6))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-6))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-6))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-6))) (point p))
+                 (:instance rot-6-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-6))
+                                                                               P)))
+                 (:instance rot-6-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-6))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 10"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b7-00 (p p))
+                 (:instance b7-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-7)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-7)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-7)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-7))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-7))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-7))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-7))) (point p))
+                 (:instance rot-7-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-7))
+                                                                               P)))
+                 (:instance rot-7-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-7))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 9"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b8-00 (p p))
+                 (:instance b8-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-8)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-8)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-8)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-8))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-8))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-8))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-8))) (point p))
+                 (:instance rot-8-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-8))
+                                                                               P)))
+                 (:instance rot-8-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-8))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+
+          ("Subgoal 8"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b9-00 (p p))
+                 (:instance b9-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-9)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-9)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-9)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-9))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-9))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-9))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-9))) (point p))
+                 (:instance rot-9-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-9))
+                                                                               P)))
+                 (:instance rot-9-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-9))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 7"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b10-00 (p p))
+                 (:instance b10-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-10)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-10)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-10)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance rot*rot-is-rot
+                            (m1 (b-inv-rotation (acl2-sqrt 2)))
+                            (m2 (ROTATION-3D (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                              0 (* 2 (ACL2-PI)))
+                                             (POINT-ON-S2-NOT-D))))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-10))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-10))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-10))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-10))) (point p))
+                 (:instance rot-10-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-10))
+                                                                               P)))
+                 (:instance rot-10-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-10))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 6"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b11-00 (p p))
+                 (:instance b11-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-11)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-11)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-11)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance rot*rot-is-rot
+                            (m2 (b-inv-rotation (acl2-sqrt 2)))
+                            (m1 (ROTATION-3D (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                 0 (* 2 (ACL2-PI))))
+                                             (POINT-ON-S2-NOT-D))))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-11))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-11))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-11))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-11))) (point p))
+                 (:instance rot-11-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-11))
+                                                                               P)))
+                 (:instance rot-11-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-11))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 5"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b12-00 (p p))
+                 (:instance b12-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-12)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-12)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-12)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance r3-rotationp-r-theta
+                            (angle (- (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi))))))
+                 (:instance r3-rotationp-r-theta
+                            (angle (exists-in-interval-but-not-in-angle-sequence-witness 0 (* 2 (acl2-pi)))))
+                 (:instance witness-not-in-angle-sequence)
+                 (:instance b3-0-r-1-a-inv-r-b3-0-a6-iff-b3-0-r-1-a-1-r-a6-1
+                            (m2 (b-inv-rotation (acl2-sqrt 2)))
+                            (m1 (ROTATION-3D (- (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                                 0 (* 2 (ACL2-PI))))
+                                             (POINT-ON-S2-NOT-D)))
+                            (m3 (ROTATION-3D (EXISTS-IN-INTERVAL-BUT-NOT-IN-ANGLE-SEQUENCE-WITNESS
+                                              0 (* 2 (ACL2-PI)))
+                                             (POINT-ON-S2-NOT-D))))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-12))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-12))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-12))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-12))) (point p))
+                 (:instance rot-12-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-12))
+                                                                               P)))
+                 (:instance rot-12-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-12))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 4"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b13-00 (p p))
+                 (:instance b13-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-13)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-13)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-13)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-13))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-13))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-13))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-13))) (point p))
+                 (:instance rot-13-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-13))
+                                                                               P)))
+                 (:instance rot-13-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-13))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 3"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance b14-00 (p p))
+                 (:instance b14-01 (p p))
+                 (:instance b3-f (p p))
+                 (:instance rot-14)
+                 (:instance rotp-rot=>b3=>rot*b3-f-or-rot-sf
+                            (rot (r3-m-inverse (rot-14)))
+                            (p p))
+                 (:instance rot-m=>rot-m-inv
+                            (m (rot-14)))
+                 (:instance base-rotations (x (acl2-sqrt 2)))
+                 (:instance ROT*SET-F (rot (r3-m-inverse (rot-14))) (p p))
+                 (:instance ROT*SET-F-1 (rot (r3-m-inverse (rot-14))) (point p))
+                 (:instance ROT*b3-F (rot (r3-m-inverse (rot-14))) (p p))
+                 (:instance ROT*b3-F-1 (rot (r3-m-inverse (rot-14))) (point p))
+                 (:instance rot-14-inv*f-suff (point p) (p (ROT*SET-F-1-WITNESS (R3-M-INVERSE (ROT-14))
+                                                                               P)))
+                 (:instance rot-14-inv*b3-f-suff (point p) (p (ROT*b3-F-1-WITNESS (R3-M-INVERSE (ROT-14))
+                                                                                 P)))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 2"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance set-b20 (p p))
+                 )
+           :in-theory nil
+           )
+          ("Subgoal 1"
+           :use ((:instance b3-0-n-b3-f (p p))
+                 (:instance set-b10 (p p))
+                 )
+           :in-theory nil
+           )
+          ))
+
+(defun-sk rota-1-b3-01-1 (point)
+  (exists p
+          (and (b3-10 p)
+               (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p) p) point))))
+
+(defun rota-1-b3-01 (p)
+  (and (point-in-r3 p)
+       (rota-1-b3-01-1 p)))
+
+(defun-sk rota-1-b3-01-1 (point)
+  (exists p
+          (and (b3-10 p)
+               (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p) p) point))))
+
+(defun rota-1-b3-01 (p)
+  (and (point-in-r3 p)
+       (rota-1-b3-01-1 p)))
+
+----
+
+(defun-sk rota-1-b3-01-1 (point)
+  (exists p
+          (and (b3-10 p)
+               (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p) p) point))))
+
+(defun rota-1-b3-01 (p)
+  (and (point-in-r3 p)
+       (rota-1-b3-01-1 p)))
+
+(defun-sk rota-1-b3-01-1 (point)
+  (exists p
+          (and (b3-10 p)
+               (m-= (rotation-about-arbitrary-line (- (angle-const)) (m-p) (n-p) p) point))))
+
+(defun rota-1-b3-01 (p)
+  (and (point-in-r3 p)
+       (rota-1-b3-01-1 p)))
+
+
 ;; (defun rot-9 ()
 ;;   (b-inv-rotation (acl2-sqrt 2)))
 
