@@ -3,13 +3,13 @@
 ; Proof of the Banach-Tarski theorem on a solid ball centered at the origin except for the origin (B^3-0).
 ;
 ;
-; Copyright (C) 2021 University of Wyoming
+; Copyright (C) 2022 University of Wyoming
 ;
 ; License: A 3-clause BSD license.  See the LICENSE file distributed with ACL2.
 ;
-; Main Authors: Jagadish Bapanapally (jagadishb285@gmail.com)
+; Main Author: Jagadish Bapanapally (jagadishb285@gmail.com)
 ;
-; Contributing Authors:
+; Contributing Author:
 ;   Ruben Gamboa (ruben@uwyo.edu)
 
 (in-package "ACL2")
