@@ -10,7 +10,7 @@
 ;
 ; Main Author: Jagadish Bapanapally (jagadishb285@gmail.com)
 ;
-; Contributing Author:
+; Contributing Authors:
 ;   Ruben Gamboa (ruben@uwyo.edu)
 ;   John R. Cowles (cowles@uwyo.edu)
 
