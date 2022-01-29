@@ -1,4 +1,4 @@
-A Formal Proof of the Banach-Tarski Theorem in ACL2(r)
+####A Formal Proof of the Banach-Tarski Theorem in ACL2(r)
 
 groups.lisp: A free group of reduced words.
 
