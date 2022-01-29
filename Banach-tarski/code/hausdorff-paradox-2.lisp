@@ -1,7 +1,7 @@
 ; Banach-Tarski theorem
 ;
 ; Proof of the Hausdorff paradox (part 2).
-; Proof that the set of poles is countable.
+; Proof for the set of poles is countable.
 ;
 ;
 ; Copyright (C) 2022 University of Wyoming
