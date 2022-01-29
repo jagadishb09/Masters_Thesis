@@ -2,8 +2,9 @@
 ;
 ; Proof of the Hausdorff paradox (part 1).
 ;
-; Book contains the proof of the equivalence between different partitions of S^2-D.
-; See hausdorff-paradox-2.lisp for the proof that the set D is countable.
+; Book contains the proof of the equivalence between different partitions of
+; S^2 minus the set of poles.
+; See hausdorff-paradox-2.lisp for the proof that the set of poles is countable.
 ;
 ;
 ; Copyright (C) 2022 University of Wyoming

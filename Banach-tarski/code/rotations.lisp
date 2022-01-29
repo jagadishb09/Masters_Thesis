@@ -1,6 +1,6 @@
 ; Banach-Tarski theorem
 ;
-; Proof that every element of the free group is a rotation in R^3.
+; Proof for the every element of the free group is a rotation in R^3.
 ;
 ;
 ; Copyright (C) 2022 University of Wyoming
