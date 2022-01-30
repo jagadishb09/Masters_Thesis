@@ -1,5 +1,8 @@
 ### A Formal Proof of the Banach-Tarski Theorem in ACL2(r)
 
+Reference: Weston, T.. “THE BANACH-TARSKI PARADOX.” (2003)
+
+
 groups.lisp: A free group of reduced words.
 
 free-group.lisp: A free group of 3-d matrices of rank 2.

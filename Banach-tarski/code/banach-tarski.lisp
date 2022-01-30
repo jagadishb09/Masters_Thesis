@@ -1,4 +1,4 @@
-; Banach-Tarski theorem
+; Banach-Tarski Theorem
 ;
 ; Proof of the Banach-Tarski theorem on the unit ball.
 ;
@@ -250,6 +250,761 @@
            :use ((:instance rotation-3d-angle-n-m= (angle angle) (ret-point ret-point))
                  )
            :in-theory (e/d (aref2) (rotation-3d))
+           )))
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic-5/top" :dir :system))
+
+  (defthmd r3-rotationp-rotation-3d-angle-n-m-det
+    (implies (and (realp angle)
+                  (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                             (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                             (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                         ret-point))
+             (equal (r3-m-determinant (rotation-3d angle ret-point)) 1))
+    :hints (("goal"
+             :use ((:instance r3-matrixp-r3d (angle angle)
+                              (u ret-point))
+                   (:instance return-point-in-r3-n-m=)
+                   (:instance rotation-3d-angle-n-m=1 (angle angle) (ret-point ret-point))
+                   (:instance sin**2+cos**2 (x angle))
+                   )
+             :in-theory (disable aref2 rotation-3d return-point-in-r3 point-in-r3-x1
+                                 point-in-r3-y1 point-in-r3-z1 point-in-r3 r3-m-inverse m-trans sin**2+cos**2)
+             )))
+  )
+
+(encapsulate
+  ()
+
+  (local (include-book "arithmetic/top" :dir :system))
+
+  (defthm r3-rotationp-rotation-3d-angle-n-m-is-rot-sub9
+    (implies (and (realp angle)
+                  (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                             (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                             (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                         ret-point)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 2) (acl2-cosine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 1) (acl2-cosine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 2) (- (acl2-sine angle)))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 1) (acl2-sine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 0) 1)
+                  (equal r3-m-rot-0-0
+                         (/ (- (* (aref2 :fakename (rotation-3d angle ret-point) 1 1)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 2 2))
+                               (* (aref2 :fakename (rotation-3d angle ret-point) 2 1)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 1 2)))
+                            (r3-m-determinant (rotation-3d angle ret-point)))))
+             (equal r3-m-rot-0-0
+                    (aref2 :fake-name (m-trans (rotation-3d angle ret-point)) 0 0)))
+    :hints (("goal"
+             :use ((:instance r3-matrixp-r3d (angle angle)
+                              (u ret-point))
+                   (:instance return-point-in-r3-n-m=)
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-3d angle ret-point)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-rotationp-rotation-3d-angle-n-m-det
+                              (angle angle)
+                              (ret-point ret-point))
+                   )
+             :in-theory (disable aref2 rotation-3d return-point-in-r3 point-in-r3-x1 r3-m-determinant
+                                 point-in-r3-y1 point-in-r3-z1 point-in-r3 r3-m-inverse m-trans sin**2+cos**2
+                                 m-p n-p r3-matrixp
+                                 (:executable-counterpart m-p)
+                                 (:executable-counterpart n-p)
+                                 (:executable-counterpart point-in-r3)
+                                 (:executable-counterpart point-in-r3-x1)
+                                 (:executable-counterpart point-in-r3-y1)
+                                 (:executable-counterpart point-in-r3-z1)
+                                 (:executable-counterpart return-point-in-r3))
+             ))
+    :rule-classes nil)
+
+  (defthm r3-rotationp-rotation-3d-angle-n-m-is-rot-sub8
+    (implies (and (realp angle)
+                  (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                             (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                             (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                         ret-point)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 2) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 1) (acl2-sine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 2) (acl2-cosine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 1) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 0) 0)
+                  (equal r3-m-rot-0-1
+                         (/ (- (* (aref2 :fakename (rotation-3d angle ret-point) 0 2)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 2 1))
+                               (* (aref2 :fakename (rotation-3d angle ret-point) 2 2)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 0 1)))
+                            (r3-m-determinant (rotation-3d angle ret-point)))))
+             (equal r3-m-rot-0-1
+                    (aref2 :fake-name (m-trans (rotation-3d angle ret-point)) 0 1)))
+    :hints (("goal"
+             :use ((:instance r3-matrixp-r3d (angle angle)
+                              (u ret-point))
+                   (:instance return-point-in-r3-n-m=)
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-3d angle ret-point)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-rotationp-rotation-3d-angle-n-m-det
+                              (angle angle)
+                              (ret-point ret-point))
+                   )
+             :in-theory (disable aref2 rotation-3d return-point-in-r3 point-in-r3-x1 r3-m-determinant
+                                 point-in-r3-y1 point-in-r3-z1 point-in-r3 r3-m-inverse m-trans sin**2+cos**2
+                                 m-p n-p r3-matrixp
+                                 (:executable-counterpart m-p)
+                                 (:executable-counterpart n-p)
+                                 (:executable-counterpart point-in-r3)
+                                 (:executable-counterpart point-in-r3-x1)
+                                 (:executable-counterpart point-in-r3-y1)
+                                 (:executable-counterpart point-in-r3-z1)
+                                 (:executable-counterpart return-point-in-r3))
+             ))
+    :rule-classes nil)
+
+  (defthm r3-rotationp-rotation-3d-angle-n-m-is-rot-sub7
+    (implies (and (realp angle)
+                  (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                             (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                             (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                         ret-point)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 1) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 2) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 1) (acl2-cosine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 2) (- (acl2-sine angle)))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 0) 0)
+                  (equal r3-m-rot-0-2
+                         (/ (- (* (aref2 :fakename (rotation-3d angle ret-point) 0 1)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 1 2))
+                               (* (aref2 :fakename (rotation-3d angle ret-point) 1 1)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 0 2)))
+                            (r3-m-determinant (rotation-3d angle ret-point)))))
+             (equal r3-m-rot-0-2
+                    (aref2 :fake-name (m-trans (rotation-3d angle ret-point)) 0 2)))
+    :hints (("goal"
+             :use ((:instance r3-matrixp-r3d (angle angle)
+                              (u ret-point))
+                   (:instance return-point-in-r3-n-m=)
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-3d angle ret-point)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-rotationp-rotation-3d-angle-n-m-det
+                              (angle angle)
+                              (ret-point ret-point))
+                   )
+             :in-theory (disable aref2 rotation-3d return-point-in-r3 point-in-r3-x1 r3-m-determinant
+                                 point-in-r3-y1 point-in-r3-z1 point-in-r3 r3-m-inverse m-trans sin**2+cos**2
+                                 m-p n-p r3-matrixp
+                                 (:executable-counterpart m-p)
+                                 (:executable-counterpart n-p)
+                                 (:executable-counterpart point-in-r3)
+                                 (:executable-counterpart point-in-r3-x1)
+                                 (:executable-counterpart point-in-r3-y1)
+                                 (:executable-counterpart point-in-r3-z1)
+                                 (:executable-counterpart return-point-in-r3))
+             ))
+    :rule-classes nil)
+
+  (defthm r3-rotationp-rotation-3d-angle-n-m-is-rot-sub6
+    (implies (and (realp angle)
+                  (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                             (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                             (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                         ret-point)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 0) 1)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 1) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 2) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 0) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 1) (acl2-cosine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 2) (- (acl2-sine angle)))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 0) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 1) (acl2-sine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 2) (acl2-cosine angle))
+                  (equal r3-m-rot-1-0
+                         (/ (- (* (aref2 :fakename (rotation-3d angle ret-point) 1 2)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 2 0))
+                               (* (aref2 :fakename (rotation-3d angle ret-point) 2 2)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 1 0)))
+                            (r3-m-determinant (rotation-3d angle ret-point)))))
+             (equal r3-m-rot-1-0
+                    (aref2 :fake-name (m-trans (rotation-3d angle ret-point)) 1 0)))
+    :hints (("goal"
+             :use ((:instance r3-matrixp-r3d (angle angle)
+                              (u ret-point))
+                   (:instance return-point-in-r3-n-m=)
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-3d angle ret-point)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-rotationp-rotation-3d-angle-n-m-det
+                              (angle angle)
+                              (ret-point ret-point))
+                   )
+             :in-theory (disable aref2 rotation-3d return-point-in-r3 point-in-r3-x1 r3-m-determinant
+                                 point-in-r3-y1 point-in-r3-z1 point-in-r3 r3-m-inverse m-trans sin**2+cos**2
+                                 m-p n-p r3-matrixp
+                                 (:executable-counterpart m-p)
+                                 (:executable-counterpart n-p)
+                                 (:executable-counterpart point-in-r3)
+                                 (:executable-counterpart point-in-r3-x1)
+                                 (:executable-counterpart point-in-r3-y1)
+                                 (:executable-counterpart point-in-r3-z1)
+                                 (:executable-counterpart return-point-in-r3))
+             ))
+    :rule-classes nil)
+
+  (defthm r3-rotationp-rotation-3d-angle-n-m-is-rot-sub5
+    (implies (and (realp angle)
+                  (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                             (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                             (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                         ret-point)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 0) 1)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 1) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 2) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 0) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 1) (acl2-cosine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 2) (- (acl2-sine angle)))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 0) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 1) (acl2-sine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 2) (acl2-cosine angle))
+                  (equal r3-m-rot-1-1
+                         (/ (- (* (aref2 :fakename (rotation-3d angle ret-point) 0 0)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 2 2))
+                               (* (aref2 :fakename (rotation-3d angle ret-point) 2 0)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 0 2)))
+                            (r3-m-determinant (rotation-3d angle ret-point)))))
+             (equal r3-m-rot-1-1
+                    (aref2 :fake-name (m-trans (rotation-3d angle ret-point)) 1 1)))
+    :hints (("goal"
+             :use ((:instance r3-matrixp-r3d (angle angle)
+                              (u ret-point))
+                   (:instance return-point-in-r3-n-m=)
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-3d angle ret-point)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-rotationp-rotation-3d-angle-n-m-det
+                              (angle angle)
+                              (ret-point ret-point))
+                   )
+             :in-theory (disable aref2 rotation-3d return-point-in-r3 point-in-r3-x1 r3-m-determinant
+                                 point-in-r3-y1 point-in-r3-z1 point-in-r3 r3-m-inverse m-trans sin**2+cos**2
+                                 m-p n-p r3-matrixp
+                                 (:executable-counterpart m-p)
+                                 (:executable-counterpart n-p)
+                                 (:executable-counterpart point-in-r3)
+                                 (:executable-counterpart point-in-r3-x1)
+                                 (:executable-counterpart point-in-r3-y1)
+                                 (:executable-counterpart point-in-r3-z1)
+                                 (:executable-counterpart return-point-in-r3))
+             ))
+    :rule-classes nil)
+
+  (defthm r3-rotationp-rotation-3d-angle-n-m-is-rot-sub4
+    (implies (and (realp angle)
+                  (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                             (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                             (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                         ret-point)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 0) 1)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 1) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 2) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 0) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 1) (acl2-cosine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 2) (- (acl2-sine angle)))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 0) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 1) (acl2-sine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 2) (acl2-cosine angle))
+                  (equal r3-m-rot-1-2
+                         (/ (- (* (aref2 :fakename (rotation-3d angle ret-point) 0 2)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 1 0))
+                               (* (aref2 :fakename (rotation-3d angle ret-point) 1 2)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 0 0)))
+                            (r3-m-determinant (rotation-3d angle ret-point)))))
+             (equal r3-m-rot-1-2
+                    (aref2 :fake-name (m-trans (rotation-3d angle ret-point)) 1 2)))
+    :hints (("goal"
+             :use ((:instance r3-matrixp-r3d (angle angle)
+                              (u ret-point))
+                   (:instance return-point-in-r3-n-m=)
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-3d angle ret-point)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-rotationp-rotation-3d-angle-n-m-det
+                              (angle angle)
+                              (ret-point ret-point))
+                   )
+             :in-theory (disable aref2 rotation-3d return-point-in-r3 point-in-r3-x1 r3-m-determinant
+                                 point-in-r3-y1 point-in-r3-z1 point-in-r3 r3-m-inverse m-trans sin**2+cos**2
+                                 m-p n-p r3-matrixp
+                                 (:executable-counterpart m-p)
+                                 (:executable-counterpart n-p)
+                                 (:executable-counterpart point-in-r3)
+                                 (:executable-counterpart point-in-r3-x1)
+                                 (:executable-counterpart point-in-r3-y1)
+                                 (:executable-counterpart point-in-r3-z1)
+                                 (:executable-counterpart return-point-in-r3))
+             ))
+    :rule-classes nil)
+
+  (defthm r3-rotationp-rotation-3d-angle-n-m-is-rot-sub3
+    (implies (and (realp angle)
+                  (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                             (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                             (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                         ret-point)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 0) 1)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 1) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 2) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 0) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 1) (acl2-cosine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 2) (- (acl2-sine angle)))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 0) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 1) (acl2-sine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 2) (acl2-cosine angle))
+                  (equal r3-m-rot-2-0
+                         (/ (- (* (aref2 :fakename (rotation-3d angle ret-point) 1 0)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 2 1))
+                               (* (aref2 :fakename (rotation-3d angle ret-point) 2 0)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 1 1)))
+                            (r3-m-determinant (rotation-3d angle ret-point)))))
+             (equal r3-m-rot-2-0
+                    (aref2 :fake-name (m-trans (rotation-3d angle ret-point)) 2 0)))
+    :hints (("goal"
+             :use ((:instance r3-matrixp-r3d (angle angle)
+                              (u ret-point))
+                   (:instance return-point-in-r3-n-m=)
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-3d angle ret-point)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-rotationp-rotation-3d-angle-n-m-det
+                              (angle angle)
+                              (ret-point ret-point))
+                   )
+             :in-theory (disable aref2 rotation-3d return-point-in-r3 point-in-r3-x1 r3-m-determinant
+                                 point-in-r3-y1 point-in-r3-z1 point-in-r3 r3-m-inverse m-trans sin**2+cos**2
+                                 m-p n-p r3-matrixp
+                                 (:executable-counterpart m-p)
+                                 (:executable-counterpart n-p)
+                                 (:executable-counterpart point-in-r3)
+                                 (:executable-counterpart point-in-r3-x1)
+                                 (:executable-counterpart point-in-r3-y1)
+                                 (:executable-counterpart point-in-r3-z1)
+                                 (:executable-counterpart return-point-in-r3))
+             ))
+    :rule-classes nil)
+
+  (defthm r3-rotationp-rotation-3d-angle-n-m-is-rot-sub2
+    (implies (and (realp angle)
+                  (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                             (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                             (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                         ret-point)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 0) 1)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 1) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 2) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 0) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 1) (acl2-cosine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 2) (- (acl2-sine angle)))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 0) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 1) (acl2-sine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 2) (acl2-cosine angle))
+                  (equal r3-m-rot-2-1
+                         (/ (- (* (aref2 :fakename (rotation-3d angle ret-point) 0 1)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 2 0))
+                               (* (aref2 :fakename (rotation-3d angle ret-point) 2 1)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 0 0)))
+                            (r3-m-determinant (rotation-3d angle ret-point)))))
+             (equal r3-m-rot-2-1
+                    (aref2 :fake-name (m-trans (rotation-3d angle ret-point)) 2 1)))
+    :hints (("goal"
+             :use ((:instance r3-matrixp-r3d (angle angle)
+                              (u ret-point))
+                   (:instance return-point-in-r3-n-m=)
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-3d angle ret-point)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-rotationp-rotation-3d-angle-n-m-det
+                              (angle angle)
+                              (ret-point ret-point))
+                   )
+             :in-theory (disable aref2 rotation-3d return-point-in-r3 point-in-r3-x1 r3-m-determinant
+                                 point-in-r3-y1 point-in-r3-z1 point-in-r3 r3-m-inverse m-trans sin**2+cos**2
+                                 m-p n-p r3-matrixp
+                                 (:executable-counterpart m-p)
+                                 (:executable-counterpart n-p)
+                                 (:executable-counterpart point-in-r3)
+                                 (:executable-counterpart point-in-r3-x1)
+                                 (:executable-counterpart point-in-r3-y1)
+                                 (:executable-counterpart point-in-r3-z1)
+                                 (:executable-counterpart return-point-in-r3))
+             ))
+    :rule-classes nil)
+
+  (defthm r3-rotationp-rotation-3d-angle-n-m-is-rot-sub1
+    (implies (and (realp angle)
+                  (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                             (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                             (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                         ret-point)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 0) 1)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 1) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 0 2) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 0) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 1) (acl2-cosine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 1 2) (- (acl2-sine angle)))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 0) 0)
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 1) (acl2-sine angle))
+                  (equal (aref2 :fake-name (rotation-3d angle ret-point) 2 2) (acl2-cosine angle))
+                  (equal (aref2 :fake-name (r3-m-inverse (rotation-3d angle ret-point)) 2 2)
+                         (/ (- (* (aref2 :fakename (rotation-3d angle ret-point) 0 0)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 1 1))
+                               (* (aref2 :fakename (rotation-3d angle ret-point) 1 0)
+                                  (aref2 :fakename (rotation-3d angle ret-point) 0 1)))
+                            (r3-m-determinant (rotation-3d angle ret-point)))))
+             (equal (aref2 :fake-name (r3-m-inverse (rotation-3d angle ret-point)) 2 2)
+                    (aref2 :fake-name (m-trans (rotation-3d angle ret-point)) 2 2)))
+    :hints (("goal"
+             :use ((:instance r3-matrixp-r3d (angle angle)
+                              (u ret-point))
+                   (:instance return-point-in-r3-n-m=)
+                   (:instance r3-matrixp-r3-m-inverse (m (rotation-3d angle ret-point)))
+                   (:instance sin**2+cos**2 (x angle))
+                   (:instance r3-rotationp-rotation-3d-angle-n-m-det
+                              (angle angle)
+                              (ret-point ret-point))
+                   )
+             :in-theory (disable aref2 rotation-3d return-point-in-r3 point-in-r3-x1 r3-m-determinant
+                                 point-in-r3-y1 point-in-r3-z1 point-in-r3 r3-m-inverse m-trans sin**2+cos**2
+                                 m-p n-p r3-matrixp
+                                 (:executable-counterpart m-p)
+                                 (:executable-counterpart n-p)
+                                 (:executable-counterpart point-in-r3)
+                                 (:executable-counterpart point-in-r3-x1)
+                                 (:executable-counterpart point-in-r3-y1)
+                                 (:executable-counterpart point-in-r3-z1)
+                                 (:executable-counterpart return-point-in-r3))
+             ))
+    :rule-classes nil)
+
+  )
+
+(defthmd r3-rotationp-rotation-3d-angle-n-m-is-rot-lemma1
+  (implies (and (realp angle)
+                (point-in-r3 (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                                 (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                                 (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p)))))
+                (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                           (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                           (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                       ret-point))
+           (and (r3-matrixp (rotation-3d angle ret-point))
+                (equal (r3-m-determinant (rotation-3d angle ret-point)) 1)))
+  :hints (("goal"
+           :use ((:instance r3-matrixp-r3d (angle angle)
+                            (u ret-point))
+                 (:instance r3-rotationp-rotation-3d-angle-n-m-det
+                            (angle angle)
+                            (ret-point ret-point))
+                 )
+           :in-theory nil
+           )))
+
+(defthmd r3-rotationp-rotation-3d-angle-n-m-is-rot-lemma2-1
+  (and (equal
+        (aref2
+         :fake-name
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         2 2)
+        (aref2
+         :fakename
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         2 2))
+
+       (equal
+        (aref2
+         :fake-name
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         0 0)
+        (aref2
+         :fakename
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         0 0))
+
+       (equal
+        (aref2
+         :fake-name
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         0 1)
+        (aref2
+         :fakename
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         0 1))
+
+       (equal
+        (aref2
+         :fake-name
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         0 2)
+        (aref2
+         :fakename
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         0 2))
+
+       (equal
+        (aref2
+         :fake-name
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         1 0)
+        (aref2
+         :fakename
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         1 0))
+
+       (equal
+        (aref2
+         :fake-name
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         1 1)
+        (aref2
+         :fakename
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         1 1))
+
+       (equal
+        (aref2
+         :fake-name
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         1 2)
+        (aref2
+         :fakename
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         1 2))
+
+       (equal
+        (aref2
+         :fake-name
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         2 0)
+        (aref2
+         :fakename
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         2 0))
+
+       (equal
+        (aref2
+         :fake-name
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         2 1)
+        (aref2
+         :fakename
+         (r3-m-inverse
+          (rotation-3d angle
+                       (return-point-in-r3 (+ (point-in-r3-x1 (n-p))
+                                              (- (point-in-r3-x1 (m-p))))
+                                           (+ (point-in-r3-y1 (n-p))
+                                              (- (point-in-r3-y1 (m-p))))
+                                           (+ (point-in-r3-z1 (n-p))
+                                              (- (point-in-r3-z1 (m-p)))))))
+         2 1))
+
+       )
+  )
+
+(defthmd r3-rotationp-rotation-3d-angle-n-m-is-rot-lemma2
+  (implies (and (realp angle)
+                (point-in-r3 (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                                 (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                                 (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p)))))
+                (equal (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                           (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                           (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                       ret-point))
+           (m-= (r3-m-inverse (rotation-3d angle ret-point))
+                (m-trans (rotation-3d angle ret-point))))
+  :hints (("goal"
+           :use ((:instance r3-matrixp-r3d (angle angle)
+                            (u ret-point))
+                 (:instance r3-rotationp-rotation-3d-angle-n-m-is-rot-lemma2-1)
+                 (:instance r3-matrixp-r3-m-inverse (m (rotation-3d angle ret-point)))
+                 (:instance r3-matrixp-m-trans (m (rotation-3d angle ret-point)))
+                 (:instance r3-m-inverse-= (m (rotation-3d angle ret-point)))
+                 (:instance rotation-3d-angle-n-m=1 (angle angle) (ret-point ret-point))
+                 (:instance r3-rotationp-rotation-3d-angle-n-m-is-rot-sub1
+                            (angle angle) (ret-point (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                                                         (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                                                         (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))))
+                 (:instance r3-rotationp-rotation-3d-angle-n-m-is-rot-sub2
+                            (r3-m-rot-2-1 (aref2 :fake-name (r3-m-inverse (rotation-3d angle ret-point)) 2 1))
+                            (angle angle) (ret-point ret-point))
+                 (:instance r3-rotationp-rotation-3d-angle-n-m-is-rot-sub3
+                            (r3-m-rot-2-0 (aref2 :fake-name (r3-m-inverse (rotation-3d angle ret-point)) 2 0))
+                            (angle angle) (ret-point ret-point))
+                 (:instance r3-rotationp-rotation-3d-angle-n-m-is-rot-sub4
+                            (r3-m-rot-1-2 (aref2 :fake-name (r3-m-inverse (rotation-3d angle ret-point)) 1 2))
+                            (angle angle) (ret-point ret-point))
+                 (:instance r3-rotationp-rotation-3d-angle-n-m-is-rot-sub5
+                            (r3-m-rot-1-1 (aref2 :fake-name (r3-m-inverse (rotation-3d angle ret-point)) 1 1))
+                            (angle angle) (ret-point ret-point))
+                 (:instance r3-rotationp-rotation-3d-angle-n-m-is-rot-sub6
+                            (r3-m-rot-1-0 (aref2 :fake-name (r3-m-inverse (rotation-3d angle ret-point)) 1 0))
+                            (angle angle) (ret-point ret-point))
+                 (:instance r3-rotationp-rotation-3d-angle-n-m-is-rot-sub7
+                            (r3-m-rot-0-2 (aref2 :fake-name (r3-m-inverse (rotation-3d angle ret-point)) 0 2))
+                            (angle angle) (ret-point ret-point))
+                 (:instance r3-rotationp-rotation-3d-angle-n-m-is-rot-sub8
+                            (r3-m-rot-0-1 (aref2 :fake-name (r3-m-inverse (rotation-3d angle ret-point)) 0 1))
+                            (angle angle) (ret-point ret-point))
+                 (:instance r3-rotationp-rotation-3d-angle-n-m-is-rot-sub9
+                            (r3-m-rot-0-0 (aref2 :fake-name (r3-m-inverse (rotation-3d angle ret-point)) 0 0))
+                            (angle angle) (ret-point ret-point))
+
+                 (:instance m-=-equiv-lemma
+                            (m1 (r3-m-inverse (rotation-3d angle ret-point)))
+                            (m2 (m-trans (rotation-3d angle ret-point))))
+
+                 )
+           :in-theory nil)))
+
+(defthmd r3-rotationp-rotation-3d-angle-n-m-is-rot
+  (implies (realp angle)
+           (r3-rotationp (rotation-3d angle (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                                                (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                                                (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p)))))))
+  :hints (("goal"
+           :use ((:instance r3-rotationp-rotation-3d-angle-n-m-is-rot-lemma2
+                            (angle angle)
+                            (ret-point (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                                           (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                                           (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))))
+                 (:instance r3-rotationp-rotation-3d-angle-n-m-is-rot-lemma1
+                            (angle angle)
+                            (ret-point (return-point-in-r3 (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p)))
+                                                           (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p)))
+                                                           (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))))
+                 (:instance return-point-in-r3=>r3p
+                            (x (- (point-in-r3-x1 (n-p)) (point-in-r3-x1 (m-p))))
+                            (y (- (point-in-r3-y1 (n-p)) (point-in-r3-y1 (m-p))))
+                            (z (- (point-in-r3-z1 (n-p)) (point-in-r3-z1 (m-p))))
+                            )
+
+                 )
+           :in-theory (disable rotation-3d r3-matrixp r3-m-determinant r3-m-inverse m-trans)
            )))
 
 (defthmd m-*rot-3d-vect-tr-values-1
