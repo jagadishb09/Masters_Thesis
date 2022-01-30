@@ -1,6 +1,6 @@
 ### A Formal Proof of the Banach-Tarski Theorem in ACL2(r)
 
-Reference: Weston, T.. “THE BANACH-TARSKI PARADOX.” (2003)
+##### Reference: Weston, T.. “THE BANACH-TARSKI PARADOX.” (2003)
 
 
 groups.lisp: A free group of reduced words.
